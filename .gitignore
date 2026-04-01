@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+.turbo/
+.vinxi/
+.output/
+
+# Environment & secrets
+.env
+.env.*
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# TypeScript build cache
+*.tsbuildinfo
+
+# AI-specific rules, hooks, and workflows
+.clinerules/
+
+# Docs — ignored by default, allowed per-case basis
+docs/*
+!docs/ARCHITECTURE.md
