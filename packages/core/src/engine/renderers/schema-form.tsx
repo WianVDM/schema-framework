@@ -99,7 +99,7 @@ export function SchemaForm({ schema, onSubmit, initialValues, onCancel }: Schema
           )}
         </form.Subscribe>
         <div className="flex justify-end gap-2 pt-2">
-          {cancelLabel && (
+          {cancelLabel && onCancel && (
             <Button
               type="button"
               variant="outline"

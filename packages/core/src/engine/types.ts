@@ -196,6 +196,7 @@ export interface SchemaGridProps {
   data: Record<string, unknown>[]
   onRowClick?: (row: Record<string, unknown>, rowIndex: number) => void
   onPageChange?: (page: number, pageSize: number) => void
+  onFilterChange?: (columnKey: string, value: string) => void
 }
 
 // Helper type for formatted cell values

@@ -1,4 +1,5 @@
 import type { FieldRendererProps, SelectOption } from '../types'
+import type { AddressData } from '../../primitives/address-input'
 import { usePrimitives } from '../context/primitives-context'
 
 export function FieldRenderer({ schema, value, onChange, error }: FieldRendererProps) {
@@ -136,8 +137,8 @@ export function FieldRenderer({ schema, value, onChange, error }: FieldRendererP
           {labelElement}
           <AddressInput
             id={fieldId}
-            value={value ?? ''}
-            onChange={(val: unknown) => onChange(val)}
+            value={(value as AddressData) ?? { street: '', city: '', state: '', zip: '', country: '' }}
+            onChange={(val: AddressData) => onChange(val)}
             disabled={schema.disabled}
             placeholder={schema.placeholder}
             {...ariaProps}

@@ -15,7 +15,7 @@ import { GridPagination } from './grid-pagination'
 import { GridColumnHeader } from './grid-column-header'
 import { resolveMessage } from '../helpers/i18n'
 
-export function SchemaGrid({ schema, data, onRowClick, onPageChange }: SchemaGridProps) {
+export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterChange }: SchemaGridProps) {
   const {
     Table,
     TableHeader,
@@ -59,10 +59,17 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange }: SchemaGri
     manualPagination: isServerMode,
   })
 
+  const disableFilters = isServerMode && !onFilterChange
+
   const handleFilterChange = useCallback((columnKey: string, value: string) => {
-    setColumnFilters((prev) => ({ ...prev, [columnKey]: value }))
-    table.getColumn(columnKey)?.setFilterValue(value)
-  }, [table])
+    if (isServerMode) {
+      onFilterChange?.(columnKey, value)
+      setColumnFilters((prev) => ({ ...prev, [columnKey]: value }))
+    } else {
+      setColumnFilters((prev) => ({ ...prev, [columnKey]: value }))
+      table.getColumn(columnKey)?.setFilterValue(value)
+    }
+  }, [table, isServerMode, onFilterChange])
 
   const borderedClasses = schema.bordered
     ? 'border border-border rounded-lg overflow-hidden'
@@ -111,6 +118,7 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange }: SchemaGri
                         handleFilterChange(header.id, val)
                       }
                       enableResizing={schema.resizable ?? false}
+                      filterDisabled={disableFilters}
                     />
                   )
                 })}
@@ -129,7 +137,10 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange }: SchemaGri
                 </TableCell>
               </TableRow>
             ) : (
-              table.getRowModel().rows.map((row, rowIndex) => (
+              table.getRowModel().rows.map((row, rowIndex) => {
+                const { pageIndex, pageSize } = table.getState().pagination
+                const globalIndex = pageIndex * pageSize + rowIndex + 2
+                return (
                 <TableRow
                   key={row.id}
                   className={rowClasses}
@@ -140,7 +151,7 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange }: SchemaGri
                   }
                   style={onRowClick ? { cursor: 'pointer' } : undefined}
                   role="row"
-                  aria-rowindex={rowIndex + 2}
+                  aria-rowindex={globalIndex}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
@@ -155,7 +166,7 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange }: SchemaGri
                     </TableCell>
                   ))}
                 </TableRow>
-              ))
+              )})
             )}
           </TableBody>
         </Table>

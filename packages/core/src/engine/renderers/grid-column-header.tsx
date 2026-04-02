@@ -9,6 +9,7 @@ interface GridColumnHeaderProps {
   filterValue: string
   onFilterChange: (value: string) => void
   enableResizing: boolean
+  filterDisabled?: boolean
 }
 
 export function GridColumnHeader({
@@ -17,6 +18,7 @@ export function GridColumnHeader({
   filterValue,
   onFilterChange,
   enableResizing,
+  filterDisabled = false,
 }: GridColumnHeaderProps) {
   const { TableHead, Input } = usePrimitives()
 
@@ -67,6 +69,7 @@ export function GridColumnHeader({
               onFilterChange(e.target.value)
             }
             className="h-6 text-xs"
+            disabled={filterDisabled}
           />
         </div>
       )}
