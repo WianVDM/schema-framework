@@ -20,7 +20,8 @@
   },
   "scripts": {
     "build": "tsup src/index.ts --format esm --dts --external zod --external react --external @tanstack/react-table --external @tanstack/react-form",
-    "dev": "tsup src/index.ts --format esm --dts --watch --external zod --external react --external @tanstack/react-table --external @tanstack/react-form"
+    "dev": "tsup src/index.ts --format esm --dts --watch --external zod --external react --external @tanstack/react-table --external @tanstack/react-form",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "zod": "^3.24"
