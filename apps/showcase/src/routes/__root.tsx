@@ -8,6 +8,7 @@ import {
   Link,
 } from '@tanstack/react-router'
 import appCss from '../app/app.css?url'
+import { AppPrimitivesProvider } from '../app/primitives-provider'
 
 export const Route = createRootRoute({
   head: () => ({
@@ -25,9 +26,11 @@ export const Route = createRootRoute({
 
 function RootComponent() {
   return (
-    <RootDocument>
-      <Outlet />
-    </RootDocument>
+    <AppPrimitivesProvider>
+      <RootDocument>
+        <Outlet />
+      </RootDocument>
+    </AppPrimitivesProvider>
   )
 }
 
@@ -54,6 +57,20 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
             className="text-sm hover:underline"
           >
             Demo
+          </Link>
+          <Link
+            to="/demo-form"
+            activeProps={{ className: 'font-bold underline' }}
+            className="text-sm hover:underline"
+          >
+            Form
+          </Link>
+          <Link
+            to="/demo-grid"
+            activeProps={{ className: 'font-bold underline' }}
+            className="text-sm hover:underline"
+          >
+            Grid
           </Link>
         </nav>
         <main className="p-6">
