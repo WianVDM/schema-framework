@@ -9,6 +9,7 @@ import {
 } from '@tanstack/react-router'
 import appCss from '../app/app.css?url'
 import { AppPrimitivesProvider } from '../app/primitives-provider'
+import { AppQueryProvider } from '../lib/query-client'
 
 export const Route = createRootRoute({
   head: () => ({
@@ -27,11 +28,13 @@ export const Route = createRootRoute({
 
 function RootComponent() {
   return (
-    <AppPrimitivesProvider>
-      <RootDocument>
-        <Outlet />
-      </RootDocument>
-    </AppPrimitivesProvider>
+    <AppQueryProvider>
+      <AppPrimitivesProvider>
+        <RootDocument>
+          <Outlet />
+        </RootDocument>
+      </AppPrimitivesProvider>
+    </AppQueryProvider>
   )
 }
 
