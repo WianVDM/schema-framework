@@ -5,7 +5,7 @@ export function createSelectionStore<T>() {
   return create<SelectionStore<T>>((set) => ({
     selectedId: null,
     selectedData: null,
-    setSelected: (id, data) => set({ selectedId: id, selectedData: data }),
+    setSelected: (id: string, data: T) => set({ selectedId: id, selectedData: data }),
     clearSelection: () => set({ selectedId: null, selectedData: null }),
   }))
 }

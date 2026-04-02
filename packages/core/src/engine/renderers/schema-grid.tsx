@@ -1,44 +1,42 @@
-import { useState, useMemo, useCallback } from 'react'
+import { useMemo } from 'react'
+import {
+  useReactTable,
+  getCoreRowModel,
+  getSortedRowModel,
+  flexRender,
+  type ColumnDef,
+  type SortingState,
+} from '@tanstack/react-table'
+import { useState } from 'react'
 import type { SchemaGridProps, GridColumnSchema } from '../types'
 import { usePrimitives } from '../context/primitives-context'
-
-type SortDirection = 'asc' | 'desc' | null
 
 export function SchemaGrid({ schema, data, onRowClick }: SchemaGridProps) {
   const { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } =
     usePrimitives()
 
-  const [sortColumn, setSortColumn] = useState<string | null>(null)
-  const [sortDirection, setSortDirection] = useState<SortDirection>(null)
+  const [sorting, setSorting] = useState<SortingState>([])
 
-  const handleSort = useCallback((columnKey: string) => {
-    setSortColumn((prev) => {
-      if (prev === columnKey) {
-        setSortDirection((dir) =>
-          dir === 'asc' ? 'desc' : dir === 'desc' ? null : 'asc'
-        )
-        return columnKey
-      }
-      setSortDirection('asc')
-      return columnKey
-    })
-  }, [])
+  const columns = useMemo<ColumnDef<Record<string, unknown>>[]>(
+    () =>
+      schema.columns.map((col: GridColumnSchema) => ({
+        accessorKey: col.key,
+        header: col.label,
+        enableSorting: col.sortable ?? false,
+        size: col.width ? parseInt(col.width, 10) : undefined,
+        cell: (info) => formatCellValue(col, info.getValue()),
+      })),
+    [schema.columns]
+  )
 
-  const sortedData = useMemo(() => {
-    if (!sortColumn || !sortDirection) return data
-
-    return [...data].sort((a, b) => {
-      const aVal = a[sortColumn]
-      const bVal = b[sortColumn]
-
-      if (aVal === bVal) return 0
-      if (aVal === undefined || aVal === null) return 1
-      if (bVal === undefined || bVal === null) return -1
-
-      const comparison = aVal < bVal ? -1 : 1
-      return sortDirection === 'asc' ? comparison : -comparison
-    })
-  }, [data, sortColumn, sortDirection])
+  const table = useReactTable({
+    data,
+    columns,
+    state: { sorting },
+    onSortingChange: setSorting,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+  })
 
   return (
     <div>
@@ -53,34 +51,46 @@ export function SchemaGrid({ schema, data, onRowClick }: SchemaGridProps) {
       <div className="rounded-md border">
         <Table>
           <TableHeader>
-            <TableRow>
-              {schema.columns.map((col) => (
-                <TableHead
-                  key={col.key}
-                  style={{ width: col.width }}
-                  className={getAlignClass(col.align)}
-                >
-                  {col.sortable ? (
-                    <button
-                      type="button"
-                      className="flex items-center gap-1 hover:underline cursor-pointer"
-                      onClick={() => handleSort(col.key)}
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => {
+                  const col = schema.columns.find(
+                    (c) => c.key === header.column.id
+                  )
+                  return (
+                    <TableHead
+                      key={header.id}
+                      style={{ width: col?.width }}
+                      className={getAlignClass(col?.align)}
                     >
-                      {col.label}
-                      <SortIndicator
-                        active={sortColumn === col.key}
-                        direction={sortDirection}
-                      />
-                    </button>
-                  ) : (
-                    col.label
-                  )}
-                </TableHead>
-              ))}
-            </TableRow>
+                      {header.column.getCanSort() ? (
+                        <button
+                          type="button"
+                          className="flex items-center gap-1 hover:underline cursor-pointer"
+                          onClick={header.column.getToggleSortingHandler()}
+                        >
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                          <SortIndicator
+                            sorted={header.column.getIsSorted()}
+                          />
+                        </button>
+                      ) : (
+                        flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )
+                      )}
+                    </TableHead>
+                  )
+                })}
+              </TableRow>
+            ))}
           </TableHeader>
           <TableBody>
-            {sortedData.length === 0 ? (
+            {table.getRowModel().rows.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={schema.columns.length}
@@ -90,24 +100,28 @@ export function SchemaGrid({ schema, data, onRowClick }: SchemaGridProps) {
                 </TableCell>
               </TableRow>
             ) : (
-              sortedData.map((row, rowIndex) => (
+              table.getRowModel().rows.map((row) => (
                 <TableRow
-                  key={rowIndex}
-                  className={
-                    onRowClick
-                      ? 'cursor-pointer'
-                      : ''
-                  }
-                  onClick={() => onRowClick?.(row, rowIndex)}
+                  key={row.id}
+                  className={onRowClick ? 'cursor-pointer' : ''}
+                  onClick={() => onRowClick?.(row.original, row.index)}
                 >
-                  {schema.columns.map((col) => (
-                    <TableCell
-                      key={col.key}
-                      className={getAlignClass(col.align)}
-                    >
-                      {renderCellValue(col, row)}
-                    </TableCell>
-                  ))}
+                  {row.getVisibleCells().map((cell) => {
+                    const col = schema.columns.find(
+                      (c) => c.key === cell.column.id
+                    )
+                    return (
+                      <TableCell
+                        key={cell.id}
+                        className={getAlignClass(col?.align)}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    )
+                  })}
                 </TableRow>
               ))
             )}
@@ -118,16 +132,7 @@ export function SchemaGrid({ schema, data, onRowClick }: SchemaGridProps) {
   )
 }
 
-function renderCellValue(
-  col: GridColumnSchema,
-  row: Record<string, unknown>
-): React.ReactNode {
-  const value = row[col.key]
-
-  if (col.render) {
-    return col.render(value, row)
-  }
-
+function formatCellValue(col: GridColumnSchema, value: unknown): string {
   if (col.type === 'boolean') {
     return value ? 'Yes' : 'No'
   }
@@ -151,18 +156,16 @@ function getAlignClass(align?: 'left' | 'center' | 'right'): string {
 }
 
 function SortIndicator({
-  active,
-  direction,
+  sorted,
 }: {
-  active: boolean
-  direction: SortDirection
+  sorted: false | 'asc' | 'desc'
 }) {
-  if (!active || !direction) {
+  if (!sorted) {
     return <span className="text-muted-foreground text-xs">↕</span>
   }
   return (
     <span className="text-xs">
-      {direction === 'asc' ? '↑' : '↓'}
+      {sorted === 'asc' ? '↑' : '↓'}
     </span>
   )
 }

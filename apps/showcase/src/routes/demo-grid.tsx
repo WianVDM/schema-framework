@@ -1,6 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { useQuery } from '@tanstack/react-query'
 import { SchemaGrid } from '@my-framework/core'
-import { userGridSchema, mockUsers } from '../data/mock-schemas'
+import type { GridSchema } from '@my-framework/core'
+import { getUserGridSchema } from '../server/schemas'
+import { getUsers } from '../server/data'
 import { createSelectionStore } from '../stores/selection-store'
 
 export const Route = createFileRoute('/demo-grid')({
@@ -12,15 +15,41 @@ const useUserSelection = createSelectionStore<Record<string, unknown>>()
 function DemoGridRoute() {
   const { selectedData, setSelected, clearSelection } = useUserSelection()
 
+  const { data: schema, isLoading: schemaLoading } = useQuery({
+    queryKey: ['schema', 'user-grid'],
+    queryFn: () => getUserGridSchema(),
+  })
+
+  const { data: users, isLoading: dataLoading } = useQuery({
+    queryKey: ['data', 'users'],
+    queryFn: () => getUsers(),
+  })
+
   const handleRowClick = (row: Record<string, unknown>, rowIndex: number) => {
     setSelected(String(row.id), row)
+  }
+
+  if (schemaLoading || dataLoading) {
+    return (
+      <div className="max-w-4xl mx-auto text-center py-12">
+        <p className="text-muted-foreground">Loading grid...</p>
+      </div>
+    )
+  }
+
+  if (!schema || !users) {
+    return (
+      <div className="max-w-4xl mx-auto text-center py-12">
+        <p className="text-destructive">Failed to load grid data.</p>
+      </div>
+    )
   }
 
   return (
     <div className="max-w-4xl mx-auto space-y-4">
       <SchemaGrid
-        schema={userGridSchema}
-        data={mockUsers}
+        schema={schema as GridSchema}
+        data={users}
         onRowClick={handleRowClick}
       />
       {selectedData && (

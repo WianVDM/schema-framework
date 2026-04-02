@@ -38,7 +38,7 @@ export const fieldSchemaValidator = z.object({
   type: fieldTypeSchema,
   required: z.boolean().optional(),
   placeholder: z.string().optional(),
-  defaultValue: z.unknown().optional(),
+  defaultValue: z.union([z.string(), z.number(), z.boolean(), z.null()]).optional(),
   disabled: z.boolean().optional(),
   options: z
     .union([z.array(z.string()), z.array(selectOptionSchema)])

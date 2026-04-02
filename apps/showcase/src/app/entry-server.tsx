@@ -1,4 +1,3 @@
-import { StartServer } from '@tanstack/react-start/server'
-import { renderToStream } from '@tanstack/react-start/server/streaming'
+import { StartServer, defaultStreamHandler } from '@tanstack/react-start/server'
 
-export default renderToStream
+export default defaultStreamHandler

@@ -1,4 +1,4 @@
-import type { ComponentType, ReactNode } from 'react'
+import type { ComponentType } from 'react'
 
 // NOTE: All schema types are defined here as the single source of truth
 // for the data-driven UI engine. Renderers consume these types to produce forms/grids.
@@ -30,7 +30,7 @@ export interface FieldSchema {
   type: FieldType
   required?: boolean
   placeholder?: string
-  defaultValue?: unknown
+  defaultValue?: string | number | boolean | null
   disabled?: boolean
   options?: string[] | SelectOption[]
   validation?: ValidationRule[]
@@ -53,7 +53,6 @@ export interface GridColumnSchema {
   sortable?: boolean
   width?: string
   align?: 'left' | 'center' | 'right'
-  render?: (value: unknown, row: Record<string, unknown>) => ReactNode
 }
 
 export interface GridSchema {

@@ -10,6 +10,8 @@ export type {
   FieldRendererProps,
   SchemaFormProps,
   SchemaGridProps,
+  SelectionStore,
+  FormSubmitHandler,
 } from './types'
 
 export { validateFieldValue, validateFormSchema } from './validators'

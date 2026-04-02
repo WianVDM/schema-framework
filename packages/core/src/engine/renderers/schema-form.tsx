@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useForm } from '@tanstack/react-form'
 import type { SchemaFormProps, FieldSchema } from '../types'
 import { validateFieldValue } from '../validators'
 import { FieldRenderer } from './field-renderer'
@@ -8,47 +8,13 @@ export function SchemaForm({ schema, onSubmit, initialValues }: SchemaFormProps)
   const { Button } = usePrimitives()
 
   const fieldDefaults = buildDefaults(schema.fields, initialValues)
-  const [values, setValues] = useState<Record<string, unknown>>(fieldDefaults)
-  const [errors, setErrors] = useState<Record<string, string>>({})
-  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const handleChange = useCallback((fieldName: string, value: unknown) => {
-    setValues((prev) => ({ ...prev, [fieldName]: value }))
-    setErrors((prev) => {
-      const next = { ...prev }
-      delete next[fieldName]
-      return next
-    })
-  }, [])
-
-  const handleSubmit = useCallback(
-    async (e: React.FormEvent) => {
-      e.preventDefault()
-
-      const validationErrors: Record<string, string> = {}
-      for (const field of schema.fields) {
-        const error = validateFieldValue(values[field.name], field)
-        if (error) {
-          validationErrors[field.name] = error
-        }
-      }
-
-      if (Object.keys(validationErrors).length > 0) {
-        setErrors(validationErrors)
-        return
-      }
-
-      setIsSubmitting(true)
-      try {
-        await onSubmit(values)
-      } finally {
-        setIsSubmitting(false)
-      }
+  const form = useForm({
+    defaultValues: fieldDefaults,
+    onSubmit: async ({ value }) => {
+      await onSubmit(value)
     },
-    [schema.fields, values, onSubmit]
-  )
-
-  const isGridLayout = schema.layout === 'grid'
+  })
 
   return (
     <div>
@@ -60,28 +26,60 @@ export function SchemaForm({ schema, onSubmit, initialValues }: SchemaFormProps)
           {schema.description}
         </p>
       )}
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          form.handleSubmit()
+        }}
+        className="space-y-4"
+      >
         <div
           className={
-            isGridLayout
+            schema.layout === 'grid'
               ? 'grid grid-cols-2 gap-4'
               : 'space-y-4'
           }
         >
           {schema.fields.map((field) => (
-            <FieldRenderer
+            <form.Field
               key={field.name}
-              schema={field}
-              value={values[field.name]}
-              onChange={(val) => handleChange(field.name, val)}
-              error={errors[field.name]}
-            />
+              name={field.name}
+              validators={{
+                onChange: ({ value }) => {
+                  const error = validateFieldValue(value, field)
+                  return error ?? undefined
+                },
+              }}
+            >
+              {(fieldApi) => (
+                <FieldRenderer
+                  schema={field}
+                  value={fieldApi.state.value}
+                  onChange={(val) => fieldApi.handleChange(val)}
+                  error={
+                    fieldApi.state.meta.isTouched &&
+                    !fieldApi.state.meta.isValid
+                      ? fieldApi.state.meta.errors.join(', ')
+                      : undefined
+                  }
+                />
+              )}
+            </form.Field>
           ))}
         </div>
         <div className="flex justify-end pt-2">
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Submitting...' : (schema.submitLabel ?? 'Submit')}
-          </Button>
+          <form.Subscribe
+            selector={(state) => [state.canSubmit, state.isSubmitting]}
+          >
+            {([canSubmit, isSubmitting]) => (
+              <Button type="submit" disabled={!canSubmit}>
+                {isSubmitting
+                  ? 'Submitting...'
+                  : (schema.submitLabel ?? 'Submit')}
+              </Button>
+            )}
+          </form.Subscribe>
         </div>
       </form>
     </div>
