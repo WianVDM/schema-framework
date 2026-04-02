@@ -9,9 +9,21 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as DemoGridRouteImport } from './routes/demo-grid'
+import { Route as DemoFormRouteImport } from './routes/demo-form'
 import { Route as DemoRouteImport } from './routes/demo'
 import { Route as IndexRouteImport } from './routes/index'
 
+const DemoGridRoute = DemoGridRouteImport.update({
+  id: '/demo-grid',
+  path: '/demo-grid',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoFormRoute = DemoFormRouteImport.update({
+  id: '/demo-form',
+  path: '/demo-form',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DemoRoute = DemoRouteImport.update({
   id: '/demo',
   path: '/demo',
@@ -26,31 +38,53 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/demo': typeof DemoRoute
+  '/demo-form': typeof DemoFormRoute
+  '/demo-grid': typeof DemoGridRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/demo': typeof DemoRoute
+  '/demo-form': typeof DemoFormRoute
+  '/demo-grid': typeof DemoGridRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/demo': typeof DemoRoute
+  '/demo-form': typeof DemoFormRoute
+  '/demo-grid': typeof DemoGridRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/demo'
+  fullPaths: '/' | '/demo' | '/demo-form' | '/demo-grid'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/demo'
-  id: '__root__' | '/' | '/demo'
+  to: '/' | '/demo' | '/demo-form' | '/demo-grid'
+  id: '__root__' | '/' | '/demo' | '/demo-form' | '/demo-grid'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DemoRoute: typeof DemoRoute
+  DemoFormRoute: typeof DemoFormRoute
+  DemoGridRoute: typeof DemoGridRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/demo-grid': {
+      id: '/demo-grid'
+      path: '/demo-grid'
+      fullPath: '/demo-grid'
+      preLoaderRoute: typeof DemoGridRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo-form': {
+      id: '/demo-form'
+      path: '/demo-form'
+      fullPath: '/demo-form'
+      preLoaderRoute: typeof DemoFormRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/demo': {
       id: '/demo'
       path: '/demo'
@@ -71,6 +105,8 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DemoRoute: DemoRoute,
+  DemoFormRoute: DemoFormRoute,
+  DemoGridRoute: DemoGridRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

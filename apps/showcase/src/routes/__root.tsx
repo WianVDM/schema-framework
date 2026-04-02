@@ -8,6 +8,7 @@ import {
   Link,
 } from '@tanstack/react-router'
 import appCss from '../app/app.css?url'
+import { AppPrimitivesProvider } from '../app/primitives-provider'
 
 export const Route = createRootRoute({
   head: () => ({
@@ -21,13 +22,30 @@ export const Route = createRootRoute({
     ],
   }),
   component: RootComponent,
+  notFoundComponent: NotFound,
 })
 
 function RootComponent() {
   return (
-    <RootDocument>
-      <Outlet />
-    </RootDocument>
+    <AppPrimitivesProvider>
+      <RootDocument>
+        <Outlet />
+      </RootDocument>
+    </AppPrimitivesProvider>
+  )
+}
+
+function NotFound() {
+  return (
+    <div className="max-w-2xl mx-auto text-center py-12">
+      <h2 className="text-2xl font-bold mb-2">Page Not Found</h2>
+      <p className="text-muted-foreground mb-4">
+        The page you are looking for does not exist.
+      </p>
+      <Link to="/" className="text-primary hover:underline">
+        Go back home
+      </Link>
+    </div>
   )
 }
 
@@ -54,6 +72,20 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
             className="text-sm hover:underline"
           >
             Demo
+          </Link>
+          <Link
+            to="/demo-form"
+            activeProps={{ className: 'font-bold underline' }}
+            className="text-sm hover:underline"
+          >
+            Form
+          </Link>
+          <Link
+            to="/demo-grid"
+            activeProps={{ className: 'font-bold underline' }}
+            className="text-sm hover:underline"
+          >
+            Grid
           </Link>
         </nav>
         <main className="p-6">
