@@ -1,5 +1,6 @@
 import type { FieldRendererProps, SelectOption } from '../types'
 import { usePrimitives } from '../context/primitives-context'
+import { FileUpload } from '../../primitives/file-upload'
 
 export function FieldRenderer({ schema, value, onChange, error }: FieldRendererProps) {
   const {
@@ -90,6 +91,23 @@ export function FieldRenderer({ schema, value, onChange, error }: FieldRendererP
             disabled={schema.disabled}
           />
           {labelElement}
+          {errorElement}
+        </div>
+      )
+
+    case 'file':
+      return (
+        <div className="space-y-1">
+          {labelElement}
+          <FileUpload
+            accept={schema.fileConfig?.accept}
+            maxSize={schema.fileConfig?.maxSize}
+            multiple={schema.fileConfig?.multiple}
+            value={(value as File[]) ?? []}
+            onChange={(files) => onChange(files)}
+            disabled={schema.disabled}
+          />
+          {descriptionElement}
           {errorElement}
         </div>
       )

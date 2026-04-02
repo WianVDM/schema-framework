@@ -1,4 +1,4 @@
-import type { ComponentType } from 'react'
+import type { ComponentType, ReactNode } from 'react'
 
 // NOTE: All schema types are defined here as the single source of truth
 // for the data-driven UI engine. Renderers consume these types to produce forms/grids.
@@ -12,6 +12,7 @@ export type FieldType =
   | 'checkbox'
   | 'date'
   | 'password'
+  | 'file'
 
 export interface SelectOption {
   label: string
@@ -22,6 +23,18 @@ export interface ValidationRule {
   type: 'required' | 'min' | 'max' | 'minLength' | 'maxLength' | 'pattern' | 'email' | 'custom'
   value?: string | number
   message: string
+}
+
+export interface FieldCondition {
+  field: string
+  operator: 'equals' | 'notEquals' | 'in' | 'notIn' | 'truthy' | 'falsy'
+  value?: string | number | boolean | (string | number)[]
+}
+
+export interface FileUploadConfig {
+  accept?: string
+  maxSize?: number
+  multiple?: boolean
 }
 
 export interface FieldSchema {
@@ -36,6 +49,9 @@ export interface FieldSchema {
   validation?: ValidationRule[]
   colSpan?: number
   description?: string
+  visibleWhen?: FieldCondition
+  dependsOn?: string[]
+  fileConfig?: FileUploadConfig
 }
 
 export interface FormSchema {
@@ -43,7 +59,24 @@ export interface FormSchema {
   description?: string
   fields: FieldSchema[]
   submitLabel?: string
+  cancelLabel?: string
   layout?: 'stack' | 'grid'
+  onCancel?: () => void
+}
+
+export interface PaginationConfig {
+  pageSize: number
+  pageSizeOptions?: number[]
+  showPageSizeSelector?: boolean
+}
+
+export interface ColumnFilterConfig {
+  enabled: boolean
+  placeholder?: string
+}
+
+export interface StatusConfig {
+  variants: Record<string, { label: string; className: string }>
 }
 
 export interface GridColumnSchema {
@@ -53,6 +86,11 @@ export interface GridColumnSchema {
   sortable?: boolean
   width?: string
   align?: 'left' | 'center' | 'right'
+  filterable?: boolean
+  resizable?: boolean
+  visible?: boolean
+  filter?: ColumnFilterConfig
+  statusConfig?: StatusConfig
 }
 
 export interface GridSchema {
@@ -64,6 +102,10 @@ export interface GridSchema {
   bordered?: boolean
   hoverable?: boolean
   emptyMessage?: string
+  pagination?: PaginationConfig | boolean
+  filterable?: boolean
+  resizable?: boolean
+  columnVisibility?: Record<string, boolean>
 }
 
 // PrimitiveComponents — used by PrimitivesContext to inject UI components.
@@ -85,6 +127,14 @@ export interface PrimitiveComponents {
   TableHead: ComponentType<Record<string, unknown>>
   TableCell: ComponentType<Record<string, unknown>>
   Button: ComponentType<Record<string, unknown>>
+  Badge: ComponentType<Record<string, unknown>>
+  Dialog: ComponentType<Record<string, unknown>>
+  DialogContent: ComponentType<Record<string, unknown>>
+  DialogTrigger: ComponentType<Record<string, unknown>>
+  DropdownMenu: ComponentType<Record<string, unknown>>
+  DropdownMenuTrigger: ComponentType<Record<string, unknown>>
+  DropdownMenuContent: ComponentType<Record<string, unknown>>
+  DropdownMenuItem: ComponentType<Record<string, unknown>>
 }
 
 export type FormSubmitHandler = (values: Record<string, unknown>) => void | Promise<void>
@@ -115,3 +165,6 @@ export interface SchemaGridProps {
   data: Record<string, unknown>[]
   onRowClick?: (row: Record<string, unknown>, rowIndex: number) => void
 }
+
+// Helper type for formatted cell values
+export type CellValueRenderer = (col: GridColumnSchema, value: unknown) => ReactNode

@@ -10,6 +10,7 @@ const fieldTypeSchema = z.enum([
   'checkbox',
   'date',
   'password',
+  'file',
 ])
 
 const selectOptionSchema = z.object({
@@ -32,6 +33,20 @@ const validationRuleSchema = z.object({
   message: z.string(),
 })
 
+const fieldConditionSchema = z.object({
+  field: z.string(),
+  operator: z.enum(['equals', 'notEquals', 'in', 'notIn', 'truthy', 'falsy']),
+  value: z
+    .union([z.string(), z.number(), z.boolean(), z.array(z.union([z.string(), z.number()]))])
+    .optional(),
+})
+
+const fileUploadConfigSchema = z.object({
+  accept: z.string().optional(),
+  maxSize: z.number().positive().optional(),
+  multiple: z.boolean().optional(),
+})
+
 export const fieldSchemaValidator = z.object({
   name: z.string().min(1, 'Field name is required'),
   label: z.string().min(1, 'Field label is required'),
@@ -46,6 +61,9 @@ export const fieldSchemaValidator = z.object({
   validation: z.array(validationRuleSchema).optional(),
   colSpan: z.number().int().positive().optional(),
   description: z.string().optional(),
+  visibleWhen: fieldConditionSchema.optional(),
+  dependsOn: z.array(z.string()).optional(),
+  fileConfig: fileUploadConfigSchema.optional(),
 })
 
 export const formSchemaValidator = z.object({
@@ -55,7 +73,29 @@ export const formSchemaValidator = z.object({
     .array(fieldSchemaValidator)
     .min(1, 'Form must have at least one field'),
   submitLabel: z.string().optional(),
+  cancelLabel: z.string().optional(),
   layout: z.enum(['stack', 'grid']).optional(),
+})
+
+const paginationConfigSchema = z.object({
+  pageSize: z.number().int().positive().default(10),
+  pageSizeOptions: z.array(z.number().int().positive()).optional(),
+  showPageSizeSelector: z.boolean().optional(),
+})
+
+const columnFilterConfigSchema = z.object({
+  enabled: z.boolean(),
+  placeholder: z.string().optional(),
+})
+
+const statusConfigSchema = z.object({
+  variants: z.record(
+    z.string(),
+    z.object({
+      label: z.string(),
+      className: z.string(),
+    })
+  ),
 })
 
 export const gridColumnSchemaValidator = z.object({
@@ -67,6 +107,11 @@ export const gridColumnSchemaValidator = z.object({
   sortable: z.boolean().optional(),
   width: z.string().optional(),
   align: z.enum(['left', 'center', 'right']).optional(),
+  filterable: z.boolean().optional(),
+  resizable: z.boolean().optional(),
+  visible: z.boolean().optional(),
+  filter: columnFilterConfigSchema.optional(),
+  statusConfig: statusConfigSchema.optional(),
 })
 
 export const gridSchemaValidator = z.object({
@@ -80,6 +125,12 @@ export const gridSchemaValidator = z.object({
   bordered: z.boolean().optional(),
   hoverable: z.boolean().optional(),
   emptyMessage: z.string().optional(),
+  pagination: z
+    .union([paginationConfigSchema, z.boolean()])
+    .optional(),
+  filterable: z.boolean().optional(),
+  resizable: z.boolean().optional(),
+  columnVisibility: z.record(z.string(), z.boolean()).optional(),
 })
 
 export type ValidatedFieldSchema = z.infer<typeof fieldSchemaValidator>
@@ -185,4 +236,28 @@ export function validateFieldValue(
   }
 
   return null
+}
+
+export function evaluateCondition(
+  condition: { field: string; operator: string; value?: unknown },
+  formValues: Record<string, unknown>
+): boolean {
+  const fieldValue = formValues[condition.field]
+
+  switch (condition.operator) {
+    case 'equals':
+      return fieldValue === condition.value
+    case 'notEquals':
+      return fieldValue !== condition.value
+    case 'in':
+      return Array.isArray(condition.value) && condition.value.includes(fieldValue as string | number)
+    case 'notIn':
+      return Array.isArray(condition.value) && !condition.value.includes(fieldValue as string | number)
+    case 'truthy':
+      return Boolean(fieldValue)
+    case 'falsy':
+      return !fieldValue
+    default:
+      return true
+  }
 }

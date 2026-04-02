@@ -9,11 +9,29 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as DemoSupportTicketRouteImport } from './routes/demo-support-ticket'
+import { Route as DemoRegistrationRouteImport } from './routes/demo-registration'
+import { Route as DemoOrdersRouteImport } from './routes/demo-orders'
 import { Route as DemoGridRouteImport } from './routes/demo-grid'
 import { Route as DemoFormRouteImport } from './routes/demo-form'
 import { Route as DemoRouteImport } from './routes/demo'
 import { Route as IndexRouteImport } from './routes/index'
 
+const DemoSupportTicketRoute = DemoSupportTicketRouteImport.update({
+  id: '/demo-support-ticket',
+  path: '/demo-support-ticket',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoRegistrationRoute = DemoRegistrationRouteImport.update({
+  id: '/demo-registration',
+  path: '/demo-registration',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoOrdersRoute = DemoOrdersRouteImport.update({
+  id: '/demo-orders',
+  path: '/demo-orders',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DemoGridRoute = DemoGridRouteImport.update({
   id: '/demo-grid',
   path: '/demo-grid',
@@ -40,12 +58,18 @@ export interface FileRoutesByFullPath {
   '/demo': typeof DemoRoute
   '/demo-form': typeof DemoFormRoute
   '/demo-grid': typeof DemoGridRoute
+  '/demo-orders': typeof DemoOrdersRoute
+  '/demo-registration': typeof DemoRegistrationRoute
+  '/demo-support-ticket': typeof DemoSupportTicketRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/demo': typeof DemoRoute
   '/demo-form': typeof DemoFormRoute
   '/demo-grid': typeof DemoGridRoute
+  '/demo-orders': typeof DemoOrdersRoute
+  '/demo-registration': typeof DemoRegistrationRoute
+  '/demo-support-ticket': typeof DemoSupportTicketRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +77,38 @@ export interface FileRoutesById {
   '/demo': typeof DemoRoute
   '/demo-form': typeof DemoFormRoute
   '/demo-grid': typeof DemoGridRoute
+  '/demo-orders': typeof DemoOrdersRoute
+  '/demo-registration': typeof DemoRegistrationRoute
+  '/demo-support-ticket': typeof DemoSupportTicketRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/demo' | '/demo-form' | '/demo-grid'
+  fullPaths:
+    | '/'
+    | '/demo'
+    | '/demo-form'
+    | '/demo-grid'
+    | '/demo-orders'
+    | '/demo-registration'
+    | '/demo-support-ticket'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/demo' | '/demo-form' | '/demo-grid'
-  id: '__root__' | '/' | '/demo' | '/demo-form' | '/demo-grid'
+  to:
+    | '/'
+    | '/demo'
+    | '/demo-form'
+    | '/demo-grid'
+    | '/demo-orders'
+    | '/demo-registration'
+    | '/demo-support-ticket'
+  id:
+    | '__root__'
+    | '/'
+    | '/demo'
+    | '/demo-form'
+    | '/demo-grid'
+    | '/demo-orders'
+    | '/demo-registration'
+    | '/demo-support-ticket'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,10 +116,34 @@ export interface RootRouteChildren {
   DemoRoute: typeof DemoRoute
   DemoFormRoute: typeof DemoFormRoute
   DemoGridRoute: typeof DemoGridRoute
+  DemoOrdersRoute: typeof DemoOrdersRoute
+  DemoRegistrationRoute: typeof DemoRegistrationRoute
+  DemoSupportTicketRoute: typeof DemoSupportTicketRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/demo-support-ticket': {
+      id: '/demo-support-ticket'
+      path: '/demo-support-ticket'
+      fullPath: '/demo-support-ticket'
+      preLoaderRoute: typeof DemoSupportTicketRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo-registration': {
+      id: '/demo-registration'
+      path: '/demo-registration'
+      fullPath: '/demo-registration'
+      preLoaderRoute: typeof DemoRegistrationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo-orders': {
+      id: '/demo-orders'
+      path: '/demo-orders'
+      fullPath: '/demo-orders'
+      preLoaderRoute: typeof DemoOrdersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/demo-grid': {
       id: '/demo-grid'
       path: '/demo-grid'
@@ -107,6 +180,9 @@ const rootRouteChildren: RootRouteChildren = {
   DemoRoute: DemoRoute,
   DemoFormRoute: DemoFormRoute,
   DemoGridRoute: DemoGridRoute,
+  DemoOrdersRoute: DemoOrdersRoute,
+  DemoRegistrationRoute: DemoRegistrationRoute,
+  DemoSupportTicketRoute: DemoSupportTicketRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -12,13 +12,13 @@ The framework relies on a strict, one-way dependency chain. A higher layer can i
 
 ### Layer 1: Primitives (The Raw Materials)
 
-- **What it is:** Generic, highly reusable component wrappers. In Phase 1, the primitives layer exports the `PrimitiveComponents` interface and a `PrimitivesContext` used to inject shadcn/ui components from Layer 3. Future phases will add bespoke wrappers (`DataTable`, `StatusBadge`, `AddressInput`).
+- **What it is:** Generic, highly reusable component wrappers. The primitives layer exports the `PrimitiveComponents` interface and a `PrimitivesContext` used to inject shadcn/ui components from Layer 3. Phase 2 added bespoke wrappers (`DataTable`, `StatusBadge`, `AddressInput`, `FileUpload`).
 - **Rule:** These know nothing about JSON schemas. They just accept standard React props.
 
 ### Layer 2: The Engine (The "Ext.NET" Brain)
 
-- **What it is:** The schema system. It contains the TypeScript interfaces defining what a schema is (`FieldSchema`, `GridColumnSchema`), the Zod validators, the `PrimitivesContext` provider, and the `SchemaForm`/`SchemaGrid` renderers.
-- **How it works:** The `FieldRenderer` acts as a switchboard, reading a schema `type: 'select'` and rendering the injected `<Select>` component from `PrimitivesContext`. `SchemaGrid` uses `@tanstack/react-table` under the hood for sorting and column management. `SchemaForm` uses `@tanstack/react-form` for field-level validation and dirty-state tracking.
+- **What it is:** The schema system. It contains the TypeScript interfaces defining what a schema is (`FieldSchema`, `GridColumnSchema`, `FieldCondition`, `StatusConfig`, etc.), the Zod validators, the `PrimitivesContext` provider, and the `SchemaForm`/`SchemaGrid` renderers.
+- **How it works:** The `FieldRenderer` acts as a switchboard, reading a schema `type: 'select'` and rendering the injected `<Select>` component from `PrimitivesContext`. `SchemaGrid` uses `@tanstack/react-table` under the hood for sorting, filtering, pagination, column resizing, column visibility, and status badge rendering. `SchemaForm` uses `@tanstack/react-form` for field-level validation, dirty-state tracking, and conditional visibility. Helper renderers `GridPagination`, `GridColumnHeader`, and `GridToolbar` modularize grid concerns.
 
 ### Layer 3: Composition (The App/Showcase)
 
@@ -151,15 +151,63 @@ All Phase 1 objectives have been implemented:
 | `textarea` | `<Textarea>` | ✅ |
 | `checkbox` | `<Checkbox>` | ✅ |
 | `date` | `<Input type="date">` | ✅ |
+| `file` | `<FileUpload>` (dropzone primitive) | ✅ Phase 2 |
 
-### Phase 2 Considerations (Not Yet Implemented)
+### Grid Column Types
 
-- [ ] Advanced grid features (pagination, filtering, column resizing)
-- [ ] Bespoke Layer 1 primitives (`DataTable`, `StatusBadge`, `AddressInput`)
-- [ ] Schema-driven layout rules (conditional visibility, field dependencies)
-- [ ] File upload field type
+| Type | Renderer | Status |
+| :--- | :--- | :--- |
+| `string` | Plain text cell | ✅ Phase 1 |
+| `number` | Numeric cell | ✅ Phase 1 |
+| `boolean` | Checkmark / dash | ✅ Phase 1 |
+| `date` | Date string cell | ✅ Phase 2 |
+| `status` | `<StatusBadge>` with configurable variants | ✅ Phase 2 |
+
+## 8. Phase 2 Status: COMPLETE ✅
+
+All Phase 2 objectives have been implemented:
+
+### Sub-Phase 2A: Advanced Grid Features ✅
+- **Pagination:** `GridPagination` component with configurable page sizes, page navigation, and total count display.
+- **Filtering:** Global toolbar search filter via `GridToolbar`. Column-level filters via TanStack Table `getFilteredRowModel`.
+- **Column Resizing:** Interactive column width dragging via TanStack Table `getFilteredRowModel` with CSS resize handles.
+- **Column Visibility:** Dropdown menu to toggle column visibility on/off.
+- **Style Props:** `striped`, `bordered`, `hoverable` consumed by `SchemaGrid` for visual variants.
+- **Empty State:** `emptyMessage` displayed when data array is empty.
+
+### Sub-Phase 2B: Bespoke Layer 1 Primitives ✅
+- **`DataTable`:** A generic table wrapper with sorting indicators, header click handlers, and column resize support.
+- **`StatusBadge`:** Renders status values as colored badges with configurable variant mappings.
+- **`AddressInput`:** A multi-line address input primitive (structured address fields).
+- **`FileUpload`:** A drag-and-drop file upload zone with accept/maxSize/multiple constraints.
+- **Status column rendering:** `SchemaGrid` auto-renders `type: 'status'` columns using `StatusBadge`.
+
+### Sub-Phase 2C: Schema-Driven Layout Rules ✅
+- **`FieldCondition` interface:** Supports `equals`, `notEquals`, `in` operators for conditional logic.
+- **`visibleWhen` on `FieldSchema`:** Fields can be conditionally shown/hidden based on other field values.
+- **`dependsOn` on `FieldSchema`:** Declares field dependencies for the engine.
+- **`colSpan` on `FieldSchema`:** Fields can span multiple grid columns in `layout: 'grid'` forms.
+- **`evaluateCondition` function:** Evaluates `FieldCondition` against current form values.
+- **Conditional rendering in `SchemaForm`:** Uses `form.Subscribe` to reactively show/hide fields.
+
+### Sub-Phase 2D: File Upload Field Type ✅
+- **`FileUploadConfig` interface:** `accept`, `maxSize`, `multiple` properties on `FieldSchema.fileConfig`.
+- **`FileUpload` primitive:** Drag-and-drop zone with file list display and remove functionality.
+- **Field renderer `case 'file'`:** Renders `FileUpload` with schema-driven constraints.
+
+### Sub-Phase 2E: Showcase Polish ✅
+- **New routes:** `demo-orders` (orders grid with status badges), `demo-registration` (conditional fields + file upload), `demo-support-ticket` (conditional priority fields + multi-file upload).
+- **New shadcn components:** `badge`, `dropdown-menu`, `dialog`, `textarea`, `checkbox` added to showcase.
+- **Updated navigation:** All new routes linked in `__root.tsx` nav bar.
+- **Mock data:** Order grid schema/data, registration form schema, support ticket form schema with conditional visibility rules.
+
+### Phase 3 Considerations (Not Yet Implemented)
+
 - [ ] CI/CD pipeline (GitHub Actions → npm publish)
 - [ ] Theme customization support beyond shadcn defaults
+- [ ] Server-side pagination and virtualized scrolling
+- [ ] Accessibility audit (ARIA labels, keyboard navigation)
+- [ ] Internationalization (i18n) support for labels and messages
 
 ---
 

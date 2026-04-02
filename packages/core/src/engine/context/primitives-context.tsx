@@ -18,6 +18,14 @@ const primitivesContextDefaultValue: PrimitiveComponents = {
   TableHead: () => null,
   TableCell: () => null,
   Button: () => null,
+  Badge: () => null,
+  Dialog: () => null,
+  DialogContent: () => null,
+  DialogTrigger: () => null,
+  DropdownMenu: () => null,
+  DropdownMenuTrigger: () => null,
+  DropdownMenuContent: () => null,
+  DropdownMenuItem: () => null,
 }
 
 export const PrimitivesContext = createContext<PrimitiveComponents>(
