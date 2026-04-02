@@ -90,6 +90,27 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
           >
             Grid
           </Link>
+          <Link
+            to="/demo-orders"
+            activeProps={{ className: 'font-bold underline' }}
+            className="text-sm hover:underline"
+          >
+            Orders
+          </Link>
+          <Link
+            to="/demo-registration"
+            activeProps={{ className: 'font-bold underline' }}
+            className="text-sm hover:underline"
+          >
+            Registration
+          </Link>
+          <Link
+            to="/demo-support-ticket"
+            activeProps={{ className: 'font-bold underline' }}
+            className="text-sm hover:underline"
+          >
+            Support Ticket
+          </Link>
         </nav>
         <main className="p-6">
           {children}

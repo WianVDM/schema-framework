@@ -12,9 +12,20 @@ export type {
   SchemaGridProps,
   SelectionStore,
   FormSubmitHandler,
+  FieldCondition,
+  FileUploadConfig,
+  PaginationConfig,
+  ColumnFilterConfig,
+  StatusConfig,
+  CellValueRenderer,
 } from './types'
 
-export { validateFieldValue, validateFormSchema } from './validators'
+export {
+  validateFieldValue,
+  validateFormSchema,
+  validateGridSchema,
+  evaluateCondition,
+} from './validators'
 
 export { PrimitivesProvider, usePrimitives } from './context/primitives-context'
 

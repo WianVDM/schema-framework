@@ -1,21 +1,40 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import {
   useReactTable,
   getCoreRowModel,
   getSortedRowModel,
+  getPaginationRowModel,
+  getFilteredRowModel,
   flexRender,
   type ColumnDef,
   type SortingState,
+  type ColumnFiltersState,
+  type VisibilityState,
 } from '@tanstack/react-table'
-import { useState } from 'react'
-import type { SchemaGridProps, GridColumnSchema } from '../types'
+import type { SchemaGridProps, GridSchema, GridColumnSchema, PaginationConfig } from '../types'
 import { usePrimitives } from '../context/primitives-context'
+import { GridPagination } from './grid-pagination'
+import { GridColumnHeader } from './grid-column-header'
+import { GridToolbar } from './grid-toolbar'
 
 export function SchemaGrid({ schema, data, onRowClick }: SchemaGridProps) {
-  const { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } =
-    usePrimitives()
+  const {
+    Table,
+    TableHeader,
+    TableBody,
+    TableRow,
+    TableCell,
+    Badge,
+  } = usePrimitives()
 
   const [sorting, setSorting] = useState<SortingState>([])
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
+    schema.columnVisibility ?? {}
+  )
+
+  const paginationConfig = resolvePaginationConfig(schema.pagination)
+  const isResizable = schema.resizable ?? false
 
   const columns = useMemo<ColumnDef<Record<string, unknown>>[]>(
     () =>
@@ -23,20 +42,36 @@ export function SchemaGrid({ schema, data, onRowClick }: SchemaGridProps) {
         accessorKey: col.key,
         header: col.label,
         enableSorting: col.sortable ?? false,
+        enableResizing: (col.resizable ?? false) && isResizable,
+        enableColumnFilter: col.filterable ?? false,
         size: col.width ? parseInt(col.width, 10) : undefined,
-        cell: (info) => formatCellValue(col, info.getValue()),
+        cell: (info) => formatCellValue(col, info.getValue(), Badge),
       })),
-    [schema.columns]
+    [schema.columns, isResizable, Badge]
   )
 
   const table = useReactTable({
     data,
     columns,
-    state: { sorting },
+    state: {
+      sorting,
+      columnFilters,
+      columnVisibility,
+    },
     onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: paginationConfig ? getPaginationRowModel() : undefined,
+    getFilteredRowModel: getFilteredRowModel(),
+    columnResizeMode: 'onChange',
+    initialState: paginationConfig
+      ? { pagination: { pageSize: paginationConfig.pageSize } }
+      : undefined,
   })
+
+  const tableClassName = applyGridStyles(schema)
 
   return (
     <div>
@@ -48,8 +83,9 @@ export function SchemaGrid({ schema, data, onRowClick }: SchemaGridProps) {
           {schema.description}
         </p>
       )}
-      <div className="rounded-md border">
-        <Table>
+      <GridToolbar table={table} columns={schema.columns} />
+      <div className="rounded-md border overflow-auto">
+        <Table className={tableClassName}>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -58,32 +94,18 @@ export function SchemaGrid({ schema, data, onRowClick }: SchemaGridProps) {
                     (c) => c.key === header.column.id
                   )
                   return (
-                    <TableHead
+                    <GridColumnHeader
                       key={header.id}
-                      style={{ width: col?.width }}
-                      className={getAlignClass(col?.align)}
-                    >
-                      {header.column.getCanSort() ? (
-                        <button
-                          type="button"
-                          className="flex items-center gap-1 hover:underline cursor-pointer"
-                          onClick={header.column.getToggleSortingHandler()}
-                        >
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                          <SortIndicator
-                            sorted={header.column.getIsSorted()}
-                          />
-                        </button>
-                      ) : (
-                        flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )
-                      )}
-                    </TableHead>
+                      header={header}
+                      column={col}
+                      filterValue={
+                        (header.column.getFilterValue() as string) ?? ''
+                      }
+                      onFilterChange={(value) =>
+                        header.column.setFilterValue(value)
+                      }
+                      enableResizing={isResizable}
+                    />
                   )
                 })}
               </TableRow>
@@ -128,11 +150,35 @@ export function SchemaGrid({ schema, data, onRowClick }: SchemaGridProps) {
           </TableBody>
         </Table>
       </div>
+      {paginationConfig && (
+        <GridPagination
+          table={table}
+          pageSizeOptions={paginationConfig.pageSizeOptions}
+          showPageSizeSelector={paginationConfig.showPageSizeSelector}
+        />
+      )}
     </div>
   )
 }
 
-function formatCellValue(col: GridColumnSchema, value: unknown): string {
+function formatCellValue(
+  col: GridColumnSchema,
+  value: unknown,
+  Badge?: React.ComponentType<Record<string, unknown>>
+): React.ReactNode {
+  if (col.type === 'status' && Badge && col.statusConfig && value != null) {
+    const statusKey = String(value).toLowerCase()
+    const variant = col.statusConfig.variants[statusKey]
+    if (variant) {
+      return (
+        <Badge className={variant.className}>
+          {variant.label}
+        </Badge>
+      )
+    }
+    return <Badge>{String(value)}</Badge>
+  }
+
   if (col.type === 'boolean') {
     return value ? 'Yes' : 'No'
   }
@@ -144,6 +190,29 @@ function formatCellValue(col: GridColumnSchema, value: unknown): string {
   return String(value)
 }
 
+function resolvePaginationConfig(
+  pagination?: PaginationConfig | boolean
+): PaginationConfig | null {
+  if (pagination === undefined || pagination === false) {
+    return null
+  }
+  if (pagination === true) {
+    return { pageSize: 10 }
+  }
+  return pagination
+}
+
+export function applyGridStyles(schema: GridSchema): string {
+  const classes: string[] = []
+  if (schema.striped) {
+    classes.push('[&_tbody_tr:nth-child(even)]:bg-muted/50')
+  }
+  if (schema.hoverable) {
+    classes.push('[&_tbody_tr:hover]:bg-muted/80')
+  }
+  return classes.join(' ')
+}
+
 function getAlignClass(align?: 'left' | 'center' | 'right'): string {
   switch (align) {
     case 'center':
@@ -153,19 +222,4 @@ function getAlignClass(align?: 'left' | 'center' | 'right'): string {
     default:
       return 'text-left'
   }
-}
-
-function SortIndicator({
-  sorted,
-}: {
-  sorted: false | 'asc' | 'desc'
-}) {
-  if (!sorted) {
-    return <span className="text-muted-foreground text-xs">↕</span>
-  }
-  return (
-    <span className="text-xs">
-      {sorted === 'asc' ? '↑' : '↓'}
-    </span>
-  )
 }

@@ -1,6 +1,6 @@
 import { useForm } from '@tanstack/react-form'
 import type { SchemaFormProps, FieldSchema } from '../types'
-import { validateFieldValue } from '../validators'
+import { validateFieldValue, evaluateCondition } from '../validators'
 import { FieldRenderer } from './field-renderer'
 import { usePrimitives } from '../context/primitives-context'
 
@@ -34,41 +34,68 @@ export function SchemaForm({ schema, onSubmit, initialValues }: SchemaFormProps)
         }}
         className="space-y-4"
       >
-        <div
-          className={
-            schema.layout === 'grid'
-              ? 'grid grid-cols-2 gap-4'
-              : 'space-y-4'
-          }
-        >
-          {schema.fields.map((field) => (
-            <form.Field
-              key={field.name}
-              name={field.name}
-              validators={{
-                onChange: ({ value }) => {
-                  const error = validateFieldValue(value, field)
-                  return error ?? undefined
-                },
-              }}
+        <form.Subscribe selector={(state) => state.values}>
+          {(values) => (
+            <div
+              className={
+                schema.layout === 'grid'
+                  ? 'grid grid-cols-2 gap-4'
+                  : 'space-y-4'
+              }
             >
-              {(fieldApi) => (
-                <FieldRenderer
-                  schema={field}
-                  value={fieldApi.state.value}
-                  onChange={(val) => fieldApi.handleChange(val)}
-                  error={
-                    fieldApi.state.meta.isTouched &&
-                    !fieldApi.state.meta.isValid
-                      ? fieldApi.state.meta.errors.join(', ')
-                      : undefined
-                  }
-                />
-              )}
-            </form.Field>
-          ))}
-        </div>
-        <div className="flex justify-end pt-2">
+              {schema.fields.map((field) => {
+                if (!isFieldVisible(field, values)) {
+                  return null
+                }
+
+                return (
+                  <form.Field
+                    key={field.name}
+                    name={field.name}
+                    validators={{
+                      onChange: ({ value }) => {
+                        const error = validateFieldValue(value, field)
+                        return error ?? undefined
+                      },
+                    }}
+                  >
+                    {(fieldApi) => (
+                      <div
+                        style={
+                          schema.layout === 'grid' && field.colSpan
+                            ? { gridColumn: `span ${field.colSpan} / span ${field.colSpan}` }
+                            : undefined
+                        }
+                      >
+                        <FieldRenderer
+                          schema={field}
+                          value={fieldApi.state.value}
+                          onChange={(val) => fieldApi.handleChange(val)}
+                          error={
+                            fieldApi.state.meta.isTouched &&
+                            !fieldApi.state.meta.isValid
+                              ? fieldApi.state.meta.errors.join(', ')
+                              : undefined
+                          }
+                        />
+                      </div>
+                    )}
+                  </form.Field>
+                )
+              })}
+            </div>
+          )}
+        </form.Subscribe>
+        <div className="flex justify-end gap-2 pt-2">
+          {schema.cancelLabel && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={schema.onCancel}
+            >
+              {schema.cancelLabel}
+            </Button>
+          )}
           <form.Subscribe
             selector={(state) => [state.canSubmit, state.isSubmitting]}
           >
@@ -84,6 +111,14 @@ export function SchemaForm({ schema, onSubmit, initialValues }: SchemaFormProps)
       </form>
     </div>
   )
+}
+
+function isFieldVisible(
+  field: FieldSchema,
+  formValues: Record<string, unknown>
+): boolean {
+  if (!field.visibleWhen) return true
+  return evaluateCondition(field.visibleWhen, formValues)
 }
 
 function buildDefaults(

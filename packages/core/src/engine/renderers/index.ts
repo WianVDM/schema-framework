@@ -1,3 +1,6 @@
 export { FieldRenderer } from './field-renderer'
 export { SchemaForm } from './schema-form'
 export { SchemaGrid } from './schema-grid'
+export { GridPagination } from './grid-pagination'
+export { GridColumnHeader } from './grid-column-header'
+export { GridToolbar } from './grid-toolbar'
