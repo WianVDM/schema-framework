@@ -6,15 +6,13 @@ import {
   registrationFormSchema,
   supportTicketFormSchema,
 } from '../data/mock-schemas'
-import type { GridSchema } from '@my-framework/core'
+import type { GridSchema, FormSchema } from '@my-framework/core'
 
-// NOTE: Server functions return serializable JSON. The render property on
-// GridColumnSchema (a function) is a client-side concern and cannot cross
-// the server boundary. Schemas returned here are plain JSON metadata.
-// FormSchema has an onCancel callback that is not serializable, so we use
-// Omit to exclude it from the server return type.
+// NOTE: Server functions return serializable JSON. FormSchema is fully
+// JSON-serializable (callbacks live on SchemaFormProps, not FormSchema).
+// GridColumnSchema.render is a client-side concern handled by the grid renderer.
 
-type SerializableFormSchema = Omit<import('@my-framework/core').FormSchema, 'onCancel'>
+type SerializableFormSchema = FormSchema
 
 export const getContactFormSchema = createServerFn({ method: 'GET' }).handler(
   async (): Promise<SerializableFormSchema> => {

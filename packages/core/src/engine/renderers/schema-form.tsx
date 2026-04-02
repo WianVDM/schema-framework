@@ -3,8 +3,9 @@ import type { SchemaFormProps, FieldSchema } from '../types'
 import { validateFieldValue, evaluateCondition } from '../validators'
 import { FieldRenderer } from './field-renderer'
 import { usePrimitives } from '../context/primitives-context'
+import { resolveMessage } from '../helpers/i18n'
 
-export function SchemaForm({ schema, onSubmit, initialValues }: SchemaFormProps) {
+export function SchemaForm({ schema, onSubmit, initialValues, onCancel }: SchemaFormProps) {
   const { Button } = usePrimitives()
 
   const fieldDefaults = buildDefaults(schema.fields, initialValues)
@@ -15,6 +16,15 @@ export function SchemaForm({ schema, onSubmit, initialValues }: SchemaFormProps)
       await onSubmit(value)
     },
   })
+
+  const i18n = schema.i18n
+  const submitLabel = resolveMessage('submit', i18n, schema.submitLabel ?? 'Submit')
+  const cancelLabel = schema.cancelLabel
+    ? resolveMessage('cancel', i18n, schema.cancelLabel)
+    : null
+  const submittingLabel = resolveMessage('submitting', i18n, 'Submitting...')
+
+  const handleCancel = onCancel
 
   return (
     <div>
@@ -33,6 +43,8 @@ export function SchemaForm({ schema, onSubmit, initialValues }: SchemaFormProps)
           form.handleSubmit()
         }}
         className="space-y-4"
+        role="form"
+        aria-label={schema.title ?? 'Form'}
       >
         <form.Subscribe selector={(state) => state.values}>
           {(values) => (
@@ -87,13 +99,14 @@ export function SchemaForm({ schema, onSubmit, initialValues }: SchemaFormProps)
           )}
         </form.Subscribe>
         <div className="flex justify-end gap-2 pt-2">
-          {schema.cancelLabel && (
+          {cancelLabel && (
             <Button
               type="button"
               variant="outline"
-              onClick={schema.onCancel}
+              onClick={handleCancel}
+              aria-label={cancelLabel}
             >
-              {schema.cancelLabel}
+              {cancelLabel}
             </Button>
           )}
           <form.Subscribe
@@ -101,9 +114,7 @@ export function SchemaForm({ schema, onSubmit, initialValues }: SchemaFormProps)
           >
             {([canSubmit, isSubmitting]) => (
               <Button type="submit" disabled={!canSubmit}>
-                {isSubmitting
-                  ? 'Submitting...'
-                  : (schema.submitLabel ?? 'Submit')}
+                {isSubmitting ? submittingLabel : submitLabel}
               </Button>
             )}
           </form.Subscribe>

@@ -1,30 +1,78 @@
 import type { Table } from '@tanstack/react-table'
+import type { I18nConfig, ServerPaginationConfig } from '../types'
 import { usePrimitives } from '../context/primitives-context'
+import { resolveMessage } from '../helpers/i18n'
 
 interface GridPaginationProps {
   table: Table<Record<string, unknown>>
   pageSizeOptions?: number[]
   showPageSizeSelector?: boolean
+  i18n?: I18nConfig
+  serverPagination?: ServerPaginationConfig
+  onPageChange?: (page: number, pageSize: number) => void
 }
 
 export function GridPagination({
   table,
   pageSizeOptions = [10, 25, 50, 100],
   showPageSizeSelector = true,
+  i18n,
+  serverPagination,
+  onPageChange,
 }: GridPaginationProps) {
   const { Button } = usePrimitives()
 
-  const pageIndex = table.getState().pagination.pageIndex
+  const isServerMode = !!serverPagination
+
+  const pageIndex = isServerMode
+    ? serverPagination.currentPage
+    : table.getState().pagination.pageIndex
   const pageSize = table.getState().pagination.pageSize
-  const totalPages = table.getPageCount()
-  const totalRows = table.getFilteredRowModel().rows.length
+  const totalPages = isServerMode
+    ? Math.ceil(serverPagination.totalRecords / pageSize)
+    : table.getPageCount()
+  const totalRows = isServerMode
+    ? serverPagination.totalRecords
+    : table.getFilteredRowModel().rows.length
+
+  const rowsLabel = resolveMessage('rows', i18n, 'rows')
+  const pageLabel = resolveMessage('page', i18n, '/ page')
+  const previousLabel = resolveMessage('previous', i18n, 'Previous')
+  const nextLabel = resolveMessage('next', i18n, 'Next')
 
   const pageButtons = getPageNumbers(pageIndex, totalPages)
+
+  const handlePrevious = () => {
+    if (isServerMode) {
+      onPageChange?.(pageIndex - 1, pageSize)
+    } else {
+      table.previousPage()
+    }
+  }
+
+  const handleNext = () => {
+    if (isServerMode) {
+      onPageChange?.(pageIndex + 1, pageSize)
+    } else {
+      table.nextPage()
+    }
+  }
+
+  const handlePageSelect = (page: number) => {
+    if (isServerMode) {
+      onPageChange?.(page, pageSize)
+    } else {
+      table.setPageIndex(page)
+    }
+  }
+
+  const canPreviousPage = isServerMode ? pageIndex > 0 : table.getCanPreviousPage()
+  const canNextPage = isServerMode ? pageIndex < totalPages - 1 : table.getCanNextPage()
 
   return (
     <div className="flex items-center justify-between py-3 px-1">
       <div className="text-sm text-muted-foreground">
-        {totalRows} row{totalRows !== 1 ? 's' : ''} total
+        {totalRows} {rowsLabel}
       </div>
       <div className="flex items-center gap-2">
         {showPageSizeSelector && (
@@ -32,19 +80,21 @@ export function GridPagination({
             value={pageSize}
             onChange={(e) => table.setPageSize(Number(e.target.value))}
             className="h-8 rounded-md border border-input bg-background px-2 text-sm"
+            aria-label="Page size"
           >
             {pageSizeOptions.map((size) => (
               <option key={size} value={size}>
-                {size} / page
+                {size} {pageLabel}
               </option>
             ))}
           </select>
         )}
         <Button
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
+          onClick={handlePrevious}
+          disabled={!canPreviousPage}
           variant="outline"
           size="sm"
+          aria-label={previousLabel}
         >
           ‹
         </Button>
@@ -56,19 +106,22 @@ export function GridPagination({
           ) : (
             <Button
               key={page}
-              onClick={() => table.setPageIndex(page as number)}
+              onClick={() => handlePageSelect(page as number)}
               variant={page === pageIndex ? 'default' : 'outline'}
               size="sm"
+              aria-label={`Page ${(page as number) + 1}`}
+              aria-current={page === pageIndex ? 'page' : undefined}
             >
               {(page as number) + 1}
             </Button>
           )
         )}
         <Button
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
+          onClick={handleNext}
+          disabled={!canNextPage}
           variant="outline"
           size="sm"
+          aria-label={nextLabel}
         >
           ›
         </Button>

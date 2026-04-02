@@ -1,4 +1,5 @@
 import type { PrimitiveComponents } from '@my-framework/core'
+import { FileUpload, AddressInput } from '@my-framework/core'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
@@ -48,4 +49,6 @@ export const primitives: PrimitiveComponents = {
   TableRow,
   TableHead,
   TableCell,
+  FileUpload: FileUpload as unknown as PrimitiveComponents['FileUpload'],
+  AddressInput: AddressInput as unknown as PrimitiveComponents['AddressInput'],
 }

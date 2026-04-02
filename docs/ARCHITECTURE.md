@@ -12,7 +12,7 @@ The framework relies on a strict, one-way dependency chain. A higher layer can i
 
 ### Layer 1: Primitives (The Raw Materials)
 
-- **What it is:** Generic, highly reusable component wrappers. The primitives layer exports the `PrimitiveComponents` interface and a `PrimitivesContext` used to inject shadcn/ui components from Layer 3. Phase 2 added bespoke wrappers (`DataTable`, `StatusBadge`, `AddressInput`, `FileUpload`).
+- **What it is:** Generic, highly reusable component wrappers. The primitives layer exports the `PrimitiveComponents` interface and a `PrimitivesContext` used to inject shadcn/ui components from Layer 3. Bespoke wrappers include `StatusBadge`, `AddressInput`, and `FileUpload`.
 - **Rule:** These know nothing about JSON schemas. They just accept standard React props.
 
 ### Layer 2: The Engine (The "Ext.NET" Brain)
@@ -152,6 +152,7 @@ All Phase 1 objectives have been implemented:
 | `checkbox` | `<Checkbox>` | ✅ |
 | `date` | `<Input type="date">` | ✅ |
 | `file` | `<FileUpload>` (dropzone primitive) | ✅ Phase 2 |
+| `address` | `<AddressInput>` (multi-line address) | ✅ Phase 3 |
 
 ### Grid Column Types
 
@@ -201,13 +202,31 @@ All Phase 2 objectives have been implemented:
 - **Updated navigation:** All new routes linked in `__root.tsx` nav bar.
 - **Mock data:** Order grid schema/data, registration form schema, support ticket form schema with conditional visibility rules.
 
-### Phase 3 Considerations (Not Yet Implemented)
+## 9. Phase 3 Status: COMPLETE ✅
 
-- [ ] CI/CD pipeline (GitHub Actions → npm publish)
-- [ ] Theme customization support beyond shadcn defaults
-- [ ] Server-side pagination and virtualized scrolling
-- [ ] Accessibility audit (ARIA labels, keyboard navigation)
-- [ ] Internationalization (i18n) support for labels and messages
+### Phase 3A: Architectural Fixes ✅
+- **FileUpload via PrimitivesContext:** Removed direct import from field-renderer; now injected like all other primitives.
+- **Dead code removal:** Deleted unused `DataTable` primitive that violated Layer 1 by importing `@tanstack/react-table`.
+- **Global search in GridToolbar:** Added search input with debounced filtering across all columns.
+- **onCancel moved to SchemaFormProps:** `FormSchema` is now fully JSON-serializable; callbacks live on component props.
+- **Bordered grid style:** `bordered` prop on `GridSchema` now applies border utility classes to table cells.
+- **Utility type exports:** `ValidationRule`, `FieldCondition`, `SelectOption`, `FileUploadConfig`, etc. exported from engine index.
+- **AddressInput wired to engine:** New `address` field type renders via `AddressInput` from `PrimitivesContext`.
+
+### Phase 3B: Production Features ✅
+- **Accessibility (ARIA):** `FieldRenderer` adds `aria-required`, `aria-invalid`, `aria-describedby` to all field types; error messages use `role="alert"`.
+- **Theme provider:** `ThemeProvider` context accepts `ThemeConfig` with optional CSS class overrides for grid, form, and pagination elements.
+- **Internationalization:** `I18nConfig` on `FormSchema`/`GridSchema` with `useI18n()` hook and `t()` translation function.
+- **Server-side pagination:** `ServerPaginationConfig` on `GridSchema`, `onPageChange` callback on `SchemaGridProps`, toolbar displays server page info.
+- **CI/CD pipelines:** GitHub Actions workflows for CI (typecheck + build + lint on push/PR) and npm publish (on release).
+
+### Phase 4 Considerations (Not Yet Implemented)
+
+- [ ] Virtualized scrolling for large datasets
+- [ ] Date picker primitive (calendar-based, not native input)
+- [ ] Multi-select / tag input field type
+- [ ] Form wizard / multi-step layout
+- [ ] Column reordering via drag-and-drop
 
 ---
 

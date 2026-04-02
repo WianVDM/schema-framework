@@ -4,7 +4,6 @@
 // wires shadcn primitives into the engine via PrimitivesContext.
 
 export { StatusBadge } from './status-badge'
-export { DataTable } from './data-table'
 export { AddressInput } from './address-input'
 export type { AddressData } from './address-input'
 export { FileUpload } from './file-upload'
