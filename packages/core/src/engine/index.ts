@@ -13,10 +13,14 @@ export type {
   SelectionStore,
   FormSubmitHandler,
   FieldCondition,
+  ValidationRule,
   FileUploadConfig,
   PaginationConfig,
   ColumnFilterConfig,
   StatusConfig,
+  I18nConfig,
+  ServerPaginationConfig,
+  ThemeConfig,
   CellValueRenderer,
 } from './types'
 
@@ -29,4 +33,12 @@ export {
 
 export { PrimitivesProvider, usePrimitives } from './context/primitives-context'
 
-export { FieldRenderer, SchemaForm, SchemaGrid } from './renderers'
+export {
+  FieldRenderer,
+  SchemaForm,
+  SchemaGrid,
+  ThemeProvider,
+  useTheme,
+} from './renderers'
+
+export { resolveMessage } from './helpers/i18n'

@@ -3,8 +3,11 @@
 // Knows nothing about schemas — accepts standard controlled props.
 
 import { useState, useRef } from 'react'
+import type { HTMLAttributes } from 'react'
 
-interface FileUploadProps {
+type RestProps = Omit<HTMLAttributes<HTMLDivElement>, 'value' | 'onChange' | 'disabled' | 'accept' | 'multiple'>
+
+interface FileUploadProps extends RestProps {
   accept?: string
   maxSize?: number
   multiple?: boolean
@@ -20,6 +23,7 @@ export function FileUpload({
   value = [],
   onChange,
   disabled = false,
+  ...rest
 }: FileUploadProps) {
   const [isDragging, setIsDragging] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -78,18 +82,30 @@ export function FileUpload({
     onChange(updated)
   }
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      inputRef.current?.click()
+    }
+  }
+
+  const dropZoneClassName = `border-2 border-dashed rounded-md p-6 text-center cursor-pointer transition-colors ${
+    isDragging
+      ? 'border-primary bg-primary/5'
+      : 'border-muted-foreground/25 hover:border-muted-foreground/50'
+  } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}${rest.className ? ` ${rest.className}` : ''}`
+
   return (
     <div className="space-y-2">
       <div
+        role="button"
+        tabIndex={0}
+        onKeyDown={handleKeyDown}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onClick={() => inputRef.current?.click()}
-        className={`border-2 border-dashed rounded-md p-6 text-center cursor-pointer transition-colors ${
-          isDragging
-            ? 'border-primary bg-primary/5'
-            : 'border-muted-foreground/25 hover:border-muted-foreground/50'
-        } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+        className={dropZoneClassName}
       >
         <input
           ref={inputRef}
@@ -121,7 +137,7 @@ export function FileUpload({
         </div>
       </div>
       {error && (
-        <p className="text-sm text-destructive">{error}</p>
+        <p role="alert" className="text-sm text-destructive">{error}</p>
       )}
       {value.length > 0 && (
         <ul className="space-y-1">
@@ -141,6 +157,7 @@ export function FileUpload({
                   handleRemove(index)
                 }}
                 className="ml-2 text-destructive hover:text-destructive/80 text-xs"
+                aria-label="Remove file"
               >
                 ✕
               </button>

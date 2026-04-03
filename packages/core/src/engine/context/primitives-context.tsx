@@ -26,6 +26,8 @@ const primitivesContextDefaultValue: PrimitiveComponents = {
   DropdownMenuTrigger: () => null,
   DropdownMenuContent: () => null,
   DropdownMenuItem: () => null,
+  FileUpload: () => null,
+  AddressInput: () => null,
 }
 
 export const PrimitivesContext = createContext<PrimitiveComponents>(

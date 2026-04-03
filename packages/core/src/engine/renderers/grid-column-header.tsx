@@ -9,6 +9,7 @@ interface GridColumnHeaderProps {
   filterValue: string
   onFilterChange: (value: string) => void
   enableResizing: boolean
+  filterDisabled?: boolean
 }
 
 export function GridColumnHeader({
@@ -17,6 +18,7 @@ export function GridColumnHeader({
   filterValue,
   onFilterChange,
   enableResizing,
+  filterDisabled = false,
 }: GridColumnHeaderProps) {
   const { TableHead, Input } = usePrimitives()
 
@@ -33,6 +35,14 @@ export function GridColumnHeader({
         position: 'relative',
       }}
       className={getAlignClass(column?.align)}
+      aria-sort={
+        header.column.getIsSorted() === 'asc'
+          ? 'ascending'
+          : header.column.getIsSorted() === 'desc'
+            ? 'descending'
+            : undefined
+      }
+      role="columnheader"
     >
       <div className="flex items-center gap-1">
         {header.column.getCanSort() ? (
@@ -59,6 +69,7 @@ export function GridColumnHeader({
               onFilterChange(e.target.value)
             }
             className="h-6 text-xs"
+            disabled={filterDisabled}
           />
         </div>
       )}

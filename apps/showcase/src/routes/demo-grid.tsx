@@ -25,8 +25,8 @@ function DemoGridRoute() {
     queryFn: () => getUsers(),
   })
 
-  const handleRowClick = (row: Record<string, unknown>, rowIndex: number) => {
-    setSelected(String(row.id), row)
+  const handleRowClick = (row: Record<string, unknown>, rowId: string) => {
+    setSelected(rowId, row)
   }
 
   if (schemaLoading || dataLoading) {

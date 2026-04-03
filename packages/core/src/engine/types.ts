@@ -13,6 +13,7 @@ export type FieldType =
   | 'date'
   | 'password'
   | 'file'
+  | 'address'
 
 export interface SelectOption {
   label: string
@@ -54,6 +55,11 @@ export interface FieldSchema {
   fileConfig?: FileUploadConfig
 }
 
+export interface I18nConfig {
+  locale: string
+  messages?: Record<string, string>
+}
+
 export interface FormSchema {
   title?: string
   description?: string
@@ -61,7 +67,7 @@ export interface FormSchema {
   submitLabel?: string
   cancelLabel?: string
   layout?: 'stack' | 'grid'
-  onCancel?: () => void
+  i18n?: I18nConfig
 }
 
 export interface PaginationConfig {
@@ -93,6 +99,29 @@ export interface GridColumnSchema {
   statusConfig?: StatusConfig
 }
 
+/** Configuration for server-side pagination.
+ *  NOTE: `currentPage` is 0-based (first page = 0). */
+export interface ServerPaginationConfig {
+  totalRecords: number
+  /** 0-based page index */
+  currentPage: number
+}
+
+export interface ThemeConfig {
+  classes?: Partial<{
+    grid: string
+    gridRow: string
+    gridCell: string
+    gridHeader: string
+    form: string
+    formField: string
+    submitButton: string
+    cancelButton: string
+    pagination: string
+    toolbar: string
+  }>
+}
+
 export interface GridSchema {
   title?: string
   description?: string
@@ -103,9 +132,11 @@ export interface GridSchema {
   hoverable?: boolean
   emptyMessage?: string
   pagination?: PaginationConfig | boolean
+  serverPagination?: ServerPaginationConfig
   filterable?: boolean
   resizable?: boolean
   columnVisibility?: Record<string, boolean>
+  i18n?: I18nConfig
 }
 
 // PrimitiveComponents — used by PrimitivesContext to inject UI components.
@@ -135,6 +166,8 @@ export interface PrimitiveComponents {
   DropdownMenuTrigger: ComponentType<Record<string, unknown>>
   DropdownMenuContent: ComponentType<Record<string, unknown>>
   DropdownMenuItem: ComponentType<Record<string, unknown>>
+  FileUpload: ComponentType<Record<string, unknown>>
+  AddressInput: ComponentType<Record<string, unknown>>
 }
 
 export type FormSubmitHandler = (values: Record<string, unknown>) => void | Promise<void>
@@ -158,12 +191,15 @@ export interface SchemaFormProps {
   schema: FormSchema
   onSubmit: FormSubmitHandler
   initialValues?: Record<string, unknown>
+  onCancel?: () => void
 }
 
 export interface SchemaGridProps {
   schema: GridSchema
   data: Record<string, unknown>[]
-  onRowClick?: (row: Record<string, unknown>, rowIndex: number) => void
+  onRowClick?: (row: Record<string, unknown>, rowId: string) => void
+  onPageChange?: (page: number, pageSize: number) => void
+  onFilterChange?: (columnKey: string, value: string) => void
 }
 
 // Helper type for formatted cell values

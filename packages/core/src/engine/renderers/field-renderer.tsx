@@ -1,6 +1,6 @@
 import type { FieldRendererProps, SelectOption } from '../types'
+import type { AddressData } from '../../primitives/address-input'
 import { usePrimitives } from '../context/primitives-context'
-import { FileUpload } from '../../primitives/file-upload'
 
 export function FieldRenderer({ schema, value, onChange, error }: FieldRendererProps) {
   const {
@@ -13,10 +13,23 @@ export function FieldRenderer({ schema, value, onChange, error }: FieldRendererP
     Label,
     Textarea,
     Checkbox,
+    FileUpload,
+    AddressInput,
   } = usePrimitives()
 
   const fieldId = `field-${schema.name}`
   const errorId = `${fieldId}-error`
+  const descriptionId = `${fieldId}-description`
+
+  const describedBy = [error ? errorId : null, schema.description ? descriptionId : null]
+    .filter(Boolean)
+    .join(' ') || undefined
+
+  const ariaProps = {
+    'aria-required': schema.required || undefined,
+    'aria-invalid': error ? true : undefined,
+    'aria-describedby': describedBy,
+  }
 
   const labelElement = (
     <Label htmlFor={fieldId}>
@@ -26,13 +39,15 @@ export function FieldRenderer({ schema, value, onChange, error }: FieldRendererP
   )
 
   const errorElement = error ? (
-    <p id={errorId} className="text-sm text-destructive mt-1">
+    <p id={errorId} role="alert" className="text-sm text-destructive mt-1">
       {error}
     </p>
   ) : null
 
   const descriptionElement = schema.description ? (
-    <p className="text-sm text-muted-foreground">{schema.description}</p>
+    <p id={descriptionId} className="text-sm text-muted-foreground">
+      {schema.description}
+    </p>
   ) : null
 
   switch (schema.type) {
@@ -46,7 +61,7 @@ export function FieldRenderer({ schema, value, onChange, error }: FieldRendererP
             onValueChange={(val: string) => onChange(val)}
             disabled={schema.disabled}
           >
-            <SelectTrigger>
+            <SelectTrigger id={fieldId} {...ariaProps}>
               <SelectValue placeholder={schema.placeholder ?? 'Select...'} />
             </SelectTrigger>
             <SelectContent>
@@ -75,6 +90,7 @@ export function FieldRenderer({ schema, value, onChange, error }: FieldRendererP
             }
             placeholder={schema.placeholder}
             disabled={schema.disabled}
+            {...ariaProps}
           />
           {descriptionElement}
           {errorElement}
@@ -89,8 +105,10 @@ export function FieldRenderer({ schema, value, onChange, error }: FieldRendererP
             checked={Boolean(value)}
             onCheckedChange={(checked: boolean) => onChange(checked)}
             disabled={schema.disabled}
+            {...ariaProps}
           />
           {labelElement}
+          {descriptionElement}
           {errorElement}
         </div>
       )
@@ -103,9 +121,30 @@ export function FieldRenderer({ schema, value, onChange, error }: FieldRendererP
             accept={schema.fileConfig?.accept}
             maxSize={schema.fileConfig?.maxSize}
             multiple={schema.fileConfig?.multiple}
-            value={(value as File[]) ?? []}
-            onChange={(files) => onChange(files)}
+            value={Array.isArray(value) ? (value as File[]) : []}
+            onChange={(files: File[]) => onChange(files)}
             disabled={schema.disabled}
+            {...ariaProps}
+          />
+          {descriptionElement}
+          {errorElement}
+        </div>
+      )
+
+    case 'address':
+      return (
+        <div className="space-y-1">
+          <Label htmlFor={`${fieldId}-street`}>
+            {schema.label}
+            {schema.required && <span className="text-destructive ml-1">*</span>}
+          </Label>
+          <AddressInput
+            id={fieldId}
+            value={(value as AddressData) ?? { street: '', city: '', state: '', zip: '', country: '' }}
+            onChange={(val: AddressData) => onChange(val)}
+            disabled={schema.disabled}
+            placeholder={schema.placeholder}
+            {...ariaProps}
           />
           {descriptionElement}
           {errorElement}
@@ -136,6 +175,7 @@ export function FieldRenderer({ schema, value, onChange, error }: FieldRendererP
             }}
             placeholder={schema.placeholder}
             disabled={schema.disabled}
+            {...ariaProps}
           />
           {descriptionElement}
           {errorElement}

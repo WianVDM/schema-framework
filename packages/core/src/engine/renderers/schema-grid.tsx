@@ -1,110 +1,135 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useCallback } from 'react'
 import {
   useReactTable,
   getCoreRowModel,
-  getSortedRowModel,
   getPaginationRowModel,
+  getSortedRowModel,
   getFilteredRowModel,
   flexRender,
-  type ColumnDef,
-  type SortingState,
-  type ColumnFiltersState,
-  type VisibilityState,
 } from '@tanstack/react-table'
-import type { SchemaGridProps, GridSchema, GridColumnSchema, PaginationConfig } from '../types'
+import type { ColumnDef } from '@tanstack/react-table'
+import type { SchemaGridProps, GridColumnSchema } from '../types'
 import { usePrimitives } from '../context/primitives-context'
+import { GridToolbar } from './grid-toolbar'
 import { GridPagination } from './grid-pagination'
 import { GridColumnHeader } from './grid-column-header'
-import { GridToolbar } from './grid-toolbar'
+import { resolveMessage } from '../helpers/i18n'
 
-export function SchemaGrid({ schema, data, onRowClick }: SchemaGridProps) {
+export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterChange }: SchemaGridProps) {
   const {
     Table,
     TableHeader,
     TableBody,
     TableRow,
+    TableHead,
     TableCell,
     Badge,
   } = usePrimitives()
 
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
-    schema.columnVisibility ?? {}
-  )
+  const [sorting, setSorting] = useState<import('@tanstack/react-table').SortingState>([])
+  const [columnFilters, setColumnFilters] = useState<Record<string, string>>({})
 
-  const paginationConfig = resolvePaginationConfig(schema.pagination)
-  const isResizable = schema.resizable ?? false
+  const paginationConfig = typeof schema.pagination === 'object'
+    ? schema.pagination
+    : { pageSize: 10 }
+
+  const isServerMode = !!schema.serverPagination
+
+  const columnVisibility = useMemo(() => {
+    const visibility: Record<string, boolean> = {}
+    for (const col of schema.columns) {
+      if (col.visible === false) {
+        visibility[col.key] = false
+      }
+    }
+    return visibility
+  }, [schema.columns])
 
   const columns = useMemo<ColumnDef<Record<string, unknown>>[]>(
-    () =>
-      schema.columns.map((col: GridColumnSchema) => ({
-        accessorKey: col.key,
-        header: col.label,
-        enableSorting: col.sortable ?? false,
-        enableResizing: (col.resizable ?? false) && isResizable,
-        enableColumnFilter: col.filterable ?? false,
-        size: col.width ? parseInt(col.width, 10) : undefined,
-        cell: (info) => formatCellValue(col, info.getValue(), Badge),
-      })),
-    [schema.columns, isResizable, Badge]
+    () => buildColumns(schema.columns, Badge, isServerMode),
+    [schema.columns, Badge, isServerMode]
   )
 
   const table = useReactTable({
     data,
     columns,
-    state: {
-      sorting,
-      columnFilters,
+    state: { sorting },
+    onSortingChange: setSorting,
+    getCoreRowModel: getCoreRowModel(),
+    ...(isServerMode
+      ? {}
+      : {
+          getPaginationRowModel: getPaginationRowModel(),
+          getSortedRowModel: getSortedRowModel(),
+          getFilteredRowModel: getFilteredRowModel(),
+        }),
+    initialState: {
+      pagination: { pageSize: paginationConfig?.pageSize ?? 10 },
       columnVisibility,
     },
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    onColumnVisibilityChange: setColumnVisibility,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: paginationConfig ? getPaginationRowModel() : undefined,
-    getFilteredRowModel: getFilteredRowModel(),
-    columnResizeMode: 'onChange',
-    initialState: paginationConfig
-      ? { pagination: { pageSize: paginationConfig.pageSize } }
-      : undefined,
+    manualPagination: isServerMode,
   })
 
-  const tableClassName = applyGridStyles(schema)
+  const disableFilters = isServerMode && !onFilterChange
+
+  const handleFilterChange = useCallback((columnKey: string, value: string) => {
+    if (isServerMode) {
+      onFilterChange?.(columnKey, value)
+      setColumnFilters((prev) => ({ ...prev, [columnKey]: value }))
+    } else {
+      setColumnFilters((prev) => ({ ...prev, [columnKey]: value }))
+      table.getColumn(columnKey)?.setFilterValue(value)
+    }
+  }, [table, isServerMode, onFilterChange])
+
+  const borderedClasses = schema.bordered
+    ? 'border border-border rounded-lg overflow-hidden'
+    : 'rounded-lg overflow-hidden'
+
+  const rowClasses = [
+    schema.hoverable !== false ? 'hover:bg-muted/50' : '',
+    schema.striped ? 'even:bg-muted/30' : '',
+    'border-b last:border-b-0 transition-colors',
+  ]
+    .filter(Boolean)
+    .join(' ')
+
+  const cellBorderClasses = schema.bordered ? 'border-r last:border-r-0 px-4 py-2' : 'px-4 py-2'
+  const headerBorderClasses = schema.bordered ? 'border-r last:border-r-0' : ''
+
+  const emptyMessage = resolveMessage('noData', schema.i18n, schema.emptyMessage ?? 'No data available')
 
   return (
-    <div>
+    <div className="space-y-2">
       {schema.title && (
-        <h2 className="text-xl font-bold mb-1">{schema.title}</h2>
+        <h2 className="text-xl font-bold">{schema.title}</h2>
       )}
       {schema.description && (
-        <p className="text-sm text-muted-foreground mb-4">
-          {schema.description}
-        </p>
+        <p className="text-sm text-muted-foreground">{schema.description}</p>
       )}
-      <GridToolbar table={table} columns={schema.columns} />
-      <div className="rounded-md border overflow-auto">
-        <Table className={tableClassName}>
+      {schema.filterable && (
+        <GridToolbar table={table} columns={schema.columns} i18n={schema.i18n} disabled={isServerMode} />
+      )}
+      <div className={borderedClasses}>
+        <Table role="grid" aria-label={schema.title ?? 'Data grid'}>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow key={headerGroup.id} aria-rowindex={1}>
                 {headerGroup.headers.map((header) => {
-                  const col = schema.columns.find(
-                    (c) => c.key === header.column.id
+                  const colDef = schema.columns.find(
+                    (c) => c.key === header.id
                   )
                   return (
                     <GridColumnHeader
                       key={header.id}
                       header={header}
-                      column={col}
-                      filterValue={
-                        (header.column.getFilterValue() as string) ?? ''
+                      column={colDef}
+                      filterValue={columnFilters[header.id] ?? ''}
+                      onFilterChange={(val) =>
+                        handleFilterChange(header.id, val)
                       }
-                      onFilterChange={(value) =>
-                        header.column.setFilterValue(value)
-                      }
-                      enableResizing={isResizable}
+                      enableResizing={schema.resizable ?? false}
+                      filterDisabled={disableFilters}
                     />
                   )
                 })}
@@ -117,109 +142,95 @@ export function SchemaGrid({ schema, data, onRowClick }: SchemaGridProps) {
                 <TableCell
                   colSpan={schema.columns.length}
                   className="text-center text-muted-foreground py-8"
+                  role="cell"
                 >
-                  {schema.emptyMessage ?? 'No data available'}
+                  {emptyMessage}
                 </TableCell>
               </TableRow>
             ) : (
-              table.getRowModel().rows.map((row) => (
+              table.getRowModel().rows.map((row, rowIndex) => {
+                const { pageIndex, pageSize } = table.getState().pagination
+                const globalIndex = pageIndex * pageSize + rowIndex + 2
+                return (
                 <TableRow
                   key={row.id}
-                  className={onRowClick ? 'cursor-pointer' : ''}
-                  onClick={() => onRowClick?.(row.original, row.index)}
+                  className={rowClasses}
+                  onClick={
+                    onRowClick
+                      ? () => onRowClick(row.original, row.id)
+                      : undefined
+                  }
+                  style={onRowClick ? { cursor: 'pointer' } : undefined}
+                  role="row"
+                  aria-rowindex={globalIndex}
                 >
-                  {row.getVisibleCells().map((cell) => {
-                    const col = schema.columns.find(
-                      (c) => c.key === cell.column.id
-                    )
-                    return (
-                      <TableCell
-                        key={cell.id}
-                        className={getAlignClass(col?.align)}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    )
-                  })}
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell
+                      key={cell.id}
+                      className={`text-sm ${cellBorderClasses}`}
+                      role="cell"
+                    >
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
                 </TableRow>
-              ))
+              )})
             )}
           </TableBody>
         </Table>
       </div>
-      {paginationConfig && (
+      {schema.pagination !== false && (
         <GridPagination
           table={table}
-          pageSizeOptions={paginationConfig.pageSizeOptions}
-          showPageSizeSelector={paginationConfig.showPageSizeSelector}
+          pageSizeOptions={paginationConfig?.pageSizeOptions}
+          showPageSizeSelector={paginationConfig?.showPageSizeSelector}
+          i18n={schema.i18n}
+          serverPagination={schema.serverPagination}
+          onPageChange={onPageChange}
         />
       )}
     </div>
   )
 }
 
-function formatCellValue(
+function buildColumns(
+  columns: GridColumnSchema[],
+  Badge: React.ComponentType<Record<string, unknown>>,
+  disableSort: boolean
+): ColumnDef<Record<string, unknown>>[] {
+  return columns
+    .map((col) => ({
+      accessorKey: col.key,
+      header: col.label,
+      enableSorting: disableSort ? false : (col.sortable ?? false),
+      enableResizing: col.resizable ?? false,
+      cell: (info: import('@tanstack/react-table').CellContext<Record<string, unknown>, unknown>) =>
+        renderCellValue(col, info.getValue(), Badge),
+      size: col.width ? parseInt(col.width, 10) : undefined,
+    }))
+}
+
+function renderCellValue(
   col: GridColumnSchema,
   value: unknown,
-  Badge?: React.ComponentType<Record<string, unknown>>
+  Badge: React.ComponentType<Record<string, unknown>>
 ): React.ReactNode {
-  if (col.type === 'status' && Badge && col.statusConfig && value != null) {
+  if (col.type === 'status' && col.statusConfig && value != null) {
     const statusKey = String(value).toLowerCase()
-    const variant = col.statusConfig.variants[statusKey]
-    if (variant) {
+    const statusDef = col.statusConfig.variants[statusKey]
+    if (statusDef === undefined) {
+      console.warn(`[SchemaGrid] No status variant found for key "${statusKey}". Available keys: ${Object.keys(col.statusConfig.variants).join(', ')}`)
+    }
+    if (statusDef) {
       return (
-        <Badge className={variant.className}>
-          {variant.label}
+        <Badge variant="outline" className={statusDef.className}>
+          {statusDef.label}
         </Badge>
       )
     }
-    return <Badge>{String(value)}</Badge>
   }
-
-  if (col.type === 'boolean') {
-    return value ? 'Yes' : 'No'
-  }
-
-  if (value === null || value === undefined) {
-    return '—'
-  }
-
-  return String(value)
-}
-
-function resolvePaginationConfig(
-  pagination?: PaginationConfig | boolean
-): PaginationConfig | null {
-  if (pagination === undefined || pagination === false) {
-    return null
-  }
-  if (pagination === true) {
-    return { pageSize: 10 }
-  }
-  return pagination
-}
-
-export function applyGridStyles(schema: GridSchema): string {
-  const classes: string[] = []
-  if (schema.striped) {
-    classes.push('[&_tbody_tr:nth-child(even)]:bg-muted/50')
-  }
-  if (schema.hoverable) {
-    classes.push('[&_tbody_tr:hover]:bg-muted/80')
-  }
-  return classes.join(' ')
-}
-
-function getAlignClass(align?: 'left' | 'center' | 'right'): string {
-  switch (align) {
-    case 'center':
-      return 'text-center'
-    case 'right':
-      return 'text-right'
-    default:
-      return 'text-left'
-  }
+  return value != null ? String(value) : ''
 }
