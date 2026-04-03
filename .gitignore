@@ -26,4 +26,3 @@ Thumbs.db
 
 # Docs — ignored by default, allowed per-case basis
 docs/*
-!docs/ARCHITECTURE.md

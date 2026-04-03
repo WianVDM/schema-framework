@@ -1,0 +1,1 @@
+export type FormSubmitHandler = (values: Record<string, unknown>) => void | Promise<void>

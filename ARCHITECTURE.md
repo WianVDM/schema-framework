@@ -17,7 +17,7 @@ The framework relies on a strict, one-way dependency chain. A higher layer can i
 
 ### Layer 2: The Engine (The "Ext.NET" Brain)
 
-- **What it is:** The schema system. It contains the TypeScript interfaces defining what a schema is (`FieldSchema`, `GridColumnSchema`, `FieldCondition`, `StatusConfig`, etc.), the Zod validators, the `PrimitivesContext` provider, and the `SchemaForm`/`SchemaGrid` renderers.
+- **What it is:** The schema system. It contains the TypeScript interfaces defining what a schema is (`FieldSchema`, `GridColumnSchema`, `FieldCondition`, `StatusConfig`, etc.) in individual files under `types/`, the Zod validators in `validators/`, the `PrimitivesContext` provider, and the `SchemaForm`/`SchemaGrid` renderers.
 - **How it works:** The `FieldRenderer` acts as a switchboard, reading a schema `type: 'select'` and rendering the injected `<Select>` component from `PrimitivesContext`. `SchemaGrid` uses `@tanstack/react-table` under the hood for sorting, filtering, pagination, column resizing, column visibility, and status badge rendering. `SchemaForm` uses `@tanstack/react-form` for field-level validation, dirty-state tracking, and conditional visibility. Helper renderers `GridPagination`, `GridColumnHeader`, and `GridToolbar` modularize grid concerns.
 
 ### Layer 3: Composition (The App/Showcase)
@@ -48,15 +48,19 @@ schema-framework/                  # <- ONE SINGLE GIT REPO
 │       ├── src/
 │       │   ├── primitives/        #     Layer 1: PrimitiveComponents interface, context
 │       │   ├── engine/            #     Layer 2: Types, validators, renderers
-│       │   │   ├── types.ts       #       FieldSchema, GridColumnSchema, etc.
-│       │   │   ├── validators.ts  #       Zod schemas + validateFieldValue
+│       │   │   ├── types/         #       Individual type files (one-export-per-file)
+│       │   │   │   └── index.ts   #         Barrel re-export
+│       │   │   ├── validators/    #       Individual validator files (one-export-per-file)
+│       │   │   │   └── index.ts   #         Barrel re-export
 │       │   │   ├── context/       #       PrimitivesContext (shadcn injection)
+│       │   │   ├── helpers/       #       i18n helper
 │       │   │   └── renderers/     #       SchemaForm, SchemaGrid, FieldRenderer
 │       │   └── index.ts           #     Public API exports
 │       └── package.json           #     Name: "@my-framework/core"
 │
-├── docs/                          #     Architecture docs and plans
-│   ├── ARCHITECTURE.md            #     This file
+├── docs/                          #     Architecture docs, plans, and status
+│   ├── implementation-status.md   #     Phase-by-phase implementation progress
+│   ├── context-map.md             #     Project-wide relationship graph
 │   └── plans/                     #     Implementation plans
 ├── pnpm-workspace.yaml            #     Links apps and packages
 ├── turbo.json                     #     Orchestrates builds
@@ -129,103 +133,7 @@ This makes the framework agnostic to the end-user's specific shadcn theme or fil
 5. You run `pnpm add @my-framework/core`.
 6. You build your logistics app using the engine you built.
 
-## 7. Phase 1 Status: COMPLETE ✅
-
-All Phase 1 objectives have been implemented:
-
-1. **✅ Scaffold the Monorepo:** pnpm workspace, Turborepo, TanStack Start with file-based routing, shadcn/ui initialized in showcase.
-2. **✅ Define the Schema Types:** `FieldSchema`, `GridColumnSchema`, `FormSchema`, `GridSchema` in `types.ts`. Zod validators in `validators.ts`.
-3. **✅ Build Renderers:** `SchemaForm` (supports text, email, number, select, textarea, checkbox, date, password) and `SchemaGrid` with `@tanstack/react-table` sorting.
-4. **✅ Wire up the Showcase:** Routes use `useQuery` to fetch schemas from TanStack server functions. Zustand store manages grid row selection.
-5. **✅ Iterate:** Validation via TanStack Form field-level validators, grid sorting via TanStack Table, selection state via Zustand.
-
-### Implemented Field Types
-
-| Type | Renderer | Status |
-| :--- | :--- | :--- |
-| `text` | `<Input>` | ✅ |
-| `email` | `<Input type="email">` | ✅ |
-| `number` | `<Input type="number">` | ✅ |
-| `password` | `<Input type="password">` | ✅ |
-| `select` | `<Select>` + `SelectTrigger/Content/Item` | ✅ |
-| `textarea` | `<Textarea>` | ✅ |
-| `checkbox` | `<Checkbox>` | ✅ |
-| `date` | `<Input type="date">` | ✅ |
-| `file` | `<FileUpload>` (dropzone primitive) | ✅ Phase 2 |
-| `address` | `<AddressInput>` (multi-line address) | ✅ Phase 3 |
-
-### Grid Column Types
-
-| Type | Renderer | Status |
-| :--- | :--- | :--- |
-| `string` | Plain text cell | ✅ Phase 1 |
-| `number` | Numeric cell | ✅ Phase 1 |
-| `boolean` | Checkmark / dash | ✅ Phase 1 |
-| `date` | Date string cell | ✅ Phase 2 |
-| `status` | `<StatusBadge>` with configurable variants | ✅ Phase 2 |
-
-## 8. Phase 2 Status: COMPLETE ✅
-
-All Phase 2 objectives have been implemented:
-
-### Sub-Phase 2A: Advanced Grid Features ✅
-- **Pagination:** `GridPagination` component with configurable page sizes, page navigation, and total count display.
-- **Filtering:** Global toolbar search filter via `GridToolbar`. Column-level filters via TanStack Table `getFilteredRowModel`.
-- **Column Resizing:** Interactive column width dragging via TanStack Table `getFilteredRowModel` with CSS resize handles.
-- **Column Visibility:** Dropdown menu to toggle column visibility on/off.
-- **Style Props:** `striped`, `bordered`, `hoverable` consumed by `SchemaGrid` for visual variants.
-- **Empty State:** `emptyMessage` displayed when data array is empty.
-
-### Sub-Phase 2B: Bespoke Layer 1 Primitives ✅
-- **`StatusBadge`:** Renders status values as colored badges with configurable variant mappings.
-- **`AddressInput`:** A multi-line address input primitive (structured address fields).
-- **`FileUpload`:** A drag-and-drop file upload zone with accept/maxSize/multiple constraints.
-- **Status column rendering:** `SchemaGrid` auto-renders `type: 'status'` columns using `StatusBadge`.
-
-### Sub-Phase 2C: Schema-Driven Layout Rules ✅
-- **`FieldCondition` interface:** Supports `equals`, `notEquals`, `in` operators for conditional logic.
-- **`visibleWhen` on `FieldSchema`:** Fields can be conditionally shown/hidden based on other field values.
-- **`dependsOn` on `FieldSchema`:** Declares field dependencies for the engine.
-- **`colSpan` on `FieldSchema`:** Fields can span multiple grid columns in `layout: 'grid'` forms.
-- **`evaluateCondition` function:** Evaluates `FieldCondition` against current form values.
-- **Conditional rendering in `SchemaForm`:** Uses `form.Subscribe` to reactively show/hide fields.
-
-### Sub-Phase 2D: File Upload Field Type ✅
-- **`FileUploadConfig` interface:** `accept`, `maxSize`, `multiple` properties on `FieldSchema.fileConfig`.
-- **`FileUpload` primitive:** Drag-and-drop zone with file list display and remove functionality.
-- **Field renderer `case 'file'`:** Renders `FileUpload` with schema-driven constraints.
-
-### Sub-Phase 2E: Showcase Polish ✅
-- **New routes:** `demo-orders` (orders grid with status badges), `demo-registration` (conditional fields + file upload), `demo-support-ticket` (conditional priority fields + multi-file upload).
-- **New shadcn components:** `badge`, `dropdown-menu`, `dialog`, `textarea`, `checkbox` added to showcase.
-- **Updated navigation:** All new routes linked in `__root.tsx` nav bar.
-- **Mock data:** Order grid schema/data, registration form schema, support ticket form schema with conditional visibility rules.
-
-## 9. Phase 3 Status: COMPLETE ✅
-
-### Phase 3A: Architectural Fixes ✅
-- **FileUpload via PrimitivesContext:** Removed direct import from field-renderer; now injected like all other primitives.
-- **Dead code removal:** Deleted unused `DataTable` primitive that violated Layer 1 by importing `@tanstack/react-table`.
-- **Global search in GridToolbar:** Added search input with debounced filtering across all columns.
-- **onCancel moved to SchemaFormProps:** `FormSchema` is now fully JSON-serializable; callbacks live on component props.
-- **Bordered grid style:** `bordered` prop on `GridSchema` now applies border utility classes to table cells.
-- **Utility type exports:** `ValidationRule`, `FieldCondition`, `SelectOption`, `FileUploadConfig`, etc. exported from engine index.
-- **AddressInput wired to engine:** New `address` field type renders via `AddressInput` from `PrimitivesContext`.
-
-### Phase 3B: Production Features ✅
-- **Accessibility (ARIA):** `FieldRenderer` adds `aria-required`, `aria-invalid`, `aria-describedby` to all field types; error messages use `role="alert"`.
-- **Theme provider:** `ThemeProvider` context accepts `ThemeConfig` with optional CSS class overrides for grid, form, and pagination elements.
-- **Internationalization:** `I18nConfig` on `FormSchema`/`GridSchema` with `useI18n()` hook and `t()` translation function.
-- **Server-side pagination:** `ServerPaginationConfig` on `GridSchema`, `onPageChange` callback on `SchemaGridProps`, toolbar displays server page info.
-- **CI/CD pipelines:** GitHub Actions workflows for CI (typecheck + build + lint on push/PR) and npm publish (on release).
-
-### Phase 4 Considerations (Not Yet Implemented)
-
-- [ ] Virtualized scrolling for large datasets
-- [ ] Date picker primitive (calendar-based, not native input)
-- [ ] Multi-select / tag input field type
-- [ ] Form wizard / multi-step layout
-- [ ] Column reordering via drag-and-drop
+For phase-by-phase implementation progress, see [`docs/implementation-status.md`](docs/implementation-status.md).
 
 ---
 
