@@ -99,8 +99,11 @@ export interface GridColumnSchema {
   statusConfig?: StatusConfig
 }
 
+/** Configuration for server-side pagination.
+ *  NOTE: `currentPage` is 0-based (first page = 0). */
 export interface ServerPaginationConfig {
   totalRecords: number
+  /** 0-based page index */
   currentPage: number
 }
 
@@ -194,7 +197,7 @@ export interface SchemaFormProps {
 export interface SchemaGridProps {
   schema: GridSchema
   data: Record<string, unknown>[]
-  onRowClick?: (row: Record<string, unknown>, rowIndex: number) => void
+  onRowClick?: (row: Record<string, unknown>, rowId: string) => void
   onPageChange?: (page: number, pageSize: number) => void
   onFilterChange?: (columnKey: string, value: string) => void
 }

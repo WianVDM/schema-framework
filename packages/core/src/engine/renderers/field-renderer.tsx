@@ -21,14 +21,14 @@ export function FieldRenderer({ schema, value, onChange, error }: FieldRendererP
   const errorId = `${fieldId}-error`
   const descriptionId = `${fieldId}-description`
 
+  const describedBy = [error ? errorId : null, schema.description ? descriptionId : null]
+    .filter(Boolean)
+    .join(' ') || undefined
+
   const ariaProps = {
     'aria-required': schema.required || undefined,
     'aria-invalid': error ? true : undefined,
-    'aria-describedby': error
-      ? errorId
-      : schema.description
-        ? descriptionId
-        : undefined,
+    'aria-describedby': describedBy,
   }
 
   const labelElement = (
@@ -122,9 +122,10 @@ export function FieldRenderer({ schema, value, onChange, error }: FieldRendererP
             accept={schema.fileConfig?.accept}
             maxSize={schema.fileConfig?.maxSize}
             multiple={schema.fileConfig?.multiple}
-            value={(value as File[]) ?? []}
+            value={Array.isArray(value) ? (value as File[]) : []}
             onChange={(files: File[]) => onChange(files)}
             disabled={schema.disabled}
+            {...ariaProps}
           />
           {descriptionElement}
           {errorElement}

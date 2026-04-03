@@ -35,9 +35,19 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
 
   const isServerMode = !!schema.serverPagination
 
+  const columnVisibility = useMemo(() => {
+    const visibility: Record<string, boolean> = {}
+    for (const col of schema.columns) {
+      if (col.visible === false) {
+        visibility[col.key] = false
+      }
+    }
+    return visibility
+  }, [schema.columns])
+
   const columns = useMemo<ColumnDef<Record<string, unknown>>[]>(
-    () => buildColumns(schema.columns, Badge),
-    [schema.columns, Badge]
+    () => buildColumns(schema.columns, Badge, isServerMode),
+    [schema.columns, Badge, isServerMode]
   )
 
   const table = useReactTable({
@@ -55,6 +65,7 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
         }),
     initialState: {
       pagination: { pageSize: paginationConfig?.pageSize ?? 10 },
+      columnVisibility,
     },
     manualPagination: isServerMode,
   })
@@ -97,7 +108,7 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
         <p className="text-sm text-muted-foreground">{schema.description}</p>
       )}
       {schema.filterable && (
-        <GridToolbar table={table} columns={schema.columns} i18n={schema.i18n} />
+        <GridToolbar table={table} columns={schema.columns} i18n={schema.i18n} disabled={isServerMode} />
       )}
       <div className={borderedClasses}>
         <Table role="grid" aria-label={schema.title ?? 'Data grid'}>
@@ -146,7 +157,7 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
                   className={rowClasses}
                   onClick={
                     onRowClick
-                      ? () => onRowClick(row.original, rowIndex)
+                      ? () => onRowClick(row.original, row.id)
                       : undefined
                   }
                   style={onRowClick ? { cursor: 'pointer' } : undefined}
@@ -187,14 +198,14 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
 
 function buildColumns(
   columns: GridColumnSchema[],
-  Badge: React.ComponentType<Record<string, unknown>>
+  Badge: React.ComponentType<Record<string, unknown>>,
+  disableSort: boolean
 ): ColumnDef<Record<string, unknown>>[] {
   return columns
-    .filter((col) => col.visible !== false)
     .map((col) => ({
       accessorKey: col.key,
       header: col.label,
-      enableSorting: col.sortable ?? false,
+      enableSorting: disableSort ? false : (col.sortable ?? false),
       enableResizing: col.resizable ?? false,
       cell: (info: import('@tanstack/react-table').CellContext<Record<string, unknown>, unknown>) =>
         renderCellValue(col, info.getValue(), Badge),

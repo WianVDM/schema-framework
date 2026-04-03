@@ -177,7 +177,6 @@ All Phase 2 objectives have been implemented:
 - **Empty State:** `emptyMessage` displayed when data array is empty.
 
 ### Sub-Phase 2B: Bespoke Layer 1 Primitives ✅
-- **`DataTable`:** A generic table wrapper with sorting indicators, header click handlers, and column resize support.
 - **`StatusBadge`:** Renders status values as colored badges with configurable variant mappings.
 - **`AddressInput`:** A multi-line address input primitive (structured address fields).
 - **`FileUpload`:** A drag-and-drop file upload zone with accept/maxSize/multiple constraints.

@@ -24,6 +24,10 @@ export function GridPagination({
 
   const isServerMode = !!serverPagination
 
+  if (isServerMode && !onPageChange) {
+    console.warn('[SchemaGrid] serverPagination is enabled but onPageChange is not provided. The grid will not be able to fetch new pages.')
+  }
+
   const pageIndex = isServerMode
     ? serverPagination.currentPage
     : table.getState().pagination.pageIndex
@@ -37,6 +41,7 @@ export function GridPagination({
 
   const rowsLabel = resolveMessage('rows', i18n, 'rows')
   const pageLabel = resolveMessage('page', i18n, '/ page')
+  const pageSizeLabel = resolveMessage('pageSize', i18n, 'Page size')
   const previousLabel = resolveMessage('previous', i18n, 'Previous')
   const nextLabel = resolveMessage('next', i18n, 'Next')
 
@@ -78,9 +83,16 @@ export function GridPagination({
         {showPageSizeSelector && (
           <select
             value={pageSize}
-            onChange={(e) => table.setPageSize(Number(e.target.value))}
+            onChange={(e) => {
+              const newSize = Number(e.target.value)
+              table.setPageSize(newSize)
+              table.setPageIndex(0)
+              if (isServerMode) {
+                onPageChange?.(0, newSize)
+              }
+            }}
             className="h-8 rounded-md border border-input bg-background px-2 text-sm"
-            aria-label="Page size"
+            aria-label={pageSizeLabel}
           >
             {pageSizeOptions.map((size) => (
               <option key={size} value={size}>

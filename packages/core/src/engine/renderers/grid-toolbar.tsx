@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import type { Table } from '@tanstack/react-table'
 import type { GridColumnSchema, I18nConfig } from '../types'
 import { usePrimitives } from '../context/primitives-context'
@@ -8,21 +8,32 @@ interface GridToolbarProps {
   table: Table<Record<string, unknown>>
   columns: GridColumnSchema[]
   i18n?: I18nConfig
+  disabled?: boolean
 }
 
-export function GridToolbar({ table, columns, i18n }: GridToolbarProps) {
+export function GridToolbar({ table, columns, i18n, disabled = false }: GridToolbarProps) {
   const { Button, Input, DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } =
     usePrimitives()
 
   const [globalFilter, setGlobalFilter] = useState('')
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current)
+    }
+  }, [])
 
   const searchPlaceholder = resolveMessage('searchPlaceholder', i18n, 'Search all columns...')
   const columnsLabel = resolveMessage('columns', i18n, 'Columns')
 
-  const handleSearchChange = (value: string) => {
+  const handleSearchChange = useCallback((value: string) => {
     setGlobalFilter(value)
-    table.setGlobalFilter(value || undefined)
-  }
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(() => {
+      table.setGlobalFilter(value || undefined)
+    }, 300)
+  }, [table])
 
   return (
     <div className="flex items-center justify-between pb-2 gap-2">
@@ -35,6 +46,7 @@ export function GridToolbar({ table, columns, i18n }: GridToolbarProps) {
           }
           className="h-8 text-sm"
           aria-label={searchPlaceholder}
+          disabled={disabled}
         />
       </div>
       <DropdownMenu>

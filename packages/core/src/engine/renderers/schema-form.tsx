@@ -19,9 +19,7 @@ export function SchemaForm({ schema, onSubmit, initialValues, onCancel }: Schema
 
   const i18n = schema.i18n
   const submitLabel = resolveMessage('submit', i18n, schema.submitLabel ?? 'Submit')
-  const cancelLabel = schema.cancelLabel
-    ? resolveMessage('cancel', i18n, schema.cancelLabel)
-    : null
+  const cancelLabel = resolveMessage('cancel', i18n, schema.cancelLabel ?? 'Cancel')
   const submittingLabel = resolveMessage('submitting', i18n, 'Submitting...')
 
   const handleCancel = onCancel
@@ -99,7 +97,7 @@ export function SchemaForm({ schema, onSubmit, initialValues, onCancel }: Schema
           )}
         </form.Subscribe>
         <div className="flex justify-end gap-2 pt-2">
-          {cancelLabel && onCancel && (
+          {onCancel && (
             <Button
               type="button"
               variant="outline"

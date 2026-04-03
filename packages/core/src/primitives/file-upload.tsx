@@ -3,8 +3,11 @@
 // Knows nothing about schemas — accepts standard controlled props.
 
 import { useState, useRef } from 'react'
+import type { HTMLAttributes } from 'react'
 
-interface FileUploadProps {
+type RestProps = Omit<HTMLAttributes<HTMLDivElement>, 'value' | 'onChange' | 'disabled' | 'accept' | 'multiple'>
+
+interface FileUploadProps extends RestProps {
   accept?: string
   maxSize?: number
   multiple?: boolean
@@ -20,6 +23,7 @@ export function FileUpload({
   value = [],
   onChange,
   disabled = false,
+  ...rest
 }: FileUploadProps) {
   const [isDragging, setIsDragging] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -85,6 +89,7 @@ export function FileUpload({
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onClick={() => inputRef.current?.click()}
+        {...rest}
         className={`border-2 border-dashed rounded-md p-6 text-center cursor-pointer transition-colors ${
           isDragging
             ? 'border-primary bg-primary/5'
