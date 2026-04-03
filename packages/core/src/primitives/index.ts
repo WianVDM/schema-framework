@@ -5,5 +5,5 @@
 
 export { StatusBadge } from './status-badge'
 export { AddressInput } from './address-input'
-export type { AddressData } from './address-input'
+export type { AddressData, AddressPlaceholders } from './address-input'
 export { FileUpload } from './file-upload'

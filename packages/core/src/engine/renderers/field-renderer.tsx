@@ -135,7 +135,10 @@ export function FieldRenderer({ schema, value, onChange, error }: FieldRendererP
     case 'address':
       return (
         <div className="space-y-1">
-          {labelElement}
+          <Label htmlFor={`${fieldId}-street`}>
+            {schema.label}
+            {schema.required && <span className="text-destructive ml-1">*</span>}
+          </Label>
           <AddressInput
             id={fieldId}
             value={(value as AddressData) ?? { street: '', city: '', state: '', zip: '', country: '' }}

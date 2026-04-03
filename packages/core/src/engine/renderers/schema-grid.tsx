@@ -219,8 +219,11 @@ function renderCellValue(
   Badge: React.ComponentType<Record<string, unknown>>
 ): React.ReactNode {
   if (col.type === 'status' && col.statusConfig && value != null) {
-    const statusKey = String(value)
+    const statusKey = String(value).toLowerCase()
     const statusDef = col.statusConfig.variants[statusKey]
+    if (statusDef === undefined) {
+      console.warn(`[SchemaGrid] No status variant found for key "${statusKey}". Available keys: ${Object.keys(col.statusConfig.variants).join(', ')}`)
+    }
     if (statusDef) {
       return (
         <Badge variant="outline" className={statusDef.className}>
