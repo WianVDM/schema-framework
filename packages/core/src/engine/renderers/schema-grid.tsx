@@ -114,7 +114,7 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
         <Table role="grid" aria-label={schema.title ?? 'Data grid'}>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow key={headerGroup.id} aria-rowindex={1}>
                 {headerGroup.headers.map((header) => {
                   const colDef = schema.columns.find(
                     (c) => c.key === header.id

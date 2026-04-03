@@ -105,11 +105,10 @@ export function FieldRenderer({ schema, value, onChange, error }: FieldRendererP
             checked={Boolean(value)}
             onCheckedChange={(checked: boolean) => onChange(checked)}
             disabled={schema.disabled}
-            aria-required={schema.required || undefined}
-            aria-invalid={error ? true : undefined}
-            aria-describedby={error ? errorId : undefined}
+            {...ariaProps}
           />
           {labelElement}
+          {descriptionElement}
           {errorElement}
         </div>
       )

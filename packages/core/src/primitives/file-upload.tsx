@@ -157,6 +157,7 @@ export function FileUpload({
                   handleRemove(index)
                 }}
                 className="ml-2 text-destructive hover:text-destructive/80 text-xs"
+                aria-label="Remove file"
               >
                 ✕
               </button>
