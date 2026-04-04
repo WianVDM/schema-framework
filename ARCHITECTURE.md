@@ -25,6 +25,25 @@ The framework relies on a strict, one-way dependency chain. A higher layer can i
 - **What it is:** The actual page files (TanStack Start file-based routes) and server functions (`createServerFn`).
 - **How it works:** This layer fetches the JSON schema from mock TanStack server functions via `TanStack Query` (`useQuery`), fetches the actual business data the same way, and passes both into the Layer 2 Engine renderers. Zustand stores manage UI selection state.
 
+### Layer Dependency Diagram
+
+```mermaid
+graph TD
+    L1["Layer 1: Primitives<br/>(Generic UI wrappers)"]
+    L2["Layer 2: Engine<br/>(Schema system + Renderers)"]
+    L3["Layer 3: Composition<br/>(Showcase App)"]
+
+    L3 -->|imports| L2
+    L2 -->|imports| L1
+    L3 -.-x|FORBIDDEN| L1
+    L2 -.-x|FORBIDDEN| L3
+    L1 -.-x|FORBIDDEN| L3
+
+    style L1 fill:#e1f5fe
+    style L2 fill:#fff3e0
+    style L3 fill:#e8f5e9
+```
+
 ## 3. The Monorepo Structure
 
 ```
@@ -79,6 +98,26 @@ We replace the monolithic Ext JS "Store" with a modern, separated approach:
 | **Store (Dirty State)** | **TanStack Form** (`useForm`) | Tracks if the user typed in a form field, handles validation, and knows exactly what changed. |
 | **Table State (Sort/Page)** | **TanStack Table** (`useReactTable`) | Manages grid sorting, column visibility, and row model state. |
 
+### State Management Data Flow
+
+```mermaid
+graph TD
+    Server["Server Functions<br/>(createServerFn)"]
+    Query["TanStack Query<br/>(useQuery)"]
+    Form["TanStack Form<br/>(useForm)"]
+    Table["TanStack Table<br/>(useReactTable)"]
+    Zustand["Zustand Store<br/>(Selection State)"]
+    Routes["Route Components"]
+
+    Server -->|schema JSON| Query
+    Server -->|business data| Query
+    Query -->|cached schemas| Routes
+    Query -->|cached data| Routes
+    Routes -->|form schema| Form
+    Routes -->|grid data| Table
+    Routes <-->|selection state| Zustand
+```
+
 ## 5. The "Shadcn Dependency" Rule
 
 Because shadcn/ui is copy-pasted code (not an npm package), your `packages/core` library cannot hardcode import paths to shadcn files.
@@ -115,6 +154,22 @@ export function AppPrimitivesProvider({ children }) {
 
 This makes the framework agnostic to the end-user's specific shadcn theme or file structure.
 
+### Shadcn Injection Flow
+
+```mermaid
+graph LR
+    Showcase["Showcase App<br/>(Layer 3)"]
+    Shadcn["shadcn/ui Components<br/>(copy-pasted)"]
+    Provider["PrimitivesProvider"]
+    Context["PrimitivesContext<br/>(Layer 2)"]
+    Renderers["Engine Renderers<br/>(SchemaForm, SchemaGrid)"]
+
+    Shadcn -->|mapped to interface| Provider
+    Showcase -->|wraps app with| Provider
+    Provider -->|injects into| Context
+    Context -->|usePrimitives| Renderers
+```
+
 ## 6. Workflow & Lifecycle
 
 ### Local Development (Simultaneous)
@@ -134,6 +189,36 @@ This makes the framework agnostic to the end-user's specific shadcn theme or fil
 6. You build your logistics app using the engine you built.
 
 For phase-by-phase implementation progress, see [`docs/implementation-status.md`](docs/implementation-status.md).
+
+### Workflow Diagrams
+
+```mermaid
+sequenceDiagram
+    participant Dev as Developer
+    participant Turbo as Turborepo
+    participant Core as packages/core
+    participant Show as apps/showcase
+
+    Note over Dev,Show: Local Development (Simultaneous)
+    Dev->>Turbo: pnpm dev
+    Turbo->>Show: Symlink to core source
+    Dev->>Core: Edit renderer
+    Core->>Show: Hot-reload (zero rebuild)
+```
+
+```mermaid
+sequenceDiagram
+    participant Dev as Developer
+    participant CI as GitHub Actions
+    participant NPM as npm Registry
+    participant App as New Logistics App
+
+    Note over Dev,App: Production Usage (Separation)
+    Dev->>CI: Push to main
+    CI->>NPM: Publish @my-framework/core
+    App->>NPM: pnpm add @my-framework/core
+    App->>App: Build with engine
+```
 
 ## 7. Immutability Strategy
 
@@ -182,6 +267,33 @@ Showcase mock data uses typed interfaces (`UserRow`, `OrderRow`) instead of `Rec
 type ConditionOperator = 'equals' | 'notEquals' | 'in' | 'notIn' | 'contains'
 type ValidationType = 'required' | 'email' | 'minLength' | 'maxLength' | 'pattern' | 'min' | 'max'
 ```
+
+### Immutability Layers
+
+```mermaid
+graph TD
+    subgraph "Compile-Time"
+        CT1["readonly properties"]
+        CT2["ReadonlyDeep<T>"]
+        CT3["Branded types<br/>(FieldId, DataKey)"]
+        CT4["String literal unions"]
+    end
+
+    subgraph "Runtime"
+        RT1["deepFreeze<T>()"]
+        RT2["Typed interfaces<br/>(UserRow, OrderRow)"]
+    end
+
+    CT1 --> CT2
+    CT2 --> CT3
+    RT1 --> RT2
+```
+
+## 8. Decision Records
+
+Architectural decisions are tracked in `docs/decisions/` using the ADR (Architectural Decision Record) format. Each decision includes Status, Context, Decision, and Consequences sections.
+
+See [`docs/decisions/README.md`](docs/decisions/README.md) for the full index and format specification.
 
 ---
 
