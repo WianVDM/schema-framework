@@ -24,6 +24,6 @@ Thumbs.db
 # AI-specific rules, hooks, and workflows
 .clinerules/
 
-# Docs — architecture docs, plans, and version status are tracked
-# Only ignore generated/temp docs if needed
+# Docs — implementation plans are ephemeral working documents, not tracked
+docs/plans/
 docs/*.tmp
