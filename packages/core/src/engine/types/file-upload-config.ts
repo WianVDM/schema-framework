@@ -1,5 +1,5 @@
 export interface FileUploadConfig {
-  accept?: string
-  maxSize?: number
-  multiple?: boolean
+  readonly accept?: string
+  readonly maxSize?: number
+  readonly multiple?: boolean
 }

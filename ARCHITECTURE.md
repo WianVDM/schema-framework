@@ -135,6 +135,54 @@ This makes the framework agnostic to the end-user's specific shadcn theme or fil
 
 For phase-by-phase implementation progress, see [`docs/implementation-status.md`](docs/implementation-status.md).
 
+## 7. Immutability Strategy
+
+All schema types enforce immutability at two levels: compile-time via `ReadonlyDeep<T>` on array/object properties, and runtime via `deepFreeze<T>()`.
+
+### Compile-Time: `ReadonlyDeep<T>`
+
+Schema type interfaces use `readonly` on all properties. Arrays and nested objects use `ReadonlyDeep<T>` to recursively enforce immutability:
+
+```typescript
+// Applied at definition site for array/nested object properties
+interface FormSchema {
+  readonly fields: ReadonlyArray<ReadonlyDeep<FieldSchema>>
+  readonly layout?: 'stack' | 'grid'
+}
+```
+
+### Runtime: `deepFreeze<T>()`
+
+The `deepFreeze()` utility recursively calls `Object.freeze()` on all objects and arrays. All mock schema constants in the showcase app are wrapped with `deepFreeze()`:
+
+```typescript
+import { deepFreeze } from '@my-framework/core'
+
+export const contactFormSchema = deepFreeze<FormSchema>({ ... })
+```
+
+### Branded Types
+
+`FieldId` and `DataKey` are branded string types that prevent accidental string interchange:
+
+```typescript
+type FieldId = Brand<string, 'FieldId'>
+type DataKey = Brand<string, 'DataKey'>
+```
+
+### Typed Data Interfaces
+
+Showcase mock data uses typed interfaces (`UserRow`, `OrderRow`) instead of `Record<string, unknown>[]`. All properties are `readonly`.
+
+### String Literal Unions
+
+`ConditionOperator` and `ValidationType` replace bare `string` in validators with explicit string literal unions:
+
+```typescript
+type ConditionOperator = 'equals' | 'notEquals' | 'in' | 'notIn' | 'contains'
+type ValidationType = 'required' | 'email' | 'minLength' | 'maxLength' | 'pattern' | 'min' | 'max'
+```
+
 ---
 
 ## Appendix A: AI-README Template

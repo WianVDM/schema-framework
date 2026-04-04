@@ -1,30 +1,35 @@
 import type { ComponentType } from 'react'
 
+/* eslint-disable @typescript-eslint/no-explicit-any -- Primitives are passed from
+   the showcase app where shadcn components have varying prop signatures.
+   Using `any` here is intentional: the adapter pattern accepts any component
+   and type safety is enforced at the renderer call-site instead. */
+
 export interface PrimitiveComponents {
-  Input: ComponentType<Record<string, unknown>>
-  Select: ComponentType<Record<string, unknown>>
-  SelectTrigger: ComponentType<Record<string, unknown>>
-  SelectContent: ComponentType<Record<string, unknown>>
-  SelectItem: ComponentType<Record<string, unknown>>
-  SelectValue: ComponentType<Record<string, unknown>>
-  Label: ComponentType<Record<string, unknown>>
-  Textarea: ComponentType<Record<string, unknown>>
-  Checkbox: ComponentType<Record<string, unknown>>
-  Table: ComponentType<Record<string, unknown>>
-  TableHeader: ComponentType<Record<string, unknown>>
-  TableBody: ComponentType<Record<string, unknown>>
-  TableRow: ComponentType<Record<string, unknown>>
-  TableHead: ComponentType<Record<string, unknown>>
-  TableCell: ComponentType<Record<string, unknown>>
-  Button: ComponentType<Record<string, unknown>>
-  Badge: ComponentType<Record<string, unknown>>
-  Dialog: ComponentType<Record<string, unknown>>
-  DialogContent: ComponentType<Record<string, unknown>>
-  DialogTrigger: ComponentType<Record<string, unknown>>
-  DropdownMenu: ComponentType<Record<string, unknown>>
-  DropdownMenuTrigger: ComponentType<Record<string, unknown>>
-  DropdownMenuContent: ComponentType<Record<string, unknown>>
-  DropdownMenuItem: ComponentType<Record<string, unknown>>
-  FileUpload: ComponentType<Record<string, unknown>>
-  AddressInput: ComponentType<Record<string, unknown>>
+  readonly Input: ComponentType<any>
+  readonly Select: ComponentType<any>
+  readonly SelectTrigger: ComponentType<any>
+  readonly SelectContent: ComponentType<any>
+  readonly SelectItem: ComponentType<any>
+  readonly SelectValue: ComponentType<any>
+  readonly Label: ComponentType<any>
+  readonly Textarea: ComponentType<any>
+  readonly Checkbox: ComponentType<any>
+  readonly Table: ComponentType<any>
+  readonly TableHeader: ComponentType<any>
+  readonly TableBody: ComponentType<any>
+  readonly TableRow: ComponentType<any>
+  readonly TableHead: ComponentType<any>
+  readonly TableCell: ComponentType<any>
+  readonly Button: ComponentType<any>
+  readonly Badge: ComponentType<any>
+  readonly Dialog: ComponentType<any>
+  readonly DialogContent: ComponentType<any>
+  readonly DialogTrigger: ComponentType<any>
+  readonly DropdownMenu: ComponentType<any>
+  readonly DropdownMenuTrigger: ComponentType<any>
+  readonly DropdownMenuContent: ComponentType<any>
+  readonly DropdownMenuItem: ComponentType<any>
+  readonly FileUpload: ComponentType<any>
+  readonly AddressInput: ComponentType<any>
 }

@@ -185,7 +185,7 @@ export function FieldRenderer({ schema, value, onChange, error }: FieldRendererP
 }
 
 function normalizeOptions(
-  options?: string[] | SelectOption[]
+  options?: readonly (string | SelectOption)[]
 ): SelectOption[] {
   if (!options) return []
   return options.map((opt) =>

@@ -1,56 +1,73 @@
+import type { ValidationRule, FieldSchema } from '../types'
+
 export function validateFieldValue(
-  _value: unknown,
-  field: { required?: boolean; validation?: { type: string; value?: string | number; message: string }[] }
+  value: unknown,
+  field: Readonly<FieldSchema>
 ): string | null {
-  if (field.required && (_value === undefined || _value === null || _value === '')) {
-    return 'This field is required'
-  }
+  if (!field.validation) return null
 
-  if (field.validation) {
-    for (const rule of field.validation) {
-      const val = _value as string | number | undefined
-
-      switch (rule.type) {
-        case 'minLength':
-          if (typeof val === 'string' && val.length < (rule.value as number)) {
-            return rule.message
-          }
-          break
-        case 'maxLength':
-          if (typeof val === 'string' && val.length > (rule.value as number)) {
-            return rule.message
-          }
-          break
-        case 'min':
-          if (typeof val === 'number' && val < (rule.value as number)) {
-            return rule.message
-          }
-          break
-        case 'max':
-          if (typeof val === 'number' && val > (rule.value as number)) {
-            return rule.message
-          }
-          break
-        case 'email':
-          if (
-            typeof val === 'string' &&
-            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)
-          ) {
-            return rule.message
-          }
-          break
-        case 'pattern':
-          if (
-            typeof val === 'string' &&
-            typeof rule.value === 'string' &&
-            !new RegExp(rule.value).test(val)
-          ) {
-            return rule.message
-          }
-          break
-      }
-    }
+  for (const rule of field.validation as readonly ValidationRule[]) {
+    const error = applyRule(value, rule, field)
+    if (error) return error
   }
 
   return null
+}
+
+function applyRule(
+  value: unknown,
+  rule: Readonly<ValidationRule>,
+  field: Readonly<FieldSchema>
+): string | null {
+  switch (rule.type) {
+    case 'required':
+      if (field.required && isEmpty(value)) {
+        return rule.message
+      }
+      break
+    case 'min':
+      if (typeof value === 'number' && value < (rule.value as number)) {
+        return rule.message
+      }
+      break
+    case 'max':
+      if (typeof value === 'number' && value > (rule.value as number)) {
+        return rule.message
+      }
+      break
+    case 'minLength':
+      if (typeof value === 'string' && value.length < (rule.value as number)) {
+        return rule.message
+      }
+      break
+    case 'maxLength':
+      if (typeof value === 'string' && value.length > (rule.value as number)) {
+        return rule.message
+      }
+      break
+    case 'pattern': {
+      if (typeof value === 'string' && rule.value) {
+        const regex = new RegExp(rule.value as string)
+        if (!regex.test(value)) {
+          return rule.message
+        }
+      }
+      break
+    }
+    case 'email':
+      if (typeof value === 'string' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        return rule.message
+      }
+      break
+    case 'custom':
+      return rule.message
+  }
+
+  return null
+}
+
+function isEmpty(value: unknown): boolean {
+  if (value === null || value === undefined) return true
+  if (typeof value === 'string' && value.trim() === '') return true
+  return false
 }

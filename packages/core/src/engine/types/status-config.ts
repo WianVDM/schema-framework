@@ -1,3 +1,3 @@
 export interface StatusConfig {
-  variants: Record<string, { label: string; className: string }>
+  readonly variants: Readonly<Record<string, { readonly label: string; readonly className: string }>>
 }

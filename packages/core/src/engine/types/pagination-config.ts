@@ -1,5 +1,5 @@
 export interface PaginationConfig {
-  pageSize: number
-  pageSizeOptions?: number[]
-  showPageSizeSelector?: boolean
+  readonly pageSize: number
+  readonly pageSizeOptions?: readonly number[]
+  readonly showPageSizeSelector?: boolean
 }

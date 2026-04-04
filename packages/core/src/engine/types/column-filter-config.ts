@@ -1,4 +1,4 @@
 export interface ColumnFilterConfig {
-  enabled: boolean
-  placeholder?: string
+  readonly enabled: boolean
+  readonly placeholder?: string
 }

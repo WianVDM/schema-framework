@@ -5,10 +5,10 @@ import { usePrimitives } from '../context/primitives-context'
 import { resolveMessage } from '../helpers/i18n'
 
 interface GridToolbarProps {
-  table: Table<Record<string, unknown>>
-  columns: GridColumnSchema[]
-  i18n?: I18nConfig
-  disabled?: boolean
+  readonly table: Table<Record<string, unknown>>
+  readonly columns: readonly GridColumnSchema[]
+  readonly i18n?: I18nConfig
+  readonly disabled?: boolean
 }
 
 export function GridToolbar({ table, columns, i18n, disabled = false }: GridToolbarProps) {

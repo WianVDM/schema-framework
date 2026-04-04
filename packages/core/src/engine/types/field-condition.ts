@@ -1,5 +1,7 @@
+import type { ConditionOperator } from './condition-operator'
+
 export interface FieldCondition {
-  field: string
-  operator: 'equals' | 'notEquals' | 'in' | 'notIn' | 'truthy' | 'falsy'
-  value?: string | number | boolean | (string | number)[]
+  readonly field: string
+  readonly operator: ConditionOperator
+  readonly value?: string | number | boolean | readonly (string | number)[]
 }

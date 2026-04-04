@@ -1,5 +1,7 @@
+import type { ValidationType } from './validation-type'
+
 export interface ValidationRule {
-  type: 'required' | 'min' | 'max' | 'minLength' | 'maxLength' | 'pattern' | 'email' | 'custom'
-  value?: string | number
-  message: string
+  readonly type: ValidationType
+  readonly value?: string | number
+  readonly message: string
 }

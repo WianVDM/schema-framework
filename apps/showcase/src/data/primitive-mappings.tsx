@@ -49,6 +49,6 @@ export const primitives: PrimitiveComponents = {
   TableRow,
   TableHead,
   TableCell,
-  FileUpload: FileUpload as unknown as PrimitiveComponents['FileUpload'],
-  AddressInput: AddressInput as unknown as PrimitiveComponents['AddressInput'],
+  FileUpload,
+  AddressInput,
 }

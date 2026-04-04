@@ -1,6 +1,8 @@
+import type { FieldCondition } from '../types'
+
 export function evaluateCondition(
-  condition: { field: string; operator: string; value?: unknown },
-  formValues: Record<string, unknown>
+  condition: Readonly<FieldCondition>,
+  formValues: Readonly<Record<string, unknown>>
 ): boolean {
   const fieldValue = formValues[condition.field]
 

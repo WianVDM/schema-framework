@@ -24,6 +24,13 @@ export type {
   ThemeConfig,
   I18nConfig,
   CellValueRenderer,
+  Brand,
+  FieldId,
+  DataKey,
+  ReadonlyDeep,
+  DeepFrozen,
+  ConditionOperator,
+  ValidationType,
 } from './types'
 
 // Validators (one-export-per-file via barrel)
@@ -46,6 +53,7 @@ export { PrimitivesProvider, usePrimitives } from './context/primitives-context'
 
 // Helpers
 export { resolveMessage } from './helpers/i18n'
+export { deepFreeze } from './helpers'
 
 // Renderers
 export { SchemaForm } from './renderers/schema-form'
