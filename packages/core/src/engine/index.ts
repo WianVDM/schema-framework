@@ -54,7 +54,7 @@ export { PrimitivesProvider, usePrimitives } from './context/primitives-context'
 
 // Helpers
 export { resolveMessage } from './helpers/i18n'
-export { deepFreeze } from './helpers'
+export { deepFreeze, asDataKey } from './helpers'
 
 // Renderers
 export { SchemaForm } from './renderers/schema-form'

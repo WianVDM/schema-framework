@@ -8,6 +8,7 @@ import {
   i18nConfigSchema,
 } from './shared-schemas'
 import type { ValidationResult } from './shared-schemas'
+import type { DataKey } from '../types/branded'
 
 export const gridColumnSchemaValidator = z.object({
   key: z.string().min(1, 'Column key is required'),
@@ -31,7 +32,7 @@ export const gridSchemaValidator = z.object({
   columns: z
     .array(gridColumnSchemaValidator)
     .min(1, 'Grid must have at least one column'),
-  dataKey: z.string().min(1, 'Data key is required'),
+  dataKey: z.string().min(1, 'Data key is required').transform((v) => v as DataKey),
   striped: z.boolean().optional(),
   bordered: z.boolean().optional(),
   hoverable: z.boolean().optional(),
