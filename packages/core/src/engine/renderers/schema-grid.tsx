@@ -50,8 +50,10 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
     [schema.columns, Badge, isServerMode]
   )
 
+  // NOTE: TanStack Table requires mutable Record<string, unknown>[];
+  // the data prop is typed as readonly unknown[] for caller immutability.
   const table = useReactTable({
-    data,
+    data: data as Record<string, unknown>[],
     columns,
     state: { sorting },
     onSortingChange: setSorting,
@@ -197,7 +199,7 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
 }
 
 function buildColumns(
-  columns: GridColumnSchema[],
+  columns: readonly GridColumnSchema[],
   Badge: React.ComponentType<Record<string, unknown>>,
   disableSort: boolean
 ): ColumnDef<Record<string, unknown>>[] {

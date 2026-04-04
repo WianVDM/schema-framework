@@ -4,12 +4,12 @@ import { usePrimitives } from '../context/primitives-context'
 import { resolveMessage } from '../helpers/i18n'
 
 interface GridPaginationProps {
-  table: Table<Record<string, unknown>>
-  pageSizeOptions?: number[]
-  showPageSizeSelector?: boolean
-  i18n?: I18nConfig
-  serverPagination?: ServerPaginationConfig
-  onPageChange?: (page: number, pageSize: number) => void
+  readonly table: Table<Record<string, unknown>>
+  readonly pageSizeOptions?: readonly number[]
+  readonly showPageSizeSelector?: boolean
+  readonly i18n?: I18nConfig
+  readonly serverPagination?: ServerPaginationConfig
+  readonly onPageChange?: (page: number, pageSize: number) => void
 }
 
 export function GridPagination({

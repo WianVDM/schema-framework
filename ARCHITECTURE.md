@@ -17,13 +17,32 @@ The framework relies on a strict, one-way dependency chain. A higher layer can i
 
 ### Layer 2: The Engine (The "Ext.NET" Brain)
 
-- **What it is:** The schema system. It contains the TypeScript interfaces defining what a schema is (`FieldSchema`, `GridColumnSchema`, `FieldCondition`, `StatusConfig`, etc.), the Zod validators, the `PrimitivesContext` provider, and the `SchemaForm`/`SchemaGrid` renderers.
+- **What it is:** The schema system. It contains the TypeScript interfaces defining what a schema is (`FieldSchema`, `GridColumnSchema`, `FieldCondition`, `StatusConfig`, etc.) in individual files under `types/`, the Zod validators in `validators/`, the `PrimitivesContext` provider, and the `SchemaForm`/`SchemaGrid` renderers.
 - **How it works:** The `FieldRenderer` acts as a switchboard, reading a schema `type: 'select'` and rendering the injected `<Select>` component from `PrimitivesContext`. `SchemaGrid` uses `@tanstack/react-table` under the hood for sorting, filtering, pagination, column resizing, column visibility, and status badge rendering. `SchemaForm` uses `@tanstack/react-form` for field-level validation, dirty-state tracking, and conditional visibility. Helper renderers `GridPagination`, `GridColumnHeader`, and `GridToolbar` modularize grid concerns.
 
 ### Layer 3: Composition (The App/Showcase)
 
 - **What it is:** The actual page files (TanStack Start file-based routes) and server functions (`createServerFn`).
 - **How it works:** This layer fetches the JSON schema from mock TanStack server functions via `TanStack Query` (`useQuery`), fetches the actual business data the same way, and passes both into the Layer 2 Engine renderers. Zustand stores manage UI selection state.
+
+### Layer Dependency Diagram
+
+```mermaid
+graph TD
+    L1["Layer 1: Primitives<br/>(Generic UI wrappers)"]
+    L2["Layer 2: Engine<br/>(Schema system + Renderers)"]
+    L3["Layer 3: Composition<br/>(Showcase App)"]
+
+    L3 -->|imports| L2
+    L2 -->|imports| L1
+    L3 -.-x|FORBIDDEN| L1
+    L2 -.-x|FORBIDDEN| L3
+    L1 -.-x|FORBIDDEN| L3
+
+    style L1 fill:#e1f5fe
+    style L2 fill:#fff3e0
+    style L3 fill:#e8f5e9
+```
 
 ## 3. The Monorepo Structure
 
@@ -48,15 +67,20 @@ schema-framework/                  # <- ONE SINGLE GIT REPO
 │       ├── src/
 │       │   ├── primitives/        #     Layer 1: PrimitiveComponents interface, context
 │       │   ├── engine/            #     Layer 2: Types, validators, renderers
-│       │   │   ├── types.ts       #       FieldSchema, GridColumnSchema, etc.
-│       │   │   ├── validators.ts  #       Zod schemas + validateFieldValue
+│       │   │   ├── types/         #       Individual type files (one-export-per-file)
+│       │   │   │   └── index.ts   #         Barrel re-export
+│       │   │   ├── validators/    #       Individual validator files (one-export-per-file)
+│       │   │   │   └── index.ts   #         Barrel re-export
 │       │   │   ├── context/       #       PrimitivesContext (shadcn injection)
+│       │   │   ├── helpers/       #       i18n helper, deepFreeze utility
 │       │   │   └── renderers/     #       SchemaForm, SchemaGrid, FieldRenderer
 │       │   └── index.ts           #     Public API exports
 │       └── package.json           #     Name: "@my-framework/core"
 │
-├── docs/                          #     Architecture docs and plans
-│   ├── ARCHITECTURE.md            #     This file
+├── docs/                          #     Architecture docs, plans, and status
+│   ├── decisions/                 #     ADRs and architectural decisions
+│   ├── implementation-status.md   #     Phase-by-phase implementation progress
+│   ├── context-map.md             #     Project-wide relationship graph
 │   └── plans/                     #     Implementation plans
 ├── pnpm-workspace.yaml            #     Links apps and packages
 ├── turbo.json                     #     Orchestrates builds
@@ -74,6 +98,26 @@ We replace the monolithic Ext JS "Store" with a modern, separated approach:
 | **Store (Selection)** | **Zustand** (Global Store) | Tracks UI state (e.g., "Which row is currently clicked?"). Shared across sibling components. |
 | **Store (Dirty State)** | **TanStack Form** (`useForm`) | Tracks if the user typed in a form field, handles validation, and knows exactly what changed. |
 | **Table State (Sort/Page)** | **TanStack Table** (`useReactTable`) | Manages grid sorting, column visibility, and row model state. |
+
+### State Management Data Flow
+
+```mermaid
+graph TD
+    Server["Server Functions<br/>(createServerFn)"]
+    Query["TanStack Query<br/>(useQuery)"]
+    Form["TanStack Form<br/>(useForm)"]
+    Table["TanStack Table<br/>(useReactTable)"]
+    Zustand["Zustand Store<br/>(Selection State)"]
+    Routes["Route Components"]
+
+    Server -->|schema JSON| Query
+    Server -->|business data| Query
+    Query -->|cached schemas| Routes
+    Query -->|cached data| Routes
+    Routes -->|form schema| Form
+    Routes -->|grid data| Table
+    Routes <-->|selection state| Zustand
+```
 
 ## 5. The "Shadcn Dependency" Rule
 
@@ -111,6 +155,22 @@ export function AppPrimitivesProvider({ children }) {
 
 This makes the framework agnostic to the end-user's specific shadcn theme or file structure.
 
+### Shadcn Injection Flow
+
+```mermaid
+graph LR
+    Showcase["Showcase App<br/>(Layer 3)"]
+    Shadcn["shadcn/ui Components<br/>(copy-pasted)"]
+    Provider["PrimitivesProvider"]
+    Context["PrimitivesContext<br/>(Layer 2)"]
+    Renderers["Engine Renderers<br/>(SchemaForm, SchemaGrid)"]
+
+    Shadcn -->|mapped to interface| Provider
+    Showcase -->|wraps app with| Provider
+    Provider -->|injects into| Context
+    Context -->|usePrimitives| Renderers
+```
+
 ## 6. Workflow & Lifecycle
 
 ### Local Development (Simultaneous)
@@ -129,103 +189,112 @@ This makes the framework agnostic to the end-user's specific shadcn theme or fil
 5. You run `pnpm add @my-framework/core`.
 6. You build your logistics app using the engine you built.
 
-## 7. Phase 1 Status: COMPLETE ✅
+For phase-by-phase implementation progress, see [`docs/implementation-status.md`](docs/implementation-status.md).
 
-All Phase 1 objectives have been implemented:
+### Workflow Diagrams
 
-1. **✅ Scaffold the Monorepo:** pnpm workspace, Turborepo, TanStack Start with file-based routing, shadcn/ui initialized in showcase.
-2. **✅ Define the Schema Types:** `FieldSchema`, `GridColumnSchema`, `FormSchema`, `GridSchema` in `types.ts`. Zod validators in `validators.ts`.
-3. **✅ Build Renderers:** `SchemaForm` (supports text, email, number, select, textarea, checkbox, date, password) and `SchemaGrid` with `@tanstack/react-table` sorting.
-4. **✅ Wire up the Showcase:** Routes use `useQuery` to fetch schemas from TanStack server functions. Zustand store manages grid row selection.
-5. **✅ Iterate:** Validation via TanStack Form field-level validators, grid sorting via TanStack Table, selection state via Zustand.
+```mermaid
+sequenceDiagram
+    participant Dev as Developer
+    participant Turbo as Turborepo
+    participant Core as packages/core
+    participant Show as apps/showcase
 
-### Implemented Field Types
+    Note over Dev,Show: Local Development (Simultaneous)
+    Dev->>Turbo: pnpm dev
+    Turbo->>Show: Symlink to core source
+    Dev->>Core: Edit renderer
+    Core->>Show: Hot-reload (zero rebuild)
+```
 
-| Type | Renderer | Status |
-| :--- | :--- | :--- |
-| `text` | `<Input>` | ✅ |
-| `email` | `<Input type="email">` | ✅ |
-| `number` | `<Input type="number">` | ✅ |
-| `password` | `<Input type="password">` | ✅ |
-| `select` | `<Select>` + `SelectTrigger/Content/Item` | ✅ |
-| `textarea` | `<Textarea>` | ✅ |
-| `checkbox` | `<Checkbox>` | ✅ |
-| `date` | `<Input type="date">` | ✅ |
-| `file` | `<FileUpload>` (dropzone primitive) | ✅ Phase 2 |
-| `address` | `<AddressInput>` (multi-line address) | ✅ Phase 3 |
+```mermaid
+sequenceDiagram
+    participant Dev as Developer
+    participant CI as GitHub Actions
+    participant NPM as npm Registry
+    participant App as New Logistics App
 
-### Grid Column Types
+    Note over Dev,App: Production Usage (Separation)
+    Dev->>CI: Push to main
+    CI->>NPM: Publish @my-framework/core
+    App->>NPM: pnpm add @my-framework/core
+    App->>App: Build with engine
+```
 
-| Type | Renderer | Status |
-| :--- | :--- | :--- |
-| `string` | Plain text cell | ✅ Phase 1 |
-| `number` | Numeric cell | ✅ Phase 1 |
-| `boolean` | Checkmark / dash | ✅ Phase 1 |
-| `date` | Date string cell | ✅ Phase 2 |
-| `status` | `<StatusBadge>` with configurable variants | ✅ Phase 2 |
+## 7. Immutability Strategy
 
-## 8. Phase 2 Status: COMPLETE ✅
+All schema types enforce immutability at two levels: compile-time via `ReadonlyDeep<T>` on array/object properties, and runtime via `deepFreeze<T>()`.
 
-All Phase 2 objectives have been implemented:
+### Compile-Time: `ReadonlyDeep<T>`
 
-### Sub-Phase 2A: Advanced Grid Features ✅
-- **Pagination:** `GridPagination` component with configurable page sizes, page navigation, and total count display.
-- **Filtering:** Global toolbar search filter via `GridToolbar`. Column-level filters via TanStack Table `getFilteredRowModel`.
-- **Column Resizing:** Interactive column width dragging via TanStack Table `getFilteredRowModel` with CSS resize handles.
-- **Column Visibility:** Dropdown menu to toggle column visibility on/off.
-- **Style Props:** `striped`, `bordered`, `hoverable` consumed by `SchemaGrid` for visual variants.
-- **Empty State:** `emptyMessage` displayed when data array is empty.
+Schema type interfaces use `readonly` on all properties. Arrays and nested objects use `ReadonlyDeep<T>` to recursively enforce immutability:
 
-### Sub-Phase 2B: Bespoke Layer 1 Primitives ✅
-- **`StatusBadge`:** Renders status values as colored badges with configurable variant mappings.
-- **`AddressInput`:** A multi-line address input primitive (structured address fields).
-- **`FileUpload`:** A drag-and-drop file upload zone with accept/maxSize/multiple constraints.
-- **Status column rendering:** `SchemaGrid` auto-renders `type: 'status'` columns using `StatusBadge`.
+```typescript
+// Applied at definition site for array/nested object properties
+interface FormSchema {
+  readonly fields: ReadonlyArray<ReadonlyDeep<FieldSchema>>
+  readonly layout?: 'stack' | 'grid'
+}
+```
 
-### Sub-Phase 2C: Schema-Driven Layout Rules ✅
-- **`FieldCondition` interface:** Supports `equals`, `notEquals`, `in` operators for conditional logic.
-- **`visibleWhen` on `FieldSchema`:** Fields can be conditionally shown/hidden based on other field values.
-- **`dependsOn` on `FieldSchema`:** Declares field dependencies for the engine.
-- **`colSpan` on `FieldSchema`:** Fields can span multiple grid columns in `layout: 'grid'` forms.
-- **`evaluateCondition` function:** Evaluates `FieldCondition` against current form values.
-- **Conditional rendering in `SchemaForm`:** Uses `form.Subscribe` to reactively show/hide fields.
+### Runtime: `deepFreeze<T>()`
 
-### Sub-Phase 2D: File Upload Field Type ✅
-- **`FileUploadConfig` interface:** `accept`, `maxSize`, `multiple` properties on `FieldSchema.fileConfig`.
-- **`FileUpload` primitive:** Drag-and-drop zone with file list display and remove functionality.
-- **Field renderer `case 'file'`:** Renders `FileUpload` with schema-driven constraints.
+The `deepFreeze()` utility recursively calls `Object.freeze()` on all objects and arrays. All mock schema constants in the showcase app are wrapped with `deepFreeze()`:
 
-### Sub-Phase 2E: Showcase Polish ✅
-- **New routes:** `demo-orders` (orders grid with status badges), `demo-registration` (conditional fields + file upload), `demo-support-ticket` (conditional priority fields + multi-file upload).
-- **New shadcn components:** `badge`, `dropdown-menu`, `dialog`, `textarea`, `checkbox` added to showcase.
-- **Updated navigation:** All new routes linked in `__root.tsx` nav bar.
-- **Mock data:** Order grid schema/data, registration form schema, support ticket form schema with conditional visibility rules.
+```typescript
+import { deepFreeze } from '@my-framework/core'
 
-## 9. Phase 3 Status: COMPLETE ✅
+export const contactFormSchema = deepFreeze<FormSchema>({ ... })
+```
 
-### Phase 3A: Architectural Fixes ✅
-- **FileUpload via PrimitivesContext:** Removed direct import from field-renderer; now injected like all other primitives.
-- **Dead code removal:** Deleted unused `DataTable` primitive that violated Layer 1 by importing `@tanstack/react-table`.
-- **Global search in GridToolbar:** Added search input with debounced filtering across all columns.
-- **onCancel moved to SchemaFormProps:** `FormSchema` is now fully JSON-serializable; callbacks live on component props.
-- **Bordered grid style:** `bordered` prop on `GridSchema` now applies border utility classes to table cells.
-- **Utility type exports:** `ValidationRule`, `FieldCondition`, `SelectOption`, `FileUploadConfig`, etc. exported from engine index.
-- **AddressInput wired to engine:** New `address` field type renders via `AddressInput` from `PrimitivesContext`.
+### Branded Types
 
-### Phase 3B: Production Features ✅
-- **Accessibility (ARIA):** `FieldRenderer` adds `aria-required`, `aria-invalid`, `aria-describedby` to all field types; error messages use `role="alert"`.
-- **Theme provider:** `ThemeProvider` context accepts `ThemeConfig` with optional CSS class overrides for grid, form, and pagination elements.
-- **Internationalization:** `I18nConfig` on `FormSchema`/`GridSchema` with `useI18n()` hook and `t()` translation function.
-- **Server-side pagination:** `ServerPaginationConfig` on `GridSchema`, `onPageChange` callback on `SchemaGridProps`, toolbar displays server page info.
-- **CI/CD pipelines:** GitHub Actions workflows for CI (typecheck + build + lint on push/PR) and npm publish (on release).
+`FieldId` and `DataKey` are branded string types that prevent accidental string interchange:
 
-### Phase 4 Considerations (Not Yet Implemented)
+```typescript
+type FieldId = Brand<string, 'FieldId'>
+type DataKey = Brand<string, 'DataKey'>
+```
 
-- [ ] Virtualized scrolling for large datasets
-- [ ] Date picker primitive (calendar-based, not native input)
-- [ ] Multi-select / tag input field type
-- [ ] Form wizard / multi-step layout
-- [ ] Column reordering via drag-and-drop
+### Typed Data Interfaces
+
+Showcase mock data uses typed interfaces (`UserRow`, `OrderRow`) instead of `Record<string, unknown>[]`. All properties are `readonly`.
+
+### String Literal Unions
+
+`ConditionOperator` and `ValidationType` replace bare `string` in validators with explicit string literal unions:
+
+```typescript
+type ConditionOperator = 'equals' | 'notEquals' | 'in' | 'notIn' | 'truthy' | 'falsy'
+type ValidationType = 'required' | 'email' | 'minLength' | 'maxLength' | 'pattern' | 'min' | 'max' | 'custom'
+```
+
+### Immutability Layers
+
+```mermaid
+graph TD
+    subgraph "Compile-Time"
+        CT1["readonly properties"]
+        CT2["ReadonlyDeep<T>"]
+        CT3["Branded types<br/>(FieldId, DataKey)"]
+        CT4["String literal unions"]
+    end
+
+    subgraph "Runtime"
+        RT1["deepFreeze<T>()"]
+        RT2["Typed interfaces<br/>(UserRow, OrderRow)"]
+    end
+
+    CT1 --> CT2
+    CT2 --> CT3
+    RT1 --> RT2
+```
+
+## 8. Decision Records
+
+Architectural decisions are tracked in `docs/decisions/` using the ADR (Architectural Decision Record) format. Each decision includes Status, Context, Decision, and Consequences sections.
+
+See [`docs/decisions/README.md`](docs/decisions/README.md) for the full index and format specification.
 
 ---
 

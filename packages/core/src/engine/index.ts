@@ -1,4 +1,6 @@
 // Layer 2: Engine — Schema types, validators, context, and renderers
+
+// Types (one-export-per-file via barrel)
 export type {
   FieldType,
   FieldSchema,
@@ -14,31 +16,51 @@ export type {
   FormSubmitHandler,
   FieldCondition,
   ValidationRule,
+  RuntimeValidationRule,
   FileUploadConfig,
   PaginationConfig,
   ColumnFilterConfig,
   StatusConfig,
-  I18nConfig,
   ServerPaginationConfig,
   ThemeConfig,
+  I18nConfig,
   CellValueRenderer,
+  Brand,
+  FieldId,
+  DataKey,
+  ReadonlyDeep,
+  DeepFrozen,
+  ConditionOperator,
+  ValidationType,
 } from './types'
 
+// Validators (one-export-per-file via barrel)
 export {
-  validateFieldValue,
+  fieldSchemaValidator,
+  validateFieldSchema,
+  formSchemaValidator,
   validateFormSchema,
+  gridSchemaValidator,
+  gridColumnSchemaValidator,
   validateGridSchema,
+  validateFieldValue,
   evaluateCondition,
 } from './validators'
 
+export type { ValidationResult } from './validators'
+
+// Context
 export { PrimitivesProvider, usePrimitives } from './context/primitives-context'
 
-export {
-  FieldRenderer,
-  SchemaForm,
-  SchemaGrid,
-  ThemeProvider,
-  useTheme,
-} from './renderers'
-
+// Helpers
 export { resolveMessage } from './helpers/i18n'
+export { deepFreeze, asDataKey } from './helpers'
+
+// Renderers
+export { SchemaForm } from './renderers/schema-form'
+export { SchemaGrid } from './renderers/schema-grid'
+export { FieldRenderer } from './renderers/field-renderer'
+export { GridPagination } from './renderers/grid-pagination'
+export { GridColumnHeader } from './renderers/grid-column-header'
+export { GridToolbar } from './renderers/grid-toolbar'
+export { ThemeProvider, useTheme } from './renderers/theme-provider'

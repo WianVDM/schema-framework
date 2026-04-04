@@ -8,14 +8,11 @@ import {
 } from '../data/mock-schemas'
 import type { GridSchema, FormSchema } from '@my-framework/core'
 
-// NOTE: Server functions return serializable JSON. FormSchema is fully
-// JSON-serializable (callbacks live on SchemaFormProps, not FormSchema).
-// GridColumnSchema.render is a client-side concern handled by the grid renderer.
-
-type SerializableFormSchema = FormSchema
+// NOTE: Server functions return serializable JSON. GridColumnSchema.render
+// is a client-side concern handled by the grid renderer.
 
 export const getContactFormSchema = createServerFn({ method: 'GET' }).handler(
-  async (): Promise<SerializableFormSchema> => {
+  async (): Promise<FormSchema> => {
     return JSON.parse(JSON.stringify(contactFormSchema))
   }
 )
@@ -33,13 +30,13 @@ export const getOrderGridSchema = createServerFn({ method: 'GET' }).handler(
 )
 
 export const getRegistrationFormSchema = createServerFn({ method: 'GET' }).handler(
-  async (): Promise<SerializableFormSchema> => {
+  async (): Promise<FormSchema> => {
     return JSON.parse(JSON.stringify(registrationFormSchema))
   }
 )
 
 export const getSupportTicketFormSchema = createServerFn({ method: 'GET' }).handler(
-  async (): Promise<SerializableFormSchema> => {
+  async (): Promise<FormSchema> => {
     return JSON.parse(JSON.stringify(supportTicketFormSchema))
   }
 )

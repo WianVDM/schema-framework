@@ -131,7 +131,7 @@ function isFieldVisible(
 }
 
 function buildDefaults(
-  fields: FieldSchema[],
+  fields: ReadonlyArray<FieldSchema>,
   initialValues?: Record<string, unknown>
 ): Record<string, unknown> {
   const defaults: Record<string, unknown> = {}

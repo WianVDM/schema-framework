@@ -1,6 +1,9 @@
 import type { FormSchema, GridSchema } from '@my-framework/core'
+import { deepFreeze, asDataKey } from '@my-framework/core'
+import type { UserRow } from './user-row'
+import type { OrderRow } from './order-row'
 
-export const contactFormSchema: FormSchema = {
+export const contactFormSchema = deepFreeze<FormSchema>({
   title: 'Contact Us',
   description: 'Fill in the form below to get in touch.',
   fields: [
@@ -59,9 +62,9 @@ export const contactFormSchema: FormSchema = {
   ],
   submitLabel: 'Send Message',
   layout: 'grid',
-}
+})
 
-export const userGridSchema: GridSchema = {
+export const userGridSchema = deepFreeze<GridSchema>({
   title: 'Users',
   description: 'Manage user accounts and roles.',
   columns: [
@@ -84,16 +87,16 @@ export const userGridSchema: GridSchema = {
     },
     { key: 'active', label: 'Active', type: 'boolean', width: '80px', align: 'center' },
   ],
-  dataKey: 'id',
+  dataKey: asDataKey('id'),
   striped: true,
   hoverable: true,
   emptyMessage: 'No users found.',
   pagination: { pageSize: 5, pageSizeOptions: [5, 10, 25], showPageSizeSelector: true },
   resizable: true,
   columnVisibility: {},
-}
+})
 
-export const mockUsers: Record<string, unknown>[] = [
+export const mockUsers = deepFreeze<readonly UserRow[]>([
   { id: 1, name: 'Alice Johnson', email: 'alice@example.com', role: 'admin', active: true },
   { id: 2, name: 'Bob Smith', email: 'bob@example.com', role: 'editor', active: true },
   { id: 3, name: 'Charlie Brown', email: 'charlie@example.com', role: 'viewer', active: false },
@@ -106,9 +109,9 @@ export const mockUsers: Record<string, unknown>[] = [
   { id: 10, name: 'Jack Wilson', email: 'jack@example.com', role: 'editor', active: true },
   { id: 11, name: 'Karen Taylor', email: 'karen@example.com', role: 'viewer', active: false },
   { id: 12, name: 'Leo Martin', email: 'leo@example.com', role: 'admin', active: true },
-]
+])
 
-export const orderGridSchema: GridSchema = {
+export const orderGridSchema = deepFreeze<GridSchema>({
   title: 'Orders',
   description: 'Track and manage customer orders.',
   columns: [
@@ -133,15 +136,15 @@ export const orderGridSchema: GridSchema = {
       },
     },
   ],
-  dataKey: 'orderId',
+  dataKey: asDataKey('orderId'),
   striped: true,
   hoverable: true,
   bordered: false,
   pagination: true,
   emptyMessage: 'No orders found.',
-}
+})
 
-export const mockOrders: Record<string, unknown>[] = [
+export const mockOrders = deepFreeze<readonly OrderRow[]>([
   { orderId: 1001, customer: 'Alice Johnson', date: '2026-03-15', total: 249.99, status: 'delivered' },
   { orderId: 1002, customer: 'Bob Smith', date: '2026-03-18', total: 89.50, status: 'shipped' },
   { orderId: 1003, customer: 'Charlie Brown', date: '2026-03-20', total: 1249.00, status: 'processing' },
@@ -150,9 +153,9 @@ export const mockOrders: Record<string, unknown>[] = [
   { orderId: 1006, customer: 'Frank Miller', date: '2026-03-25', total: 175.00, status: 'shipped' },
   { orderId: 1007, customer: 'Grace Lee', date: '2026-03-28', total: 320.50, status: 'delivered' },
   { orderId: 1008, customer: 'Henry Davis', date: '2026-04-01', total: 67.00, status: 'pending' },
-]
+])
 
-export const registrationFormSchema: FormSchema = {
+export const registrationFormSchema = deepFreeze<FormSchema>({
   title: 'Registration Form',
   description: 'Advanced form with conditional fields and file upload.',
   fields: [
@@ -230,9 +233,9 @@ export const registrationFormSchema: FormSchema = {
   submitLabel: 'Register',
   cancelLabel: 'Cancel',
   layout: 'grid',
-}
+})
 
-export const supportTicketFormSchema: FormSchema = {
+export const supportTicketFormSchema = deepFreeze<FormSchema>({
   title: 'Support Ticket',
   description: 'Submit a support request with conditional priority details.',
   fields: [
@@ -307,4 +310,4 @@ export const supportTicketFormSchema: FormSchema = {
   submitLabel: 'Submit Ticket',
   cancelLabel: 'Cancel',
   layout: 'grid',
-}
+})
