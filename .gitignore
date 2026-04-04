@@ -24,5 +24,6 @@ Thumbs.db
 # AI-specific rules, hooks, and workflows
 .clinerules/
 
-# Docs — ignored by default, allowed per-case basis
-docs/*
+# Docs — implementation plans are ephemeral working documents, not tracked
+docs/plans/
+docs/*.tmp
