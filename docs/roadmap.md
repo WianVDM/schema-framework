@@ -155,7 +155,7 @@ This is the largest single milestone. It may be broken into sub-versions (0.3.0,
   - Axis labels, legends, tooltips
   - Responsive sizing
   - Theme integration (matches app theme)
-  - Library: Recharts (React-native, composable, widely used)
+  - Library: Recharts (React, composable, widely used)
 - **SchemaTreeGrid** — hybrid tree + grid:
   - Expandable rows with child data
   - Hierarchical column structure
