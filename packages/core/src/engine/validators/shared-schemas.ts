@@ -69,8 +69,8 @@ export const statusConfigSchema = z.object({
 })
 
 export const serverPaginationConfigSchema = z.object({
-  totalRecords: z.number(),
-  currentPage: z.number(),
+  totalRecords: z.number().int().min(0),
+  currentPage: z.number().int().min(0),
 })
 
 export const i18nConfigSchema = z.object({

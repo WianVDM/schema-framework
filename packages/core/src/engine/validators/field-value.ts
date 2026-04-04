@@ -21,7 +21,7 @@ function applyRule(
 ): string | null {
   switch (rule.type) {
     case 'required':
-      if (field.required && isEmpty(value)) {
+      if (isEmpty(value)) {
         return rule.message
       }
       break
@@ -47,9 +47,13 @@ function applyRule(
       break
     case 'pattern': {
       if (typeof value === 'string' && rule.value) {
-        const regex = new RegExp(rule.value as string)
-        if (!regex.test(value)) {
-          return rule.message
+        try {
+          const regex = new RegExp(rule.value as string)
+          if (!regex.test(value)) {
+            return rule.message
+          }
+        } catch {
+          return rule.message || 'Invalid pattern rule'
         }
       }
       break
@@ -59,8 +63,16 @@ function applyRule(
         return rule.message
       }
       break
-    case 'custom':
-      return rule.message
+    case 'custom': {
+      if (typeof rule.validate === 'function') {
+        try {
+          return rule.validate(value)
+        } catch {
+          return rule.message || 'Validation failed'
+        }
+      }
+      return null
+    }
   }
 
   return null
