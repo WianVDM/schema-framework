@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { SchemaForm } from '@my-framework/core'
 import type { FormSchema } from '@my-framework/core'
-import { getSupportTicketFormSchema } from '../server/schemas'
+import { getSupportTicketFormSchema } from '../server/get-support-ticket-form-schema'
 
 export const Route = createFileRoute('/demo-support-ticket')({
   component: DemoSupportTicketRoute,

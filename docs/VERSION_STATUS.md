@@ -1,29 +1,29 @@
 # Version Status
 
-## Current Version: 0.0.1
-## Target Version: 0.1.0
-## Active Milestone: Tooling & Workflow Foundation
+## Current Version: 0.1.0
+## Target Version: 0.2.0
+## Active Milestone: Enhanced Grid & Form Features
 ## Milestone Status: NOT STARTED
 
-## Milestone Checklist (v0.1.0)
-- [ ] Install and configure `@changesets/cli`
-- [ ] Add changeset workflow scripts to root `package.json`
-- [ ] Create `docs/roadmap.md`
-- [ ] Create `docs/VERSION_STATUS.md`
-- [ ] Populate `.clinerules/workspace-versioning.md`
-- [ ] Update `.clinerules/workspace-workflows.md` with Workflow G & H
-- [ ] Update `.clinerules/hooks/PreToolUse.ps1` with branch + changeset checks
-- [ ] Create `.github/pull_request_template.md`
-- [ ] Create `.github/workflows/release.yml`
-- [ ] Add ADR-003 for SemVer/Changesets decision
-- [ ] Fix file structure violations (multi-export files in showcase)
-- [ ] Bump `packages/core` to `0.1.0`
-- [ ] Bump `apps/showcase` to `0.1.0`
-- [ ] Update `ARCHITECTURE.md` with Section 9
-- [ ] Verify `pnpm build` passes
+## Milestone Checklist (v0.1.0) — COMPLETE ✅
+- [x] Install and configure `@changesets/cli`
+- [x] Add changeset workflow scripts to root `package.json`
+- [x] Create `docs/roadmap.md`
+- [x] Create `docs/VERSION_STATUS.md`
+- [x] Populate `.clinerules/workspace-versioning.md`
+- [x] Update `.clinerules/workspace-workflows.md` with Workflow G & H
+- [x] Update `.clinerules/hooks/PreToolUse.ps1` with branch + changeset checks
+- [x] Create `.github/pull_request_template.md`
+- [x] Create `.github/workflows/release.yml`
+- [x] Add ADR-003 for SemVer/Changesets decision
+- [x] Fix file structure violations (multi-export files in showcase)
+- [x] Bump `packages/core` to `0.1.0`
+- [x] Bump `apps/showcase` to `0.1.0`
+- [x] Update `ARCHITECTURE.md` with Section 9
+- [x] Verify `pnpm build` passes
 
 ## Completed Milestones
-(none yet)
+- **0.1.0 — Tooling & Workflow Foundation** (completed 2026-04-05)
 
 ## Upcoming Milestones
 - 0.2.0 — Enhanced Grid & Form Features
