@@ -74,7 +74,7 @@ export const serverPaginationConfigSchema = z.object({
 })
 
 export const i18nConfigSchema = z.object({
-  locale: z.string(),
+  locale: z.string().regex(/^[a-z]{2}(-[A-Z]{2})?$/, 'Locale must be in format "en" or "en-US"'),
   messages: z.record(z.string(), z.string()).optional(),
 })
 

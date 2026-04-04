@@ -19,7 +19,10 @@ export function evaluateCondition(
       return Boolean(fieldValue)
     case 'falsy':
       return !fieldValue
-    default:
-      return true
+    default: {
+      const _exhaustive: never = condition.operator
+      console.warn(`[evaluateCondition] Unhandled operator: ${String(_exhaustive)}`)
+      return false
+    }
   }
 }

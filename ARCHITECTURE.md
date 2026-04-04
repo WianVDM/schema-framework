@@ -72,12 +72,13 @@ schema-framework/                  # <- ONE SINGLE GIT REPO
 │       │   │   ├── validators/    #       Individual validator files (one-export-per-file)
 │       │   │   │   └── index.ts   #         Barrel re-export
 │       │   │   ├── context/       #       PrimitivesContext (shadcn injection)
-│       │   │   ├── helpers/       #       i18n helper
+│       │   │   ├── helpers/       #       i18n helper, deepFreeze utility
 │       │   │   └── renderers/     #       SchemaForm, SchemaGrid, FieldRenderer
 │       │   └── index.ts           #     Public API exports
 │       └── package.json           #     Name: "@my-framework/core"
 │
 ├── docs/                          #     Architecture docs, plans, and status
+│   ├── decisions/                 #     ADRs and architectural decisions
 │   ├── implementation-status.md   #     Phase-by-phase implementation progress
 │   ├── context-map.md             #     Project-wide relationship graph
 │   └── plans/                     #     Implementation plans
@@ -264,8 +265,8 @@ Showcase mock data uses typed interfaces (`UserRow`, `OrderRow`) instead of `Rec
 `ConditionOperator` and `ValidationType` replace bare `string` in validators with explicit string literal unions:
 
 ```typescript
-type ConditionOperator = 'equals' | 'notEquals' | 'in' | 'notIn' | 'contains'
-type ValidationType = 'required' | 'email' | 'minLength' | 'maxLength' | 'pattern' | 'min' | 'max'
+type ConditionOperator = 'equals' | 'notEquals' | 'in' | 'notIn' | 'truthy' | 'falsy'
+type ValidationType = 'required' | 'email' | 'minLength' | 'maxLength' | 'pattern' | 'min' | 'max' | 'custom'
 ```
 
 ### Immutability Layers

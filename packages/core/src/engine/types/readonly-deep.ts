@@ -10,6 +10,10 @@ export type ReadonlyDeep<T> = T extends Function
 
 export type DeepFrozen<T> = T extends Function
   ? T
-  : T extends object
-    ? { readonly [K in keyof T]: DeepFrozen<T[K]> }
-    : T
+  : T extends Map<infer K, infer V>
+    ? ReadonlyMap<DeepFrozen<K>, DeepFrozen<V>>
+    : T extends Set<infer U>
+      ? ReadonlySet<DeepFrozen<U>>
+      : T extends object
+        ? { readonly [K in keyof T]: DeepFrozen<T[K]> }
+        : T

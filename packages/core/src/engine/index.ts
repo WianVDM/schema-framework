@@ -16,6 +16,7 @@ export type {
   FormSubmitHandler,
   FieldCondition,
   ValidationRule,
+  RuntimeValidationRule,
   FileUploadConfig,
   PaginationConfig,
   ColumnFilterConfig,
@@ -59,4 +60,4 @@ export { deepFreeze } from './helpers'
 export { SchemaForm } from './renderers/schema-form'
 export { SchemaGrid } from './renderers/schema-grid'
 export { FieldRenderer } from './renderers/field-renderer'
-export { ThemeProvider } from './renderers/theme-provider'
+export { ThemeProvider, useTheme } from './renderers/theme-provider'

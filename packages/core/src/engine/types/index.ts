@@ -1,6 +1,7 @@
 export type { FieldType } from './field-type'
 export type { SelectOption } from './select-option'
 export type { ValidationRule } from './validation-rule'
+export type { RuntimeValidationRule } from './runtime-validation-rule'
 export type { FieldCondition } from './field-condition'
 export type { FileUploadConfig } from './file-upload-config'
 export type { FieldSchema } from './field-schema'

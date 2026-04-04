@@ -26,13 +26,13 @@ graph TD
     helpers["helpers/<br/>(i18n, deepFreeze)"]
     renderers["renderers/<br/>(SchemaForm, SchemaGrid, FieldRenderer)"]
 
-    types -->|uses-type| validators
-    types -->|uses-type| context
-    types -->|uses-type| helpers
-    types -->|uses-type| renderers
-    validators -->|validates| renderers
-    context -->|provides primitives| renderers
-    helpers -->|consumes| renderers
+    validators -->|uses-type| types
+    context -->|uses-type| types
+    helpers -->|uses-type| types
+    renderers -->|uses-type| types
+    renderers -->|validates| validators
+    renderers -->|provides primitives| context
+    renderers -->|consumes| helpers
 ```
 
 ## Layer 3: Composition (`apps/showcase/`)

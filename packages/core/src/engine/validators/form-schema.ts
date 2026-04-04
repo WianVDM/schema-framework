@@ -12,7 +12,7 @@ export const formSchemaValidator = z.object({
   submitLabel: z.string().optional(),
   cancelLabel: z.string().optional(),
   layout: z.enum(['stack', 'grid']).optional(),
-})
+}).strict()
 
 export function validateFormSchema(data: unknown): ValidationResult {
   const result = formSchemaValidator.safeParse(data)
@@ -22,7 +22,9 @@ export function validateFormSchema(data: unknown): ValidationResult {
   return {
     success: false,
     errors: result.error.issues.map(
-      (issue: ZodIssue) => `${issue.path.join('.')}: ${issue.message}`
+      (issue: ZodIssue) => issue.path.length > 0
+        ? `${issue.path.join('.')}: ${issue.message}`
+        : issue.message
     ),
   }
 }

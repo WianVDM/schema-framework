@@ -1,4 +1,4 @@
-import type { ValidationRule, FieldSchema } from '../types'
+import type { RuntimeValidationRule, FieldSchema } from '../types'
 
 export function validateFieldValue(
   value: unknown,
@@ -6,9 +6,9 @@ export function validateFieldValue(
 ): string | null {
   if (!field.validation) return null
 
-  for (const rule of field.validation as readonly ValidationRule[]) {
+  for (const rule of field.validation as readonly RuntimeValidationRule[]) {
     const error = applyRule(value, rule, field)
-    if (error) return error
+    if (error != null) return error
   }
 
   return null
@@ -16,7 +16,7 @@ export function validateFieldValue(
 
 function applyRule(
   value: unknown,
-  rule: Readonly<ValidationRule>,
+  rule: Readonly<RuntimeValidationRule>,
   field: Readonly<FieldSchema>
 ): string | null {
   switch (rule.type) {

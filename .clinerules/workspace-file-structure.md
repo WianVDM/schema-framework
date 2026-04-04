@@ -98,10 +98,10 @@ Every directory containing 2+ source files MUST have a `.context.md` file in the
 | file-name.ts | ExportName | type/instance/function/component | Brief purpose |
 
 ## Internal Relationships
-- `source-file.ts` <-- relationship-type --> `target-file.ts`
+- See Mermaid diagram in updated template below for relationship notation
 
 ## External Dependencies
-- `this-file.ts` --> imports from `../other-directory/file.ts`
+- `this-file.ts` imports from `../other-directory/file.ts`
 ```
 
 #### Relationship Types
@@ -121,7 +121,7 @@ Use these standardized tags when documenting relationships:
 
 A single file at `docs/context-map.md` provides the full project-wide relationship graph. It aggregates all per-directory maps into one view, organized by architectural layer.
 
-This file serves as the "bird's eye view" for understanding how layers and domains connect across the entire project. It is read at task start to give the AI model global context.
+This file serves as the "bird's-eye view" for understanding how layers and domains connect across the entire project. It is read at task start to give the AI model global context.
 
 ### When to Update Context Maps
 
@@ -197,7 +197,7 @@ graph TD
 ```
 
 ## External Dependencies
-- `this-file.ts` --> imports from `../other-directory/file.ts`
+- `this-file.ts` imports from `../other-directory/file.ts`
 ```
 
 ## Enforcement

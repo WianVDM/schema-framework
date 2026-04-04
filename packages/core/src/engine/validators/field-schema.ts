@@ -26,7 +26,7 @@ export const fieldSchemaValidator = z.object({
   visibleWhen: fieldConditionSchema.optional(),
   dependsOn: z.array(z.string()).optional(),
   fileConfig: fileUploadConfigSchema.optional(),
-})
+}).strict()
 
 export function validateFieldSchema(data: unknown): ValidationResult {
   const result = fieldSchemaValidator.safeParse(data)

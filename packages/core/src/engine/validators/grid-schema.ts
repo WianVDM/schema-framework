@@ -23,7 +23,7 @@ export const gridColumnSchemaValidator = z.object({
   visible: z.boolean().optional(),
   filter: columnFilterConfigSchema.optional(),
   statusConfig: statusConfigSchema.optional(),
-})
+}).strict()
 
 export const gridSchemaValidator = z.object({
   title: z.string().optional(),
@@ -44,7 +44,7 @@ export const gridSchemaValidator = z.object({
   columnVisibility: z.record(z.string(), z.boolean()).optional(),
   serverPagination: serverPaginationConfigSchema.optional(),
   i18n: i18nConfigSchema.optional(),
-})
+}).strict()
 
 export function validateGridSchema(data: unknown): ValidationResult {
   const result = gridSchemaValidator.safeParse(data)
@@ -54,7 +54,9 @@ export function validateGridSchema(data: unknown): ValidationResult {
   return {
     success: false,
     errors: result.error.issues.map(
-      (issue: ZodIssue) => `${issue.path.join('.')}: ${issue.message}`
+      (issue: ZodIssue) => issue.path.length > 0
+        ? `${issue.path.join('.')}: ${issue.message}`
+        : issue.message
     ),
   }
 }

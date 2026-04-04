@@ -1,4 +1,4 @@
-import type { FormSchema, GridSchema } from '@my-framework/core'
+import type { FormSchema, GridSchema, DataKey } from '@my-framework/core'
 import { deepFreeze } from '@my-framework/core'
 import type { UserRow } from './user-row'
 import type { OrderRow } from './order-row'
@@ -87,7 +87,7 @@ export const userGridSchema = deepFreeze<GridSchema>({
     },
     { key: 'active', label: 'Active', type: 'boolean', width: '80px', align: 'center' },
   ],
-  dataKey: 'id',
+  dataKey: 'id' as DataKey,
   striped: true,
   hoverable: true,
   emptyMessage: 'No users found.',
@@ -136,7 +136,7 @@ export const orderGridSchema = deepFreeze<GridSchema>({
       },
     },
   ],
-  dataKey: 'orderId',
+  dataKey: 'orderId' as DataKey,
   striped: true,
   hoverable: true,
   bordered: false,
