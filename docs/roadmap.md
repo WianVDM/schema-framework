@@ -452,8 +452,11 @@ NOTE: v0.5.0 and v0.6.0 could potentially run in parallel since they are largely
 
 ## Branching Convention
 
+### Branch Types
+
 | Branch Pattern | Purpose | Example |
 |----------------|---------|---------|
+| `v{VERSION}` | Long-running staging branch for a milestone | `v0.1.0`, `v0.2.0` |
 | `feature/*` | New feature development | `feature/v0.2.0-date-picker` |
 | `fix/*` | Bug fixes | `fix/grid-pagination-off-by-one` |
 | `docs/*` | Documentation changes | `docs/getting-started-guide` |
@@ -462,7 +465,61 @@ NOTE: v0.5.0 and v0.6.0 could potentially run in parallel since they are largely
 
 Branch names SHOULD include the target version for feature branches (e.g., `feature/v0.2.0-date-picker`).
 
-All branches merge to `main` via Pull Request. Direct commits to `main` are forbidden.
+### Staging Branch Flow
+
+Each milestone has a long-running staging branch (e.g., `v0.1.0`) that acts as the integration target for all feature branches during that milestone. The staging branch merges into `main` only when the milestone is complete.
+
+**Rules:**
+- Feature branches MUST be based on the current milestone's staging branch
+- Pull Requests from feature branches MUST target the staging branch as base
+- The staging branch MUST be kept up-to-date with `main` by merging `main` into it before creating new feature branches
+- The staging branch merges into `main` only when the milestone is complete (via a release PR)
+- Direct commits to `main` are forbidden
+
+```mermaid
+graph TD
+    Main["main<br/>(protected, clean)"]
+    V01["v0.1.0<br/>(staging)"]
+    V02["v0.2.0<br/>(staging)"]
+    F1["feature/v0.1.0-tooling"]
+    F2["feature/v0.1.0-changeset"]
+    F3["feature/v0.1.0-cleanup"]
+    F4["feature/v0.2.0-date-picker"]
+
+    Main -->|"milestone starts"| V01
+    Main -->|"milestone starts"| V02
+    V01 --> F1
+    V01 --> F2
+    V01 --> F3
+    F1 -->|"PR → v0.1.0"| V01
+    F2 -->|"PR → v0.1.0"| V01
+    F3 -->|"PR → v0.1.0"| V01
+    V01 -->|"milestone complete<br/>release PR"| Main
+    V02 --> F4
+    F4 -->|"PR → v0.2.0"| V02
+```
+
+### Typical Workflow
+
+```mermaid
+sequenceDiagram
+    participant Dev as Developer
+    participant Main as Main Branch
+    participant Staging as Staging Branch (v0.1.0)
+    participant Feature as Feature Branch
+    participant PR as Pull Request
+
+    Dev->>Main: git pull origin main
+    Dev->>Staging: git merge main (keep staging up-to-date)
+    Dev->>Feature: git checkout -b feature/v0.1.0-xyz v0.1.0
+    Dev->>Feature: Implement changes
+    Dev->>Feature: git add . && git commit
+    Dev->>Feature: git push -u origin feature/v0.1.0-xyz
+    Dev->>PR: gh pr create --base v0.1.0
+    PR->>Staging: Merge approved PR
+    Note over Staging: Repeat for each feature in milestone
+    Staging->>Main: Release PR when milestone complete
+```
 
 ---
 
@@ -474,15 +531,18 @@ sequenceDiagram
     participant Branch as Feature Branch
     participant PR as Pull Request
     participant CI as GitHub Actions
+    participant Staging as Staging Branch
     participant Main as Main Branch
 
-    Dev->>Branch: Create feature/v0.2.0-date-picker
+    Dev->>Branch: Create feature/v0.2.0-date-picker off v0.2.0
     Dev->>Branch: Implement DatePicker
     Dev->>Branch: Run `pnpm changeset`
     Note over Branch: Creates .changeset/spotty-lions-123.md
-    Dev->>PR: Open PR with code + changeset
+    Dev->>PR: Open PR targeting v0.2.0 (not main)
     CI->>PR: Run tests + typecheck + build
-    PR->>Main: Merge approved PR
+    PR->>Staging: Merge approved PR into v0.2.0
+    Note over Staging: Repeat for all features in milestone
+    Staging->>Main: Release PR when milestone complete
     CI->>Main: Changeset action runs
     CI->>Main: Bumps version, updates CHANGELOG
     CI->>Main: Publishes to npm (if release branch)
