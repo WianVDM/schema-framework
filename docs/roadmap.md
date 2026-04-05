@@ -545,4 +545,5 @@ sequenceDiagram
     Staging->>Main: Release PR when milestone complete
     CI->>Main: Changeset action runs
     CI->>Main: Bumps version, updates CHANGELOG
-    CI->>Main: Publishes to npm (if release branch)
+    CI->>Main: Publishes to npm (on successful main workflow run)
+```

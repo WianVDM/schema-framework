@@ -1,12 +1,13 @@
 import { createServerFn } from '@tanstack/react-start'
 import type { FormSchema } from '@my-framework/core'
+import { toSerializable } from '../lib/to-serializable'
 import { contactFormSchema } from '../data/contact-form-schema'
 
-// NOTE: Server functions return serializable JSON. GridColumnSchema.render
-// is a client-side concern handled by the grid renderer.
+// NOTE: Server functions return serializable JSON. Any presentation or rendering
+// of this form schema is handled client-side.
 
 export const getContactFormSchema = createServerFn({ method: 'GET' }).handler(
   async (): Promise<FormSchema> => {
-    return JSON.parse(JSON.stringify(contactFormSchema))
+    return toSerializable(contactFormSchema)
   }
 )

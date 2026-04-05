@@ -26,4 +26,4 @@ Thumbs.db
 
 # Docs — implementation plans are ephemeral working documents, not tracked
 docs/plans/
-docs/*.tmp
+docs/**/*.tmp

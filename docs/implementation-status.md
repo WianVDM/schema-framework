@@ -58,7 +58,7 @@ All Phase 2 objectives have been implemented:
 ### Sub-Phase 2A: Advanced Grid Features ✅
 - **Pagination:** `GridPagination` component with configurable page sizes, page navigation, and total count display.
 - **Filtering:** Global toolbar search filter via `GridToolbar`. Column-level filters via TanStack Table `getFilteredRowModel`.
-- **Column Resizing:** Interactive column width dragging via TanStack Table `getFilteredRowModel` with CSS resize handles.
+- **Column Resizing:** Interactive column width dragging via TanStack Table column sizing API and `header.getResizeHandler()` (as implemented in `grid-column-header.tsx`).
 - **Column Visibility:** Dropdown menu to toggle column visibility on/off.
 - **Style Props:** `striped`, `bordered`, `hoverable` consumed by `SchemaGrid` for visual variants.
 - **Empty State:** `emptyMessage` displayed when data array is empty.
@@ -104,7 +104,7 @@ All Phase 2 objectives have been implemented:
 - **Theme provider:** `ThemeProvider` context accepts `ThemeConfig` with optional CSS class overrides for grid, form, and pagination elements.
 - **Internationalization:** `I18nConfig` on `FormSchema`/`GridSchema` with `useI18n()` hook and `t()` translation function.
 - **Server-side pagination:** `ServerPaginationConfig` on `GridSchema`, `onPageChange` callback on `SchemaGridProps`, toolbar displays server page info.
-- **CI/CD pipelines:** GitHub Actions workflows for CI (typecheck + build + lint on push/PR) and npm publish (on release).
+- **CI/CD pipelines:** GitHub Actions workflows for CI (typecheck + build + lint on push/PR) and npm publish (on merge to main via changesets action).
 
 ## Phase 5 Status: COMPLETE ✅
 

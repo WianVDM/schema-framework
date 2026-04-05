@@ -321,15 +321,17 @@ sequenceDiagram
     participant Branch as Feature Branch
     participant PR as Pull Request
     participant CI as GitHub Actions
+    participant Staging as Staging Branch
     participant Main as Main Branch
 
-    Dev->>Branch: Create feature branch
+    Dev->>Branch: Create feature branch off staging
     Dev->>Branch: Implement changes
     Dev->>Branch: Run pnpm changeset
     Note over Branch: Creates .changeset/*.md
-    Dev->>PR: Open PR with code + changeset
+    Dev->>PR: Open PR targeting staging branch
     CI->>PR: Run build + typecheck
-    PR->>Main: Merge approved PR
+    PR->>Staging: Merge approved PR
+    Staging->>Main: Release PR when milestone complete
     CI->>Main: Changesets action bumps versions
     CI->>Main: Updates CHANGELOGs
 ```
@@ -338,12 +340,13 @@ sequenceDiagram
 
 | Branch Pattern | Purpose | Example |
 |----------------|---------|---------|
+| `v{VERSION}` | Long-running staging branch for a milestone | `v0.1.0`, `v0.2.0` |
 | `feature/*` | New feature development | `feature/v0.2.0-date-picker` |
 | `fix/*` | Bug fixes | `fix/grid-pagination-off-by-one` |
 | `docs/*` | Documentation changes | `docs/getting-started-guide` |
 | `release/*` | Release preparation | `release/v0.2.0` |
 
-All branches merge to `main` via Pull Request. Direct commits to `main` are forbidden.
+Feature/fix PRs target the appropriate version staging branch first. The staging branch merges into `main` via a release PR when the milestone is complete. Direct commits to `main` are forbidden.
 
 ### Roadmap
 
