@@ -296,6 +296,62 @@ Architectural decisions are tracked in `docs/decisions/` using the ADR (Architec
 
 See [`docs/decisions/README.md`](docs/decisions/README.md) for the full index and format specification.
 
+## 9. Version Strategy
+
+This project follows **Semantic Versioning (SemVer)** with **Changesets** for monorepo version management.
+
+### Version Phases
+
+| Phase | Range | API Stability |
+|-------|-------|---------------|
+| Development | `0.x.x` | Unstable. Breaking changes allowed in any version. |
+| Stable | `1.x.x+` | Strict SemVer. Breaking changes require MAJOR bump. |
+
+### Tooling
+
+- **Changesets** (`@changesets/cli`) — version bumping, CHANGELOG generation, npm publishing
+- **GitHub Actions** — automated CI (test + build) and release (version + publish) pipelines
+- **Branch Protection** — no direct pushes to `main`, all changes via PR
+
+### Workflow
+
+```mermaid
+sequenceDiagram
+    participant Dev as Developer
+    participant Branch as Feature Branch
+    participant PR as Pull Request
+    participant CI as GitHub Actions
+    participant Staging as Staging Branch
+    participant Main as Main Branch
+
+    Dev->>Branch: Create feature branch off staging
+    Dev->>Branch: Implement changes
+    Dev->>Branch: Run pnpm changeset
+    Note over Branch: Creates .changeset/*.md
+    Dev->>PR: Open PR targeting staging branch
+    CI->>PR: Run build + typecheck
+    PR->>Staging: Merge approved PR
+    Staging->>Main: Release PR when milestone complete
+    CI->>Main: Changesets action bumps versions
+    CI->>Main: Updates CHANGELOGs
+```
+
+### Branching Convention
+
+| Branch Pattern | Purpose | Example |
+|----------------|---------|---------|
+| `v{VERSION}` | Long-running staging branch for a milestone | `v0.1.0`, `v0.2.0` |
+| `feature/*` | New feature development | `feature/v0.2.0-date-picker` |
+| `fix/*` | Bug fixes | `fix/grid-pagination-off-by-one` |
+| `docs/*` | Documentation changes | `docs/getting-started-guide` |
+| `release/*` | Release preparation | `release/v0.2.0` |
+
+Feature/fix PRs target the appropriate version staging branch first. The staging branch merges into `main` via a release PR when the milestone is complete. Direct commits to `main` are forbidden.
+
+### Roadmap
+
+The full version roadmap is located at `docs/roadmap.md`. Current milestone status is tracked in `docs/VERSION_STATUS.md`.
+
 ---
 
 ## Appendix A: AI-README Template

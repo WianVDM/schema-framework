@@ -2,8 +2,8 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { SchemaGrid } from '@my-framework/core'
 import type { GridSchema } from '@my-framework/core'
-import { getUserGridSchema } from '../server/schemas'
-import { getUsers } from '../server/data'
+import { getUserGridSchema } from '../server/get-user-grid-schema'
+import { getUsers } from '../server/get-users'
 import { createSelectionStore } from '../stores/selection-store'
 
 export const Route = createFileRoute('/demo-grid')({

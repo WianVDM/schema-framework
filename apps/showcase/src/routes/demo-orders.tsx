@@ -2,8 +2,8 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { SchemaGrid } from '@my-framework/core'
 import type { GridSchema } from '@my-framework/core'
-import { getOrderGridSchema } from '../server/schemas'
-import { getOrders } from '../server/data'
+import { getOrderGridSchema } from '../server/get-order-grid-schema'
+import { getOrders } from '../server/get-orders'
 
 export const Route = createFileRoute('/demo-orders')({
   component: DemoOrdersRoute,
