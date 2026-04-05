@@ -275,7 +275,7 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
               ) : (
                 table.getRowModel().rows.map((row, rowIndex) => {
                   const { pageIndex, pageSize } = table.getState().pagination
-                  const globalIndex = pageIndex * pageSize + rowIndex + 2
+                  const globalIndex = pageIndex * pageSize + rowIndex
                   return renderRow(row, globalIndex)
                 })
               )}
