@@ -32,3 +32,6 @@ Files are numbered sequentially: `001-short-title.md`, `002-short-title.md`, etc
 |--------|-------|--------|
 | 001 | [Mermaid Diagram Standard](001-mermaid-diagram-standard.md) | Accepted |
 | 002 | [Bracket-Delimited Plan Sections](002-bracket-delimited-plan-sections.md) | Accepted |
+| 003 | [SemVer Changesets](003-semver-changesets.md) | Accepted |
+| 004 | [Version Branch Strategy (Staging Branches)](004-version-branch-strategy.md) | Superseded by ADR-005 |
+| 005 | [Versioned GitHub Flow](005-versioned-github-flow.md) | Accepted |
