@@ -42,13 +42,13 @@ See `docs/VERSION_STATUS.md` for the current target version and milestone progre
 - Updates to `.clinerules/workspace-workflows.md`
 
 **Exit Criteria:**
-- [ ] `pnpm changeset` works and generates changeset files
-- [ ] `pnpm changeset version` bumps package versions and updates CHANGELOGs
-- [ ] GitHub branch protection is configured on the remote repo
-- [ ] PR template exists and is used for all merges
-- [ ] All file structure violations from `.context.md` are resolved
-- [ ] Both packages are at version `0.1.0`
-- [ ] `pnpm build` passes with zero errors
+- [x] `pnpm changeset` works and generates changeset files
+- [x] `pnpm changeset version` bumps package versions and updates CHANGELOGs
+- [x] GitHub branch protection is configured on the remote repo
+- [x] PR template exists and is used for all merges
+- [x] All file structure violations from `.context.md` are resolved
+- [x] Both packages are at version `0.1.0`
+- [x] `pnpm build` passes with zero errors
 
 ---
 
