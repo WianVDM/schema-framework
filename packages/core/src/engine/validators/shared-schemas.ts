@@ -82,7 +82,8 @@ export const virtualScrollConfigSchema = z.object({
   enabled: z.literal(true),
   overscan: z.number().int().min(0).optional(),
   rowHeight: z.number().int().positive().optional(),
-})
+  containerHeight: z.number().int().positive().optional(),
+}).strict()
 
 export interface ValidationResult {
   success: boolean

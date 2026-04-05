@@ -123,13 +123,14 @@ All Phase 2 objectives have been implemented:
 ## Phase 4 Status: IN PROGRESS
 
 ### Phase 4A: Virtualized Scrolling ✅
-- **`VirtualScrollConfig` type:** New interface with `enabled`, `overscan`, and `rowHeight` properties in `engine/types/virtual-scroll-config.ts`
-- **Zod validator:** `virtualScrollConfigSchema` in `shared-schemas.ts` validates config shape
+- **`VirtualScrollConfig` type:** Interface with `enabled`, `overscan`, `rowHeight`, and `containerHeight` properties in `engine/types/virtual-scroll-config.ts`
+- **Zod validator:** `virtualScrollConfigSchema` in `shared-schemas.ts` validates config shape with `.strict()` to reject unknown properties
 - **GridSchema extension:** `virtualScroll` optional property accepts `VirtualScrollConfig | boolean`
 - **`@tanstack/react-virtual` integration:** `useVirtualizer` in `schema-grid.tsx` mounts only visible rows in DOM
-- **Mutual exclusion:** Virtual scroll automatically disables client-side pagination when active
+- **Configurable container height:** `containerHeight` on `VirtualScrollConfig` overrides the default 600px virtual scroll container
+- **Mutual exclusion:** Virtual scroll automatically disables client-side pagination when active; server pagination UI still renders when `serverPagination` is configured
 - **Padding-based layout:** Spacer `<tr>` elements for top/bottom padding avoid absolute positioning issues with table layout
-- **Showcase demo:** `/demo-virtual-grid` route with 10,000 mock rows, status badges, sorting, and filtering
+- **Showcase demo:** `/demo-virtual-grid` route with 10,000 mock rows, status badges, sorting, filtering, and immutable query cache settings
 
 ### Phase 4 Remaining (Not Yet Implemented)
 

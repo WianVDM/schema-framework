@@ -68,6 +68,7 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
   )
 
   const shouldPaginate = !isServerMode && !isVirtualScroll
+  const shouldShowServerPagination = !!schema.serverPagination
 
   // NOTE: TanStack Table requires mutable Record<string, unknown>[];
   // the data prop is typed as readonly unknown[] for caller immutability.
@@ -211,7 +212,7 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
         <div
           ref={scrollContainerRef}
           className={borderedClasses}
-          style={{ overflow: 'auto', height: `${VIRTUAL_CONTAINER_HEIGHT}px` }}
+          style={{ overflow: 'auto', height: `${virtualConfig?.containerHeight ?? VIRTUAL_CONTAINER_HEIGHT}px` }}
         >
           <Table role="grid" aria-label={schema.title ?? 'Data grid'} style={{ width: '100%' }}>
             <TableHeader>
@@ -283,7 +284,7 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
           </Table>
         </div>
       )}
-      {!isVirtualScroll && schema.pagination !== false && (
+      {schema.pagination !== false && (!isVirtualScroll || shouldShowServerPagination) && (
         <GridPagination
           table={table}
           pageSizeOptions={paginationConfig?.pageSizeOptions}

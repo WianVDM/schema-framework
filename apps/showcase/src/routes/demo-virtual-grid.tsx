@@ -13,11 +13,17 @@ function DemoVirtualGridRoute() {
   const { data: schema, isLoading: schemaLoading } = useQuery({
     queryKey: ['schema', 'virtual-grid'],
     queryFn: () => getVirtualGridSchema(),
+    staleTime: Number.POSITIVE_INFINITY,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   })
 
   const { data: rows, isLoading: dataLoading } = useQuery({
     queryKey: ['data', 'virtual'],
     queryFn: () => getVirtualData(),
+    staleTime: Number.POSITIVE_INFINITY,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   })
 
   if (schemaLoading || dataLoading) {
