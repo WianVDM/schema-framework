@@ -12,4 +12,3 @@ reviews:
   poem: false
   review_status: true
   collapse_walkthrough: true
-  auto_review_comment: true
