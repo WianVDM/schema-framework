@@ -1,0 +1,1 @@
+export type SerializableRecord = Record<string, string | number | boolean | null>
