@@ -2,6 +2,7 @@ import type { GridColumnSchema } from './grid-column-schema'
 import type { PaginationConfig } from './pagination-config'
 import type { ServerPaginationConfig } from './server-pagination-config'
 import type { I18nConfig } from './i18n-config'
+import type { VirtualScrollConfig } from './virtual-scroll-config'
 import type { DataKey } from './branded'
 
 export interface GridSchema {
@@ -19,4 +20,5 @@ export interface GridSchema {
   readonly resizable?: boolean
   readonly columnVisibility?: Readonly<Record<string, boolean>>
   readonly i18n?: I18nConfig
+  readonly virtualScroll?: VirtualScrollConfig | boolean
 }

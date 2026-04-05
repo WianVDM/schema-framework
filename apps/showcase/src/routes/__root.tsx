@@ -111,6 +111,13 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
           >
             Support Ticket
           </Link>
+          <Link
+            to="/demo-virtual-grid"
+            activeProps={{ className: 'font-bold underline' }}
+            className="text-sm hover:underline"
+          >
+            Virtual Grid
+          </Link>
         </nav>
         <main className="p-6">
           {children}
