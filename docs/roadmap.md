@@ -506,7 +506,7 @@ sequenceDiagram
     Dev->>Feature: git add . && git commit
     Dev->>Feature: git push -u origin feature/v0.2.0-date-picker
     Dev->>PR: gh pr create --base main
-    CI->>PR: Run build + typecheck
+    CI->>PR: Run typecheck + build + lint
     PR->>Main: Merge approved PR
     Note over Main: Repeat for each feature in milestone
     Dev->>Main: git tag v{VERSION} when milestone complete
@@ -529,7 +529,7 @@ sequenceDiagram
     Dev->>Branch: Run `pnpm changeset`
     Note over Branch: Creates .changeset/spotty-lions-123.md
     Dev->>PR: Open PR targeting main
-    CI->>PR: Run tests + typecheck + build
+    CI->>PR: Run typecheck + build + lint
     PR->>Main: Merge approved PR
     Note over Main: Repeat for all features in milestone
     Dev->>Main: Run pnpm changeset version

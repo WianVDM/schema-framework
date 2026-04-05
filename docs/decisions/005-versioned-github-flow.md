@@ -45,7 +45,7 @@ graph TD
 - Direct commits to `main` are forbidden
 - When a milestone is complete, tag `main` with `v{VERSION}` (e.g., `git tag v0.2.0`)
 - Only one milestone is active at a time (sequential milestones)
-- Branch naming convention is unchanged: `feature/v{VERSION}-{description}`, `fix/{description}`, `docs/{description}`
+- Branch naming convention is unchanged: `feature/v{VERSION}-{description}`, `fix/{description}`, `refactor/{description}`, `docs/{description}`
 
 ### Milestone Completion Flow
 
