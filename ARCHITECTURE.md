@@ -321,32 +321,30 @@ sequenceDiagram
     participant Branch as Feature Branch
     participant PR as Pull Request
     participant CI as GitHub Actions
-    participant Staging as Staging Branch
     participant Main as Main Branch
 
-    Dev->>Branch: Create feature branch off staging
+    Dev->>Branch: Create feature branch off main
     Dev->>Branch: Implement changes
     Dev->>Branch: Run pnpm changeset
     Note over Branch: Creates .changeset/*.md
-    Dev->>PR: Open PR targeting staging branch
+    Dev->>PR: Open PR targeting main
     CI->>PR: Run build + typecheck
-    PR->>Staging: Merge approved PR
-    Staging->>Main: Release PR when milestone complete
-    CI->>Main: Changesets action bumps versions
-    CI->>Main: Updates CHANGELOGs
+    PR->>Main: Merge approved PR
+    Note over Main: Repeat for all features in milestone
+    Dev->>Main: pnpm changeset version
+    Dev->>Main: git tag v{VERSION}
 ```
 
 ### Branching Convention
 
 | Branch Pattern | Purpose | Example |
 |----------------|---------|---------|
-| `v{VERSION}` | Long-running staging branch for a milestone | `v0.1.0`, `v0.2.0` |
 | `feature/*` | New feature development | `feature/v0.2.0-date-picker` |
 | `fix/*` | Bug fixes | `fix/grid-pagination-off-by-one` |
 | `docs/*` | Documentation changes | `docs/getting-started-guide` |
-| `release/*` | Release preparation | `release/v0.2.0` |
+| `refactor/*` | Code refactoring | `refactor/extract-layout-helpers` |
 
-Feature/fix PRs target the appropriate version staging branch first. The staging branch merges into `main` via a release PR when the milestone is complete. Direct commits to `main` are forbidden.
+Feature/fix PRs target `main` directly. There are no staging branches. When a milestone is complete, tag `main` with `v{VERSION}`. Direct commits to `main` are forbidden.
 
 ### Roadmap
 

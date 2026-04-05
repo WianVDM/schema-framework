@@ -24,8 +24,8 @@ Brief description of what this PR does and why.
 ## Checklist
 
 - [ ] `pnpm build` passes with zero errors
-- [ ] Branch name follows convention (`feature/*`, `fix/*`, `docs/*`)
-- [ ] Feature/fix PRs target the appropriate version staging branch (not main); only release PRs target main
+- [ ] Branch name follows convention (`feature/*`, `fix/*`, `refactor/*`, `docs/*`)
+- [ ] PRs target `main` (no direct commits to `main`)
 - [ ] Context maps (`.context.md`) updated if file structure changed
 - [ ] ARCHITECTURE.md updated if architectural decisions changed
 
