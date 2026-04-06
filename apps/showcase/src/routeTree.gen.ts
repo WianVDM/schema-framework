@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as DemoVirtualGridRouteImport } from './routes/demo-virtual-grid'
 import { Route as DemoSupportTicketRouteImport } from './routes/demo-support-ticket'
 import { Route as DemoRegistrationRouteImport } from './routes/demo-registration'
 import { Route as DemoOrdersRouteImport } from './routes/demo-orders'
@@ -17,6 +18,11 @@ import { Route as DemoFormRouteImport } from './routes/demo-form'
 import { Route as DemoRouteImport } from './routes/demo'
 import { Route as IndexRouteImport } from './routes/index'
 
+const DemoVirtualGridRoute = DemoVirtualGridRouteImport.update({
+  id: '/demo-virtual-grid',
+  path: '/demo-virtual-grid',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DemoSupportTicketRoute = DemoSupportTicketRouteImport.update({
   id: '/demo-support-ticket',
   path: '/demo-support-ticket',
@@ -61,6 +67,7 @@ export interface FileRoutesByFullPath {
   '/demo-orders': typeof DemoOrdersRoute
   '/demo-registration': typeof DemoRegistrationRoute
   '/demo-support-ticket': typeof DemoSupportTicketRoute
+  '/demo-virtual-grid': typeof DemoVirtualGridRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -70,6 +77,7 @@ export interface FileRoutesByTo {
   '/demo-orders': typeof DemoOrdersRoute
   '/demo-registration': typeof DemoRegistrationRoute
   '/demo-support-ticket': typeof DemoSupportTicketRoute
+  '/demo-virtual-grid': typeof DemoVirtualGridRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -80,6 +88,7 @@ export interface FileRoutesById {
   '/demo-orders': typeof DemoOrdersRoute
   '/demo-registration': typeof DemoRegistrationRoute
   '/demo-support-ticket': typeof DemoSupportTicketRoute
+  '/demo-virtual-grid': typeof DemoVirtualGridRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -91,6 +100,7 @@ export interface FileRouteTypes {
     | '/demo-orders'
     | '/demo-registration'
     | '/demo-support-ticket'
+    | '/demo-virtual-grid'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -100,6 +110,7 @@ export interface FileRouteTypes {
     | '/demo-orders'
     | '/demo-registration'
     | '/demo-support-ticket'
+    | '/demo-virtual-grid'
   id:
     | '__root__'
     | '/'
@@ -109,6 +120,7 @@ export interface FileRouteTypes {
     | '/demo-orders'
     | '/demo-registration'
     | '/demo-support-ticket'
+    | '/demo-virtual-grid'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -119,10 +131,18 @@ export interface RootRouteChildren {
   DemoOrdersRoute: typeof DemoOrdersRoute
   DemoRegistrationRoute: typeof DemoRegistrationRoute
   DemoSupportTicketRoute: typeof DemoSupportTicketRoute
+  DemoVirtualGridRoute: typeof DemoVirtualGridRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/demo-virtual-grid': {
+      id: '/demo-virtual-grid'
+      path: '/demo-virtual-grid'
+      fullPath: '/demo-virtual-grid'
+      preLoaderRoute: typeof DemoVirtualGridRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/demo-support-ticket': {
       id: '/demo-support-ticket'
       path: '/demo-support-ticket'
@@ -183,6 +203,7 @@ const rootRouteChildren: RootRouteChildren = {
   DemoOrdersRoute: DemoOrdersRoute,
   DemoRegistrationRoute: DemoRegistrationRoute,
   DemoSupportTicketRoute: DemoSupportTicketRoute,
+  DemoVirtualGridRoute: DemoVirtualGridRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

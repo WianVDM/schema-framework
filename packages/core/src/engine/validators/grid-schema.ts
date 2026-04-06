@@ -6,6 +6,7 @@ import {
   statusConfigSchema,
   serverPaginationConfigSchema,
   i18nConfigSchema,
+  virtualScrollConfigSchema,
 } from './shared-schemas'
 import type { ValidationResult } from './shared-schemas'
 import type { DataKey } from '../types/branded'
@@ -45,6 +46,9 @@ export const gridSchemaValidator = z.object({
   columnVisibility: z.record(z.string(), z.boolean()).optional(),
   serverPagination: serverPaginationConfigSchema.optional(),
   i18n: i18nConfigSchema.optional(),
+  virtualScroll: z
+    .union([virtualScrollConfigSchema, z.boolean()])
+    .optional(),
 }).strict()
 
 export function validateGridSchema(data: unknown): ValidationResult {
