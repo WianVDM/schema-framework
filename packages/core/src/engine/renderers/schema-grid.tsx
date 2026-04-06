@@ -219,7 +219,7 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
           className={borderedClasses}
           style={{ overflow: 'auto', height: `${virtualConfig?.containerHeight ?? VIRTUAL_CONTAINER_HEIGHT}px` }}
         >
-          <Table role="grid" aria-label={schema.title ?? 'Data grid'} aria-rowcount={allRows.length + 1} style={{ width: '100%' }}>
+          <Table role="grid" aria-label={schema.title ?? 'Data grid'} aria-rowcount={totalRows + 1} style={{ width: '100%' }}>
             <TableHeader>
               {renderHeaderRows()}
             </TableHeader>
