@@ -2,7 +2,7 @@
 // Self-contained date picker using date-fns + react-day-picker.
 // Knows nothing about schemas — accepts standard controlled props.
 
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useEffect } from 'react'
 import { DayPicker } from 'react-day-picker'
 import { format, parse, isValid, isBefore, isAfter, startOfDay } from 'date-fns'
 
@@ -33,6 +33,10 @@ export function DatePicker({
 }: DatePickerProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [inputValue, setInputValue] = useState(value ?? '')
+
+  useEffect(() => {
+    setInputValue(value ?? '')
+  }, [value])
 
   const parsedDate = useMemo(() => {
     if (!value) return undefined
@@ -89,12 +93,6 @@ export function DatePicker({
       setInputValue(value ?? '')
     }
   }, [inputValue, parsedDate, value])
-
-  const buttonClassName = `w-full rounded-md border px-3 py-2 text-sm text-left ${
-    disabled
-      ? 'opacity-50 cursor-not-allowed bg-muted'
-      : 'cursor-pointer bg-background hover:bg-accent'
-  } ${ariaProps['aria-invalid'] ? 'border-destructive' : 'border-input'}`
 
   return (
     <div className="relative">
