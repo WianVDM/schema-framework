@@ -3,6 +3,7 @@ import type { SelectOption } from './select-option'
 import type { ValidationRule } from './validation-rule'
 import type { FieldCondition } from './field-condition'
 import type { FileUploadConfig } from './file-upload-config'
+import type { DatePickerConfig } from './date-picker-config'
 
 export interface FieldSchema {
   readonly name: string
@@ -19,4 +20,5 @@ export interface FieldSchema {
   readonly visibleWhen?: FieldCondition
   readonly dependsOn?: readonly string[]
   readonly fileConfig?: FileUploadConfig
+  readonly dateConfig?: DatePickerConfig
 }

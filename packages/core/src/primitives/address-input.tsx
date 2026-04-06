@@ -3,22 +3,8 @@
 // Knows nothing about schemas — accepts standard controlled props.
 
 import type { InputHTMLAttributes } from 'react'
-
-export interface AddressData {
-  street?: string
-  city?: string
-  state?: string
-  zip?: string
-  country?: string
-}
-
-export interface AddressPlaceholders {
-  street?: string
-  city?: string
-  state?: string
-  zip?: string
-  country?: string
-}
+import type { AddressData } from './address-data'
+import type { AddressPlaceholders } from './address-placeholders'
 
 type RestProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange' | 'placeholder' | 'disabled' | 'id' | 'type'>
 

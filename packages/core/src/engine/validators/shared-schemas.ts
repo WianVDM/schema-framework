@@ -47,6 +47,23 @@ export const fileUploadConfigSchema = z.object({
   multiple: z.boolean().optional(),
 })
 
+export const datePickerConfigSchema = z.object({
+  format: z.string().optional(),
+  minDate: z.string().optional(),
+  maxDate: z.string().optional(),
+  placeholder: z.string().optional(),
+}).refine(
+  (data) => {
+    if (data.minDate && isNaN(Date.parse(data.minDate))) return false
+    if (data.maxDate && isNaN(Date.parse(data.maxDate))) return false
+    if (data.minDate && data.maxDate && new Date(data.minDate) > new Date(data.maxDate)) return false
+    return true
+  },
+  {
+    message: 'minDate/maxDate must be valid date strings and minDate must be <= maxDate',
+  },
+)
+
 export const paginationConfigSchema = z.object({
   pageSize: z.number().int().positive().default(10),
   pageSizeOptions: z.array(z.number().int().positive()).optional(),

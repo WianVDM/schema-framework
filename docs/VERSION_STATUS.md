@@ -7,23 +7,24 @@
 
 ## Milestone Checklist (v0.2.0) — IN PROGRESS
 
-### Slice 1: Virtualized Scrolling (`feature/v0.2.0-virtual-scroll`)
+### Slice 1: Virtualized Scrolling (`v0.2.0-feature/virtual-scroll`)
 - [x] Add `VirtualScrollConfig` type + Zod validator
 - [x] Add `virtualScroll` option to `GridSchema`
 - [x] Integrate `@tanstack/react-virtual` into `SchemaGrid`
 - [x] Create showcase demo with 10k mock rows
 - [x] `pnpm build` passes
 
-### Slice 2: DatePicker Primitive (`feature/v0.2.0-date-picker`)
-- [ ] Add `DatePickerConfig` type + Zod validator
-- [ ] Create `DatePicker` primitive in Layer 1
-- [ ] Add to `PrimitiveComponents` + `PrimitivesContext` defaults
-- [ ] Update `field-renderer.tsx` for `'date'` type
-- [ ] Wire shadcn Calendar/Popover in showcase
-- [ ] Create showcase demo route
-- [ ] `pnpm build` passes
+### Slice 2: DatePicker Primitive (`v0.2.2-feature/date-picker`)
+- [x] Add `DatePickerConfig` type + Zod validator
+- [x] Create `DatePicker` primitive in Layer 1 (self-contained with date-fns + react-day-picker)
+- [x] Add to `PrimitiveComponents` + `PrimitivesContext` defaults
+- [x] Update `field-renderer.tsx` for `'date'` type
+- [x] Wire DatePicker in showcase primitive-mappings
+- [x] Create showcase demo route (`/demo-date-picker`)
+- [x] Fix Slice 1 gaps (extract useTheme, AddressData, AddressPlaceholders; convert .context.md to Mermaid)
+- [x] `pnpm build` passes
 
-### Slice 3: Multi-Select / TagInput (`feature/v0.2.0-multi-select`)
+### Slice 3: Multi-Select / TagInput (`v0.2.3-feature/multi-select`)
 - [ ] Add `'multiselect'` to `FieldType` union
 - [ ] Add `MultiSelectConfig` type + Zod validator
 - [ ] Create `TagInput` primitive in Layer 1
@@ -32,20 +33,20 @@
 - [ ] Wire in showcase + create demo route
 - [ ] `pnpm build` passes
 
-### Slice 4: Column Reordering (`feature/v0.2.0-column-reordering`)
-- [ ] Add `columnReorder` to `GridSchema`
-- [ ] Integrate `@dnd-kit/core` + `@dnd-kit/sortable`
-- [ ] Update `GridColumnHeader` with drag handles
-- [ ] Create showcase demo
-- [ ] `pnpm build` passes
-
-### Slice 5: Form Wizard (`feature/v0.2.0-form-wizard`)
+### Slice 4: Form Wizard (`v0.2.4-feature/form-wizard`)
 - [ ] Add `WizardSchema`, `WizardStep` types + Zod validators
 - [ ] Create `SchemaWizard` renderer
 - [ ] Step navigation UI (next/prev, step indicator)
 - [ ] Per-step validation with TanStack Form
 - [ ] Linear + non-linear step flow support
 - [ ] Create showcase demo route
+- [ ] `pnpm build` passes
+
+### Slice 5: Column Reordering (`v0.2.5-feature/column-reordering`)
+- [ ] Add `columnReorder` to `GridSchema`
+- [ ] Integrate `@dnd-kit/core` + `@dnd-kit/sortable`
+- [ ] Update `GridColumnHeader` with drag handles
+- [ ] Create showcase demo
 - [ ] `pnpm build` passes
 
 ## Milestone Checklist (v0.1.0) — COMPLETE ✅

@@ -112,6 +112,13 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
             Support Ticket
           </Link>
           <Link
+            to="/demo-date-picker"
+            activeProps={{ className: 'font-bold underline' }}
+            className="text-sm hover:underline"
+          >
+            DatePicker
+          </Link>
+          <Link
             to="/demo-virtual-grid"
             activeProps={{ className: 'font-bold underline' }}
             className="text-sm hover:underline"

@@ -1,10 +1,10 @@
-import { createContext, useContext } from 'react'
+import { createContext } from 'react'
 import type { ReactNode } from 'react'
 import type { ThemeConfig } from '../types'
 
 const defaultTheme: ThemeConfig = {}
 
-const ThemeContext = createContext<ThemeConfig>(defaultTheme)
+export const ThemeContext = createContext<ThemeConfig>(defaultTheme)
 
 export function ThemeProvider({
   theme,
@@ -18,8 +18,4 @@ export function ThemeProvider({
       {children}
     </ThemeContext.Provider>
   )
-}
-
-export function useTheme(): ThemeConfig {
-  return useContext(ThemeContext)
 }

@@ -6,6 +6,7 @@ import {
   validationRuleSchema,
   fieldConditionSchema,
   fileUploadConfigSchema,
+  datePickerConfigSchema,
 } from './shared-schemas'
 import type { ValidationResult } from './shared-schemas'
 
@@ -26,6 +27,7 @@ export const fieldSchemaValidator = z.object({
   visibleWhen: fieldConditionSchema.optional(),
   dependsOn: z.array(z.string()).optional(),
   fileConfig: fileUploadConfigSchema.optional(),
+  dateConfig: datePickerConfigSchema.optional(),
 }).strict()
 
 export function validateFieldSchema(data: unknown): ValidationResult {

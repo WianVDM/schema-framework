@@ -452,16 +452,24 @@ NOTE: v0.5.0 and v0.6.0 could potentially run in parallel since they are largely
 
 ## Branching Convention
 
+### Branch Name Format
+
+All branch names MUST follow the format: `v{VERSION}-{type}/{description}`
+
+| Component | Rules | Examples |
+|-----------|-------|----------|
+| **Version prefix** | The milestone version (e.g., `v0.2.0`). Use the target milestone version. | `v0.2.0`, `v0.3.0` |
+| **Type** | One of: `feature`, `fix`, `refactor`, `docs` | `feature`, `fix` |
+| **Description** | Short kebab-case topic (no version — it's in the prefix) | `date-picker`, `grid-pagination-off-by-one` |
+
 ### Branch Types
 
 | Branch Pattern | Purpose | Example |
 |----------------|---------|---------|
-| `feature/*` | New feature development | `feature/v0.2.0-date-picker` |
-| `fix/*` | Bug fixes | `fix/grid-pagination-off-by-one` |
-| `docs/*` | Documentation changes | `docs/getting-started-guide` |
-| `refactor/*` | Code refactoring | `refactor/extract-layout-helpers` |
-
-Branch names SHOULD include the target version for feature branches (e.g., `feature/v0.2.0-date-picker`).
+| `v{VERSION}-feature/{description}` | New feature development | `v0.2.0-feature/date-picker` |
+| `v{VERSION}-fix/{description}` | Bug fixes | `v0.2.1-fix/grid-pagination-off-by-one` |
+| `v{VERSION}-refactor/{description}` | Code refactoring | `v0.3.0-refactor/extract-layout-helpers` |
+| `v{VERSION}-docs/{description}` | Documentation changes | `v0.3.0-docs/getting-started-guide` |
 
 ### GitHub Flow
 
@@ -477,9 +485,9 @@ Feature branches PR directly to `main`. There are no staging branches. Milestone
 ```mermaid
 graph TD
     Main["main<br/>(protected)"]
-    F1["feature/v0.2.0-date-picker"]
-    F2["feature/v0.2.0-multi-select"]
-    F3["fix/grid-pagination"]
+    F1["v0.2.0-feature/date-picker"]
+    F2["v0.2.0-feature/multi-select"]
+    F3["v0.2.1-fix/grid-pagination"]
     Tag1["git tag v0.1.0"]
     Tag2["git tag v0.2.0"]
 
@@ -501,10 +509,10 @@ sequenceDiagram
     participant CI as GitHub Actions
 
     Dev->>Main: git pull origin main
-    Dev->>Feature: git checkout -b feature/v0.2.0-date-picker
+    Dev->>Feature: git checkout -b v0.2.0-feature/date-picker
     Dev->>Feature: Implement changes
     Dev->>Feature: git add . && git commit
-    Dev->>Feature: git push -u origin feature/v0.2.0-date-picker
+    Dev->>Feature: git push -u origin v0.2.0-feature/date-picker
     Dev->>PR: gh pr create --base main
     CI->>PR: Run typecheck + build + lint
     PR->>Main: Merge approved PR
@@ -524,7 +532,7 @@ sequenceDiagram
     participant CI as GitHub Actions
     participant Main as Main Branch
 
-    Dev->>Branch: Create feature/v0.2.0-date-picker off main
+    Dev->>Branch: Create v0.2.0-feature/date-picker off main
     Dev->>Branch: Implement DatePicker
     Dev->>Branch: Run `pnpm changeset`
     Note over Branch: Creates .changeset/spotty-lions-123.md
