@@ -4,13 +4,13 @@
 
 | Directory | Purpose | Dependencies |
 |-----------|---------|--------------|
-| primitives/ | Generic UI wrappers (StatusBadge, AddressInput, FileUpload) | React only |
+| primitives/ | Generic UI wrappers (StatusBadge, AddressInput, FileUpload, DatePicker) | React, date-fns, react-day-picker |
 
 ## Layer 2: Engine (`packages/core/src/engine/`)
 
 | Directory | Purpose | Imports From | Imported By |
 |-----------|---------|--------------|-------------|
-| types/ | Schema type definitions (27 types, one per file) | (none — pure TS types) | validators/, context/, helpers/, renderers/ |
+| types/ | Schema type definitions (29 types, one per file) | (none — pure TS types) | validators/, context/, helpers/, renderers/ |
 | validators/ | Zod schemas + runtime validation (7 files) | types/, zod | renderers/, index.ts |
 | context/ | PrimitivesContext provider | types/ | renderers/ |
 | helpers/ | i18n resolveMessage, deepFreeze immutability | types/ | renderers/ |
@@ -20,7 +20,7 @@
 
 ```mermaid
 graph TD
-    types["types/<br/>(27 type files)"]
+    types["types/<br/>(29 type files)"]
     validators["validators/<br/>(7 Zod schemas)"]
     context["context/<br/>(PrimitivesContext)"]
     helpers["helpers/<br/>(i18n, deepFreeze)"]
@@ -95,7 +95,7 @@ graph LR
 |------|------|
 | `packages/core/src/index.ts` | Public API — re-exports from primitives/ and engine/ |
 | `packages/core/src/engine/index.ts` | Engine barrel — re-exports types, validators, context, helpers, renderers |
-| `packages/core/src/engine/types/index.ts` | Types barrel — re-exports all 27 type files |
+| `packages/core/src/engine/types/index.ts` | Types barrel — re-exports all 29 type files |
 | `packages/core/src/engine/validators/index.ts` | Validators barrel — re-exports all 7 validator files |
 | `packages/core/src/engine/helpers/deep-freeze.ts` | Runtime immutability — recursively freezes objects |
 | `packages/core/src/engine/types/branded.ts` | Branded types for FieldId, DataKey |

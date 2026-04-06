@@ -32,6 +32,7 @@ export type {
   DeepFrozen,
   ConditionOperator,
   ValidationType,
+  DatePickerConfig,
 } from './types'
 
 // Validators (one-export-per-file via barrel)
@@ -63,4 +64,5 @@ export { FieldRenderer } from './renderers/field-renderer'
 export { GridPagination } from './renderers/grid-pagination'
 export { GridColumnHeader } from './renderers/grid-column-header'
 export { GridToolbar } from './renderers/grid-toolbar'
-export { ThemeProvider, useTheme } from './renderers/theme-provider'
+export { ThemeProvider } from './renderers/theme-provider'
+export { useTheme } from './renderers/use-theme'

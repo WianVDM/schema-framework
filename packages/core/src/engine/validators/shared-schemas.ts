@@ -47,6 +47,13 @@ export const fileUploadConfigSchema = z.object({
   multiple: z.boolean().optional(),
 })
 
+export const datePickerConfigSchema = z.object({
+  format: z.string().optional(),
+  minDate: z.string().optional(),
+  maxDate: z.string().optional(),
+  placeholder: z.string().optional(),
+})
+
 export const paginationConfigSchema = z.object({
   pageSize: z.number().int().positive().default(10),
   pageSizeOptions: z.array(z.number().int().positive()).optional(),

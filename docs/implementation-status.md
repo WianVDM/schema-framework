@@ -37,7 +37,7 @@ All Phase 1 objectives have been implemented:
 | `select` | `<Select>` + `SelectTrigger/Content/Item` | ✅ |
 | `textarea` | `<Textarea>` | ✅ |
 | `checkbox` | `<Checkbox>` | ✅ |
-| `date` | `<Input type="date">` | ✅ |
+| `date` | `<DatePicker>` (calendar popup primitive) | ✅ Phase 4A |
 | `file` | `<FileUpload>` (dropzone primitive) | ✅ Phase 2 |
 | `address` | `<AddressInput>` (multi-line address) | ✅ Phase 3 |
 
@@ -132,9 +132,16 @@ All Phase 2 objectives have been implemented:
 - **Padding-based layout:** Spacer `<tr>` elements for top/bottom padding avoid absolute positioning issues with table layout
 - **Showcase demo:** `/demo-virtual-grid` route with 10,000 mock rows, status badges, sorting, filtering, and immutable query cache settings
 
+### Phase 4A+: DatePicker Primitive ✅
+
+- **`DatePickerConfig` interface:** `format`, `placeholder`, `minDate`, `maxDate` properties on `FieldSchema.dateConfig`
+- **`DatePicker` primitive:** Self-contained date picker using `date-fns` + `react-day-picker` (Layer 1)
+- **Field renderer `case 'date'`:** Renders `DatePicker` with schema-driven constraints via `PrimitivesContext`
+- **Showcase demo:** `/demo-date-picker` route with basic, custom format, constrained, and disabled variants
+- **Slice 1 gap fixes:** Extracted `useTheme` to separate file, extracted `AddressData`/`AddressPlaceholders` to separate files, converted renderers `.context.md` to Mermaid
+
 ### Phase 4 Remaining (Not Yet Implemented)
 
-- [ ] Date picker primitive (calendar-based, not native input)
 - [ ] Multi-select / tag input field type
 - [ ] Form wizard / multi-step layout
 - [ ] Column reordering via drag-and-drop

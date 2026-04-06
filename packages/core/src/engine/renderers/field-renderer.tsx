@@ -1,5 +1,5 @@
 import type { FieldRendererProps, SelectOption } from '../types'
-import type { AddressData } from '../../primitives/address-input'
+import type { AddressData } from '../../primitives/address-data'
 import { usePrimitives } from '../context/primitives-context'
 
 export function FieldRenderer({ schema, value, onChange, error }: FieldRendererProps) {
@@ -15,6 +15,7 @@ export function FieldRenderer({ schema, value, onChange, error }: FieldRendererP
     Checkbox,
     FileUpload,
     AddressInput,
+    DatePicker,
   } = usePrimitives()
 
   const fieldId = `field-${schema.name}`
@@ -151,10 +152,29 @@ export function FieldRenderer({ schema, value, onChange, error }: FieldRendererP
         </div>
       )
 
+    case 'date':
+      return (
+        <div className="space-y-1">
+          {labelElement}
+          <DatePicker
+            id={fieldId}
+            value={(value as string) ?? ''}
+            onChange={(date: string) => onChange(date)}
+            disabled={schema.disabled}
+            placeholder={schema.dateConfig?.placeholder ?? schema.placeholder ?? 'Pick a date...'}
+            formatStr={schema.dateConfig?.format}
+            minDate={schema.dateConfig?.minDate}
+            maxDate={schema.dateConfig?.maxDate}
+            {...ariaProps}
+          />
+          {descriptionElement}
+          {errorElement}
+        </div>
+      )
+
     case 'text':
     case 'email':
     case 'number':
-    case 'date':
     case 'password':
     default:
       return (
@@ -162,7 +182,7 @@ export function FieldRenderer({ schema, value, onChange, error }: FieldRendererP
           {labelElement}
           <Input
             id={fieldId}
-            type={schema.type === 'email' ? 'email' : schema.type === 'number' ? 'number' : schema.type === 'date' ? 'date' : schema.type === 'password' ? 'password' : 'text'}
+            type={schema.type === 'email' ? 'email' : schema.type === 'number' ? 'number' : schema.type === 'password' ? 'password' : 'text'}
             value={value ?? ''}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               const newVal =

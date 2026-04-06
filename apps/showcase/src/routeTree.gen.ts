@@ -15,6 +15,7 @@ import { Route as DemoRegistrationRouteImport } from './routes/demo-registration
 import { Route as DemoOrdersRouteImport } from './routes/demo-orders'
 import { Route as DemoGridRouteImport } from './routes/demo-grid'
 import { Route as DemoFormRouteImport } from './routes/demo-form'
+import { Route as DemoDatePickerRouteImport } from './routes/demo-date-picker'
 import { Route as DemoRouteImport } from './routes/demo'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -48,6 +49,11 @@ const DemoFormRoute = DemoFormRouteImport.update({
   path: '/demo-form',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DemoDatePickerRoute = DemoDatePickerRouteImport.update({
+  id: '/demo-date-picker',
+  path: '/demo-date-picker',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DemoRoute = DemoRouteImport.update({
   id: '/demo',
   path: '/demo',
@@ -62,6 +68,7 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/demo': typeof DemoRoute
+  '/demo-date-picker': typeof DemoDatePickerRoute
   '/demo-form': typeof DemoFormRoute
   '/demo-grid': typeof DemoGridRoute
   '/demo-orders': typeof DemoOrdersRoute
@@ -72,6 +79,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/demo': typeof DemoRoute
+  '/demo-date-picker': typeof DemoDatePickerRoute
   '/demo-form': typeof DemoFormRoute
   '/demo-grid': typeof DemoGridRoute
   '/demo-orders': typeof DemoOrdersRoute
@@ -83,6 +91,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/demo': typeof DemoRoute
+  '/demo-date-picker': typeof DemoDatePickerRoute
   '/demo-form': typeof DemoFormRoute
   '/demo-grid': typeof DemoGridRoute
   '/demo-orders': typeof DemoOrdersRoute
@@ -95,6 +104,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/demo'
+    | '/demo-date-picker'
     | '/demo-form'
     | '/demo-grid'
     | '/demo-orders'
@@ -105,6 +115,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/demo'
+    | '/demo-date-picker'
     | '/demo-form'
     | '/demo-grid'
     | '/demo-orders'
@@ -115,6 +126,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/demo'
+    | '/demo-date-picker'
     | '/demo-form'
     | '/demo-grid'
     | '/demo-orders'
@@ -126,6 +138,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DemoRoute: typeof DemoRoute
+  DemoDatePickerRoute: typeof DemoDatePickerRoute
   DemoFormRoute: typeof DemoFormRoute
   DemoGridRoute: typeof DemoGridRoute
   DemoOrdersRoute: typeof DemoOrdersRoute
@@ -178,6 +191,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoFormRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/demo-date-picker': {
+      id: '/demo-date-picker'
+      path: '/demo-date-picker'
+      fullPath: '/demo-date-picker'
+      preLoaderRoute: typeof DemoDatePickerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/demo': {
       id: '/demo'
       path: '/demo'
@@ -198,6 +218,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DemoRoute: DemoRoute,
+  DemoDatePickerRoute: DemoDatePickerRoute,
   DemoFormRoute: DemoFormRoute,
   DemoGridRoute: DemoGridRoute,
   DemoOrdersRoute: DemoOrdersRoute,

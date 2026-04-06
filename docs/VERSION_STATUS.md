@@ -15,13 +15,14 @@
 - [x] `pnpm build` passes
 
 ### Slice 2: DatePicker Primitive (`feature/v0.2.0-date-picker`)
-- [ ] Add `DatePickerConfig` type + Zod validator
-- [ ] Create `DatePicker` primitive in Layer 1
-- [ ] Add to `PrimitiveComponents` + `PrimitivesContext` defaults
-- [ ] Update `field-renderer.tsx` for `'date'` type
-- [ ] Wire shadcn Calendar/Popover in showcase
-- [ ] Create showcase demo route
-- [ ] `pnpm build` passes
+- [x] Add `DatePickerConfig` type + Zod validator
+- [x] Create `DatePicker` primitive in Layer 1 (self-contained with date-fns + react-day-picker)
+- [x] Add to `PrimitiveComponents` + `PrimitivesContext` defaults
+- [x] Update `field-renderer.tsx` for `'date'` type
+- [x] Wire DatePicker in showcase primitive-mappings
+- [x] Create showcase demo route (`/demo-date-picker`)
+- [x] Fix Slice 1 gaps (extract useTheme, AddressData, AddressPlaceholders; convert .context.md to Mermaid)
+- [x] `pnpm build` passes
 
 ### Slice 3: Multi-Select / TagInput (`feature/v0.2.0-multi-select`)
 - [ ] Add `'multiselect'` to `FieldType` union
