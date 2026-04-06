@@ -215,7 +215,7 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
           className={borderedClasses}
           style={{ overflow: 'auto', height: `${virtualConfig?.containerHeight ?? VIRTUAL_CONTAINER_HEIGHT}px` }}
         >
-          <Table role="grid" aria-label={schema.title ?? 'Data grid'} style={{ width: '100%' }}>
+          <Table role="grid" aria-label={schema.title ?? 'Data grid'} aria-rowcount={allRows.length} style={{ width: '100%' }}>
             <TableHeader>
               {renderHeaderRows()}
             </TableHeader>
@@ -259,7 +259,7 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
         </div>
       ) : (
         <div className={borderedClasses}>
-          <Table role="grid" aria-label={schema.title ?? 'Data grid'}>
+          <Table role="grid" aria-label={schema.title ?? 'Data grid'} aria-rowcount={table.getRowModel().rows.length}>
             <TableHeader>
               {renderHeaderRows()}
             </TableHeader>
@@ -285,7 +285,7 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
           </Table>
         </div>
       )}
-      {(!!schema.serverPagination || (!isVirtualScroll && schema.pagination !== false)) && (
+      {(schema.pagination !== false && (!!schema.serverPagination || !isVirtualScroll)) && (
         <GridPagination
           table={table}
           pageSizeOptions={paginationConfig?.pageSizeOptions}
