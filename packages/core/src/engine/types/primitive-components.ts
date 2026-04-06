@@ -33,5 +33,5 @@ export interface PrimitiveComponents {
   readonly FileUpload: ComponentType<any>
   readonly AddressInput: ComponentType<any>
   readonly DatePicker?: ComponentType<any>
-  readonly TagInput: ComponentType<any>
+  readonly TagInput?: ComponentType<any>
 }

@@ -1,10 +1,14 @@
 import { useState, useRef, useCallback } from 'react'
-import type { SelectOption } from '../engine/types/select-option'
+
+interface TagOption {
+  readonly label: string
+  readonly value: string
+}
 
 export interface TagInputProps {
   readonly value: readonly string[]
   readonly onChange: (value: readonly string[]) => void
-  readonly options?: readonly SelectOption[]
+  readonly options?: readonly TagOption[]
   readonly maxSelections?: number
   readonly creatable?: boolean
   readonly placeholder?: string
@@ -36,7 +40,9 @@ export function TagInput({
   )
 
   const exactMatch = options.some(
-    (opt) => opt.label.toLowerCase() === inputValue.toLowerCase(),
+    (opt) =>
+      opt.label.toLowerCase() === inputValue.trim().toLowerCase() ||
+      opt.value.toLowerCase() === inputValue.trim().toLowerCase(),
   )
 
   const canCreate = creatable && inputValue.trim() !== '' && !exactMatch && !isAtLimit

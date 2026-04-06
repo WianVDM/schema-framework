@@ -176,11 +176,12 @@ export function FieldRenderer({ schema, value, onChange, error }: FieldRendererP
     }
 
     case 'multiselect': {
+      const TagInputComponent = TagInput ?? (() => null)
       const selectedValues = Array.isArray(value) ? (value as readonly string[]) : []
       return (
         <div className="space-y-1">
           {labelElement}
-          <TagInput
+          <TagInputComponent
             id={fieldId}
             value={selectedValues}
             onChange={(newValues: readonly string[]) => onChange(newValues)}
