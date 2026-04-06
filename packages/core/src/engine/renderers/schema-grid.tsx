@@ -95,7 +95,7 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
       columnVisibility,
     },
     manualPagination: isServerMode,
-    getRowId: (row) => String(row[schema.dataKey]),
+    getRowId: (row, index) => row[schema.dataKey] != null ? String(row[schema.dataKey]) : String(index),
   })
 
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -145,6 +145,10 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
   const headerBorderClasses = schema.bordered ? 'border-r last:border-r-0' : ''
 
   const emptyMessage = resolveMessage('noData', schema.i18n, schema.emptyMessage ?? 'No data available')
+
+  const totalRows = isServerMode
+    ? schema.serverPagination!.totalRecords
+    : table.getFilteredRowModel().rows.length
 
   const renderHeaderRows = () =>
     table.getHeaderGroups().map((headerGroup) => (
@@ -215,7 +219,7 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
           className={borderedClasses}
           style={{ overflow: 'auto', height: `${virtualConfig?.containerHeight ?? VIRTUAL_CONTAINER_HEIGHT}px` }}
         >
-          <Table role="grid" aria-label={schema.title ?? 'Data grid'} aria-rowcount={allRows.length} style={{ width: '100%' }}>
+          <Table role="grid" aria-label={schema.title ?? 'Data grid'} aria-rowcount={allRows.length + 1} style={{ width: '100%' }}>
             <TableHeader>
               {renderHeaderRows()}
             </TableHeader>
@@ -259,7 +263,7 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
         </div>
       ) : (
         <div className={borderedClasses}>
-          <Table role="grid" aria-label={schema.title ?? 'Data grid'} aria-rowcount={table.getRowModel().rows.length}>
+          <Table role="grid" aria-label={schema.title ?? 'Data grid'} aria-rowcount={totalRows + 1}>
             <TableHeader>
               {renderHeaderRows()}
             </TableHeader>
