@@ -16,6 +16,7 @@ export function FieldRenderer({ schema, value, onChange, error }: FieldRendererP
     FileUpload,
     AddressInput,
     DatePicker,
+    TagInput,
   } = usePrimitives()
 
   const fieldId = `field-${schema.name}`
@@ -166,6 +167,28 @@ export function FieldRenderer({ schema, value, onChange, error }: FieldRendererP
             formatStr={schema.dateConfig?.format}
             minDate={schema.dateConfig?.minDate}
             maxDate={schema.dateConfig?.maxDate}
+            {...ariaProps}
+          />
+          {descriptionElement}
+          {errorElement}
+        </div>
+      )
+    }
+
+    case 'multiselect': {
+      const selectedValues = Array.isArray(value) ? (value as readonly string[]) : []
+      return (
+        <div className="space-y-1">
+          {labelElement}
+          <TagInput
+            id={fieldId}
+            value={selectedValues}
+            onChange={(newValues: readonly string[]) => onChange(newValues)}
+            options={schema.multiSelectConfig?.options}
+            maxSelections={schema.multiSelectConfig?.maxSelections}
+            creatable={schema.multiSelectConfig?.creatable}
+            placeholder={schema.multiSelectConfig?.placeholder ?? schema.placeholder ?? 'Select tags...'}
+            disabled={schema.disabled}
             {...ariaProps}
           />
           {descriptionElement}

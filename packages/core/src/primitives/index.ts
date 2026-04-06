@@ -6,6 +6,7 @@
 export { StatusBadge } from './status-badge'
 export { AddressInput } from './address-input'
 export { DatePicker } from './date-picker'
+export { TagInput } from './tag-input'
 export type { AddressData } from './address-data'
 export type { AddressPlaceholders } from './address-placeholders'
 export { FileUpload } from './file-upload'

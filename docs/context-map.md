@@ -4,7 +4,7 @@
 
 | Directory | Purpose | Dependencies |
 |-----------|---------|--------------|
-| primitives/ | Generic UI wrappers (StatusBadge, AddressInput, FileUpload, DatePicker) | React, date-fns, react-day-picker |
+| primitives/ | Generic UI wrappers (StatusBadge, AddressInput, FileUpload, DatePicker, TagInput) | React, date-fns, react-day-picker |
 
 ## Layer 2: Engine (`packages/core/src/engine/`)
 
@@ -41,7 +41,7 @@ graph TD
 |-----------|---------|--------------|
 | routes/ | TanStack Start file-based routes | @my-framework/core, server/, stores/ |
 | server/ | Mock server functions (createServerFn) | data/ |
-| data/ | Immutable schemas, typed mock data (UserRow, OrderRow, VirtualGridRow), primitive mappings | @my-framework/core |
+| data/ | Immutable schemas, typed mock data (UserRow, OrderRow, VirtualGridRow), primitive mappings, multiselect demo schema | @my-framework/core |
 | stores/ | Zustand selection stores | (none) |
 | app/components/ | shadcn/ui components | (shadcn) |
 | app/primitives-provider.tsx | Wires shadcn → PrimitivesContext | @my-framework/core |

@@ -29,6 +29,7 @@ const primitivesContextDefaultValue: PrimitiveComponents = {
   FileUpload: () => null,
   AddressInput: () => null,
   DatePicker: () => null,
+  TagInput: () => null,
 }
 
 export const PrimitivesContext = createContext<PrimitiveComponents>(

@@ -13,6 +13,7 @@ import { Route as DemoVirtualGridRouteImport } from './routes/demo-virtual-grid'
 import { Route as DemoSupportTicketRouteImport } from './routes/demo-support-ticket'
 import { Route as DemoRegistrationRouteImport } from './routes/demo-registration'
 import { Route as DemoOrdersRouteImport } from './routes/demo-orders'
+import { Route as DemoMultiSelectRouteImport } from './routes/demo-multi-select'
 import { Route as DemoGridRouteImport } from './routes/demo-grid'
 import { Route as DemoFormRouteImport } from './routes/demo-form'
 import { Route as DemoDatePickerRouteImport } from './routes/demo-date-picker'
@@ -37,6 +38,11 @@ const DemoRegistrationRoute = DemoRegistrationRouteImport.update({
 const DemoOrdersRoute = DemoOrdersRouteImport.update({
   id: '/demo-orders',
   path: '/demo-orders',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoMultiSelectRoute = DemoMultiSelectRouteImport.update({
+  id: '/demo-multi-select',
+  path: '/demo-multi-select',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoGridRoute = DemoGridRouteImport.update({
@@ -71,6 +77,7 @@ export interface FileRoutesByFullPath {
   '/demo-date-picker': typeof DemoDatePickerRoute
   '/demo-form': typeof DemoFormRoute
   '/demo-grid': typeof DemoGridRoute
+  '/demo-multi-select': typeof DemoMultiSelectRoute
   '/demo-orders': typeof DemoOrdersRoute
   '/demo-registration': typeof DemoRegistrationRoute
   '/demo-support-ticket': typeof DemoSupportTicketRoute
@@ -82,6 +89,7 @@ export interface FileRoutesByTo {
   '/demo-date-picker': typeof DemoDatePickerRoute
   '/demo-form': typeof DemoFormRoute
   '/demo-grid': typeof DemoGridRoute
+  '/demo-multi-select': typeof DemoMultiSelectRoute
   '/demo-orders': typeof DemoOrdersRoute
   '/demo-registration': typeof DemoRegistrationRoute
   '/demo-support-ticket': typeof DemoSupportTicketRoute
@@ -94,6 +102,7 @@ export interface FileRoutesById {
   '/demo-date-picker': typeof DemoDatePickerRoute
   '/demo-form': typeof DemoFormRoute
   '/demo-grid': typeof DemoGridRoute
+  '/demo-multi-select': typeof DemoMultiSelectRoute
   '/demo-orders': typeof DemoOrdersRoute
   '/demo-registration': typeof DemoRegistrationRoute
   '/demo-support-ticket': typeof DemoSupportTicketRoute
@@ -107,6 +116,7 @@ export interface FileRouteTypes {
     | '/demo-date-picker'
     | '/demo-form'
     | '/demo-grid'
+    | '/demo-multi-select'
     | '/demo-orders'
     | '/demo-registration'
     | '/demo-support-ticket'
@@ -118,6 +128,7 @@ export interface FileRouteTypes {
     | '/demo-date-picker'
     | '/demo-form'
     | '/demo-grid'
+    | '/demo-multi-select'
     | '/demo-orders'
     | '/demo-registration'
     | '/demo-support-ticket'
@@ -129,6 +140,7 @@ export interface FileRouteTypes {
     | '/demo-date-picker'
     | '/demo-form'
     | '/demo-grid'
+    | '/demo-multi-select'
     | '/demo-orders'
     | '/demo-registration'
     | '/demo-support-ticket'
@@ -141,6 +153,7 @@ export interface RootRouteChildren {
   DemoDatePickerRoute: typeof DemoDatePickerRoute
   DemoFormRoute: typeof DemoFormRoute
   DemoGridRoute: typeof DemoGridRoute
+  DemoMultiSelectRoute: typeof DemoMultiSelectRoute
   DemoOrdersRoute: typeof DemoOrdersRoute
   DemoRegistrationRoute: typeof DemoRegistrationRoute
   DemoSupportTicketRoute: typeof DemoSupportTicketRoute
@@ -175,6 +188,13 @@ declare module '@tanstack/react-router' {
       path: '/demo-orders'
       fullPath: '/demo-orders'
       preLoaderRoute: typeof DemoOrdersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo-multi-select': {
+      id: '/demo-multi-select'
+      path: '/demo-multi-select'
+      fullPath: '/demo-multi-select'
+      preLoaderRoute: typeof DemoMultiSelectRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/demo-grid': {
@@ -221,6 +241,7 @@ const rootRouteChildren: RootRouteChildren = {
   DemoDatePickerRoute: DemoDatePickerRoute,
   DemoFormRoute: DemoFormRoute,
   DemoGridRoute: DemoGridRoute,
+  DemoMultiSelectRoute: DemoMultiSelectRoute,
   DemoOrdersRoute: DemoOrdersRoute,
   DemoRegistrationRoute: DemoRegistrationRoute,
   DemoSupportTicketRoute: DemoSupportTicketRoute,

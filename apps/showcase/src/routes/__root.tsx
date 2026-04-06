@@ -125,6 +125,13 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
           >
             Virtual Grid
           </Link>
+          <Link
+            to="/demo-multi-select"
+            activeProps={{ className: 'font-bold underline' }}
+            className="text-sm hover:underline"
+          >
+            Multi-Select
+          </Link>
         </nav>
         <main className="p-6">
           {children}
