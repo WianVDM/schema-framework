@@ -33,20 +33,20 @@
 - [ ] Wire in showcase + create demo route
 - [ ] `pnpm build` passes
 
-### Slice 4: Column Reordering (`v0.2.4-feature/column-reordering`)
-- [ ] Add `columnReorder` to `GridSchema`
-- [ ] Integrate `@dnd-kit/core` + `@dnd-kit/sortable`
-- [ ] Update `GridColumnHeader` with drag handles
-- [ ] Create showcase demo
-- [ ] `pnpm build` passes
-
-### Slice 5: Form Wizard (`v0.2.5-feature/form-wizard`)
+### Slice 4: Form Wizard (`v0.2.4-feature/form-wizard`)
 - [ ] Add `WizardSchema`, `WizardStep` types + Zod validators
 - [ ] Create `SchemaWizard` renderer
 - [ ] Step navigation UI (next/prev, step indicator)
 - [ ] Per-step validation with TanStack Form
 - [ ] Linear + non-linear step flow support
 - [ ] Create showcase demo route
+- [ ] `pnpm build` passes
+
+### Slice 5: Column Reordering (`v0.2.5-feature/column-reordering`)
+- [ ] Add `columnReorder` to `GridSchema`
+- [ ] Integrate `@dnd-kit/core` + `@dnd-kit/sortable`
+- [ ] Update `GridColumnHeader` with drag handles
+- [ ] Create showcase demo
 - [ ] `pnpm build` passes
 
 ## Milestone Checklist (v0.1.0) — COMPLETE ✅
