@@ -70,6 +70,9 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
   const shouldPaginate = !isServerMode && !isVirtualScroll && schema.pagination !== false
   const shouldShowServerPagination = !!schema.serverPagination
 
+  const rowIdMapRef = useRef(new WeakMap<Record<string, unknown>, string>())
+  const rowIdCounterRef = useRef(0)
+
   // NOTE: TanStack Table requires mutable Record<string, unknown>[];
   // the data prop is typed as readonly unknown[] for caller immutability.
   const table = useReactTable({
@@ -95,12 +98,29 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
       columnVisibility,
     },
     manualPagination: isServerMode,
-    getRowId: (row, index) => row[schema.dataKey] != null ? String(row[schema.dataKey]) : String(index),
+    getRowId: (row) => {
+      const keyValue = row[schema.dataKey]
+      if (keyValue != null && (typeof keyValue === 'string' || typeof keyValue === 'number' || typeof keyValue === 'boolean')) {
+        return String(keyValue)
+      }
+      if (row.id != null) return String(row.id)
+      let stableId = rowIdMapRef.current.get(row)
+      if (stableId === undefined) {
+        stableId = `__row_${rowIdCounterRef.current++}`
+        rowIdMapRef.current.set(row, stableId)
+      }
+      return stableId
+    },
   })
 
   const scrollContainerRef = useRef<HTMLDivElement>(null)
 
   const allRows = table.getRowModel().rows
+
+  const pageSize = table.getState().pagination.pageSize
+  const pageOffset = isServerMode
+    ? schema.serverPagination!.currentPage * pageSize
+    : table.getState().pagination.pageIndex * pageSize
 
   const virtualizer = useVirtualizer({
     count: allRows.length,
@@ -177,12 +197,23 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
   const renderRow = (row: import('@tanstack/react-table').Row<Record<string, unknown>>, rowIndex: number) => (
     <TableRow
       key={row.id}
-      className={rowClasses}
+      className={onRowClick ? `${rowClasses} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2` : rowClasses}
       onClick={
         onRowClick
           ? () => onRowClick(row.original, row.id)
           : undefined
       }
+      onKeyDown={
+        onRowClick
+          ? (e: React.KeyboardEvent) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                if (e.key === ' ') e.preventDefault()
+                onRowClick(row.original, row.id)
+              }
+            }
+          : undefined
+      }
+      tabIndex={onRowClick ? 0 : undefined}
       style={onRowClick ? { cursor: 'pointer' } : undefined}
       role="row"
       aria-rowindex={rowIndex + 2}
@@ -246,7 +277,7 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
                   )}
                   {virtualItems.map((virtualRow) => {
                     const row = allRows[virtualRow.index]
-                    return renderRow(row, virtualRow.index)
+                    return renderRow(row, pageOffset + virtualRow.index)
                   })}
                   {paddingBottom > 0 && (
                     <tr aria-hidden="true">
@@ -279,11 +310,9 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
                   </TableCell>
                 </TableRow>
               ) : (
-                table.getRowModel().rows.map((row, rowIndex) => {
-                  const { pageIndex, pageSize } = table.getState().pagination
-                  const globalIndex = pageIndex * pageSize + rowIndex
-                  return renderRow(row, globalIndex)
-                })
+                table.getRowModel().rows.map((row, rowIndex) =>
+                  renderRow(row, pageOffset + rowIndex)
+                )
               )}
             </TableBody>
           </Table>
