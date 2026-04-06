@@ -67,7 +67,7 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
     [schema.columns, Badge, isServerMode]
   )
 
-  const shouldPaginate = !isServerMode && !isVirtualScroll
+  const shouldPaginate = !isServerMode && !isVirtualScroll && schema.pagination !== false
   const shouldShowServerPagination = !!schema.serverPagination
 
   // NOTE: TanStack Table requires mutable Record<string, unknown>[];
@@ -95,6 +95,7 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
       columnVisibility,
     },
     manualPagination: isServerMode,
+    getRowId: (row) => String(row[schema.dataKey]),
   })
 
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -284,7 +285,7 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
           </Table>
         </div>
       )}
-      {schema.pagination !== false && (!isVirtualScroll || shouldShowServerPagination) && (
+      {(!!schema.serverPagination || (!isVirtualScroll && schema.pagination !== false)) && (
         <GridPagination
           table={table}
           pageSizeOptions={paginationConfig?.pageSizeOptions}

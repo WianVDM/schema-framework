@@ -15,6 +15,8 @@ Mock TanStack server functions that return fake JSON schemas and business data f
 | get-support-ticket-form-schema.ts | getSupportTicketFormSchema | Returns support ticket form schema |
 | get-users.ts | getUsers | Returns mock user data |
 | get-orders.ts | getOrders | Returns mock order data |
+| get-virtual-grid-schema.ts | getVirtualGridSchema | Returns virtual scroll grid schema |
+| get-virtual-data.ts | getVirtualData | Returns mock virtual scroll data |
 
 ## Dependencies (Imports FROM)
 
