@@ -2,7 +2,7 @@
 // Self-contained date picker using date-fns + react-day-picker.
 // Knows nothing about schemas — accepts standard controlled props.
 
-import { useState, useCallback, useMemo, useEffect } from 'react'
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import { DayPicker } from 'react-day-picker'
 import { format, parse, isValid, isBefore, isAfter, startOfDay } from 'date-fns'
 
@@ -33,6 +33,7 @@ export function DatePicker({
 }: DatePickerProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [inputValue, setInputValue] = useState(value ?? '')
+  const popoverRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setInputValue(value ?? '')
@@ -78,9 +79,10 @@ export function DatePicker({
 
     const d = parse(raw, formatStr, new Date())
     if (isValid(d)) {
-      if (minDateParsed && isBefore(d, minDateParsed)) return
-      if (maxDateParsed && isAfter(d, maxDateParsed)) return
-      onChange(format(d, formatStr))
+      const dNormalized = startOfDay(d)
+      if (minDateParsed && isBefore(dNormalized, minDateParsed)) return
+      if (maxDateParsed && isAfter(dNormalized, maxDateParsed)) return
+      onChange(format(dNormalized, formatStr))
     }
   }, [formatStr, minDateParsed, maxDateParsed, onChange])
 
@@ -93,6 +95,29 @@ export function DatePicker({
       setInputValue(value ?? '')
     }
   }, [inputValue, parsedDate, value])
+
+  useEffect(() => {
+    if (!isOpen) return
+
+    const handleClickOutside = (e: MouseEvent) => {
+      if (popoverRef.current && !popoverRef.current.contains(e.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener('keydown', handleEscape)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('keydown', handleEscape)
+    }
+  }, [isOpen])
 
   return (
     <div className="relative">
@@ -124,7 +149,7 @@ export function DatePicker({
       </div>
 
       {isOpen && !disabled && (
-        <div className="absolute z-50 mt-1 rounded-md border bg-popover p-3 shadow-md">
+        <div ref={popoverRef} className="absolute z-50 mt-1 rounded-md border bg-popover p-3 shadow-md">
           <DayPicker
             mode="single"
             selected={parsedDate}

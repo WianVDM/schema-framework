@@ -32,5 +32,5 @@ export interface PrimitiveComponents {
   readonly DropdownMenuItem: ComponentType<any>
   readonly FileUpload: ComponentType<any>
   readonly AddressInput: ComponentType<any>
-  readonly DatePicker: ComponentType<any>
+  readonly DatePicker?: ComponentType<any>
 }

@@ -152,13 +152,14 @@ export function FieldRenderer({ schema, value, onChange, error }: FieldRendererP
         </div>
       )
 
-    case 'date':
+    case 'date': {
+      const DatePickerComponent = DatePicker ?? (() => null)
       return (
         <div className="space-y-1">
           {labelElement}
-          <DatePicker
+          <DatePickerComponent
             id={fieldId}
-            value={(value as string) ?? ''}
+            value={typeof value === 'string' ? value : ''}
             onChange={(date: string) => onChange(date)}
             disabled={schema.disabled}
             placeholder={schema.dateConfig?.placeholder ?? schema.placeholder ?? 'Pick a date...'}
@@ -171,6 +172,7 @@ export function FieldRenderer({ schema, value, onChange, error }: FieldRendererP
           {errorElement}
         </div>
       )
+    }
 
     case 'text':
     case 'email':
