@@ -63,6 +63,9 @@
     ]
   },
   "extDeps": {
+    "field-renderer.tsx": [
+      "react"
+    ],
     "grid-column-header.tsx": [
       "@tanstack/react-table"
     ],

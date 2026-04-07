@@ -33,7 +33,7 @@ function getLayer(dirPath) {
   if (norm.includes('packages/core/src/primitives')) return 1
   if (norm.includes('packages/core/src/engine')) return 2
   if (norm.includes('apps/showcase')) return 3
-  return 0
+  throw new Error(`Unknown layer for directory: ${dirPath}. Expected path containing packages/core/src/primitives, packages/core/src/engine, or apps/showcase.`)
 }
 
 // --- Token estimation ---
@@ -71,6 +71,7 @@ function parseExports(filePath) {
 
   // Parse named exports
   for (const pattern of EXPORT_PATTERNS) {
+    pattern.lastIndex = 0
     let match
     while ((match = pattern.exec(content)) !== null) {
       const name = match[1]
@@ -108,7 +109,7 @@ function resolveImport(importPath, fromFile) {
     const dir = dirname(fromFile)
     const resolved = resolve(dir, importPath)
     // Try extensions
-    for (const ext of ['', '.ts', '.tsx', '.js', '.jsx', '/index.ts', '/index.tsx']) {
+    for (const ext of ['', '.ts', '.tsx', '.js', '.jsx', '/index.ts', '/index.tsx', '/index.js', '/index.jsx']) {
       if (existsSync(resolved + ext)) return resolved + ext
     }
     return resolved
@@ -129,10 +130,10 @@ function classifyExport(keyword) {
   const map = {
     'interface': 'interface',
     'type': 'type',
-    'class': 'class',
+    'class': 'component',
     'function': 'function',
     'const': 'const',
-    'enum': 'enum',
+    'enum': 'const',
   }
   return map[keyword] || 'const'
 }
@@ -281,15 +282,22 @@ function writeContextFile(dirPath, data) {
   return { path: contextPath, content }
 }
 
-// --- Validate token budget ---
-function validateTokenBudget(filePath, content) {
-  const budgets = {
+// --- Token budgets (loaded from docs/ai/token-budgets.json) ---
+let BUDGETS
+try {
+  const budgetsRaw = readFileSync(join(ROOT, 'docs/ai/token-budgets.json'), 'utf-8')
+  BUDGETS = JSON.parse(budgetsRaw).budgets
+} catch {
+  BUDGETS = {
     'context.json': { maxTokens: 200, maxLines: 30 },
     'symbol-index.json': { maxTokens: 600, maxLines: 100 },
   }
+}
 
+// --- Validate token budget ---
+function validateTokenBudget(filePath, content) {
   let matched = null
-  for (const [suffix, budget] of Object.entries(budgets)) {
+  for (const [suffix, budget] of Object.entries(BUDGETS)) {
     if (filePath.endsWith(suffix)) {
       matched = budget
       break

@@ -4,7 +4,7 @@
 
 ## Architecture: 3-Layer Monorepo
 
-```
+```text
 Layer 1: packages/core/src/primitives/  — Generic UI wrappers (React only)
 Layer 2: packages/core/src/engine/       — Schema types, validators, renderers (imports L1)
 Layer 3: apps/showcase/src/              — TanStack Start routes, server functions (imports L1+L2)
