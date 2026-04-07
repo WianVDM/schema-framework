@@ -214,7 +214,7 @@ function buildContextForDir(dirPath) {
             }
           }
         }
-      } else if (!imp.startsWith('.')) {
+      } else {
         externalDepList.push(imp)
       }
     }
