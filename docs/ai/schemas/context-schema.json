@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "context-schema.json",
+  "title": "Directory Context",
+  "description": "Schema for .context.json files that document directory contents and relationships",
+  "type": "object",
+  "required": ["$schema", "layer", "purpose", "files"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Relative path to this schema file"
+    },
+    "layer": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 3,
+      "description": "Architecture layer: 1=Primitives, 2=Engine, 3=Composition"
+    },
+    "purpose": {
+      "type": "string",
+      "maxLength": 120,
+      "description": "Brief purpose statement for this directory"
+    },
+    "files": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["export", "type", "desc"],
+        "additionalProperties": false,
+        "properties": {
+          "export": {
+            "type": "string",
+            "description": "Primary export name, or comma-separated for multi-export files"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["interface", "type", "function", "const", "component", "re-export"],
+            "description": "Export type classification"
+          },
+          "desc": {
+            "type": "string",
+            "maxLength": 60,
+            "description": "Brief description (max 8 words)"
+          }
+        }
+      }
+    },
+    "rels": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Internal file dependencies within this directory"
+      },
+      "description": "Internal relationship map"
+    },
+    "extDeps": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "External import paths outside this directory"
+      },
+      "description": "External dependency map"
+    }
+  }
+}

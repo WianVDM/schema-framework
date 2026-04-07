@@ -1,0 +1,12 @@
+{
+  "$schema": "../../../../docs/ai/schemas/context-schema.json",
+  "layer": 2,
+  "purpose": "Schema parsing, validation, and rendering. Imports Layer 1 only.",
+  "files": {
+    "index.ts": {
+      "export": "*",
+      "type": "re-export",
+      "desc": "Barrel re-exports"
+    }
+  }
+}

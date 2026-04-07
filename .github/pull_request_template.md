@@ -26,7 +26,7 @@ Brief description of what this PR does and why.
 - [ ] `pnpm build` passes with zero errors
 - [ ] Branch name follows convention (`feature/*`, `fix/*`, `refactor/*`, `docs/*`)
 - [ ] PRs target `main` (no direct commits to `main`)
-- [ ] Context maps (`.context.md`) updated if file structure changed
+- [ ] Context maps (`.context.json`) updated if file structure changed
 - [ ] ARCHITECTURE.md updated if architectural decisions changed
 
 ## Related Issues

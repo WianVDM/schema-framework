@@ -1,30 +1,29 @@
 # Project Context Map
 
-## Layer 1: Primitives (`packages/core/src/primitives/`)
+> **Note:** Per-directory context is now stored in `.context.json` files alongside source code.
+> See `docs/ai/system.md` for the compressed AI entry point.
 
-| Directory | Purpose | Dependencies |
-|-----------|---------|--------------|
-| primitives/ | Generic UI wrappers (StatusBadge, AddressInput, FileUpload, DatePicker, TagInput) | React, date-fns, react-day-picker |
-
-## Layer 2: Engine (`packages/core/src/engine/`)
-
-| Directory | Purpose | Imports From | Imported By |
-|-----------|---------|--------------|-------------|
-| types/ | Schema type definitions (one per file) | (none — pure TS types) | validators/, context/, helpers/, renderers/ |
-| validators/ | Zod schemas + runtime validation (7 files) | types/, zod | renderers/, index.ts |
-| context/ | PrimitivesContext provider | types/ | renderers/ |
-| helpers/ | i18n resolveMessage, deepFreeze immutability | types/ | renderers/ |
-| renderers/ | SchemaForm, SchemaGrid, FieldRenderer, ThemeProvider | types/, validators/, context/, helpers/, @tanstack/react-virtual | index.ts |
-
-### Cross-Layer Dependency Graph
+## Cross-Layer Dependency Graph
 
 ```mermaid
 graph TD
-    types["types/<br/>(type definitions, one per file)"]
-    validators["validators/<br/>(7 Zod schemas)"]
-    context["context/<br/>(PrimitivesContext)"]
-    helpers["helpers/<br/>(i18n, deepFreeze)"]
-    renderers["renderers/<br/>(SchemaForm, SchemaGrid, FieldRenderer)"]
+    subgraph "Layer 1: Primitives"
+        primitives["primitives/<br/>(StatusBadge, AddressInput, FileUpload, DatePicker, TagInput)"]
+    end
+
+    subgraph "Layer 2: Engine"
+        types["types/<br/>(schema type definitions)"]
+        validators["validators/<br/>(Zod schemas)"]
+        context["context/<br/>(PrimitivesContext)"]
+        helpers["helpers/<br/>(i18n, deepFreeze)"]
+        renderers["renderers/<br/>(SchemaForm, SchemaGrid, FieldRenderer)"]
+    end
+
+    subgraph "Layer 3: Composition"
+        routes["routes/<br/>(TanStack Start routes)"]
+        server["server/<br/>(createServerFn)"]
+        data["data/<br/>(mock schemas + data)"]
+    end
 
     validators -->|uses-type| types
     context -->|uses-type| types
@@ -33,70 +32,25 @@ graph TD
     renderers -->|validates| validators
     renderers -->|provides primitives| context
     renderers -->|consumes| helpers
+    renderers -->|imports| primitives
+    routes -->|imports| renderers
+    server -->|imports| data
+    routes -->|fetches via useQuery| server
 ```
 
-## Layer 3: Composition (`apps/showcase/`)
-
-| Directory | Purpose | Imports From |
-|-----------|---------|--------------|
-| routes/ | TanStack Start file-based routes | @my-framework/core, server/, stores/ |
-| server/ | Mock server functions (createServerFn) | data/ |
-| data/ | Immutable schemas, typed mock data (UserRow, OrderRow, VirtualGridRow), primitive mappings, multiselect demo schema | @my-framework/core |
-| stores/ | Zustand selection stores | (none) |
-| app/components/ | shadcn/ui components | (shadcn) |
-| app/primitives-provider.tsx | Wires shadcn → PrimitivesContext | @my-framework/core |
-
-### Data Flow
-
-```mermaid
-graph TD
-    data["data/<br/>(Mock schemas + data)"]
-    server["server/<br/>(createServerFn)"]
-    routes["routes/<br/>(TanStack Start routes)"]
-    renderers["@my-framework/core<br/>(Engine renderers)"]
-    stores["stores/<br/>(Zustand selection)"]
-    provider["primitives-provider.tsx"]
-    context["PrimitivesContext"]
-
-    data -->|schema JSON| server
-    server -->|fetched via useQuery| routes
-    routes -->|schema + data| renderers
-    routes <-->|selection state| stores
-    routes -->|wires shadcn| provider
-    provider -->|injects into| context
-    context -->|usePrimitives| renderers
-```
-
-### Layer 3 Showcase Data Flow
-
-```mermaid
-graph LR
-    subgraph "Data Layer"
-        MockData["mock-schemas.ts"]
-    end
-    subgraph "Server Layer"
-        ServerFn["schemas.ts / data.ts"]
-    end
-    subgraph "UI Layer"
-        DemoRoutes["demo-*.tsx routes"]
-    end
-    subgraph "Core Library"
-        Engine["@my-framework/core"]
-    end
-
-    MockData -->|static schemas| ServerFn
-    ServerFn -->|useQuery| DemoRoutes
-    DemoRoutes -->|SchemaForm / SchemaGrid| Engine
-```
-
-## Key Files
+## Key Barrel Files
 
 | File | Role |
 |------|------|
 | `packages/core/src/index.ts` | Public API — re-exports from primitives/ and engine/ |
-| `packages/core/src/engine/index.ts` | Engine barrel — re-exports types, validators, context, helpers, renderers |
+| `packages/core/src/engine/index.ts` | Engine barrel — re-exports all subdirectories |
 | `packages/core/src/engine/types/index.ts` | Types barrel — re-exports all type definition files |
-| `packages/core/src/engine/validators/index.ts` | Validators barrel — re-exports all 7 validator files |
-| `packages/core/src/engine/helpers/deep-freeze.ts` | Runtime immutability — recursively freezes objects |
-| `packages/core/src/engine/types/branded.ts` | Branded types for FieldId, DataKey |
-| `packages/core/src/engine/types/readonly-deep.ts` | Recursive ReadonlyDeep<T> wrapper |
+| `packages/core/src/engine/validators/index.ts` | Validators barrel — re-exports all validator files |
+
+## Data Flow
+
+```mermaid
+graph LR
+    data["data/"] -->|schema JSON| server["server/"]
+    server -->|useQuery| routes["routes/"]
+    routes -->|SchemaForm/SchemaGrid| renderers["@my-framework/core"]
