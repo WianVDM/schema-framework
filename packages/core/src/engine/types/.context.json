@@ -158,5 +158,65 @@
       "type": "interface",
       "desc": "Virtual scrolling config"
     }
+  },
+  "rels": {
+    "cell-value-renderer.ts": [
+      "grid-column-schema.ts"
+    ],
+    "field-condition.ts": [
+      "condition-operator.ts"
+    ],
+    "field-renderer-props.ts": [
+      "field-schema.ts"
+    ],
+    "field-schema.ts": [
+      "field-type.ts",
+      "select-option.ts",
+      "validation-rule.ts",
+      "field-condition.ts",
+      "file-upload-config.ts",
+      "date-picker-config.ts",
+      "multi-select-config.ts"
+    ],
+    "form-schema.ts": [
+      "field-schema.ts",
+      "i18n-config.ts"
+    ],
+    "grid-column-schema.ts": [
+      "column-filter-config.ts",
+      "status-config.ts"
+    ],
+    "grid-schema.ts": [
+      "grid-column-schema.ts",
+      "pagination-config.ts",
+      "server-pagination-config.ts",
+      "i18n-config.ts",
+      "virtual-scroll-config.ts",
+      "branded.ts"
+    ],
+    "multi-select-config.ts": [
+      "select-option.ts"
+    ],
+    "runtime-validation-rule.ts": [
+      "validation-rule.ts"
+    ],
+    "schema-form-props.ts": [
+      "form-schema.ts",
+      "form-submit-handler.ts"
+    ],
+    "schema-grid-props.ts": [
+      "grid-schema.ts"
+    ],
+    "validation-rule.ts": [
+      "validation-type.ts"
+    ]
+  },
+  "extDeps": {
+    "cell-value-renderer.ts": [
+      "react"
+    ],
+    "primitive-components.ts": [
+      "react"
+    ]
   }
 }

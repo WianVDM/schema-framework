@@ -69,8 +69,12 @@
     "grid-column-header.tsx": [
       "@tanstack/react-table"
     ],
+    "grid-pagination.tsx": [
+      "@tanstack/react-table"
+    ],
     "grid-toolbar.tsx": [
-      "react"
+      "react",
+      "@tanstack/react-table"
     ],
     "schema-form.tsx": [
       "@tanstack/react-form"

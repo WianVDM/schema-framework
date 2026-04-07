@@ -1,0 +1,111 @@
+{
+  "$schema": "../../../../../docs/ai/schemas/context-schema.json",
+  "layer": 3,
+  "purpose": "",
+  "files": {
+    "badge.tsx": {
+      "export": "*",
+      "type": "component",
+      "desc": "badge"
+    },
+    "button.tsx": {
+      "export": "*",
+      "type": "component",
+      "desc": "button"
+    },
+    "checkbox.tsx": {
+      "export": "*",
+      "type": "component",
+      "desc": "checkbox"
+    },
+    "dialog.tsx": {
+      "export": "*",
+      "type": "component",
+      "desc": "dialog"
+    },
+    "dropdown-menu.tsx": {
+      "export": "*",
+      "type": "component",
+      "desc": "dropdown-menu"
+    },
+    "input.tsx": {
+      "export": "*",
+      "type": "component",
+      "desc": "input"
+    },
+    "label.tsx": {
+      "export": "*",
+      "type": "component",
+      "desc": "label"
+    },
+    "select.tsx": {
+      "export": "*",
+      "type": "component",
+      "desc": "select"
+    },
+    "table.tsx": {
+      "export": "*",
+      "type": "component",
+      "desc": "table"
+    },
+    "textarea.tsx": {
+      "export": "*",
+      "type": "component",
+      "desc": "textarea"
+    }
+  },
+  "extDeps": {
+    "badge.tsx": [
+      "@base-ui/react/merge-props",
+      "@base-ui/react/use-render",
+      "class-variance-authority",
+      "@/lib/utils"
+    ],
+    "button.tsx": [
+      "@base-ui/react/button",
+      "class-variance-authority",
+      "@/lib/utils"
+    ],
+    "checkbox.tsx": [
+      "@base-ui/react/checkbox",
+      "@/lib/utils",
+      "lucide-react"
+    ],
+    "dialog.tsx": [
+      "react",
+      "@base-ui/react/dialog",
+      "@/lib/utils",
+      "@/components/ui/button",
+      "lucide-react"
+    ],
+    "dropdown-menu.tsx": [
+      "react",
+      "@base-ui/react/menu",
+      "@/lib/utils",
+      "lucide-react"
+    ],
+    "input.tsx": [
+      "react",
+      "@base-ui/react/input",
+      "@/lib/utils"
+    ],
+    "label.tsx": [
+      "react",
+      "@/lib/utils"
+    ],
+    "select.tsx": [
+      "react",
+      "@base-ui/react/select",
+      "@/lib/utils",
+      "lucide-react"
+    ],
+    "table.tsx": [
+      "react",
+      "@/lib/utils"
+    ],
+    "textarea.tsx": [
+      "react",
+      "@/lib/utils"
+    ]
+  }
+}

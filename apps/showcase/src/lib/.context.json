@@ -1,0 +1,37 @@
+{
+  "$schema": "../../../../docs/ai/schemas/context-schema.json",
+  "layer": 3,
+  "purpose": "",
+  "files": {
+    "query-client.tsx": {
+      "export": "AppQueryProvider",
+      "type": "function",
+      "desc": "AppQueryProvider"
+    },
+    "serializable-record.ts": {
+      "export": "SerializableRecord",
+      "type": "type",
+      "desc": "SerializableRecord"
+    },
+    "to-serializable.ts": {
+      "export": "toSerializable",
+      "type": "function",
+      "desc": "toSerializable"
+    },
+    "utils.ts": {
+      "export": "cn",
+      "type": "function",
+      "desc": "cn"
+    }
+  },
+  "extDeps": {
+    "query-client.tsx": [
+      "@tanstack/react-query",
+      "react"
+    ],
+    "utils.ts": [
+      "clsx",
+      "tailwind-merge"
+    ]
+  }
+}

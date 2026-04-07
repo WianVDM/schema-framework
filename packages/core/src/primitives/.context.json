@@ -44,7 +44,16 @@
       "desc": "Multi-select tag input"
     }
   },
+  "rels": {
+    "address-input.tsx": [
+      "address-data.ts",
+      "address-placeholders.ts"
+    ]
+  },
   "extDeps": {
+    "address-input.tsx": [
+      "react"
+    ],
     "date-picker.tsx": [
       "react",
       "react-day-picker",

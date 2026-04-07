@@ -1,0 +1,135 @@
+{
+  "$schema": "../../../../docs/ai/schemas/context-schema.json",
+  "layer": 3,
+  "purpose": "",
+  "files": {
+    "contact-form-schema.ts": {
+      "export": "contactFormSchema",
+      "type": "const",
+      "desc": "contactFormSchema"
+    },
+    "index.ts": {
+      "export": "*",
+      "type": "re-export",
+      "desc": "Barrel re-exports"
+    },
+    "mock-orders.ts": {
+      "export": "mockOrders",
+      "type": "const",
+      "desc": "mockOrders"
+    },
+    "mock-users.ts": {
+      "export": "mockUsers",
+      "type": "const",
+      "desc": "mockUsers"
+    },
+    "mock-virtual-data.ts": {
+      "export": "mockVirtualData",
+      "type": "const",
+      "desc": "mockVirtualData"
+    },
+    "multiselect-form-schema.ts": {
+      "export": "multiselectFormSchema",
+      "type": "const",
+      "desc": "multiselectFormSchema"
+    },
+    "order-grid-schema.ts": {
+      "export": "orderGridSchema",
+      "type": "const",
+      "desc": "orderGridSchema"
+    },
+    "order-row.ts": {
+      "export": "OrderRow",
+      "type": "interface",
+      "desc": "OrderRow"
+    },
+    "primitive-mappings.tsx": {
+      "export": "primitives",
+      "type": "const",
+      "desc": "primitives"
+    },
+    "registration-form-schema.ts": {
+      "export": "registrationFormSchema",
+      "type": "const",
+      "desc": "registrationFormSchema"
+    },
+    "support-ticket-form-schema.ts": {
+      "export": "supportTicketFormSchema",
+      "type": "const",
+      "desc": "supportTicketFormSchema"
+    },
+    "user-grid-schema.ts": {
+      "export": "userGridSchema",
+      "type": "const",
+      "desc": "userGridSchema"
+    },
+    "user-row.ts": {
+      "export": "UserRow",
+      "type": "interface",
+      "desc": "UserRow"
+    },
+    "virtual-grid-row.ts": {
+      "export": "VirtualGridRow",
+      "type": "interface",
+      "desc": "VirtualGridRow"
+    },
+    "virtual-grid-schema.ts": {
+      "export": "virtualGridSchema",
+      "type": "const",
+      "desc": "virtualGridSchema"
+    }
+  },
+  "rels": {
+    "mock-orders.ts": [
+      "order-row.ts"
+    ],
+    "mock-users.ts": [
+      "user-row.ts"
+    ],
+    "mock-virtual-data.ts": [
+      "virtual-grid-row.ts"
+    ]
+  },
+  "extDeps": {
+    "contact-form-schema.ts": [
+      "@my-framework/core"
+    ],
+    "mock-orders.ts": [
+      "@my-framework/core"
+    ],
+    "mock-users.ts": [
+      "@my-framework/core"
+    ],
+    "multiselect-form-schema.ts": [
+      "@my-framework/core"
+    ],
+    "order-grid-schema.ts": [
+      "@my-framework/core"
+    ],
+    "primitive-mappings.tsx": [
+      "@my-framework/core",
+      "@/components/ui/input",
+      "@/components/ui/label",
+      "@/components/ui/textarea",
+      "@/components/ui/checkbox",
+      "@/components/ui/button",
+      "@/components/ui/badge",
+      "@/components/ui/dialog",
+      "@/components/ui/dropdown-menu",
+      "@/components/ui/select",
+      "@/components/ui/table"
+    ],
+    "registration-form-schema.ts": [
+      "@my-framework/core"
+    ],
+    "support-ticket-form-schema.ts": [
+      "@my-framework/core"
+    ],
+    "user-grid-schema.ts": [
+      "@my-framework/core"
+    ],
+    "virtual-grid-schema.ts": [
+      "@my-framework/core"
+    ]
+  }
+}

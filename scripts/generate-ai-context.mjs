@@ -14,17 +14,11 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 const ROOT = resolve(__dirname, '..')
 
-// --- Directories to scan (relative to ROOT) ---
-const SCAN_DIRS = [
+// --- Root directories to scan recursively (relative to ROOT) ---
+const SCAN_ROOTS = [
   'packages/core/src/primitives',
   'packages/core/src/engine',
-  'packages/core/src/engine/types',
-  'packages/core/src/engine/validators',
-  'packages/core/src/engine/helpers',
-  'packages/core/src/engine/context',
-  'packages/core/src/engine/renderers',
   'apps/showcase/src',
-  'apps/showcase/src/server',
 ]
 
 // --- Layer mapping ---
@@ -89,7 +83,7 @@ function parseImports(filePath) {
   const imports = []
 
   const patterns = [
-    /import\s+(?:\{[^}]*\}|[\w]+)\s+from\s+['"]([^'"]+)['"]/g,
+    /import\s+(?:type\s+)?(?:(?:\{[^}]*\}|[\w]+|\*\s+as\s+\w+))\s+from\s+['"]([^'"]+)['"]/g,
     /import\s+['"]([^'"]+)['"]/g,
   ]
 
@@ -117,11 +111,43 @@ function resolveImport(importPath, fromFile) {
   return null // External package
 }
 
+// --- Recursively discover directories containing source files ---
+const SKIP_DIRS = new Set(['node_modules', '.git', 'dist', '.next', '.turbo'])
+
+function discoverSourceDirs(rootPath) {
+  const results = []
+  const absRoot = resolve(ROOT, rootPath)
+  if (!existsSync(absRoot)) return results
+
+  function walk(dir) {
+    let hasSource = false
+    const entries = readdirSync(dir, { withFileTypes: true })
+
+    for (const entry of entries) {
+      if (entry.isDirectory()) {
+        if (!SKIP_DIRS.has(entry.name)) {
+          walk(join(dir, entry.name))
+        }
+      } else if (/\.(ts|tsx)$/.test(entry.name) && !entry.name.endsWith('.d.ts') && !entry.name.endsWith('.gen.ts')) {
+        hasSource = true
+      }
+    }
+
+    if (hasSource) {
+      results.push(relative(ROOT, dir).replace(/\\/g, '/'))
+    }
+  }
+
+  walk(absRoot)
+  return results.sort()
+}
+
 // --- Get TS/TSX files in directory ---
 function getSourceFiles(dirPath) {
   if (!existsSync(dirPath)) return []
-  return readdirSync(dirPath)
-    .filter(f => /\.(ts|tsx)$/.test(f) && !f.endsWith('.d.ts') && !f.endsWith('.gen.ts'))
+  return readdirSync(dirPath, { withFileTypes: true })
+    .filter(d => d.isFile() && /\.(ts|tsx)$/.test(d.name) && !d.name.endsWith('.d.ts') && !d.name.endsWith('.gen.ts'))
+    .map(d => d.name)
     .sort()
 }
 
@@ -258,6 +284,11 @@ function buildSymbolIndex(contexts) {
       for (const name of names) {
         if (name === '*') continue
         const filePath = posix.join(dirPath, file).replace(/\\/g, '/')
+        if (symbols[name]) {
+          throw new Error(
+            `Duplicate export "${name}" found in both ${symbols[name].file} and ${filePath}`
+          )
+        }
         symbols[name] = {
           file: filePath,
           type: meta.type,
@@ -324,9 +355,13 @@ function validateTokenBudget(filePath, content) {
 function main() {
   console.log('🔄 Generating AI context files...\n')
 
+  // Discover all source directories recursively from SCAN_ROOTS
+  const allDirs = SCAN_ROOTS.flatMap(root => discoverSourceDirs(root))
+  console.log(`  📂 Discovered ${allDirs.length} directories with source files\n`)
+
   const contexts = []
 
-  for (const dirPath of SCAN_DIRS) {
+  for (const dirPath of allDirs) {
     const context = buildContextForDir(dirPath)
     if (!context) {
       console.log(`  ⏭️  ${dirPath} — no source files found, skipping`)
