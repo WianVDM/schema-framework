@@ -176,8 +176,10 @@ export function FieldRenderer({ schema, value, onChange, error }: FieldRendererP
     }
 
     case 'multiselect': {
-      const TagInputComponent = TagInput ?? (() => null)
-      const selectedValues = Array.isArray(value) ? (value as readonly string[]) : []
+      const TagInputComponent = TagInput ?? DefaultTagInput
+      const selectedValues = Array.isArray(value)
+        ? (value as readonly unknown[]).filter((item): item is string => typeof item === 'string')
+        : []
       return (
         <div className="space-y-1">
           {labelElement}
@@ -228,6 +230,17 @@ export function FieldRenderer({ schema, value, onChange, error }: FieldRendererP
         </div>
       )
   }
+}
+
+function DefaultTagInput({ placeholder }: { readonly placeholder?: string }) {
+  console.warn(
+    'TagInput primitive not provided. Pass a TagInput component via PrimitiveComponents to enable multiselect fields.',
+  )
+  return (
+    <div className="flex items-center min-h-10 px-3 py-2 rounded-md border border-dashed border-muted-foreground/50 bg-muted/50 text-sm text-muted-foreground">
+      {placeholder ?? 'TagInput not configured'}
+    </div>
+  )
 }
 
 function normalizeOptions(

@@ -30,7 +30,17 @@ export const fieldSchemaValidator = z.object({
   fileConfig: fileUploadConfigSchema.optional(),
   dateConfig: datePickerConfigSchema.optional(),
   multiSelectConfig: multiSelectConfigSchema.optional(),
-}).strict()
+}).strict().refine(
+  (data) => {
+    if (data.type === 'multiselect') {
+      return data.multiSelectConfig !== undefined && data.multiSelectConfig !== null
+    }
+    return true
+  },
+  {
+    message: 'multiSelectConfig is required for multiselect type',
+  },
+)
 
 export function validateFieldSchema(data: unknown): ValidationResult {
   const result = fieldSchemaValidator.safeParse(data)

@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback } from 'react'
+import type { InputHTMLAttributes } from 'react'
 
 interface TagOption {
   readonly label: string
@@ -13,8 +14,9 @@ export interface TagInputProps {
   readonly creatable?: boolean
   readonly placeholder?: string
   readonly disabled?: boolean
-  readonly id?: string
 }
+
+type TagInputInputProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange' | 'placeholder' | 'disabled'>
 
 export function TagInput({
   value,
@@ -24,8 +26,8 @@ export function TagInput({
   creatable = false,
   placeholder = 'Add tag...',
   disabled = false,
-  id,
-}: TagInputProps) {
+  ...inputProps
+}: TagInputProps & TagInputInputProps) {
   const [inputValue, setInputValue] = useState('')
   const [showDropdown, setShowDropdown] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -100,7 +102,7 @@ export function TagInput({
   }
 
   return (
-    <div ref={containerRef} className="relative" id={id}>
+    <div ref={containerRef} className="relative">
       <div
         onClick={handleContainerClick}
         className={`flex flex-wrap gap-1.5 items-center min-h-10 px-3 py-2 rounded-md border border-input bg-background text-sm ring-offset-background cursor-text ${
@@ -142,6 +144,7 @@ export function TagInput({
             placeholder={value.length === 0 ? placeholder : ''}
             disabled={disabled}
             className="flex-1 min-w-[80px] bg-transparent outline-none placeholder:text-muted-foreground text-sm"
+            {...inputProps}
           />
         )}
         {isAtLimit && (

@@ -70,7 +70,7 @@ export const multiSelectConfigSchema = z.object({
   maxSelections: z.number().int().positive().optional(),
   creatable: z.boolean().optional(),
   placeholder: z.string().optional(),
-})
+}).strict()
 
 export const paginationConfigSchema = z.object({
   pageSize: z.number().int().positive().default(10),
