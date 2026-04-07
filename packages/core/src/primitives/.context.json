@@ -1,5 +1,5 @@
 {
-  "$schema": "context-schema.json",
+  "$schema": "../../../../docs/ai/schemas/context-schema.json",
   "layer": 1,
   "purpose": "Generic UI wrappers with no schema knowledge. Imports only React.",
   "files": {

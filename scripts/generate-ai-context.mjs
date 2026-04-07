@@ -6,7 +6,7 @@
  * Zero external dependencies — uses only Node.js built-ins (fs, path, url).
  */
 
-import { readFileSync, writeFileSync, existsSync, readdirSync, statSync, unlinkSync } from 'fs'
+import { readFileSync, writeFileSync, existsSync, readdirSync, statSync, unlinkSync, mkdirSync } from 'fs'
 import { join, relative, dirname, extname, basename, resolve, posix } from 'path'
 import { fileURLToPath } from 'url'
 
@@ -341,6 +341,7 @@ function main() {
   const symbolIndex = buildSymbolIndex(contexts)
   const symbolIndexPath = join(ROOT, 'docs', 'ai', 'symbol-index.json')
   const symbolContent = JSON.stringify(symbolIndex, null, 2) + '\n'
+  mkdirSync(dirname(symbolIndexPath), { recursive: true })
   writeFileSync(symbolIndexPath, symbolContent, 'utf-8')
 
   const symbolTokens = estimateTokens(symbolContent, true)
