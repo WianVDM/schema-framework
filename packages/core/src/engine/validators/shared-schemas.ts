@@ -53,7 +53,7 @@ export const datePickerConfigSchema = z.object({
   minDate: z.string().optional(),
   maxDate: z.string().optional(),
   placeholder: z.string().optional(),
-}).refine(
+}).strict().refine(
   (data) => {
     if (data.minDate && isNaN(Date.parse(data.minDate))) return false
     if (data.maxDate && isNaN(Date.parse(data.maxDate))) return false

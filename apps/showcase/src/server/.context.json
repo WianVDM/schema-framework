@@ -52,6 +52,11 @@
       "export": "getVirtualGridSchema",
       "type": "const",
       "desc": "getVirtualGridSchema"
+    },
+    "get-wizard-form-schema.ts": {
+      "export": "getWizardFormSchema",
+      "type": "const",
+      "desc": "Server function for wizard form schema"
     }
   },
   "extDeps": {
@@ -89,6 +94,10 @@
       "@tanstack/react-start"
     ],
     "get-virtual-grid-schema.ts": [
+      "@tanstack/react-start",
+      "@my-framework/core"
+    ],
+    "get-wizard-form-schema.ts": [
       "@tanstack/react-start",
       "@my-framework/core"
     ]

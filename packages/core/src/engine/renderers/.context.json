@@ -38,6 +38,16 @@
       "type": "function",
       "desc": "Renders grid from GridSchema"
     },
+    "schema-wizard.tsx": {
+      "export": "SchemaWizard",
+      "type": "function",
+      "desc": "Renders multi-step wizard from WizardSchema"
+    },
+    "wizard-review-step.tsx": {
+      "export": "WizardReviewStep",
+      "type": "function",
+      "desc": "Read-only review step for wizard"
+    },
     "theme-provider.tsx": {
       "export": "ThemeProvider, ThemeContext",
       "type": "const",
@@ -60,6 +70,13 @@
     ],
     "use-theme.ts": [
       "theme-provider.tsx"
+    ],
+    "schema-wizard.tsx": [
+      "field-renderer.tsx",
+      "wizard-review-step.tsx"
+    ],
+    "wizard-review-step.tsx": [
+      "field-renderer.tsx"
     ]
   },
   "extDeps": {
@@ -85,6 +102,13 @@
       "@tanstack/react-virtual"
     ],
     "theme-provider.tsx": [
+      "react"
+    ],
+    "schema-wizard.tsx": [
+      "react",
+      "@tanstack/react-form"
+    ],
+    "wizard-review-step.tsx": [
       "react"
     ],
     "use-theme.ts": [

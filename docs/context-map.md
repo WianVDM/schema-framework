@@ -16,7 +16,7 @@ graph TD
         validators["validators/<br/>(Zod schemas)"]
         context["context/<br/>(PrimitivesContext)"]
         helpers["helpers/<br/>(i18n, deepFreeze)"]
-        renderers["renderers/<br/>(SchemaForm, SchemaGrid, FieldRenderer)"]
+        renderers["renderers/<br/>(SchemaForm, SchemaGrid, SchemaWizard, FieldRenderer)"]
     end
 
     subgraph "Layer 3: Composition"
@@ -53,4 +53,4 @@ graph TD
 graph LR
     data["data/"] -->|schema JSON| server["server/"]
     server -->|useQuery| routes["routes/"]
-    routes -->|SchemaForm/SchemaGrid| renderers["@my-framework/core"]
+    routes -->|SchemaForm/SchemaGrid/SchemaWizard| renderers["@my-framework/core"]

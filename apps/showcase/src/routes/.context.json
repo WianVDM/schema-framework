@@ -13,6 +13,11 @@
       "type": "const",
       "desc": "Route"
     },
+    "demo-form-wizard.tsx": {
+      "export": "Route",
+      "type": "const",
+      "desc": "Form wizard demo route"
+    },
     "demo-form.tsx": {
       "export": "Route",
       "type": "const",
@@ -59,6 +64,11 @@
       "desc": "Route"
     }
   },
+  "rels": {
+    "demo-form-wizard.tsx": [
+      "demo.tsx"
+    ]
+  },
   "extDeps": {
     "__root.tsx": [
       "react",
@@ -67,6 +77,10 @@
     "demo-date-picker.tsx": [
       "@tanstack/react-router",
       "react",
+      "@my-framework/core"
+    ],
+    "demo-form-wizard.tsx": [
+      "@tanstack/react-router",
       "@my-framework/core"
     ],
     "demo-form.tsx": [

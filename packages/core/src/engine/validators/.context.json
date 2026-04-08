@@ -37,6 +37,11 @@
       "export": "ValidationResult, fieldTypeSchema, selectOptionSchema, validationRuleSchema, fieldConditionSchema, fileUploadConfigSchema, datePickerConfigSchema, multiSelectConfigSchema, paginationConfigSchema, columnFilterConfigSchema, statusConfigSchema, serverPaginationConfigSchema, i18nConfigSchema, virtualScrollConfigSchema",
       "type": "const",
       "desc": "Shared Zod schemas"
+    },
+    "wizard-schema.ts": {
+      "export": "wizardSchemaValidator, validateWizardSchema",
+      "type": "const",
+      "desc": "WizardSchema Zod validator"
     }
   },
   "rels": {
@@ -49,6 +54,10 @@
     ],
     "grid-schema.ts": [
       "shared-schemas.ts"
+    ],
+    "wizard-schema.ts": [
+      "shared-schemas.ts",
+      "form-schema.ts"
     ]
   },
   "extDeps": {
@@ -62,6 +71,9 @@
       "zod"
     ],
     "shared-schemas.ts": [
+      "zod"
+    ],
+    "wizard-schema.ts": [
       "zod"
     ]
   }

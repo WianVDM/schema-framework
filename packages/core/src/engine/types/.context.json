@@ -103,6 +103,16 @@
       "type": "type",
       "desc": "Recursive readonly wrappers"
     },
+    "review-step-config.ts": {
+      "export": "ReviewStepConfig",
+      "type": "interface",
+      "desc": "Wizard review step configuration"
+    },
+    "schema-wizard-props.ts": {
+      "export": "SchemaWizardProps",
+      "type": "interface",
+      "desc": "SchemaWizard renderer props"
+    },
     "runtime-validation-rule.ts": {
       "export": "RuntimeValidationRule",
       "type": "interface",
@@ -122,6 +132,11 @@
       "export": "SelectOption",
       "type": "interface",
       "desc": "Select/radio option"
+    },
+    "step-indicator-props.ts": {
+      "export": "StepIndicatorProps",
+      "type": "interface",
+      "desc": "Step indicator primitive props"
     },
     "selection-store.ts": {
       "export": "SelectionStore",
@@ -152,6 +167,21 @@
       "export": "ValidationType",
       "type": "type",
       "desc": "Validation type literal union"
+    },
+    "wizard-navigation-config.ts": {
+      "export": "WizardNavigationConfig",
+      "type": "interface",
+      "desc": "Wizard navigation button labels"
+    },
+    "wizard-schema.ts": {
+      "export": "WizardSchema",
+      "type": "interface",
+      "desc": "Complete wizard schema definition"
+    },
+    "wizard-step.ts": {
+      "export": "WizardStep",
+      "type": "interface",
+      "desc": "Single wizard step definition"
     },
     "virtual-scroll-config.ts": {
       "export": "VirtualScrollConfig",
@@ -207,8 +237,22 @@
     "schema-grid-props.ts": [
       "grid-schema.ts"
     ],
+    "schema-wizard-props.ts": [
+      "wizard-schema.ts",
+      "form-submit-handler.ts"
+    ],
+    "step-indicator-props.ts": [],
     "validation-rule.ts": [
       "validation-type.ts"
+    ],
+    "wizard-schema.ts": [
+      "wizard-step.ts",
+      "wizard-navigation-config.ts",
+      "review-step-config.ts",
+      "i18n-config.ts"
+    ],
+    "wizard-step.ts": [
+      "form-schema.ts"
     ]
   },
   "extDeps": {
