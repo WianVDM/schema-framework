@@ -1,5 +1,5 @@
-import { useState, useCallback, useRef } from 'react'
-import { useForm } from '@tanstack/react-form'
+import { useState, useCallback, useRef, useMemo } from 'react'
+import { useForm, type AnyFieldMetaBase } from '@tanstack/react-form'
 import type { SchemaWizardProps, FieldSchema, StepIndicatorProps } from '../types'
 import { validateFieldValue, evaluateCondition } from '../validators'
 import { FieldRenderer } from './field-renderer'
@@ -28,7 +28,7 @@ export function SchemaWizard({ schema, onSubmit, initialValues, onCancel }: Sche
   const reviewTitle = schema.reviewStep?.title ?? 'Review Your Answers'
   const reviewDescription = schema.reviewStep?.description
 
-  const fieldDefaults = buildWizardDefaults(schema.steps, initialValues)
+  const fieldDefaults = useMemo(() => buildWizardDefaults(schema.steps, initialValues), [schema.steps, initialValues])
 
   const form = useForm({
     defaultValues: fieldDefaults,
@@ -43,16 +43,16 @@ export function SchemaWizard({ schema, onSubmit, initialValues, onCancel }: Sche
   const formRef = useRef(form)
   formRef.current = form
 
-  const handleNext = useCallback(() => {
+  const handleNext = useCallback(async () => {
     if (isLastStep && hasReviewStep) {
-      const allValid = validateAllFields(formRef.current, schema.steps)
+      const allValid = await validateAllFields(formRef.current, schema.steps)
       if (!allValid && validationMode === 'eager') return
       setShowReview(true)
       return
     }
 
     if (validationMode === 'eager') {
-      const stepValid = validateStepFields(formRef.current, currentFields)
+      const stepValid = await validateStepFields(formRef.current, currentFields)
       if (!stepValid) return
     }
 
@@ -204,9 +204,13 @@ export function SchemaWizard({ schema, onSubmit, initialValues, onCancel }: Sche
                   </Button>
                 )}
               </form.Subscribe>
+            ) : isLastStep && !hasReviewStep ? (
+              <Button type="submit">
+                {submitLabel}
+              </Button>
             ) : (
               <Button type="button" onClick={handleNext}>
-                {isLastStep && !hasReviewStep ? submitLabel : nextLabel}
+                {nextLabel}
               </Button>
             )}
           </div>
@@ -290,34 +294,50 @@ function isFieldVisible(
   return evaluateCondition(field.visibleWhen, formValues)
 }
 
-function validateStepFields(
-  formApi: { readonly state: { readonly values: Record<string, unknown> } },
+async function validateStepFields(
+  formApi: FormApiForValidation,
   fields: readonly FieldSchema[]
-): boolean {
-  const values = formApi.state.values
+): Promise<boolean> {
   let allValid = true
   for (const field of fields) {
-    const error = validateFieldValue(values[field.name], field)
-    if (error) {
+    formApi.setFieldMeta(field.name, (prev) => ({ ...prev, isTouched: true }))
+    const errors = await formApi.validateField(field.name, 'change')
+    if (errors.length > 0) {
       allValid = false
     }
   }
   return allValid
 }
 
-function validateAllFields(
-  formApi: { readonly state: { readonly values: Record<string, unknown> } },
+async function validateAllFields(
+  formApi: FormApiForValidation,
   steps: readonly { readonly schema: { readonly fields: readonly FieldSchema[] } }[]
-): boolean {
-  const values = formApi.state.values
+): Promise<boolean> {
   let allValid = true
   for (const step of steps) {
     for (const field of step.schema.fields) {
-      const error = validateFieldValue(values[field.name], field)
-      if (error) {
+      formApi.setFieldMeta(field.name, (prev) => ({ ...prev, isTouched: true }))
+      const errors = await formApi.validateField(field.name, 'change')
+      if (errors.length > 0) {
         allValid = false
       }
     }
   }
   return allValid
+}
+
+/**
+ * NOTE: Subset of TanStack FormApi methods needed for step validation.
+ * Only declares the methods we call so the signature stays decoupled
+ * from the full FormApi generic surface.
+ */
+interface FormApiForValidation {
+  readonly setFieldMeta: (
+    field: string,
+    updater: (prev: AnyFieldMetaBase) => AnyFieldMetaBase
+  ) => void
+  readonly validateField: (
+    field: string,
+    cause: 'change'
+  ) => unknown[] | Promise<unknown[]>
 }

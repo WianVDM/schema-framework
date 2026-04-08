@@ -41,7 +41,7 @@
     "schema-wizard.tsx": {
       "export": "SchemaWizard",
       "type": "function",
-      "desc": "Renders multi-step wizard from WizardSchema"
+      "desc": "Renders multi-step wizard with form API validation and touched-state management"
     },
     "wizard-review-step.tsx": {
       "export": "WizardReviewStep",
