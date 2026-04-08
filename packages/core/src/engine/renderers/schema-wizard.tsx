@@ -273,7 +273,7 @@ function DefaultStepIndicator({ steps, currentStep, visitedSteps, onStepClick }:
                 role={canClick ? 'button' : undefined}
                 tabIndex={canClick ? 0 : undefined}
                 onClick={canClick ? () => onStepClick!(index) : undefined}
-                onKeyDown={canClick ? (e: React.KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') onStepClick!(index) } : undefined}
+                onKeyDown={canClick ? (e: React.KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onStepClick!(index) } } : undefined}
               >
                 {index + 1}
               </div>
@@ -365,8 +365,14 @@ interface FormApiForValidation {
     field: string,
     updater: (prev: AnyFieldMetaBase) => AnyFieldMetaBase
   ) => void
+  // NOTE: Return type intentionally uses `any[]` to match the upstream
+  // TanStack FormApi.validateField signature exactly. The upstream library
+  // returns `any[] | Promise<any[]>` (form-core@1.28.6 FormApi.d.ts:390).
+  // Using a narrower type like `readonly string[]` would create a type
+  // mismatch if the upstream contract changes or if custom validators
+  // return non-string error objects.
   readonly validateField: (
     field: string,
     cause: 'change'
-  ) => readonly string[] | Promise<readonly string[]>
+  ) => any[] | Promise<any[]>
 }
