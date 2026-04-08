@@ -165,7 +165,7 @@ export function SchemaWizard({ schema, onSubmit, initialValues, onCancel }: Sche
                             error={
                               fieldApi.state.meta.isTouched &&
                               !fieldApi.state.meta.isValid
-                                ? fieldApi.state.meta.errors.join(', ')
+                                ? fieldApi.state.meta.errors.map((err) => String(err)).join(', ')
                                 : undefined
                             }
                           />
