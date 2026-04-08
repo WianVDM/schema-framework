@@ -1,4 +1,5 @@
-import type { FieldSchema } from '../types'
+import type { FieldSchema, SelectOption } from '../types'
+import { evaluateCondition } from '../validators'
 import { usePrimitives } from '../context/primitives-context'
 
 interface WizardReviewStepProps {
@@ -38,16 +39,18 @@ export function WizardReviewStep({ steps, values, onEditStep, editable }: Wizard
             )}
           </div>
           <dl className="grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-2">
-            {step.schema.fields.map((field) => {
-              const fieldValue = values[field.name]
-              const displayValue = formatDisplayValue(fieldValue, field)
-              return (
-                <div key={field.name}>
-                  <dt className="text-sm font-medium text-muted-foreground">{field.label}</dt>
-                  <dd className="text-sm mt-0.5">{displayValue}</dd>
-                </div>
-              )
-            })}
+            {step.schema.fields
+              .filter((field) => isFieldVisible(field, values))
+              .map((field) => {
+                const fieldValue = values[field.name]
+                const displayValue = formatDisplayValue(fieldValue, field)
+                return (
+                  <div key={field.name}>
+                    <dt className="text-sm font-medium text-muted-foreground">{field.label}</dt>
+                    <dd className="text-sm mt-0.5">{displayValue}</dd>
+                  </div>
+                )
+              })}
           </dl>
         </div>
       ))}
@@ -55,9 +58,30 @@ export function WizardReviewStep({ steps, values, onEditStep, editable }: Wizard
   )
 }
 
+function isFieldVisible(
+  field: FieldSchema,
+  formValues: Record<string, unknown>
+): boolean {
+  if (!field.visibleWhen) return true
+  return evaluateCondition(field.visibleWhen, formValues)
+}
+
 function formatDisplayValue(value: unknown, field: FieldSchema): string {
   if (value === undefined || value === null || value === '') return '—'
   if (field.type === 'checkbox') return value ? 'Yes' : 'No'
+
+  if (field.type === 'select') {
+    return resolveOptionLabel(value, field.options) ?? String(value)
+  }
+
+  if (field.type === 'multiselect' && Array.isArray(value)) {
+    if (value.length === 0) return '—'
+    const options = field.multiSelectConfig?.options
+    return value
+      .map((v) => resolveOptionLabel(v, options) ?? String(v))
+      .join(', ')
+  }
+
   if (Array.isArray(value)) {
     if (value.length === 0) return '—'
     return value.map((v) => String(v)).join(', ')
@@ -66,4 +90,16 @@ function formatDisplayValue(value: unknown, field: FieldSchema): string {
     return JSON.stringify(value)
   }
   return String(value)
+}
+
+function resolveOptionLabel(
+  value: unknown,
+  options?: readonly (string | SelectOption)[]
+): string | undefined {
+  if (!options) return undefined
+  const normalized = options.map((opt) =>
+    typeof opt === 'string' ? { label: opt, value: opt } : opt
+  )
+  const match = normalized.find((opt) => opt.value === value)
+  return match?.label
 }

@@ -17,6 +17,7 @@ export function SchemaWizard({ schema, onSubmit, initialValues, onCancel }: Sche
   const nav = schema.navigation
   const validationMode = schema.validationMode ?? 'eager'
   const hasReviewStep = schema.reviewStep?.enabled === true
+  const isNonLinear = schema.mode === 'nonlinear'
   const totalSteps = schema.steps.length
   const isLastStep = currentStep === totalSteps - 1
   const isReviewStep = showReview && hasReviewStep
@@ -51,7 +52,7 @@ export function SchemaWizard({ schema, onSubmit, initialValues, onCancel }: Sche
       return
     }
 
-    if (validationMode === 'eager') {
+    if (validationMode === 'eager' && !currentStepData.optional) {
       const stepValid = await validateStepFields(formRef.current, currentFields, formRef.current.state.values)
       if (!stepValid) return
     }
@@ -59,7 +60,7 @@ export function SchemaWizard({ schema, onSubmit, initialValues, onCancel }: Sche
     const nextStep = currentStep + 1
     setVisitedSteps((prev) => new Set([...prev, nextStep]))
     setCurrentStep(nextStep)
-  }, [currentStep, currentFields, form, hasReviewStep, isLastStep, validationMode, schema.steps])
+  }, [currentStep, currentFields, currentStepData.optional, form, hasReviewStep, isLastStep, validationMode, schema.steps])
 
   const handlePrevious = useCallback(() => {
     if (showReview) {
@@ -75,6 +76,13 @@ export function SchemaWizard({ schema, onSubmit, initialValues, onCancel }: Sche
     setShowReview(false)
     setCurrentStep(stepIndex)
   }, [])
+
+  const handleStepClick = useCallback((stepIndex: number) => {
+    if (!isNonLinear) return
+    if (!visitedSteps.has(stepIndex)) return
+    setShowReview(false)
+    setCurrentStep(stepIndex)
+  }, [isNonLinear, visitedSteps])
 
   const StepIndicatorComponent = StepIndicator ?? DefaultStepIndicator
 
@@ -95,6 +103,7 @@ export function SchemaWizard({ schema, onSubmit, initialValues, onCancel }: Sche
           steps={schema.steps.map((s) => ({ title: s.title, description: s.description }))}
           currentStep={showReview ? totalSteps : currentStep}
           visitedSteps={visitedSteps}
+          onStepClick={isNonLinear ? handleStepClick : undefined}
         />
       )}
 
@@ -226,18 +235,21 @@ export function SchemaWizard({ schema, onSubmit, initialValues, onCancel }: Sche
   )
 }
 
-function DefaultStepIndicator({ steps, currentStep, visitedSteps }: StepIndicatorProps) {
+function DefaultStepIndicator({ steps, currentStep, visitedSteps, onStepClick }: StepIndicatorProps) {
   return (
     <div className="flex items-center gap-2 mb-6" role="navigation" aria-label="Wizard progress">
       {steps.map((step, index) => {
         const isCurrent = index === currentStep
         const isVisited = visitedSteps.has(index)
         const isPast = index < currentStep
+        const canClick = onStepClick != null && isVisited && !isCurrent
 
         let circleClassName =
           'flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium border-2 transition-colors'
 
-        if (isCurrent) {
+        if (canClick) {
+          circleClassName += ' border-primary text-primary cursor-pointer hover:bg-primary/10'
+        } else if (isCurrent) {
           circleClassName += ' border-primary bg-primary text-primary-foreground'
         } else if (isVisited || isPast) {
           circleClassName += ' border-primary text-primary'
@@ -255,7 +267,14 @@ function DefaultStepIndicator({ steps, currentStep, visitedSteps }: StepIndicato
               />
             )}
             <div className="flex flex-col items-center">
-              <div className={circleClassName} aria-current={isCurrent ? 'step' : undefined}>
+              <div
+                className={circleClassName}
+                aria-current={isCurrent ? 'step' : undefined}
+                role={canClick ? 'button' : undefined}
+                tabIndex={canClick ? 0 : undefined}
+                onClick={canClick ? () => onStepClick!(index) : undefined}
+                onKeyDown={canClick ? (e: React.KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') onStepClick!(index) } : undefined}
+              >
                 {index + 1}
               </div>
               <span
@@ -349,5 +368,5 @@ interface FormApiForValidation {
   readonly validateField: (
     field: string,
     cause: 'change'
-  ) => any[] | Promise<any[]>
+  ) => readonly string[] | Promise<readonly string[]>
 }

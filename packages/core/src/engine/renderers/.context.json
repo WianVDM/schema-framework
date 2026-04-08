@@ -46,7 +46,7 @@
     "wizard-review-step.tsx": {
       "export": "WizardReviewStep",
       "type": "function",
-      "desc": "Read-only review step for wizard"
+      "desc": "Review step with conditional field filtering and select label resolution"
     },
     "theme-provider.tsx": {
       "export": "ThemeProvider, ThemeContext",
@@ -74,9 +74,6 @@
     "schema-wizard.tsx": [
       "field-renderer.tsx",
       "wizard-review-step.tsx"
-    ],
-    "wizard-review-step.tsx": [
-      "field-renderer.tsx"
     ]
   },
   "extDeps": {

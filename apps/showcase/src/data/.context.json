@@ -1,7 +1,7 @@
 {
   "$schema": "../../../../docs/ai/schemas/context-schema.json",
   "layer": 3,
-  "purpose": "",
+  "purpose": "Mock schema definitions and static data for showcase demos",
   "files": {
     "contact-form-schema.ts": {
       "export": "contactFormSchema",

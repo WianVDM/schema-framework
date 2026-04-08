@@ -1,7 +1,7 @@
 {
   "$schema": "../../../../docs/ai/schemas/context-schema.json",
   "layer": 3,
-  "purpose": "",
+  "purpose": "TanStack Start file-based routes for showcase app pages and demos",
   "files": {
     "__root.tsx": {
       "export": "Route",
