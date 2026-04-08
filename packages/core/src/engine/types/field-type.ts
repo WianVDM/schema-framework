@@ -9,3 +9,4 @@ export type FieldType =
   | 'password'
   | 'file'
   | 'address'
+  | 'multiselect'

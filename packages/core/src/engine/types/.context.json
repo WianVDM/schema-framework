@@ -1,0 +1,222 @@
+{
+  "$schema": "../../../../../docs/ai/schemas/context-schema.json",
+  "layer": 2,
+  "purpose": "All schema type definitions (one per file). Pure TS, no runtime deps.",
+  "files": {
+    "branded.ts": {
+      "export": "Brand, FieldId, DataKey",
+      "type": "type",
+      "desc": "Branded types for safe IDs"
+    },
+    "cell-value-renderer.ts": {
+      "export": "CellValueRenderer",
+      "type": "type",
+      "desc": "Custom cell renderer fn"
+    },
+    "column-filter-config.ts": {
+      "export": "ColumnFilterConfig",
+      "type": "interface",
+      "desc": "Column filter config"
+    },
+    "condition-operator.ts": {
+      "export": "ConditionOperator",
+      "type": "type",
+      "desc": "Condition operator literal union"
+    },
+    "date-picker-config.ts": {
+      "export": "DatePickerConfig",
+      "type": "interface",
+      "desc": "Date picker configuration"
+    },
+    "field-condition.ts": {
+      "export": "FieldCondition",
+      "type": "interface",
+      "desc": "Conditional visibility rule"
+    },
+    "field-renderer-props.ts": {
+      "export": "FieldRendererProps",
+      "type": "interface",
+      "desc": "FieldRenderer props"
+    },
+    "field-schema.ts": {
+      "export": "FieldSchema",
+      "type": "interface",
+      "desc": "Form field schema definition"
+    },
+    "field-type.ts": {
+      "export": "FieldType",
+      "type": "type",
+      "desc": "Union of all field types"
+    },
+    "file-upload-config.ts": {
+      "export": "FileUploadConfig",
+      "type": "interface",
+      "desc": "File upload constraints"
+    },
+    "form-schema.ts": {
+      "export": "FormSchema",
+      "type": "interface",
+      "desc": "Complete form schema"
+    },
+    "form-submit-handler.ts": {
+      "export": "FormSubmitHandler",
+      "type": "type",
+      "desc": "Form submission handler"
+    },
+    "grid-column-schema.ts": {
+      "export": "GridColumnSchema",
+      "type": "interface",
+      "desc": "Grid column schema"
+    },
+    "grid-schema.ts": {
+      "export": "GridSchema",
+      "type": "interface",
+      "desc": "Complete grid schema"
+    },
+    "i18n-config.ts": {
+      "export": "I18nConfig",
+      "type": "interface",
+      "desc": "Internationalization config"
+    },
+    "index.ts": {
+      "export": "*",
+      "type": "re-export",
+      "desc": "Barrel re-exports"
+    },
+    "multi-select-config.ts": {
+      "export": "MultiSelectConfig",
+      "type": "interface",
+      "desc": "Multi-select/tag input config"
+    },
+    "pagination-config.ts": {
+      "export": "PaginationConfig",
+      "type": "interface",
+      "desc": "Client-side pagination"
+    },
+    "primitive-components.ts": {
+      "export": "PrimitiveComponents",
+      "type": "interface",
+      "desc": "Injectable UI component map"
+    },
+    "readonly-deep.ts": {
+      "export": "ReadonlyDeep, DeepFrozen",
+      "type": "type",
+      "desc": "Recursive readonly wrappers"
+    },
+    "runtime-validation-rule.ts": {
+      "export": "RuntimeValidationRule",
+      "type": "interface",
+      "desc": "Runtime validation with callback"
+    },
+    "schema-form-props.ts": {
+      "export": "SchemaFormProps",
+      "type": "interface",
+      "desc": "SchemaForm props"
+    },
+    "schema-grid-props.ts": {
+      "export": "SchemaGridProps",
+      "type": "interface",
+      "desc": "SchemaGrid props"
+    },
+    "select-option.ts": {
+      "export": "SelectOption",
+      "type": "interface",
+      "desc": "Select/radio option"
+    },
+    "selection-store.ts": {
+      "export": "SelectionStore",
+      "type": "interface",
+      "desc": "Generic selection state"
+    },
+    "server-pagination-config.ts": {
+      "export": "ServerPaginationConfig",
+      "type": "interface",
+      "desc": "Server-side pagination"
+    },
+    "status-config.ts": {
+      "export": "StatusConfig",
+      "type": "interface",
+      "desc": "Status badge variant map"
+    },
+    "theme-config.ts": {
+      "export": "ThemeConfig",
+      "type": "interface",
+      "desc": "Theme customization"
+    },
+    "validation-rule.ts": {
+      "export": "ValidationRule",
+      "type": "interface",
+      "desc": "Validation constraint"
+    },
+    "validation-type.ts": {
+      "export": "ValidationType",
+      "type": "type",
+      "desc": "Validation type literal union"
+    },
+    "virtual-scroll-config.ts": {
+      "export": "VirtualScrollConfig",
+      "type": "interface",
+      "desc": "Virtual scrolling config"
+    }
+  },
+  "rels": {
+    "cell-value-renderer.ts": [
+      "grid-column-schema.ts"
+    ],
+    "field-condition.ts": [
+      "condition-operator.ts"
+    ],
+    "field-renderer-props.ts": [
+      "field-schema.ts"
+    ],
+    "field-schema.ts": [
+      "field-type.ts",
+      "select-option.ts",
+      "validation-rule.ts",
+      "field-condition.ts",
+      "file-upload-config.ts",
+      "date-picker-config.ts",
+      "multi-select-config.ts"
+    ],
+    "form-schema.ts": [
+      "field-schema.ts",
+      "i18n-config.ts"
+    ],
+    "grid-column-schema.ts": [
+      "column-filter-config.ts",
+      "status-config.ts"
+    ],
+    "grid-schema.ts": [
+      "grid-column-schema.ts",
+      "pagination-config.ts",
+      "server-pagination-config.ts",
+      "i18n-config.ts",
+      "virtual-scroll-config.ts",
+      "branded.ts"
+    ],
+    "multi-select-config.ts": [
+      "select-option.ts"
+    ],
+    "runtime-validation-rule.ts": [
+      "validation-rule.ts"
+    ],
+    "schema-form-props.ts": [
+      "form-schema.ts",
+      "form-submit-handler.ts"
+    ],
+    "schema-grid-props.ts": [
+      "grid-schema.ts"
+    ],
+    "validation-rule.ts": [
+      "validation-type.ts"
+    ]
+  },
+  "extDeps": {
+    "cell-value-renderer.ts": [
+      "react"
+    ],
+    "primitive-components.ts": [
+      "react"
+    ]
+  }
+}

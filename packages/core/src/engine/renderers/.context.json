@@ -1,0 +1,94 @@
+{
+  "$schema": "../../../../../docs/ai/schemas/context-schema.json",
+  "layer": 2,
+  "purpose": "React renderers that consume schemas via PrimitivesContext.",
+  "files": {
+    "field-renderer.tsx": {
+      "export": "FieldRenderer",
+      "type": "function",
+      "desc": "Renders form fields from schema"
+    },
+    "grid-column-header.tsx": {
+      "export": "GridColumnHeader",
+      "type": "function",
+      "desc": "Column header with sorting"
+    },
+    "grid-pagination.tsx": {
+      "export": "GridPagination",
+      "type": "function",
+      "desc": "Grid pagination controls"
+    },
+    "grid-toolbar.tsx": {
+      "export": "GridToolbar",
+      "type": "function",
+      "desc": "Grid toolbar with filters"
+    },
+    "index.ts": {
+      "export": "*",
+      "type": "re-export",
+      "desc": "Barrel re-exports"
+    },
+    "schema-form.tsx": {
+      "export": "SchemaForm",
+      "type": "function",
+      "desc": "Renders form from FormSchema"
+    },
+    "schema-grid.tsx": {
+      "export": "SchemaGrid",
+      "type": "function",
+      "desc": "Renders grid from GridSchema"
+    },
+    "theme-provider.tsx": {
+      "export": "ThemeProvider, ThemeContext",
+      "type": "const",
+      "desc": "Theme context provider"
+    },
+    "use-theme.ts": {
+      "export": "useTheme",
+      "type": "function",
+      "desc": "Theme context hook"
+    }
+  },
+  "rels": {
+    "schema-form.tsx": [
+      "field-renderer.tsx"
+    ],
+    "schema-grid.tsx": [
+      "grid-toolbar.tsx",
+      "grid-pagination.tsx",
+      "grid-column-header.tsx"
+    ],
+    "use-theme.ts": [
+      "theme-provider.tsx"
+    ]
+  },
+  "extDeps": {
+    "field-renderer.tsx": [
+      "react"
+    ],
+    "grid-column-header.tsx": [
+      "@tanstack/react-table"
+    ],
+    "grid-pagination.tsx": [
+      "@tanstack/react-table"
+    ],
+    "grid-toolbar.tsx": [
+      "react",
+      "@tanstack/react-table"
+    ],
+    "schema-form.tsx": [
+      "@tanstack/react-form"
+    ],
+    "schema-grid.tsx": [
+      "react",
+      "@tanstack/react-table",
+      "@tanstack/react-virtual"
+    ],
+    "theme-provider.tsx": [
+      "react"
+    ],
+    "use-theme.ts": [
+      "react"
+    ]
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "$schema": "../../../../../docs/ai/schemas/context-schema.json",
+  "layer": 2,
+  "purpose": "Zod schemas and runtime validation functions.",
+  "files": {
+    "evaluate-condition.ts": {
+      "export": "evaluateCondition",
+      "type": "function",
+      "desc": "Evaluates FieldCondition"
+    },
+    "field-schema.ts": {
+      "export": "validateFieldSchema, fieldSchemaValidator",
+      "type": "const",
+      "desc": "FieldSchema Zod validator"
+    },
+    "field-value.ts": {
+      "export": "validateFieldValue",
+      "type": "function",
+      "desc": "Runtime field value validation"
+    },
+    "form-schema.ts": {
+      "export": "validateFormSchema, formSchemaValidator",
+      "type": "const",
+      "desc": "FormSchema Zod validator"
+    },
+    "grid-schema.ts": {
+      "export": "validateGridSchema, gridColumnSchemaValidator, gridSchemaValidator",
+      "type": "const",
+      "desc": "GridSchema Zod validators"
+    },
+    "index.ts": {
+      "export": "*",
+      "type": "re-export",
+      "desc": "Barrel re-exports"
+    },
+    "shared-schemas.ts": {
+      "export": "ValidationResult, fieldTypeSchema, selectOptionSchema, validationRuleSchema, fieldConditionSchema, fileUploadConfigSchema, datePickerConfigSchema, multiSelectConfigSchema, paginationConfigSchema, columnFilterConfigSchema, statusConfigSchema, serverPaginationConfigSchema, i18nConfigSchema, virtualScrollConfigSchema",
+      "type": "const",
+      "desc": "Shared Zod schemas"
+    }
+  },
+  "rels": {
+    "field-schema.ts": [
+      "shared-schemas.ts"
+    ],
+    "form-schema.ts": [
+      "field-schema.ts",
+      "shared-schemas.ts"
+    ],
+    "grid-schema.ts": [
+      "shared-schemas.ts"
+    ]
+  },
+  "extDeps": {
+    "field-schema.ts": [
+      "zod"
+    ],
+    "form-schema.ts": [
+      "zod"
+    ],
+    "grid-schema.ts": [
+      "zod"
+    ],
+    "shared-schemas.ts": [
+      "zod"
+    ]
+  }
+}

@@ -1,0 +1,113 @@
+{
+  "$schema": "../../../../docs/ai/schemas/context-schema.json",
+  "layer": 3,
+  "purpose": "",
+  "files": {
+    "__root.tsx": {
+      "export": "Route",
+      "type": "const",
+      "desc": "Route"
+    },
+    "demo-date-picker.tsx": {
+      "export": "Route",
+      "type": "const",
+      "desc": "Route"
+    },
+    "demo-form.tsx": {
+      "export": "Route",
+      "type": "const",
+      "desc": "Route"
+    },
+    "demo-grid.tsx": {
+      "export": "Route",
+      "type": "const",
+      "desc": "Route"
+    },
+    "demo-multi-select.tsx": {
+      "export": "Route",
+      "type": "const",
+      "desc": "Route"
+    },
+    "demo-orders.tsx": {
+      "export": "Route",
+      "type": "const",
+      "desc": "Route"
+    },
+    "demo-registration.tsx": {
+      "export": "Route",
+      "type": "const",
+      "desc": "Route"
+    },
+    "demo-support-ticket.tsx": {
+      "export": "Route",
+      "type": "const",
+      "desc": "Route"
+    },
+    "demo-virtual-grid.tsx": {
+      "export": "Route",
+      "type": "const",
+      "desc": "Route"
+    },
+    "demo.tsx": {
+      "export": "Route",
+      "type": "const",
+      "desc": "Route"
+    },
+    "index.tsx": {
+      "export": "Route",
+      "type": "const",
+      "desc": "Route"
+    }
+  },
+  "extDeps": {
+    "__root.tsx": [
+      "react",
+      "@tanstack/react-router"
+    ],
+    "demo-date-picker.tsx": [
+      "@tanstack/react-router",
+      "react",
+      "@my-framework/core"
+    ],
+    "demo-form.tsx": [
+      "@tanstack/react-router",
+      "@tanstack/react-query",
+      "@my-framework/core"
+    ],
+    "demo-grid.tsx": [
+      "@tanstack/react-router",
+      "@tanstack/react-query",
+      "@my-framework/core"
+    ],
+    "demo-multi-select.tsx": [
+      "@tanstack/react-router",
+      "@my-framework/core"
+    ],
+    "demo-orders.tsx": [
+      "@tanstack/react-router",
+      "@tanstack/react-query",
+      "@my-framework/core"
+    ],
+    "demo-registration.tsx": [
+      "@tanstack/react-router",
+      "@tanstack/react-query",
+      "@my-framework/core"
+    ],
+    "demo-support-ticket.tsx": [
+      "@tanstack/react-router",
+      "@tanstack/react-query",
+      "@my-framework/core"
+    ],
+    "demo-virtual-grid.tsx": [
+      "@tanstack/react-router",
+      "@tanstack/react-query",
+      "@my-framework/core"
+    ],
+    "demo.tsx": [
+      "@tanstack/react-router"
+    ],
+    "index.tsx": [
+      "@tanstack/react-router"
+    ]
+  }
+}

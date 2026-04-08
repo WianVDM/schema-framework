@@ -1,0 +1,455 @@
+{
+  "$schema": "schemas/symbol-index-schema.json",
+  "symbols": {
+    "AddressData": {
+      "file": "packages/core/src/primitives/address-data.ts",
+      "type": "interface",
+      "layer": 1
+    },
+    "AddressInput": {
+      "file": "packages/core/src/primitives/address-input.tsx",
+      "type": "function",
+      "layer": 1
+    },
+    "AddressPlaceholders": {
+      "file": "packages/core/src/primitives/address-placeholders.ts",
+      "type": "interface",
+      "layer": 1
+    },
+    "DatePicker": {
+      "file": "packages/core/src/primitives/date-picker.tsx",
+      "type": "function",
+      "layer": 1
+    },
+    "FileUpload": {
+      "file": "packages/core/src/primitives/file-upload.tsx",
+      "type": "function",
+      "layer": 1
+    },
+    "StatusBadge": {
+      "file": "packages/core/src/primitives/status-badge.tsx",
+      "type": "function",
+      "layer": 1
+    },
+    "TagInputProps": {
+      "file": "packages/core/src/primitives/tag-input.tsx",
+      "type": "const",
+      "layer": 1
+    },
+    "TagInput": {
+      "file": "packages/core/src/primitives/tag-input.tsx",
+      "type": "const",
+      "layer": 1
+    },
+    "Brand": {
+      "file": "packages/core/src/engine/types/branded.ts",
+      "type": "type",
+      "layer": 2
+    },
+    "FieldId": {
+      "file": "packages/core/src/engine/types/branded.ts",
+      "type": "type",
+      "layer": 2
+    },
+    "DataKey": {
+      "file": "packages/core/src/engine/types/branded.ts",
+      "type": "type",
+      "layer": 2
+    },
+    "CellValueRenderer": {
+      "file": "packages/core/src/engine/types/cell-value-renderer.ts",
+      "type": "type",
+      "layer": 2
+    },
+    "ColumnFilterConfig": {
+      "file": "packages/core/src/engine/types/column-filter-config.ts",
+      "type": "interface",
+      "layer": 2
+    },
+    "ConditionOperator": {
+      "file": "packages/core/src/engine/types/condition-operator.ts",
+      "type": "type",
+      "layer": 2
+    },
+    "DatePickerConfig": {
+      "file": "packages/core/src/engine/types/date-picker-config.ts",
+      "type": "interface",
+      "layer": 2
+    },
+    "FieldCondition": {
+      "file": "packages/core/src/engine/types/field-condition.ts",
+      "type": "interface",
+      "layer": 2
+    },
+    "FieldRendererProps": {
+      "file": "packages/core/src/engine/types/field-renderer-props.ts",
+      "type": "interface",
+      "layer": 2
+    },
+    "FieldSchema": {
+      "file": "packages/core/src/engine/types/field-schema.ts",
+      "type": "interface",
+      "layer": 2
+    },
+    "FieldType": {
+      "file": "packages/core/src/engine/types/field-type.ts",
+      "type": "type",
+      "layer": 2
+    },
+    "FileUploadConfig": {
+      "file": "packages/core/src/engine/types/file-upload-config.ts",
+      "type": "interface",
+      "layer": 2
+    },
+    "FormSchema": {
+      "file": "packages/core/src/engine/types/form-schema.ts",
+      "type": "interface",
+      "layer": 2
+    },
+    "FormSubmitHandler": {
+      "file": "packages/core/src/engine/types/form-submit-handler.ts",
+      "type": "type",
+      "layer": 2
+    },
+    "GridColumnSchema": {
+      "file": "packages/core/src/engine/types/grid-column-schema.ts",
+      "type": "interface",
+      "layer": 2
+    },
+    "GridSchema": {
+      "file": "packages/core/src/engine/types/grid-schema.ts",
+      "type": "interface",
+      "layer": 2
+    },
+    "I18nConfig": {
+      "file": "packages/core/src/engine/types/i18n-config.ts",
+      "type": "interface",
+      "layer": 2
+    },
+    "MultiSelectConfig": {
+      "file": "packages/core/src/engine/types/multi-select-config.ts",
+      "type": "interface",
+      "layer": 2
+    },
+    "PaginationConfig": {
+      "file": "packages/core/src/engine/types/pagination-config.ts",
+      "type": "interface",
+      "layer": 2
+    },
+    "PrimitiveComponents": {
+      "file": "packages/core/src/engine/types/primitive-components.ts",
+      "type": "interface",
+      "layer": 2
+    },
+    "ReadonlyDeep": {
+      "file": "packages/core/src/engine/types/readonly-deep.ts",
+      "type": "type",
+      "layer": 2
+    },
+    "DeepFrozen": {
+      "file": "packages/core/src/engine/types/readonly-deep.ts",
+      "type": "type",
+      "layer": 2
+    },
+    "RuntimeValidationRule": {
+      "file": "packages/core/src/engine/types/runtime-validation-rule.ts",
+      "type": "interface",
+      "layer": 2
+    },
+    "SchemaFormProps": {
+      "file": "packages/core/src/engine/types/schema-form-props.ts",
+      "type": "interface",
+      "layer": 2
+    },
+    "SchemaGridProps": {
+      "file": "packages/core/src/engine/types/schema-grid-props.ts",
+      "type": "interface",
+      "layer": 2
+    },
+    "SelectOption": {
+      "file": "packages/core/src/engine/types/select-option.ts",
+      "type": "interface",
+      "layer": 2
+    },
+    "SelectionStore": {
+      "file": "packages/core/src/engine/types/selection-store.ts",
+      "type": "interface",
+      "layer": 2
+    },
+    "ServerPaginationConfig": {
+      "file": "packages/core/src/engine/types/server-pagination-config.ts",
+      "type": "interface",
+      "layer": 2
+    },
+    "StatusConfig": {
+      "file": "packages/core/src/engine/types/status-config.ts",
+      "type": "interface",
+      "layer": 2
+    },
+    "ThemeConfig": {
+      "file": "packages/core/src/engine/types/theme-config.ts",
+      "type": "interface",
+      "layer": 2
+    },
+    "ValidationRule": {
+      "file": "packages/core/src/engine/types/validation-rule.ts",
+      "type": "interface",
+      "layer": 2
+    },
+    "ValidationType": {
+      "file": "packages/core/src/engine/types/validation-type.ts",
+      "type": "type",
+      "layer": 2
+    },
+    "VirtualScrollConfig": {
+      "file": "packages/core/src/engine/types/virtual-scroll-config.ts",
+      "type": "interface",
+      "layer": 2
+    },
+    "evaluateCondition": {
+      "file": "packages/core/src/engine/validators/evaluate-condition.ts",
+      "type": "function",
+      "layer": 2
+    },
+    "validateFieldSchema": {
+      "file": "packages/core/src/engine/validators/field-schema.ts",
+      "type": "const",
+      "layer": 2
+    },
+    "fieldSchemaValidator": {
+      "file": "packages/core/src/engine/validators/field-schema.ts",
+      "type": "const",
+      "layer": 2
+    },
+    "validateFieldValue": {
+      "file": "packages/core/src/engine/validators/field-value.ts",
+      "type": "function",
+      "layer": 2
+    },
+    "validateFormSchema": {
+      "file": "packages/core/src/engine/validators/form-schema.ts",
+      "type": "const",
+      "layer": 2
+    },
+    "formSchemaValidator": {
+      "file": "packages/core/src/engine/validators/form-schema.ts",
+      "type": "const",
+      "layer": 2
+    },
+    "validateGridSchema": {
+      "file": "packages/core/src/engine/validators/grid-schema.ts",
+      "type": "const",
+      "layer": 2
+    },
+    "gridColumnSchemaValidator": {
+      "file": "packages/core/src/engine/validators/grid-schema.ts",
+      "type": "const",
+      "layer": 2
+    },
+    "gridSchemaValidator": {
+      "file": "packages/core/src/engine/validators/grid-schema.ts",
+      "type": "const",
+      "layer": 2
+    },
+    "ValidationResult": {
+      "file": "packages/core/src/engine/validators/shared-schemas.ts",
+      "type": "const",
+      "layer": 2
+    },
+    "fieldTypeSchema": {
+      "file": "packages/core/src/engine/validators/shared-schemas.ts",
+      "type": "const",
+      "layer": 2
+    },
+    "selectOptionSchema": {
+      "file": "packages/core/src/engine/validators/shared-schemas.ts",
+      "type": "const",
+      "layer": 2
+    },
+    "validationRuleSchema": {
+      "file": "packages/core/src/engine/validators/shared-schemas.ts",
+      "type": "const",
+      "layer": 2
+    },
+    "fieldConditionSchema": {
+      "file": "packages/core/src/engine/validators/shared-schemas.ts",
+      "type": "const",
+      "layer": 2
+    },
+    "fileUploadConfigSchema": {
+      "file": "packages/core/src/engine/validators/shared-schemas.ts",
+      "type": "const",
+      "layer": 2
+    },
+    "datePickerConfigSchema": {
+      "file": "packages/core/src/engine/validators/shared-schemas.ts",
+      "type": "const",
+      "layer": 2
+    },
+    "multiSelectConfigSchema": {
+      "file": "packages/core/src/engine/validators/shared-schemas.ts",
+      "type": "const",
+      "layer": 2
+    },
+    "paginationConfigSchema": {
+      "file": "packages/core/src/engine/validators/shared-schemas.ts",
+      "type": "const",
+      "layer": 2
+    },
+    "columnFilterConfigSchema": {
+      "file": "packages/core/src/engine/validators/shared-schemas.ts",
+      "type": "const",
+      "layer": 2
+    },
+    "statusConfigSchema": {
+      "file": "packages/core/src/engine/validators/shared-schemas.ts",
+      "type": "const",
+      "layer": 2
+    },
+    "serverPaginationConfigSchema": {
+      "file": "packages/core/src/engine/validators/shared-schemas.ts",
+      "type": "const",
+      "layer": 2
+    },
+    "i18nConfigSchema": {
+      "file": "packages/core/src/engine/validators/shared-schemas.ts",
+      "type": "const",
+      "layer": 2
+    },
+    "virtualScrollConfigSchema": {
+      "file": "packages/core/src/engine/validators/shared-schemas.ts",
+      "type": "const",
+      "layer": 2
+    },
+    "asDataKey": {
+      "file": "packages/core/src/engine/helpers/as-data-key.ts",
+      "type": "function",
+      "layer": 2
+    },
+    "deepFreeze": {
+      "file": "packages/core/src/engine/helpers/deep-freeze.ts",
+      "type": "function",
+      "layer": 2
+    },
+    "resolveMessage": {
+      "file": "packages/core/src/engine/helpers/i18n.ts",
+      "type": "function",
+      "layer": 2
+    },
+    "PrimitivesProvider": {
+      "file": "packages/core/src/engine/context/primitives-context.tsx",
+      "type": "const",
+      "layer": 2
+    },
+    "usePrimitives": {
+      "file": "packages/core/src/engine/context/primitives-context.tsx",
+      "type": "const",
+      "layer": 2
+    },
+    "PrimitivesContext": {
+      "file": "packages/core/src/engine/context/primitives-context.tsx",
+      "type": "const",
+      "layer": 2
+    },
+    "FieldRenderer": {
+      "file": "packages/core/src/engine/renderers/field-renderer.tsx",
+      "type": "function",
+      "layer": 2
+    },
+    "GridColumnHeader": {
+      "file": "packages/core/src/engine/renderers/grid-column-header.tsx",
+      "type": "function",
+      "layer": 2
+    },
+    "GridPagination": {
+      "file": "packages/core/src/engine/renderers/grid-pagination.tsx",
+      "type": "function",
+      "layer": 2
+    },
+    "GridToolbar": {
+      "file": "packages/core/src/engine/renderers/grid-toolbar.tsx",
+      "type": "function",
+      "layer": 2
+    },
+    "SchemaForm": {
+      "file": "packages/core/src/engine/renderers/schema-form.tsx",
+      "type": "function",
+      "layer": 2
+    },
+    "SchemaGrid": {
+      "file": "packages/core/src/engine/renderers/schema-grid.tsx",
+      "type": "function",
+      "layer": 2
+    },
+    "ThemeProvider": {
+      "file": "packages/core/src/engine/renderers/theme-provider.tsx",
+      "type": "const",
+      "layer": 2
+    },
+    "ThemeContext": {
+      "file": "packages/core/src/engine/renderers/theme-provider.tsx",
+      "type": "const",
+      "layer": 2
+    },
+    "useTheme": {
+      "file": "packages/core/src/engine/renderers/use-theme.ts",
+      "type": "function",
+      "layer": 2
+    },
+    "getRouter": {
+      "file": "apps/showcase/src/router.tsx",
+      "type": "function",
+      "layer": 3
+    },
+    "getContactFormSchema": {
+      "file": "apps/showcase/src/server/get-contact-form-schema.ts",
+      "type": "const",
+      "layer": 3
+    },
+    "getMultiselectFormSchema": {
+      "file": "apps/showcase/src/server/get-multiselect-form-schema.ts",
+      "type": "const",
+      "layer": 3
+    },
+    "getOrderGridSchema": {
+      "file": "apps/showcase/src/server/get-order-grid-schema.ts",
+      "type": "const",
+      "layer": 3
+    },
+    "getOrders": {
+      "file": "apps/showcase/src/server/get-orders.ts",
+      "type": "const",
+      "layer": 3
+    },
+    "getRegistrationFormSchema": {
+      "file": "apps/showcase/src/server/get-registration-form-schema.ts",
+      "type": "const",
+      "layer": 3
+    },
+    "getSupportTicketFormSchema": {
+      "file": "apps/showcase/src/server/get-support-ticket-form-schema.ts",
+      "type": "const",
+      "layer": 3
+    },
+    "getUserGridSchema": {
+      "file": "apps/showcase/src/server/get-user-grid-schema.ts",
+      "type": "const",
+      "layer": 3
+    },
+    "getUsers": {
+      "file": "apps/showcase/src/server/get-users.ts",
+      "type": "const",
+      "layer": 3
+    },
+    "getVirtualData": {
+      "file": "apps/showcase/src/server/get-virtual-data.ts",
+      "type": "const",
+      "layer": 3
+    },
+    "getVirtualGridSchema": {
+      "file": "apps/showcase/src/server/get-virtual-grid-schema.ts",
+      "type": "const",
+      "layer": 3
+    }
+  }
+}

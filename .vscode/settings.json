@@ -1,0 +1,12 @@
+{
+  "json.schemas": [
+    {
+      "fileMatch": ["**/.context.json"],
+      "url": "./docs/ai/schemas/context-schema.json"
+    },
+    {
+      "fileMatch": ["docs/ai/symbol-index.json"],
+      "url": "./docs/ai/schemas/symbol-index-schema.json"
+    }
+  ]
+}

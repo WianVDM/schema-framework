@@ -1,0 +1,17 @@
+{
+  "$schema": "../../../docs/ai/schemas/context-schema.json",
+  "layer": 3,
+  "purpose": "Showcase app entry point. TanStack Start file-based routing.",
+  "files": {
+    "router.tsx": {
+      "export": "getRouter",
+      "type": "function",
+      "desc": "getRouter"
+    }
+  },
+  "extDeps": {
+    "router.tsx": [
+      "@tanstack/react-router"
+    ]
+  }
+}

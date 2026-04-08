@@ -11,6 +11,7 @@ export const fieldTypeSchema = z.enum([
   'password',
   'file',
   'address',
+  'multiselect',
 ])
 
 export const selectOptionSchema = z.object({
@@ -63,6 +64,13 @@ export const datePickerConfigSchema = z.object({
     message: 'minDate/maxDate must be valid date strings and minDate must be <= maxDate',
   },
 )
+
+export const multiSelectConfigSchema = z.object({
+  options: z.array(selectOptionSchema),
+  maxSelections: z.number().int().positive().optional(),
+  creatable: z.boolean().optional(),
+  placeholder: z.string().optional(),
+}).strict()
 
 export const paginationConfigSchema = z.object({
   pageSize: z.number().int().positive().default(10),

@@ -1,0 +1,96 @@
+{
+  "$schema": "../../../../docs/ai/schemas/context-schema.json",
+  "layer": 3,
+  "purpose": "Server functions for data fetching (TanStack Start createServerFn).",
+  "files": {
+    "get-contact-form-schema.ts": {
+      "export": "getContactFormSchema",
+      "type": "const",
+      "desc": "getContactFormSchema"
+    },
+    "get-multiselect-form-schema.ts": {
+      "export": "getMultiselectFormSchema",
+      "type": "const",
+      "desc": "getMultiselectFormSchema"
+    },
+    "get-order-grid-schema.ts": {
+      "export": "getOrderGridSchema",
+      "type": "const",
+      "desc": "getOrderGridSchema"
+    },
+    "get-orders.ts": {
+      "export": "getOrders",
+      "type": "const",
+      "desc": "getOrders"
+    },
+    "get-registration-form-schema.ts": {
+      "export": "getRegistrationFormSchema",
+      "type": "const",
+      "desc": "getRegistrationFormSchema"
+    },
+    "get-support-ticket-form-schema.ts": {
+      "export": "getSupportTicketFormSchema",
+      "type": "const",
+      "desc": "getSupportTicketFormSchema"
+    },
+    "get-user-grid-schema.ts": {
+      "export": "getUserGridSchema",
+      "type": "const",
+      "desc": "getUserGridSchema"
+    },
+    "get-users.ts": {
+      "export": "getUsers",
+      "type": "const",
+      "desc": "Fetches paginated user data"
+    },
+    "get-virtual-data.ts": {
+      "export": "getVirtualData",
+      "type": "const",
+      "desc": "getVirtualData"
+    },
+    "get-virtual-grid-schema.ts": {
+      "export": "getVirtualGridSchema",
+      "type": "const",
+      "desc": "getVirtualGridSchema"
+    }
+  },
+  "extDeps": {
+    "get-contact-form-schema.ts": [
+      "@tanstack/react-start",
+      "@my-framework/core"
+    ],
+    "get-multiselect-form-schema.ts": [
+      "@tanstack/react-start",
+      "@my-framework/core"
+    ],
+    "get-order-grid-schema.ts": [
+      "@tanstack/react-start",
+      "@my-framework/core"
+    ],
+    "get-orders.ts": [
+      "@tanstack/react-start"
+    ],
+    "get-registration-form-schema.ts": [
+      "@tanstack/react-start",
+      "@my-framework/core"
+    ],
+    "get-support-ticket-form-schema.ts": [
+      "@tanstack/react-start",
+      "@my-framework/core"
+    ],
+    "get-user-grid-schema.ts": [
+      "@tanstack/react-start",
+      "@my-framework/core"
+    ],
+    "get-users.ts": [
+      "@tanstack/react-start"
+    ],
+    "get-virtual-data.ts": [
+      "@tanstack/react-start"
+    ],
+    "get-virtual-grid-schema.ts": [
+      "@tanstack/react-start",
+      "@my-framework/core"
+    ]
+  }
+}

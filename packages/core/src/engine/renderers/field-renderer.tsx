@@ -1,5 +1,7 @@
 import type { FieldRendererProps, SelectOption } from '../types'
 import type { AddressData } from '../../primitives/address-data'
+import type { ComponentType } from 'react'
+import { useEffect } from 'react'
 import { usePrimitives } from '../context/primitives-context'
 
 export function FieldRenderer({ schema, value, onChange, error }: FieldRendererProps) {
@@ -16,6 +18,7 @@ export function FieldRenderer({ schema, value, onChange, error }: FieldRendererP
     FileUpload,
     AddressInput,
     DatePicker,
+    TagInput,
   } = usePrimitives()
 
   const fieldId = `field-${schema.name}`
@@ -174,6 +177,31 @@ export function FieldRenderer({ schema, value, onChange, error }: FieldRendererP
       )
     }
 
+    case 'multiselect': {
+      const TagInputComponent: ComponentType<any> = TagInput ?? DefaultTagInput
+      const selectedValues = Array.isArray(value)
+        ? (value as readonly unknown[]).filter((item): item is string => typeof item === 'string')
+        : []
+      return (
+        <div className="space-y-1">
+          {labelElement}
+          <TagInputComponent
+            id={fieldId}
+            value={selectedValues}
+            onChange={(newValues: readonly string[]) => onChange(newValues)}
+            options={schema.multiSelectConfig?.options}
+            maxSelections={schema.multiSelectConfig?.maxSelections}
+            creatable={schema.multiSelectConfig?.creatable}
+            placeholder={schema.multiSelectConfig?.placeholder ?? schema.placeholder ?? 'Select tags...'}
+            disabled={schema.disabled}
+            {...ariaProps}
+          />
+          {descriptionElement}
+          {errorElement}
+        </div>
+      )
+    }
+
     case 'text':
     case 'email':
     case 'number':
@@ -204,6 +232,19 @@ export function FieldRenderer({ schema, value, onChange, error }: FieldRendererP
         </div>
       )
   }
+}
+
+function DefaultTagInput({ placeholder }: { readonly placeholder?: string }) {
+  useEffect(() => {
+    console.warn(
+      'TagInput primitive not provided. Pass a TagInput component via PrimitiveComponents to enable multiselect fields.',
+    )
+  }, [])
+  return (
+    <div className="flex items-center min-h-10 px-3 py-2 rounded-md border border-dashed border-muted-foreground/50 bg-muted/50 text-sm text-muted-foreground">
+      {placeholder ?? 'TagInput not configured'}
+    </div>
+  )
 }
 
 function normalizeOptions(

@@ -1,0 +1,17 @@
+{
+  "$schema": "../../../../../docs/ai/schemas/context-schema.json",
+  "layer": 2,
+  "purpose": "React context for injecting shadcn primitives into engine renderers.",
+  "files": {
+    "primitives-context.tsx": {
+      "export": "PrimitivesProvider, usePrimitives, PrimitivesContext",
+      "type": "const",
+      "desc": "Shadcn injection context"
+    }
+  },
+  "extDeps": {
+    "primitives-context.tsx": [
+      "react"
+    ]
+  }
+}

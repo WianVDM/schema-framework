@@ -4,6 +4,7 @@ import type { ValidationRule } from './validation-rule'
 import type { FieldCondition } from './field-condition'
 import type { FileUploadConfig } from './file-upload-config'
 import type { DatePickerConfig } from './date-picker-config'
+import type { MultiSelectConfig } from './multi-select-config'
 
 export interface FieldSchema {
   readonly name: string
@@ -11,7 +12,7 @@ export interface FieldSchema {
   readonly type: FieldType
   readonly required?: boolean
   readonly placeholder?: string
-  readonly defaultValue?: string | number | boolean | null
+  readonly defaultValue?: string | number | boolean | readonly string[] | null
   readonly disabled?: boolean
   readonly options?: readonly string[] | readonly SelectOption[]
   readonly validation?: readonly ValidationRule[]
@@ -21,4 +22,5 @@ export interface FieldSchema {
   readonly dependsOn?: readonly string[]
   readonly fileConfig?: FileUploadConfig
   readonly dateConfig?: DatePickerConfig
+  readonly multiSelectConfig?: MultiSelectConfig
 }

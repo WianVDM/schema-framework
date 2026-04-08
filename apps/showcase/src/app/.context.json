@@ -1,0 +1,36 @@
+{
+  "$schema": "../../../../docs/ai/schemas/context-schema.json",
+  "layer": 3,
+  "purpose": "",
+  "files": {
+    "entry-client.tsx": {
+      "export": "*",
+      "type": "component",
+      "desc": "entry-client"
+    },
+    "entry-server.tsx": {
+      "export": "*",
+      "type": "component",
+      "desc": "entry-server"
+    },
+    "primitives-provider.tsx": {
+      "export": "AppPrimitivesProvider",
+      "type": "function",
+      "desc": "AppPrimitivesProvider"
+    }
+  },
+  "extDeps": {
+    "entry-client.tsx": [
+      "@tanstack/react-start/client",
+      "react",
+      "react-dom/client"
+    ],
+    "entry-server.tsx": [
+      "@tanstack/react-start/server"
+    ],
+    "primitives-provider.tsx": [
+      "react",
+      "@my-framework/core"
+    ]
+  }
+}

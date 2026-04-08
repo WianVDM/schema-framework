@@ -7,6 +7,7 @@ import {
   fieldConditionSchema,
   fileUploadConfigSchema,
   datePickerConfigSchema,
+  multiSelectConfigSchema,
 } from './shared-schemas'
 import type { ValidationResult } from './shared-schemas'
 
@@ -16,7 +17,7 @@ export const fieldSchemaValidator = z.object({
   type: fieldTypeSchema,
   required: z.boolean().optional(),
   placeholder: z.string().optional(),
-  defaultValue: z.union([z.string(), z.number(), z.boolean(), z.null()]).optional(),
+  defaultValue: z.union([z.string(), z.number(), z.boolean(), z.array(z.string()), z.null()]).optional(),
   disabled: z.boolean().optional(),
   options: z
     .union([z.array(z.string()), z.array(selectOptionSchema)])
@@ -28,7 +29,18 @@ export const fieldSchemaValidator = z.object({
   dependsOn: z.array(z.string()).optional(),
   fileConfig: fileUploadConfigSchema.optional(),
   dateConfig: datePickerConfigSchema.optional(),
-}).strict()
+  multiSelectConfig: multiSelectConfigSchema.optional(),
+}).strict().refine(
+  (data) => {
+    if (data.type === 'multiselect') {
+      return data.multiSelectConfig !== undefined && data.multiSelectConfig !== null
+    }
+    return true
+  },
+  {
+    message: 'multiSelectConfig is required for multiselect type',
+  },
+)
 
 export function validateFieldSchema(data: unknown): ValidationResult {
   const result = fieldSchemaValidator.safeParse(data)

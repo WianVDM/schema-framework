@@ -1,0 +1,8 @@
+{
+  "budgets": {
+    "system.md": { "maxTokens": 800, "maxLines": 80 },
+    "context.json": { "maxTokens": 200, "maxLines": 30 },
+    "symbol-index.json": { "maxTokens": 600, "maxLines": 100 },
+    "file-placement.json": { "maxTokens": 300, "maxLines": 40 }
+  }
+}

@@ -7,7 +7,7 @@
 
 ## Milestone Checklist (v0.2.0) — IN PROGRESS
 
-### Slice 1: Virtualized Scrolling (`v0.2.0-feature/virtual-scroll`)
+### Slice 1: Virtualized Scrolling (`v0.2.1-feature/virtual-scroll`)
 - [x] Add `VirtualScrollConfig` type + Zod validator
 - [x] Add `virtualScroll` option to `GridSchema`
 - [x] Integrate `@tanstack/react-virtual` into `SchemaGrid`
@@ -25,13 +25,13 @@
 - [x] `pnpm build` passes
 
 ### Slice 3: Multi-Select / TagInput (`v0.2.3-feature/multi-select`)
-- [ ] Add `'multiselect'` to `FieldType` union
-- [ ] Add `MultiSelectConfig` type + Zod validator
-- [ ] Create `TagInput` primitive in Layer 1
-- [ ] Add to `PrimitiveComponents` + `PrimitivesContext` defaults
-- [ ] Update `field-renderer.tsx` for `'multiselect'`
-- [ ] Wire in showcase + create demo route
-- [ ] `pnpm build` passes
+- [x] Add `'multiselect'` to `FieldType` union
+- [x] Add `MultiSelectConfig` type + Zod validator
+- [x] Create `TagInput` primitive in Layer 1
+- [x] Add to `PrimitiveComponents` + `PrimitivesContext` defaults
+- [x] Update `field-renderer.tsx` for `'multiselect'`
+- [x] Wire in showcase + create demo route
+- [x] `pnpm build` passes
 
 ### Slice 4: Form Wizard (`v0.2.4-feature/form-wizard`)
 - [ ] Add `WizardSchema`, `WizardStep` types + Zod validators

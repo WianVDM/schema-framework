@@ -78,10 +78,15 @@ schema-framework/                  # <- ONE SINGLE GIT REPO
 │       └── package.json           #     Name: "@my-framework/core"
 │
 ├── docs/                          #     Architecture docs, plans, and status
+│   ├── ai/                        #     AI context system entry point
+│   │   ├── system.md              #       Compressed AI system context
+│   │   ├── symbol-index.json      #       Auto-generated export→file lookup
+│   │   ├── file-placement.json    #       Where to put new files
+│   │   ├── token-budgets.json     #       Token limits per file type
+│   │   └── schemas/               #       JSON Schemas for .context.json
 │   ├── decisions/                 #     ADRs and architectural decisions
-│   ├── implementation-status.md   #     Phase-by-phase implementation progress
 │   ├── context-map.md             #     Project-wide relationship graph
-│   └── plans/                     #     Implementation plans
+│   └── plans/                     #     Implementation plans (not tracked)
 ├── pnpm-workspace.yaml            #     Links apps and packages
 ├── turbo.json                     #     Orchestrates builds
 └── package.json

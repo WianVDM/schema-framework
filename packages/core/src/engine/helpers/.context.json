@@ -1,0 +1,27 @@
+{
+  "$schema": "../../../../../docs/ai/schemas/context-schema.json",
+  "layer": 2,
+  "purpose": "Utility functions: i18n, immutability, branded type helpers.",
+  "files": {
+    "as-data-key.ts": {
+      "export": "asDataKey",
+      "type": "function",
+      "desc": "Constructs branded DataKey"
+    },
+    "deep-freeze.ts": {
+      "export": "deepFreeze",
+      "type": "function",
+      "desc": "Recursively freezes objects"
+    },
+    "i18n.ts": {
+      "export": "resolveMessage",
+      "type": "function",
+      "desc": "Resolves localized messages"
+    },
+    "index.ts": {
+      "export": "*",
+      "type": "re-export",
+      "desc": "Barrel re-exports"
+    }
+  }
+}
