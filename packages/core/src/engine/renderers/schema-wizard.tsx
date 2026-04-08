@@ -45,14 +45,14 @@ export function SchemaWizard({ schema, onSubmit, initialValues, onCancel }: Sche
 
   const handleNext = useCallback(async () => {
     if (isLastStep && hasReviewStep) {
-      const allValid = await validateAllFields(formRef.current, schema.steps)
+      const allValid = await validateAllFields(formRef.current, schema.steps, formRef.current.state.values)
       if (!allValid && validationMode === 'eager') return
       setShowReview(true)
       return
     }
 
     if (validationMode === 'eager') {
-      const stepValid = await validateStepFields(formRef.current, currentFields)
+      const stepValid = await validateStepFields(formRef.current, currentFields, formRef.current.state.values)
       if (!stepValid) return
     }
 
@@ -205,9 +205,15 @@ export function SchemaWizard({ schema, onSubmit, initialValues, onCancel }: Sche
                 )}
               </form.Subscribe>
             ) : isLastStep && !hasReviewStep ? (
-              <Button type="submit">
-                {submitLabel}
-              </Button>
+              <form.Subscribe
+                selector={(state) => [state.canSubmit, state.isSubmitting]}
+              >
+                {([canSubmit, isSubmitting]) => (
+                  <Button type="submit" disabled={!canSubmit}>
+                    {isSubmitting ? 'Submitting...' : submitLabel}
+                  </Button>
+                )}
+              </form.Subscribe>
             ) : (
               <Button type="button" onClick={handleNext}>
                 {nextLabel}
@@ -296,10 +302,12 @@ function isFieldVisible(
 
 async function validateStepFields(
   formApi: FormApiForValidation,
-  fields: readonly FieldSchema[]
+  fields: readonly FieldSchema[],
+  formValues: Record<string, unknown>
 ): Promise<boolean> {
   let allValid = true
   for (const field of fields) {
+    if (!isFieldVisible(field, formValues)) continue
     formApi.setFieldMeta(field.name, (prev) => ({ ...prev, isTouched: true }))
     const errors = await formApi.validateField(field.name, 'change')
     if (errors.length > 0) {
@@ -311,11 +319,13 @@ async function validateStepFields(
 
 async function validateAllFields(
   formApi: FormApiForValidation,
-  steps: readonly { readonly schema: { readonly fields: readonly FieldSchema[] } }[]
+  steps: readonly { readonly schema: { readonly fields: readonly FieldSchema[] } }[],
+  formValues: Record<string, unknown>
 ): Promise<boolean> {
   let allValid = true
   for (const step of steps) {
     for (const field of step.schema.fields) {
+      if (!isFieldVisible(field, formValues)) continue
       formApi.setFieldMeta(field.name, (prev) => ({ ...prev, isTouched: true }))
       const errors = await formApi.validateField(field.name, 'change')
       if (errors.length > 0) {
@@ -339,5 +349,5 @@ interface FormApiForValidation {
   readonly validateField: (
     field: string,
     cause: 'change'
-  ) => unknown[] | Promise<unknown[]>
+  ) => any[] | Promise<any[]>
 }
