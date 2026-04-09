@@ -61,29 +61,6 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
     })
   }, [schema.columns])
 
-  const isColumnReorderEnabled = schema.columnReorder === true
-
-  const handleDragEnd = useCallback((event: DragEndEvent) => {
-    const { active, over } = event
-    if (over && active.id !== over.id) {
-      const oldIndex = columnOrder.indexOf(String(active.id))
-      const newIndex = columnOrder.indexOf(String(over.id))
-      if (oldIndex === -1 || newIndex === -1) return
-      const newOrder = arrayMove(columnOrder, oldIndex, newIndex)
-      setColumnOrder(newOrder)
-      onColumnOrderChange?.(newOrder)
-    }
-  }, [onColumnOrderChange, columnOrder])
-
-  const virtualConfig = resolveVirtualScrollConfig(schema.virtualScroll)
-  const isVirtualScroll = virtualConfig !== null
-
-  const paginationConfig = typeof schema.pagination === 'object'
-    ? schema.pagination
-    : { pageSize: 10 }
-
-  const isServerMode = !!schema.serverPagination
-
   const columnVisibility = useMemo(() => {
     const visibility: Record<string, boolean> = {}
     for (const col of schema.columns) {
@@ -93,6 +70,42 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
     }
     return visibility
   }, [schema.columns])
+
+  const isColumnReorderEnabled = schema.columnReorder === true
+
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+
+    const activeId = String(active.id)
+    const overId = String(over.id)
+
+    // NOTE: Compute reorder against visible columns only, preserving hidden column positions.
+    const visibleIds = columnOrder.filter(id => columnVisibility[id] !== false)
+    const oldVisIndex = visibleIds.indexOf(activeId)
+    const newVisIndex = visibleIds.indexOf(overId)
+    if (oldVisIndex === -1 || newVisIndex === -1) return
+
+    const reorderedVisible = arrayMove(visibleIds, oldVisIndex, newVisIndex)
+
+    // Merge reordered visible IDs back into full columnOrder
+    let visIdx = 0
+    const mergedOrder = columnOrder.map(id =>
+      columnVisibility[id] !== false ? reorderedVisible[visIdx++] : id
+    )
+
+    setColumnOrder(mergedOrder)
+    onColumnOrderChange?.(mergedOrder)
+  }, [onColumnOrderChange, columnOrder, columnVisibility])
+
+  const virtualConfig = resolveVirtualScrollConfig(schema.virtualScroll)
+  const isVirtualScroll = virtualConfig !== null
+
+  const paginationConfig = typeof schema.pagination === 'object'
+    ? schema.pagination
+    : { pageSize: 10 }
+
+  const isServerMode = !!schema.serverPagination
 
   const columns = useMemo<import('@tanstack/react-table').ColumnDef<Record<string, unknown>>[]>(
     () => buildColumns(schema.columns, Badge, isServerMode),
@@ -202,7 +215,10 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
     ? schema.serverPagination!.totalRecords
     : table.getFilteredRowModel().rows.length
 
-  const sortableColumnIds = columnOrder
+  const sortableColumnIds = useMemo(
+    () => columnOrder.filter(id => columnVisibility[id] !== false),
+    [columnOrder, columnVisibility]
+  )
 
   const renderHeaderRows = () =>
     table.getHeaderGroups().map((headerGroup) => (

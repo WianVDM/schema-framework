@@ -79,9 +79,9 @@ function checkVersionStatus() {
   }
 
   // Check milestone status consistency
-  const milestoneStatusMatch = content.match(/##\s*Milestone Status:\s*(\S+)/)
+  const milestoneStatusMatch = content.match(/##\s*Milestone Status:\s*(.+?)$/m)
   if (milestoneStatusMatch) {
-    const status = milestoneStatusMatch[1]
+    const status = milestoneStatusMatch[1].trim()
     if (status === 'COMPLETE') {
       // If milestone is complete, current version should equal target version
       if (statedCurrent !== statedTarget) {
@@ -103,11 +103,24 @@ function checkVersionStatus() {
   }
 
   // Check that active milestone has unchecked items (unless complete)
-  const milestoneStatus = milestoneStatusMatch ? milestoneStatusMatch[1] : ''
+  const milestoneStatus = milestoneStatusMatch ? milestoneStatusMatch[1].trim() : ''
   if (milestoneStatus === 'IN PROGRESS') {
-    const uncheckedItems = content.match(/- \[ \]/g)
-    if (!uncheckedItems) {
-      warning('VERSION_STATUS.md: Milestone is IN PROGRESS but all checklist items are checked — should be marked COMPLETE')
+    // NOTE: Only check unchecked items within the active milestone's checklist block,
+    // not across the entire file (which includes completed and upcoming milestones).
+    const activeMilestoneMatch = content.match(/##\s*Active Milestone:\s*(.+)$/m)
+    if (activeMilestoneMatch) {
+      const activeName = activeMilestoneMatch[1].trim()
+      // Extract the active milestone's checklist block (between its header and the next ## section)
+      const blockRegex = new RegExp(
+        `##\\s*Milestone Checklist[^\\n]*${activeName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}[^\\n]*\\n([\\s\\S]*?)(?=\\n## |\\n##[^#]|$)`
+      )
+      const activeBlock = content.match(blockRegex)
+      if (activeBlock) {
+        const uncheckedItems = activeBlock[1].match(/- \[ \]/g)
+        if (!uncheckedItems) {
+          warning('VERSION_STATUS.md: Milestone is IN PROGRESS but all checklist items are checked — should be marked COMPLETE')
+        }
+      }
     }
   }
 }
@@ -215,18 +228,33 @@ function checkSymbolUniqueness() {
 
   try {
     const content = readFileSync(indexPath, 'utf-8')
-    const index = JSON.parse(content)
-    if (!index.symbols) return
 
-    // Check for duplicate symbols (shouldn't exist if generator works correctly)
-    const seen = {}
-    for (const [name, meta] of Object.entries(index.symbols)) {
-      if (seen[name]) {
-        violation(`Duplicate symbol "${name}" found in both ${seen[name]} and ${meta.file}`)
+    // NOTE: JSON.parse silently collapses duplicate keys (last value wins), making
+    // post-parse duplicate detection ineffective. Scan the raw JSON text instead.
+    // Only match top-level symbol names (keys followed by `: {`), not nested keys
+    // like "file", "type", "layer" inside each symbol entry.
+    const symbolsBlock = content.match(/"symbols"\s*:\s*\{([\s\S]*)\}/)
+    if (symbolsBlock) {
+      const inner = symbolsBlock[1]
+      const keyRegex = /"([^"\\]*(?:\\.[^"\\]*)*)"\s*:\s*\{/g
+      const seenKeys = {}
+      let keyMatch
+      while ((keyMatch = keyRegex.exec(inner)) !== null) {
+        const key = keyMatch[1]
+        if (seenKeys[key]) {
+          violation(`Duplicate symbol "${key}" found in symbol-index.json — JSON.parse would silently drop the first definition`)
+        }
+        seenKeys[key] = true
       }
-      seen[name] = meta.file
     }
-  } catch { /* ignore */ }
+
+    // Also verify the parsed result is valid
+    JSON.parse(content)
+  } catch (e) {
+    if (e instanceof SyntaxError) {
+      violation(`docs/ai/symbol-index.json has invalid JSON: ${e.message}`)
+    }
+  }
 }
 
 // --- Helper ---
