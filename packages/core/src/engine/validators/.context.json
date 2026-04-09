@@ -39,7 +39,7 @@
       "desc": "Shared Zod schemas"
     },
     "wizard-schema.ts": {
-      "export": "wizardSchemaValidator, validateWizardSchema",
+      "export": "validateWizardSchema, wizardSchemaValidator",
       "type": "const",
       "desc": "WizardSchema Zod validator"
     }
@@ -56,8 +56,8 @@
       "shared-schemas.ts"
     ],
     "wizard-schema.ts": [
-      "shared-schemas.ts",
-      "form-schema.ts"
+      "form-schema.ts",
+      "shared-schemas.ts"
     ]
   },
   "extDeps": {

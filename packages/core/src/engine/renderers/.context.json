@@ -43,11 +43,6 @@
       "type": "function",
       "desc": "Renders multi-step wizard with form API validation and touched-state management"
     },
-    "wizard-review-step.tsx": {
-      "export": "WizardReviewStep",
-      "type": "function",
-      "desc": "Review step with conditional field filtering and select label resolution"
-    },
     "theme-provider.tsx": {
       "export": "ThemeProvider, ThemeContext",
       "type": "const",
@@ -57,6 +52,11 @@
       "export": "useTheme",
       "type": "function",
       "desc": "Theme context hook"
+    },
+    "wizard-review-step.tsx": {
+      "export": "WizardReviewStep",
+      "type": "function",
+      "desc": "Review step with conditional field filtering and select label resolution"
     }
   },
   "rels": {
@@ -68,12 +68,12 @@
       "grid-pagination.tsx",
       "grid-column-header.tsx"
     ],
-    "use-theme.ts": [
-      "theme-provider.tsx"
-    ],
     "schema-wizard.tsx": [
       "field-renderer.tsx",
       "wizard-review-step.tsx"
+    ],
+    "use-theme.ts": [
+      "theme-provider.tsx"
     ]
   },
   "extDeps": {
@@ -98,14 +98,11 @@
       "@tanstack/react-table",
       "@tanstack/react-virtual"
     ],
-    "theme-provider.tsx": [
-      "react"
-    ],
     "schema-wizard.tsx": [
       "react",
       "@tanstack/react-form"
     ],
-    "wizard-review-step.tsx": [
+    "theme-provider.tsx": [
       "react"
     ],
     "use-theme.ts": [

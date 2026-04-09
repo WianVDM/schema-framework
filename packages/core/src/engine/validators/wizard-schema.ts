@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import type { ZodIssue } from 'zod'
 import { formSchemaValidator } from './form-schema'
+import { i18nConfigSchema } from './shared-schemas'
 import type { ValidationResult } from './shared-schemas'
 
 const wizardNavigationConfigValidator = z.object({
@@ -35,6 +36,7 @@ export const wizardSchemaValidator = z.object({
   validationMode: z.enum(['eager', 'lazy']).optional(),
   navigation: wizardNavigationConfigValidator.optional(),
   reviewStep: reviewStepConfigValidator.optional(),
+  i18n: i18nConfigSchema.optional(),
 }).strict()
 
 export function validateWizardSchema(data: unknown): ValidationResult {

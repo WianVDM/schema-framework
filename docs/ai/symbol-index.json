@@ -41,6 +41,91 @@
       "type": "const",
       "layer": 1
     },
+    "PrimitivesProvider": {
+      "file": "packages/core/src/engine/context/primitives-context.tsx",
+      "type": "const",
+      "layer": 2
+    },
+    "usePrimitives": {
+      "file": "packages/core/src/engine/context/primitives-context.tsx",
+      "type": "const",
+      "layer": 2
+    },
+    "PrimitivesContext": {
+      "file": "packages/core/src/engine/context/primitives-context.tsx",
+      "type": "const",
+      "layer": 2
+    },
+    "asDataKey": {
+      "file": "packages/core/src/engine/helpers/as-data-key.ts",
+      "type": "function",
+      "layer": 2
+    },
+    "deepFreeze": {
+      "file": "packages/core/src/engine/helpers/deep-freeze.ts",
+      "type": "function",
+      "layer": 2
+    },
+    "resolveMessage": {
+      "file": "packages/core/src/engine/helpers/i18n.ts",
+      "type": "function",
+      "layer": 2
+    },
+    "FieldRenderer": {
+      "file": "packages/core/src/engine/renderers/field-renderer.tsx",
+      "type": "function",
+      "layer": 2
+    },
+    "GridColumnHeader": {
+      "file": "packages/core/src/engine/renderers/grid-column-header.tsx",
+      "type": "function",
+      "layer": 2
+    },
+    "GridPagination": {
+      "file": "packages/core/src/engine/renderers/grid-pagination.tsx",
+      "type": "function",
+      "layer": 2
+    },
+    "GridToolbar": {
+      "file": "packages/core/src/engine/renderers/grid-toolbar.tsx",
+      "type": "function",
+      "layer": 2
+    },
+    "SchemaForm": {
+      "file": "packages/core/src/engine/renderers/schema-form.tsx",
+      "type": "function",
+      "layer": 2
+    },
+    "SchemaGrid": {
+      "file": "packages/core/src/engine/renderers/schema-grid.tsx",
+      "type": "function",
+      "layer": 2
+    },
+    "SchemaWizard": {
+      "file": "packages/core/src/engine/renderers/schema-wizard.tsx",
+      "type": "function",
+      "layer": 2
+    },
+    "ThemeProvider": {
+      "file": "packages/core/src/engine/renderers/theme-provider.tsx",
+      "type": "const",
+      "layer": 2
+    },
+    "ThemeContext": {
+      "file": "packages/core/src/engine/renderers/theme-provider.tsx",
+      "type": "const",
+      "layer": 2
+    },
+    "useTheme": {
+      "file": "packages/core/src/engine/renderers/use-theme.ts",
+      "type": "function",
+      "layer": 2
+    },
+    "WizardReviewStep": {
+      "file": "packages/core/src/engine/renderers/wizard-review-step.tsx",
+      "type": "function",
+      "layer": 2
+    },
     "Brand": {
       "file": "packages/core/src/engine/types/branded.ts",
       "type": "type",
@@ -151,6 +236,11 @@
       "type": "type",
       "layer": 2
     },
+    "ReviewStepConfig": {
+      "file": "packages/core/src/engine/types/review-step-config.ts",
+      "type": "interface",
+      "layer": 2
+    },
     "RuntimeValidationRule": {
       "file": "packages/core/src/engine/types/runtime-validation-rule.ts",
       "type": "interface",
@@ -163,6 +253,11 @@
     },
     "SchemaGridProps": {
       "file": "packages/core/src/engine/types/schema-grid-props.ts",
+      "type": "interface",
+      "layer": 2
+    },
+    "SchemaWizardProps": {
+      "file": "packages/core/src/engine/types/schema-wizard-props.ts",
       "type": "interface",
       "layer": 2
     },
@@ -186,6 +281,11 @@
       "type": "interface",
       "layer": 2
     },
+    "StepIndicatorProps": {
+      "file": "packages/core/src/engine/types/step-indicator-props.ts",
+      "type": "interface",
+      "layer": 2
+    },
     "ThemeConfig": {
       "file": "packages/core/src/engine/types/theme-config.ts",
       "type": "interface",
@@ -203,6 +303,21 @@
     },
     "VirtualScrollConfig": {
       "file": "packages/core/src/engine/types/virtual-scroll-config.ts",
+      "type": "interface",
+      "layer": 2
+    },
+    "WizardNavigationConfig": {
+      "file": "packages/core/src/engine/types/wizard-navigation-config.ts",
+      "type": "interface",
+      "layer": 2
+    },
+    "WizardSchema": {
+      "file": "packages/core/src/engine/types/wizard-schema.ts",
+      "type": "interface",
+      "layer": 2
+    },
+    "WizardStep": {
+      "file": "packages/core/src/engine/types/wizard-step.ts",
       "type": "interface",
       "layer": 2
     },
@@ -321,84 +436,124 @@
       "type": "const",
       "layer": 2
     },
-    "asDataKey": {
-      "file": "packages/core/src/engine/helpers/as-data-key.ts",
-      "type": "function",
-      "layer": 2
-    },
-    "deepFreeze": {
-      "file": "packages/core/src/engine/helpers/deep-freeze.ts",
-      "type": "function",
-      "layer": 2
-    },
-    "resolveMessage": {
-      "file": "packages/core/src/engine/helpers/i18n.ts",
-      "type": "function",
-      "layer": 2
-    },
-    "PrimitivesProvider": {
-      "file": "packages/core/src/engine/context/primitives-context.tsx",
+    "validateWizardSchema": {
+      "file": "packages/core/src/engine/validators/wizard-schema.ts",
       "type": "const",
       "layer": 2
     },
-    "usePrimitives": {
-      "file": "packages/core/src/engine/context/primitives-context.tsx",
+    "wizardSchemaValidator": {
+      "file": "packages/core/src/engine/validators/wizard-schema.ts",
       "type": "const",
-      "layer": 2
-    },
-    "PrimitivesContext": {
-      "file": "packages/core/src/engine/context/primitives-context.tsx",
-      "type": "const",
-      "layer": 2
-    },
-    "FieldRenderer": {
-      "file": "packages/core/src/engine/renderers/field-renderer.tsx",
-      "type": "function",
-      "layer": 2
-    },
-    "GridColumnHeader": {
-      "file": "packages/core/src/engine/renderers/grid-column-header.tsx",
-      "type": "function",
-      "layer": 2
-    },
-    "GridPagination": {
-      "file": "packages/core/src/engine/renderers/grid-pagination.tsx",
-      "type": "function",
-      "layer": 2
-    },
-    "GridToolbar": {
-      "file": "packages/core/src/engine/renderers/grid-toolbar.tsx",
-      "type": "function",
-      "layer": 2
-    },
-    "SchemaForm": {
-      "file": "packages/core/src/engine/renderers/schema-form.tsx",
-      "type": "function",
-      "layer": 2
-    },
-    "SchemaGrid": {
-      "file": "packages/core/src/engine/renderers/schema-grid.tsx",
-      "type": "function",
-      "layer": 2
-    },
-    "ThemeProvider": {
-      "file": "packages/core/src/engine/renderers/theme-provider.tsx",
-      "type": "const",
-      "layer": 2
-    },
-    "ThemeContext": {
-      "file": "packages/core/src/engine/renderers/theme-provider.tsx",
-      "type": "const",
-      "layer": 2
-    },
-    "useTheme": {
-      "file": "packages/core/src/engine/renderers/use-theme.ts",
-      "type": "function",
       "layer": 2
     },
     "getRouter": {
       "file": "apps/showcase/src/router.tsx",
       "type": "function",
+      "layer": 3
+    },
+    "AppPrimitivesProvider": {
+      "file": "apps/showcase/src/app/primitives-provider.tsx",
+      "type": "function",
+      "layer": 3
+    },
+    "contactFormSchema": {
+      "file": "apps/showcase/src/data/contact-form-schema.ts",
+      "type": "const",
+      "layer": 3
+    },
+    "mockOrders": {
+      "file": "apps/showcase/src/data/mock-orders.ts",
+      "type": "const",
+      "layer": 3
+    },
+    "mockUsers": {
+      "file": "apps/showcase/src/data/mock-users.ts",
+      "type": "const",
+      "layer": 3
+    },
+    "mockVirtualData": {
+      "file": "apps/showcase/src/data/mock-virtual-data.ts",
+      "type": "const",
+      "layer": 3
+    },
+    "multiselectFormSchema": {
+      "file": "apps/showcase/src/data/multiselect-form-schema.ts",
+      "type": "const",
+      "layer": 3
+    },
+    "orderGridSchema": {
+      "file": "apps/showcase/src/data/order-grid-schema.ts",
+      "type": "const",
+      "layer": 3
+    },
+    "OrderRow": {
+      "file": "apps/showcase/src/data/order-row.ts",
+      "type": "interface",
+      "layer": 3
+    },
+    "primitives": {
+      "file": "apps/showcase/src/data/primitive-mappings.tsx",
+      "type": "const",
+      "layer": 3
+    },
+    "registrationFormSchema": {
+      "file": "apps/showcase/src/data/registration-form-schema.ts",
+      "type": "const",
+      "layer": 3
+    },
+    "supportTicketFormSchema": {
+      "file": "apps/showcase/src/data/support-ticket-form-schema.ts",
+      "type": "const",
+      "layer": 3
+    },
+    "userGridSchema": {
+      "file": "apps/showcase/src/data/user-grid-schema.ts",
+      "type": "const",
+      "layer": 3
+    },
+    "UserRow": {
+      "file": "apps/showcase/src/data/user-row.ts",
+      "type": "interface",
+      "layer": 3
+    },
+    "VirtualGridRow": {
+      "file": "apps/showcase/src/data/virtual-grid-row.ts",
+      "type": "interface",
+      "layer": 3
+    },
+    "virtualGridSchema": {
+      "file": "apps/showcase/src/data/virtual-grid-schema.ts",
+      "type": "const",
+      "layer": 3
+    },
+    "wizardFormSchema": {
+      "file": "apps/showcase/src/data/wizard-form-schema.ts",
+      "type": "const",
+      "layer": 3
+    },
+    "AppQueryProvider": {
+      "file": "apps/showcase/src/lib/query-client.tsx",
+      "type": "function",
+      "layer": 3
+    },
+    "SerializableRecord": {
+      "file": "apps/showcase/src/lib/serializable-record.ts",
+      "type": "type",
+      "layer": 3
+    },
+    "toSerializable": {
+      "file": "apps/showcase/src/lib/to-serializable.ts",
+      "type": "function",
+      "layer": 3
+    },
+    "cn": {
+      "file": "apps/showcase/src/lib/utils.ts",
+      "type": "function",
+      "layer": 3
+    },
+    "Route": {
+      "file": "apps/showcase/src/routes/__root.tsx",
+      "type": "const",
       "layer": 3
     },
     "getContactFormSchema": {
@@ -449,6 +604,16 @@
     "getVirtualGridSchema": {
       "file": "apps/showcase/src/server/get-virtual-grid-schema.ts",
       "type": "const",
+      "layer": 3
+    },
+    "getWizardFormSchema": {
+      "file": "apps/showcase/src/server/get-wizard-form-schema.ts",
+      "type": "const",
+      "layer": 3
+    },
+    "createSelectionStore": {
+      "file": "apps/showcase/src/stores/selection-store.ts",
+      "type": "function",
       "layer": 3
     }
   }

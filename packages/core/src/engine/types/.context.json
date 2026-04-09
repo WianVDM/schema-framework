@@ -108,11 +108,6 @@
       "type": "interface",
       "desc": "Wizard review step configuration"
     },
-    "schema-wizard-props.ts": {
-      "export": "SchemaWizardProps",
-      "type": "interface",
-      "desc": "SchemaWizard renderer props"
-    },
     "runtime-validation-rule.ts": {
       "export": "RuntimeValidationRule",
       "type": "interface",
@@ -128,15 +123,15 @@
       "type": "interface",
       "desc": "SchemaGrid props"
     },
+    "schema-wizard-props.ts": {
+      "export": "SchemaWizardProps",
+      "type": "interface",
+      "desc": "SchemaWizard renderer props"
+    },
     "select-option.ts": {
       "export": "SelectOption",
       "type": "interface",
       "desc": "Select/radio option"
-    },
-    "step-indicator-props.ts": {
-      "export": "StepIndicatorProps",
-      "type": "interface",
-      "desc": "Step indicator primitive props"
     },
     "selection-store.ts": {
       "export": "SelectionStore",
@@ -153,6 +148,11 @@
       "type": "interface",
       "desc": "Status badge variant map"
     },
+    "step-indicator-props.ts": {
+      "export": "StepIndicatorProps",
+      "type": "interface",
+      "desc": "Step indicator primitive props"
+    },
     "theme-config.ts": {
       "export": "ThemeConfig",
       "type": "interface",
@@ -168,6 +168,11 @@
       "type": "type",
       "desc": "Validation type literal union"
     },
+    "virtual-scroll-config.ts": {
+      "export": "VirtualScrollConfig",
+      "type": "interface",
+      "desc": "Virtual scrolling config"
+    },
     "wizard-navigation-config.ts": {
       "export": "WizardNavigationConfig",
       "type": "interface",
@@ -182,11 +187,6 @@
       "export": "WizardStep",
       "type": "interface",
       "desc": "Single wizard step definition"
-    },
-    "virtual-scroll-config.ts": {
-      "export": "VirtualScrollConfig",
-      "type": "interface",
-      "desc": "Virtual scrolling config"
     }
   },
   "rels": {
@@ -241,7 +241,6 @@
       "wizard-schema.ts",
       "form-submit-handler.ts"
     ],
-    "step-indicator-props.ts": [],
     "validation-rule.ts": [
       "validation-type.ts"
     ],

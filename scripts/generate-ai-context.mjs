@@ -285,6 +285,11 @@ function buildSymbolIndex(contexts) {
         if (name === '*') continue
         const filePath = posix.join(dirPath, file).replace(/\\/g, '/')
         if (symbols[name]) {
+          // NOTE: Duplicate exports are expected for route files (all export `Route` from createFileRoute).
+          // Also expected for barrel files that re-export the same name. Log and skip.
+          if (name === 'Route' || meta.type === 're-export') {
+            continue
+          }
           throw new Error(
             `Duplicate export "${name}" found in both ${symbols[name].file} and ${filePath}`
           )
@@ -301,6 +306,39 @@ function buildSymbolIndex(contexts) {
   return {
     $schema: 'schemas/symbol-index-schema.json',
     symbols,
+  }
+}
+
+// --- Check if context file is fresh (mtime newer than all source files) ---
+function isContextFresh(dirPath) {
+  const absDir = resolve(ROOT, dirPath)
+  const contextPath = join(absDir, '.context.json')
+  if (!existsSync(contextPath)) return false
+
+  try {
+    const contextMtime = statSync(contextPath).mtimeMs
+    const files = getSourceFiles(absDir)
+    for (const file of files) {
+      const filePath = join(absDir, file)
+      if (statSync(filePath).mtimeMs > contextMtime) {
+        return false
+      }
+    }
+    return true
+  } catch {
+    return false
+  }
+}
+
+// --- Load existing context for symbol index (skipped dirs) ---
+function loadExistingContext(dirPath) {
+  const absDir = resolve(ROOT, dirPath)
+  const contextPath = join(absDir, '.context.json')
+  if (!existsSync(contextPath)) return null
+  try {
+    return JSON.parse(readFileSync(contextPath, 'utf-8'))
+  } catch {
+    return null
   }
 }
 
@@ -351,6 +389,9 @@ function validateTokenBudget(filePath, content) {
   return warnings.length > 0 ? warnings : null
 }
 
+// --- Parse CLI flags ---
+const forceAll = process.argv.includes('--force')
+
 // --- Main ---
 function main() {
   console.log('🔄 Generating AI context files...\n')
@@ -360,8 +401,21 @@ function main() {
   console.log(`  📂 Discovered ${allDirs.length} directories with source files\n`)
 
   const contexts = []
+  let regenerated = 0
+  let skipped = 0
 
   for (const dirPath of allDirs) {
+    // NOTE: Incremental mode — skip directories where .context.json is fresher than all source files.
+    // Use --force flag to regenerate all contexts regardless of mtime.
+    if (!forceAll && isContextFresh(dirPath)) {
+      const existing = loadExistingContext(dirPath)
+      if (existing) {
+        contexts.push({ dirPath, context: existing })
+        skipped++
+      }
+      continue
+    }
+
     const context = buildContextForDir(dirPath)
     if (!context) {
       console.log(`  ⏭️  ${dirPath} — no source files found, skipping`)
@@ -378,9 +432,14 @@ function main() {
     }
 
     contexts.push({ dirPath, context })
+    regenerated++
   }
 
-  // Generate symbol index
+  if (skipped > 0) {
+    console.log(`  ⏭️  ${skipped} directories skipped (context fresh)\n`)
+  }
+
+  // Generate symbol index (always regenerated from all contexts)
   const symbolIndex = buildSymbolIndex(contexts)
   const symbolIndexPath = join(ROOT, 'docs', 'ai', 'symbol-index.json')
   const symbolContent = JSON.stringify(symbolIndex, null, 2) + '\n'
@@ -388,14 +447,14 @@ function main() {
   writeFileSync(symbolIndexPath, symbolContent, 'utf-8')
 
   const symbolTokens = estimateTokens(symbolContent, true)
-  console.log(`\n  ✅ docs/ai/symbol-index.json (${symbolTokens} tokens, ${Object.keys(symbolIndex.symbols).length} symbols)`)
+  console.log(`  ✅ docs/ai/symbol-index.json (${symbolTokens} tokens, ${Object.keys(symbolIndex.symbols).length} symbols)`)
 
   const warnings = validateTokenBudget(symbolIndexPath, symbolContent)
   if (warnings) {
     for (const w of warnings) console.log(`     ⚠️  ${w}`)
   }
 
-  console.log('\n✨ AI context generation complete!')
+  console.log(`\n✨ AI context generation complete! (${regenerated} regenerated, ${skipped} skipped)`)
 }
 
 main()
