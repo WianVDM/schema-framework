@@ -128,7 +128,7 @@ function checkChangelogs() {
     if (pkgJson.version && pkgJson.version !== '0.0.0') {
       const changelogPath = join(pkg.path, 'CHANGELOG.md')
       if (!existsSync(changelogPath)) {
-        violation(`CHANGELOG.md missing for ${pkg.name}@${pkgJson.version} — run 'pnpm changeset version' to generate`)
+        violation(`CHANGELOG.md missing for ${pkg.name}@${pkgJson.version} — this will be auto-generated when changesets/action processes pending changesets on merge to main`)
       }
     }
   }
