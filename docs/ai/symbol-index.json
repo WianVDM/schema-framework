@@ -33,22 +33,22 @@
     },
     "TagInputProps": {
       "file": "packages/core/src/primitives/tag-input.tsx",
-      "type": "const",
+      "type": "interface",
       "layer": 1
     },
     "TagInput": {
       "file": "packages/core/src/primitives/tag-input.tsx",
-      "type": "const",
+      "type": "function",
       "layer": 1
     },
     "PrimitivesProvider": {
       "file": "packages/core/src/engine/context/primitives-context.tsx",
-      "type": "const",
+      "type": "function",
       "layer": 2
     },
     "usePrimitives": {
       "file": "packages/core/src/engine/context/primitives-context.tsx",
-      "type": "const",
+      "type": "function",
       "layer": 2
     },
     "PrimitivesContext": {
@@ -108,7 +108,7 @@
     },
     "ThemeProvider": {
       "file": "packages/core/src/engine/renderers/theme-provider.tsx",
-      "type": "const",
+      "type": "function",
       "layer": 2
     },
     "ThemeContext": {
@@ -328,7 +328,7 @@
     },
     "validateFieldSchema": {
       "file": "packages/core/src/engine/validators/field-schema.ts",
-      "type": "const",
+      "type": "function",
       "layer": 2
     },
     "fieldSchemaValidator": {
@@ -343,7 +343,7 @@
     },
     "validateFormSchema": {
       "file": "packages/core/src/engine/validators/form-schema.ts",
-      "type": "const",
+      "type": "function",
       "layer": 2
     },
     "formSchemaValidator": {
@@ -353,7 +353,7 @@
     },
     "validateGridSchema": {
       "file": "packages/core/src/engine/validators/grid-schema.ts",
-      "type": "const",
+      "type": "function",
       "layer": 2
     },
     "gridColumnSchemaValidator": {
@@ -368,7 +368,7 @@
     },
     "ValidationResult": {
       "file": "packages/core/src/engine/validators/shared-schemas.ts",
-      "type": "const",
+      "type": "interface",
       "layer": 2
     },
     "fieldTypeSchema": {
@@ -438,7 +438,7 @@
     },
     "validateWizardSchema": {
       "file": "packages/core/src/engine/validators/wizard-schema.ts",
-      "type": "const",
+      "type": "function",
       "layer": 2
     },
     "wizardSchemaValidator": {

@@ -176,6 +176,7 @@ function buildContextForDir(dirPath) {
   const filesMap = {}
   const rels = {}
   const extDeps = {}
+  const symbolTypes = {}
 
   // Load existing .context.json for merge (preserve hand-crafted descriptions)
   const contextPath = join(absDir, '.context.json')
@@ -190,6 +191,15 @@ function buildContextForDir(dirPath) {
     const filePath = join(absDir, file)
     const exports = parseExports(filePath)
     const imports = parseImports(filePath)
+
+    // NOTE: Track per-symbol types so the symbol index uses each export's
+    // actual AST kind (function, interface, const, etc.) rather than the
+    // collapsed file-level type assigned to multi-export .context.json entries.
+    for (const exp of exports) {
+      if (exp.name && exp.name !== '*') {
+        symbolTypes[exp.name] = classifyExport(exp.keyword)
+      }
+    }
 
     // Build file entry
     if (exports.length === 0) {
@@ -263,20 +273,44 @@ function buildContextForDir(dirPath) {
   )
 
   return {
-    $schema: schemaRelPath,
-    layer,
-    purpose,
-    files: filesMap,
-    ...(Object.keys(rels).length > 0 ? { rels } : {}),
-    ...(Object.keys(extDeps).length > 0 ? { extDeps } : {}),
+    context: {
+      $schema: schemaRelPath,
+      layer,
+      purpose,
+      files: filesMap,
+      ...(Object.keys(rels).length > 0 ? { rels } : {}),
+      ...(Object.keys(extDeps).length > 0 ? { extDeps } : {}),
+    },
+    symbolTypes,
   }
+}
+
+// --- Parse per-symbol types for a directory (used for cached contexts) ---
+function parseSymbolTypesForDir(dirPath) {
+  const absDir = resolve(ROOT, dirPath)
+  if (!existsSync(absDir)) return {}
+
+  const files = getSourceFiles(absDir)
+  const symbolTypes = {}
+
+  for (const file of files) {
+    const filePath = join(absDir, file)
+    const exports = parseExports(filePath)
+    for (const exp of exports) {
+      if (exp.name && exp.name !== '*') {
+        symbolTypes[exp.name] = classifyExport(exp.keyword)
+      }
+    }
+  }
+
+  return symbolTypes
 }
 
 // --- Build symbol index from all context files ---
 function buildSymbolIndex(contexts) {
   const symbols = {}
 
-  for (const { dirPath, context } of contexts) {
+  for (const { dirPath, context, symbolTypes } of contexts) {
     for (const [file, meta] of Object.entries(context.files)) {
       if (meta.type === 're-export') continue
 
@@ -286,17 +320,19 @@ function buildSymbolIndex(contexts) {
         const filePath = posix.join(dirPath, file).replace(/\\/g, '/')
         if (symbols[name]) {
           // NOTE: Duplicate exports are expected for route files (all export `Route` from createFileRoute).
-          // Also expected for barrel files that re-export the same name. Log and skip.
-          if (name === 'Route' || meta.type === 're-export') {
+          // Re-exports are already skipped above (line 281), so they never reach this block.
+          if (name === 'Route') {
             continue
           }
           throw new Error(
             `Duplicate export "${name}" found in both ${symbols[name].file} and ${filePath}`
           )
         }
+        // NOTE: Use per-symbol type when available (accurate for multi-export files
+        // where individual exports have different AST kinds, e.g. function vs const).
         symbols[name] = {
           file: filePath,
-          type: meta.type,
+          type: symbolTypes?.[name] || meta.type,
           layer: context.layer,
         }
       }
@@ -410,18 +446,20 @@ function main() {
     if (!forceAll && isContextFresh(dirPath)) {
       const existing = loadExistingContext(dirPath)
       if (existing) {
-        contexts.push({ dirPath, context: existing })
+        const symbolTypes = parseSymbolTypesForDir(dirPath)
+        contexts.push({ dirPath, context: existing, symbolTypes })
         skipped++
       }
       continue
     }
 
-    const context = buildContextForDir(dirPath)
-    if (!context) {
+    const result = buildContextForDir(dirPath)
+    if (!result) {
       console.log(`  ⏭️  ${dirPath} — no source files found, skipping`)
       continue
     }
 
+    const { context, symbolTypes } = result
     const { path: outPath, content } = writeContextFile(dirPath, context)
     const warnings = validateTokenBudget(outPath, content)
     const tokenEst = estimateTokens(content, true)
@@ -431,7 +469,7 @@ function main() {
       for (const w of warnings) console.log(`     ⚠️  ${w}`)
     }
 
-    contexts.push({ dirPath, context })
+    contexts.push({ dirPath, context, symbolTypes })
     regenerated++
   }
 

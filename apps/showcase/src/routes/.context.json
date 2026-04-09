@@ -64,11 +64,6 @@
       "desc": "Route"
     }
   },
-  "rels": {
-    "demo-form-wizard.tsx": [
-      "demo.tsx"
-    ]
-  },
   "extDeps": {
     "__root.tsx": [
       "react",
