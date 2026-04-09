@@ -18,6 +18,7 @@ import { Route as DemoGridRouteImport } from './routes/demo-grid'
 import { Route as DemoFormWizardRouteImport } from './routes/demo-form-wizard'
 import { Route as DemoFormRouteImport } from './routes/demo-form'
 import { Route as DemoDatePickerRouteImport } from './routes/demo-date-picker'
+import { Route as DemoColumnReorderingRouteImport } from './routes/demo-column-reordering'
 import { Route as DemoRouteImport } from './routes/demo'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -66,6 +67,11 @@ const DemoDatePickerRoute = DemoDatePickerRouteImport.update({
   path: '/demo-date-picker',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DemoColumnReorderingRoute = DemoColumnReorderingRouteImport.update({
+  id: '/demo-column-reordering',
+  path: '/demo-column-reordering',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DemoRoute = DemoRouteImport.update({
   id: '/demo',
   path: '/demo',
@@ -80,6 +86,7 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/demo': typeof DemoRoute
+  '/demo-column-reordering': typeof DemoColumnReorderingRoute
   '/demo-date-picker': typeof DemoDatePickerRoute
   '/demo-form': typeof DemoFormRoute
   '/demo-form-wizard': typeof DemoFormWizardRoute
@@ -93,6 +100,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/demo': typeof DemoRoute
+  '/demo-column-reordering': typeof DemoColumnReorderingRoute
   '/demo-date-picker': typeof DemoDatePickerRoute
   '/demo-form': typeof DemoFormRoute
   '/demo-form-wizard': typeof DemoFormWizardRoute
@@ -107,6 +115,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/demo': typeof DemoRoute
+  '/demo-column-reordering': typeof DemoColumnReorderingRoute
   '/demo-date-picker': typeof DemoDatePickerRoute
   '/demo-form': typeof DemoFormRoute
   '/demo-form-wizard': typeof DemoFormWizardRoute
@@ -122,6 +131,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/demo'
+    | '/demo-column-reordering'
     | '/demo-date-picker'
     | '/demo-form'
     | '/demo-form-wizard'
@@ -135,6 +145,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/demo'
+    | '/demo-column-reordering'
     | '/demo-date-picker'
     | '/demo-form'
     | '/demo-form-wizard'
@@ -148,6 +159,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/demo'
+    | '/demo-column-reordering'
     | '/demo-date-picker'
     | '/demo-form'
     | '/demo-form-wizard'
@@ -162,6 +174,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DemoRoute: typeof DemoRoute
+  DemoColumnReorderingRoute: typeof DemoColumnReorderingRoute
   DemoDatePickerRoute: typeof DemoDatePickerRoute
   DemoFormRoute: typeof DemoFormRoute
   DemoFormWizardRoute: typeof DemoFormWizardRoute
@@ -238,6 +251,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoDatePickerRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/demo-column-reordering': {
+      id: '/demo-column-reordering'
+      path: '/demo-column-reordering'
+      fullPath: '/demo-column-reordering'
+      preLoaderRoute: typeof DemoColumnReorderingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/demo': {
       id: '/demo'
       path: '/demo'
@@ -258,6 +278,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DemoRoute: DemoRoute,
+  DemoColumnReorderingRoute: DemoColumnReorderingRoute,
   DemoDatePickerRoute: DemoDatePickerRoute,
   DemoFormRoute: DemoFormRoute,
   DemoFormWizardRoute: DemoFormWizardRoute,

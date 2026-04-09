@@ -10,6 +10,7 @@ interface GridColumnHeaderProps {
   onFilterChange: (value: string) => void
   enableResizing: boolean
   filterDisabled?: boolean
+  dragHandleProps?: Record<string, unknown>
 }
 
 export function GridColumnHeader({
@@ -19,6 +20,7 @@ export function GridColumnHeader({
   onFilterChange,
   enableResizing,
   filterDisabled = false,
+  dragHandleProps,
 }: GridColumnHeaderProps) {
   const { TableHead, Input } = usePrimitives()
 
@@ -45,6 +47,15 @@ export function GridColumnHeader({
       role="columnheader"
     >
       <div className="flex items-center gap-1">
+        {dragHandleProps && (
+          <span
+            {...dragHandleProps}
+            className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground select-none"
+            aria-label="Drag to reorder column"
+          >
+            ⠿
+          </span>
+        )}
         {header.column.getCanSort() ? (
           <button
             type="button"

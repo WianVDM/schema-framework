@@ -13,6 +13,11 @@
       "type": "function",
       "desc": "Recursively freezes objects"
     },
+    "default-fallback-component.tsx": {
+      "export": "DefaultFallbackComponent",
+      "type": "function",
+      "desc": "DefaultFallbackComponent"
+    },
     "i18n.ts": {
       "export": "resolveMessage",
       "type": "function",
@@ -22,6 +27,16 @@
       "export": "*",
       "type": "re-export",
       "desc": "Barrel re-exports"
+    },
+    "is-field-visible.ts": {
+      "export": "isFieldVisible",
+      "type": "function",
+      "desc": "isFieldVisible"
     }
+  },
+  "extDeps": {
+    "default-fallback-component.tsx": [
+      "react"
+    ]
   }
 }

@@ -3,6 +3,11 @@
   "layer": 3,
   "purpose": "Server functions for data fetching (TanStack Start createServerFn).",
   "files": {
+    "get-column-reorder-grid-schema.ts": {
+      "export": "getColumnReorderGridSchema",
+      "type": "const",
+      "desc": "getColumnReorderGridSchema"
+    },
     "get-contact-form-schema.ts": {
       "export": "getContactFormSchema",
       "type": "const",
@@ -60,6 +65,10 @@
     }
   },
   "extDeps": {
+    "get-column-reorder-grid-schema.ts": [
+      "@tanstack/react-start",
+      "@my-framework/core"
+    ],
     "get-contact-form-schema.ts": [
       "@tanstack/react-start",
       "@my-framework/core"

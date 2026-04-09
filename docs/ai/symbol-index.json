@@ -66,8 +66,18 @@
       "type": "function",
       "layer": 2
     },
+    "DefaultFallbackComponent": {
+      "file": "packages/core/src/engine/helpers/default-fallback-component.tsx",
+      "type": "function",
+      "layer": 2
+    },
     "resolveMessage": {
       "file": "packages/core/src/engine/helpers/i18n.ts",
+      "type": "function",
+      "layer": 2
+    },
+    "isFieldVisible": {
+      "file": "packages/core/src/engine/helpers/is-field-visible.ts",
       "type": "function",
       "layer": 2
     },
@@ -103,6 +113,11 @@
     },
     "SchemaWizard": {
       "file": "packages/core/src/engine/renderers/schema-wizard.tsx",
+      "type": "function",
+      "layer": 2
+    },
+    "SortableColumnHeader": {
+      "file": "packages/core/src/engine/renderers/sortable-column-header.tsx",
       "type": "function",
       "layer": 2
     },
@@ -456,6 +471,11 @@
       "type": "function",
       "layer": 3
     },
+    "columnReorderGridSchema": {
+      "file": "apps/showcase/src/data/column-reorder-grid-schema.ts",
+      "type": "const",
+      "layer": 3
+    },
     "contactFormSchema": {
       "file": "apps/showcase/src/data/contact-form-schema.ts",
       "type": "const",
@@ -553,6 +573,11 @@
     },
     "Route": {
       "file": "apps/showcase/src/routes/__root.tsx",
+      "type": "const",
+      "layer": 3
+    },
+    "getColumnReorderGridSchema": {
+      "file": "apps/showcase/src/server/get-column-reorder-grid-schema.ts",
       "type": "const",
       "layer": 3
     },

@@ -8,6 +8,11 @@
       "type": "const",
       "desc": "Route"
     },
+    "demo-column-reordering.tsx": {
+      "export": "Route",
+      "type": "const",
+      "desc": "Route"
+    },
     "demo-date-picker.tsx": {
       "export": "Route",
       "type": "const",
@@ -69,12 +74,18 @@
       "react",
       "@tanstack/react-router"
     ],
+    "demo-column-reordering.tsx": [
+      "@tanstack/react-router",
+      "@tanstack/react-query",
+      "@my-framework/core"
+    ],
     "demo-date-picker.tsx": [
       "@tanstack/react-router",
       "react",
       "@my-framework/core"
     ],
     "demo-form-wizard.tsx": [
+      "react",
       "@tanstack/react-router",
       "@my-framework/core"
     ],

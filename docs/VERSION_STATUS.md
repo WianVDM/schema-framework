@@ -43,12 +43,17 @@
 - [x] Fix Slice 3 gaps (`.strict()` on datePickerConfig, `ComponentType` fix in field-renderer)
 - [x] `pnpm build` passes
 
-### Slice 5: Column Reordering (`v0.2.5-feature/column-reordering`)
-- [ ] Add `columnReorder` to `GridSchema`
-- [ ] Integrate `@dnd-kit/core` + `@dnd-kit/sortable`
-- [ ] Update `GridColumnHeader` with drag handles
-- [ ] Create showcase demo
-- [ ] `pnpm build` passes
+### Slice 5: Column Reordering & Code Quality (`v0.2.5-feature/column-reordering`)
+- [x] Add `columnReorder` to `GridSchema`
+- [x] Integrate `@dnd-kit/core` + `@dnd-kit/sortable`
+- [x] Update `GridColumnHeader` with drag handles
+- [x] Create showcase demo (`/demo-column-reordering`)
+- [x] Extract shared `isFieldVisible` helper (DRY from wizard + review step)
+- [x] Replace `() => null` with named `DefaultFallbackComponent` in field-renderer
+- [x] Add `onStepChange` callback to `SchemaWizard`
+- [x] Add `onColumnOrderChange` callback to `SchemaGrid`
+- [x] Enhance wizard demo with non-linear mode toggle + initialValues
+- [x] `pnpm build` passes
 
 ## Milestone Checklist (v0.1.0) — COMPLETE ✅
 - [x] Install and configure `@changesets/cli`

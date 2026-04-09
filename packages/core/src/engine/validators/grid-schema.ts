@@ -49,6 +49,7 @@ export const gridSchemaValidator = z.object({
   virtualScroll: z
     .union([virtualScrollConfigSchema, z.boolean()])
     .optional(),
+  columnReorder: z.boolean().optional(),
 }).strict()
 
 export function validateGridSchema(data: unknown): ValidationResult {

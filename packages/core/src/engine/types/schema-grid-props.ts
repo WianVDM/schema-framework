@@ -6,4 +6,5 @@ export interface SchemaGridProps {
   readonly onRowClick?: (row: Readonly<Record<string, unknown>>, rowId: string) => void
   readonly onPageChange?: (page: number, pageSize: number) => void
   readonly onFilterChange?: (columnKey: string, value: string) => void
+  readonly onColumnOrderChange?: (columnKeys: readonly string[]) => void
 }

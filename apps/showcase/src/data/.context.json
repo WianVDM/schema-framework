@@ -3,6 +3,11 @@
   "layer": 3,
   "purpose": "Mock schema definitions and static data for showcase demos",
   "files": {
+    "column-reorder-grid-schema.ts": {
+      "export": "columnReorderGridSchema",
+      "type": "const",
+      "desc": "columnReorderGridSchema"
+    },
     "contact-form-schema.ts": {
       "export": "contactFormSchema",
       "type": "const",
@@ -96,6 +101,9 @@
     ]
   },
   "extDeps": {
+    "column-reorder-grid-schema.ts": [
+      "@my-framework/core"
+    ],
     "contact-form-schema.ts": [
       "@my-framework/core"
     ],

@@ -22,12 +22,15 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format esm --dts --external zod --external react --external @tanstack/react-table --external @tanstack/react-form --external @tanstack/react-virtual --external date-fns --external react-day-picker",
-    "dev": "tsup src/index.ts --format esm --dts --watch --external zod --external react --external @tanstack/react-table --external @tanstack/react-form --external @tanstack/react-virtual --external date-fns --external react-day-picker",
+    "build": "tsup src/index.ts --format esm --dts --external zod --external react --external @tanstack/react-table --external @tanstack/react-form --external @tanstack/react-virtual --external date-fns --external react-day-picker --external @dnd-kit/core --external @dnd-kit/sortable --external @dnd-kit/utilities",
+    "dev": "tsup src/index.ts --format esm --dts --watch --external zod --external react --external @tanstack/react-table --external @tanstack/react-form --external @tanstack/react-virtual --external date-fns --external react-day-picker --external @dnd-kit/core --external @dnd-kit/sortable --external @dnd-kit/utilities",
     "lint": "tsc --noEmit",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
     "zod": "^3.24"
   },
   "devDependencies": {
