@@ -46,7 +46,7 @@
     "sortable-column-header.tsx": {
       "export": "SortableColumnHeader",
       "type": "function",
-      "desc": "SortableColumnHeader"
+      "desc": "Drag-and-drop column header wrapper using @dnd-kit/sortable"
     },
     "theme-provider.tsx": {
       "export": "ThemeProvider, ThemeContext",

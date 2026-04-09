@@ -25,7 +25,7 @@ function DemoFormWizardPage() {
     console.log('Wizard cancelled')
   }
 
-  const handleStepChange = (stepIndex: number, direction: string) => {
+  const handleStepChange = (stepIndex: number, direction: 'next' | 'previous' | 'jump') => {
     const stepName = schema?.steps[stepIndex]?.title ?? `Step ${stepIndex + 1}`
     setCurrentStepLabel(`${stepName} (${direction})`)
   }

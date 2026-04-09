@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback, useRef } from 'react'
+import { useMemo, useState, useCallback, useRef, useEffect } from 'react'
 import {
   useReactTable,
   getCoreRowModel,
@@ -48,6 +48,19 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
   const [columnFilters, setColumnFilters] = useState<Record<string, string>>({})
   const [columnOrder, setColumnOrder] = useState<string[]>(() => schema.columns.map((c) => c.key))
 
+  // NOTE: Reconcile columnOrder when schema.columns changes (e.g. dynamic schemas).
+  // Adds any new keys and removes keys no longer in the schema.
+  useEffect(() => {
+    const schemaKeys = schema.columns.map((c) => c.key)
+    setColumnOrder((prev) => {
+      const existing = prev.filter((key) => schemaKeys.includes(key))
+      const added = schemaKeys.filter((key) => !prev.includes(key))
+      return added.length > 0 || existing.length !== prev.length
+        ? [...existing, ...added]
+        : prev
+    })
+  }, [schema.columns])
+
   const isColumnReorderEnabled = schema.columnReorder === true
 
   const handleDragEnd = useCallback((event: DragEndEvent) => {
@@ -56,12 +69,19 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
       setColumnOrder((prev) => {
         const oldIndex = prev.indexOf(String(active.id))
         const newIndex = prev.indexOf(String(over.id))
-        const next = arrayMove(prev, oldIndex, newIndex)
-        onColumnOrderChange?.(next)
-        return next
+        if (oldIndex === -1 || newIndex === -1) return prev
+        return arrayMove(prev, oldIndex, newIndex)
       })
+      // NOTE: Invoke callback outside the state updater to keep it pure.
+      // The new order will be available on the next render via columnOrder state.
+      const currentOrder = columnOrder
+      const oldIndex = currentOrder.indexOf(String(active.id))
+      const newIndex = currentOrder.indexOf(String(over.id))
+      if (oldIndex !== -1 && newIndex !== -1) {
+        onColumnOrderChange?.(arrayMove(currentOrder, oldIndex, newIndex))
+      }
     }
-  }, [onColumnOrderChange])
+  }, [onColumnOrderChange, columnOrder])
 
   const virtualConfig = resolveVirtualScrollConfig(schema.virtualScroll)
   const isVirtualScroll = virtualConfig !== null
