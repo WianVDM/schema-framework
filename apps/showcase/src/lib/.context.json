@@ -1,7 +1,7 @@
 {
   "$schema": "../../../../docs/ai/schemas/context-schema.json",
   "layer": 3,
-  "purpose": "",
+  "purpose": "Shared utility functions (cn helper, serialization)",
   "files": {
     "query-client.tsx": {
       "export": "AppQueryProvider",

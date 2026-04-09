@@ -208,7 +208,7 @@ function buildContextForDir(dirPath) {
       filesMap[file] = existing || {
         export: '*',
         type: 'component',
-        desc: basename(file, extname(file)),
+        desc: `TODO: describe ${basename(file, extname(file))}`,
       }
     } else if (exports.length === 1 && exports[0].type === 're-export') {
       filesMap[file] = { export: '*', type: 're-export', desc: 'Barrel re-exports' }
@@ -219,7 +219,7 @@ function buildContextForDir(dirPath) {
       filesMap[file] = {
         export: exp.name,
         type: classifyExport(exp.keyword),
-        desc: existing?.desc || exp.name,
+        desc: existing?.desc || `TODO: describe ${exp.name}`,
       }
     } else {
       // Multi-export file
@@ -229,7 +229,7 @@ function buildContextForDir(dirPath) {
       filesMap[file] = {
         export: names,
         type: types.length === 1 ? types[0] : 'const',
-        desc: existing?.desc || `Exports ${exports.length} symbols`,
+        desc: existing?.desc || `TODO: describe ${names.split(',')[0].trim()} (+${exports.length - 1} more)`,
       }
     }
 
