@@ -15,7 +15,7 @@
  */
 
 import { readFileSync, existsSync, statSync, readdirSync } from 'fs'
-import { join, resolve, dirname, relative, basename, extname, posix } from 'path'
+import { join, resolve, dirname, relative } from 'path'
 import { fileURLToPath } from 'url'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -253,9 +253,6 @@ function main() {
   checkChangelogs()
   checkContextFreshness()
   checkSymbolUniqueness()
-
-  // Output context map freshness
-  const freshCount = warnings.filter(w => !w.includes('stale')).length
 
   // Print results
   if (violations.length === 0 && warnings.length === 0 && suggestions.length === 0) {
