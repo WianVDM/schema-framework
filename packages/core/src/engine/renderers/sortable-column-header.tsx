@@ -14,8 +14,9 @@ interface SortableColumnHeaderProps {
 
 /**
  * Wraps GridColumnHeader with @dnd-kit/sortable's `useSortable` hook
- * to enable drag-and-drop column reordering. Passes `dragHandleProps`
- * down to GridColumnHeader for the drag handle icon.
+ * to enable drag-and-drop column reordering. Forwards ref, style, and
+ * ARIA attributes directly to the underlying <th> via GridColumnHeader
+ * to preserve correct table semantics (<th> as direct child of <tr>).
  */
 export function SortableColumnHeader({
   header,
@@ -34,7 +35,7 @@ export function SortableColumnHeader({
     isDragging,
   } = useSortable({ id: header.id })
 
-  const style: React.CSSProperties = {
+  const thStyle: React.CSSProperties = {
     transform: transform
       ? `translate3d(${transform.x}px, 0, 0)`
       : undefined,
@@ -45,16 +46,17 @@ export function SortableColumnHeader({
   }
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes}>
-      <GridColumnHeader
-        header={header}
-        column={column}
-        filterValue={filterValue}
-        onFilterChange={onFilterChange}
-        enableResizing={enableResizing}
-        filterDisabled={filterDisabled}
-        dragHandleProps={listeners}
-      />
-    </div>
+    <GridColumnHeader
+      header={header}
+      column={column}
+      filterValue={filterValue}
+      onFilterChange={onFilterChange}
+      enableResizing={enableResizing}
+      filterDisabled={filterDisabled}
+      dragHandleProps={listeners}
+      thRef={setNodeRef}
+      thStyle={thStyle}
+      thAttributes={attributes}
+    />
   )
 }

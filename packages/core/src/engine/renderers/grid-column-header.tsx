@@ -11,6 +11,13 @@ interface GridColumnHeaderProps {
   enableResizing: boolean
   filterDisabled?: boolean
   dragHandleProps?: Record<string, unknown>
+  // NOTE: thRef/thStyle/thAttributes are injected by sortable wrappers to
+  // attach dnd-kit's ref, transform, and ARIA attributes directly to the <th>,
+  // preserving table semantics. role="columnheader" is set after the spread to
+  // override dnd-kit's default role="button".
+  thRef?: React.Ref<HTMLTableCellElement>
+  thStyle?: React.CSSProperties
+  thAttributes?: React.HTMLAttributes<HTMLTableCellElement>
 }
 
 export function GridColumnHeader({
@@ -21,6 +28,9 @@ export function GridColumnHeader({
   enableResizing,
   filterDisabled = false,
   dragHandleProps,
+  thRef,
+  thStyle,
+  thAttributes,
 }: GridColumnHeaderProps) {
   const { TableHead, Input } = usePrimitives()
 
@@ -30,8 +40,11 @@ export function GridColumnHeader({
 
   return (
     <TableHead
+      ref={thRef}
       key={header.id}
+      {...thAttributes}
       style={{
+        ...thStyle,
         width: column?.width,
         minWidth: isResizable ? 50 : undefined,
         position: 'relative',
