@@ -10,8 +10,10 @@
     "changeset:version": "changeset version",
     "changeset:publish": "changeset publish",
     "prebuild": "node scripts/generate-ai-context.mjs",
+    "postbuild": "node scripts/compliance-check.mjs",
     "generate-context": "node scripts/generate-ai-context.mjs",
-    "generate-context:force": "node scripts/generate-ai-context.mjs --force"
+    "generate-context:force": "node scripts/generate-ai-context.mjs --force",
+    "compliance": "node scripts/compliance-check.mjs"
   },
   "packageManager": "pnpm@10.33.0",
   "devDependencies": {

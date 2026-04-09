@@ -1,11 +1,47 @@
 # Version Status
 
-## Current Version: 0.1.0
-## Target Version: 0.2.0
-## Active Milestone: Enhanced Grid & Form Features
-## Milestone Status: IN PROGRESS
+## Current Version: 0.2.0
+## Target Version: 0.3.0
+## Active Milestone: Layout System
+## Milestone Status: NOT STARTED
 
-## Milestone Checklist (v0.2.0) — IN PROGRESS
+## Milestone Checklist (v0.3.0) — NOT STARTED
+
+### Slice 1: Layout Types & Panel Primitive
+- [ ] Add `LayoutType` union type (`border`, `accordion`, `card`, `hbox`, `vbox`)
+- [ ] Add `LayoutRegion` type (position, size, resizable, collapsible, min/max)
+- [ ] Add `LayoutPanel` type (title, content, collapsed state)
+- [ ] Add `LayoutSchema` type (layout type, regions, children)
+- [ ] Add `DashboardSchema` type (root dashboard composing layouts)
+- [ ] Add Zod validators for all layout types
+- [ ] Create `Panel` primitive in Layer 1 (collapsible, title-bearing container)
+- [ ] Create `Splitter` primitive in Layer 1 (draggable resize handle)
+- [ ] `pnpm build` passes
+
+### Slice 2: Border Layout & SchemaLayout Renderer
+- [ ] Create `SchemaLayout` renderer supporting border layout
+- [ ] Implement resizable regions with Splitter primitive
+- [ ] Support north/south/east/west/center regions
+- [ ] Create showcase demo route (`/demo-border-layout`)
+- [ ] `pnpm build` passes
+
+### Slice 3: Accordion, Card, HBox, VBox Layouts
+- [ ] Implement accordion layout (vertically stacked collapsible panels)
+- [ ] Implement card/stack layout (one child at a time)
+- [ ] Implement hbox layout (horizontal flexbox)
+- [ ] Implement vbox layout (vertical flexbox)
+- [ ] Create showcase demo routes for each layout type
+- [ ] `pnpm build` passes
+
+### Slice 4: SchemaTabs & SchemaDashboard
+- [ ] Add `TabSchema`, `TabItem` types + Zod validators
+- [ ] Create `SchemaTabs` renderer with lazy rendering
+- [ ] Create `SchemaDashboard` renderer (top-level composition)
+- [ ] Create showcase demo route (`/demo-dashboard`)
+- [ ] Ensure all layouts are responsive
+- [ ] `pnpm build` passes
+
+## Milestone Checklist (v0.2.0) — COMPLETE ✅
 
 ### Slice 1: Virtualized Scrolling (`v0.2.1-feature/virtual-scroll`)
 - [x] Add `VirtualScrollConfig` type + Zod validator
@@ -74,10 +110,9 @@
 
 ## Completed Milestones
 - **0.1.0 — Tooling & Workflow Foundation** (completed 2026-04-05)
+- **0.2.0 — Enhanced Grid & Form Features** (completed 2026-04-09)
 
 ## Upcoming Milestones
-- 0.2.0 — Enhanced Grid & Form Features
-- 0.3.0 — Layout System
 - 0.4.0 — Advanced Data Components
 - 0.5.0 — Complete Primitive Library
 - 0.6.0 — Documentation & Showcase Site

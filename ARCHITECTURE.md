@@ -342,14 +342,16 @@ sequenceDiagram
 
 ### Branching Convention
 
+All branch names follow the format: `v{VERSION}-{type}/{description}`
+
 | Branch Pattern | Purpose | Example |
 |----------------|---------|---------|
-| `feature/*` | New feature development | `feature/v0.2.0-date-picker` |
-| `fix/*` | Bug fixes | `fix/grid-pagination-off-by-one` |
-| `docs/*` | Documentation changes | `docs/getting-started-guide` |
-| `refactor/*` | Code refactoring | `refactor/extract-layout-helpers` |
+| `v{VERSION}-feature/{desc}` | New feature development | `v0.2.0-feature/date-picker` |
+| `v{VERSION}-fix/{desc}` | Bug fixes | `v0.2.1-fix/grid-pagination-off-by-one` |
+| `v{VERSION}-refactor/{desc}` | Code refactoring | `v0.3.0-refactor/extract-layout-helpers` |
+| `v{VERSION}-docs/{desc}` | Documentation changes | `v0.3.0-docs/getting-started-guide` |
 
-Feature/fix PRs target `main` directly. There are no staging branches. When a milestone is complete, tag `main` with `v{VERSION}`. Direct commits to `main` are forbidden.
+Feature/fix PRs target `main` directly. There are no staging branches. When a milestone is complete, tag `main` with `v{VERSION}`. Direct commits to `main` are forbidden. See `docs/roadmap.md` for the full branching convention.
 
 ### Roadmap
 
