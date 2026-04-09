@@ -392,10 +392,18 @@ let BUDGETS
 try {
   const budgetsRaw = readFileSync(join(ROOT, 'docs/ai/token-budgets.json'), 'utf-8')
   BUDGETS = JSON.parse(budgetsRaw).budgets
-} catch {
+} catch (err) {
+  console.warn(
+    `⚠️  Failed to load docs/ai/token-budgets.json: ${err.message}. Using fallback values.`
+  )
   BUDGETS = {
-    'context.json': { maxTokens: 200, maxLines: 30 },
-    'symbol-index.json': { maxTokens: 600, maxLines: 100 },
+    'system.md': { maxTokens: 800, maxLines: 80 },
+    'context.json': { maxTokens: 2500, maxLines: 280 },
+    'symbol-index.json': { maxTokens: 7000, maxLines: 700 },
+    'symbol-index-layer1.json': { maxTokens: 500, maxLines: 60 },
+    'symbol-index-layer2.json': { maxTokens: 5000, maxLines: 450 },
+    'symbol-index-layer3.json': { maxTokens: 2000, maxLines: 200 },
+    'file-placement.json': { maxTokens: 300, maxLines: 40 },
   }
 }
 
