@@ -66,20 +66,12 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
   const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event
     if (over && active.id !== over.id) {
-      setColumnOrder((prev) => {
-        const oldIndex = prev.indexOf(String(active.id))
-        const newIndex = prev.indexOf(String(over.id))
-        if (oldIndex === -1 || newIndex === -1) return prev
-        return arrayMove(prev, oldIndex, newIndex)
-      })
-      // NOTE: Invoke callback outside the state updater to keep it pure.
-      // The new order will be available on the next render via columnOrder state.
-      const currentOrder = columnOrder
-      const oldIndex = currentOrder.indexOf(String(active.id))
-      const newIndex = currentOrder.indexOf(String(over.id))
-      if (oldIndex !== -1 && newIndex !== -1) {
-        onColumnOrderChange?.(arrayMove(currentOrder, oldIndex, newIndex))
-      }
+      const oldIndex = columnOrder.indexOf(String(active.id))
+      const newIndex = columnOrder.indexOf(String(over.id))
+      if (oldIndex === -1 || newIndex === -1) return
+      const newOrder = arrayMove(columnOrder, oldIndex, newIndex)
+      setColumnOrder(newOrder)
+      onColumnOrderChange?.(newOrder)
     }
   }, [onColumnOrderChange, columnOrder])
 
@@ -210,10 +202,7 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
     ? schema.serverPagination!.totalRecords
     : table.getFilteredRowModel().rows.length
 
-  const sortableColumnIds = useMemo(
-    () => columnOrder,
-    [columnOrder]
-  )
+  const sortableColumnIds = columnOrder
 
   const renderHeaderRows = () =>
     table.getHeaderGroups().map((headerGroup) => (

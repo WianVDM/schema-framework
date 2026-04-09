@@ -57,7 +57,7 @@ function DemoFormWizardPage() {
           Non-linear mode (jump to visited steps)
         </label>
         {currentStepLabel && (
-          <span className="text-sm text-muted-foreground ml-auto">
+          <span className="text-sm text-muted-foreground ml-auto" aria-live="polite">
             Last navigation: {currentStepLabel}
           </span>
         )}
