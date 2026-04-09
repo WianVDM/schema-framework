@@ -1,5 +1,6 @@
 export { FieldRenderer } from './field-renderer'
 export { SchemaForm } from './schema-form'
+export { SchemaWizard } from './schema-wizard'
 export { SchemaGrid } from './schema-grid'
 export { GridPagination } from './grid-pagination'
 export { GridColumnHeader } from './grid-column-header'

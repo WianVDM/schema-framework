@@ -34,13 +34,14 @@
 - [x] `pnpm build` passes
 
 ### Slice 4: Form Wizard (`v0.2.4-feature/form-wizard`)
-- [ ] Add `WizardSchema`, `WizardStep` types + Zod validators
-- [ ] Create `SchemaWizard` renderer
-- [ ] Step navigation UI (next/prev, step indicator)
-- [ ] Per-step validation with TanStack Form
-- [ ] Linear + non-linear step flow support
-- [ ] Create showcase demo route
-- [ ] `pnpm build` passes
+- [x] Add `WizardSchema`, `WizardStep` types + Zod validators
+- [x] Create `SchemaWizard` renderer
+- [x] Step navigation UI (next/prev, step indicator)
+- [x] Per-step validation with TanStack Form
+- [x] Linear + non-linear step flow support
+- [x] Create showcase demo route
+- [x] Fix Slice 3 gaps (`.strict()` on datePickerConfig, `ComponentType` fix in field-renderer)
+- [x] `pnpm build` passes
 
 ### Slice 5: Column Reordering (`v0.2.5-feature/column-reordering`)
 - [ ] Add `columnReorder` to `GridSchema`

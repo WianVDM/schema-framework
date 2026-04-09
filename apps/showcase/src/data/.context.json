@@ -1,7 +1,7 @@
 {
   "$schema": "../../../../docs/ai/schemas/context-schema.json",
   "layer": 3,
-  "purpose": "",
+  "purpose": "Mock schema definitions and static data for showcase demos",
   "files": {
     "contact-form-schema.ts": {
       "export": "contactFormSchema",
@@ -77,6 +77,11 @@
       "export": "virtualGridSchema",
       "type": "const",
       "desc": "virtualGridSchema"
+    },
+    "wizard-form-schema.ts": {
+      "export": "wizardFormSchema",
+      "type": "const",
+      "desc": "Event registration wizard schema"
     }
   },
   "rels": {
@@ -129,6 +134,9 @@
       "@my-framework/core"
     ],
     "virtual-grid-schema.ts": [
+      "@my-framework/core"
+    ],
+    "wizard-form-schema.ts": [
       "@my-framework/core"
     ]
   }

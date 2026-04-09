@@ -33,6 +33,13 @@ export type {
   ConditionOperator,
   ValidationType,
   DatePickerConfig,
+  MultiSelectConfig,
+  WizardStep,
+  WizardNavigationConfig,
+  ReviewStepConfig,
+  WizardSchema,
+  StepIndicatorProps,
+  SchemaWizardProps,
 } from './types'
 
 // Validators (one-export-per-file via barrel)
@@ -46,6 +53,8 @@ export {
   validateGridSchema,
   validateFieldValue,
   evaluateCondition,
+  wizardSchemaValidator,
+  validateWizardSchema,
 } from './validators'
 
 export type { ValidationResult } from './validators'
@@ -59,6 +68,7 @@ export { deepFreeze, asDataKey } from './helpers'
 
 // Renderers
 export { SchemaForm } from './renderers/schema-form'
+export { SchemaWizard } from './renderers/schema-wizard'
 export { SchemaGrid } from './renderers/schema-grid'
 export { FieldRenderer } from './renderers/field-renderer'
 export { GridPagination } from './renderers/grid-pagination'

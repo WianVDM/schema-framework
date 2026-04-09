@@ -34,4 +34,5 @@ export interface PrimitiveComponents {
   readonly AddressInput: ComponentType<any>
   readonly DatePicker?: ComponentType<any>
   readonly TagInput?: ComponentType<any>
+  readonly StepIndicator?: ComponentType<any>
 }

@@ -1,7 +1,7 @@
 {
   "$schema": "../../../../docs/ai/schemas/context-schema.json",
   "layer": 3,
-  "purpose": "",
+  "purpose": "TanStack Start file-based routes for showcase app pages and demos",
   "files": {
     "__root.tsx": {
       "export": "Route",
@@ -12,6 +12,11 @@
       "export": "Route",
       "type": "const",
       "desc": "Route"
+    },
+    "demo-form-wizard.tsx": {
+      "export": "Route",
+      "type": "const",
+      "desc": "Form wizard demo route"
     },
     "demo-form.tsx": {
       "export": "Route",
@@ -67,6 +72,10 @@
     "demo-date-picker.tsx": [
       "@tanstack/react-router",
       "react",
+      "@my-framework/core"
+    ],
+    "demo-form-wizard.tsx": [
+      "@tanstack/react-router",
       "@my-framework/core"
     ],
     "demo-form.tsx": [

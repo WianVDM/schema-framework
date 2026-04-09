@@ -31,6 +31,15 @@ function DemoPage() {
             Schema-driven data grid with sortable columns, row selection, and status rendering.
           </p>
         </Link>
+        <Link
+          to="/demo-form-wizard"
+          className="border rounded-lg p-6 hover:bg-muted/50 transition-colors"
+        >
+          <h3 className="font-semibold text-lg mb-2">Form Wizard</h3>
+          <p className="text-sm text-muted-foreground">
+            Multi-step wizard with per-step validation, step indicator, and review step.
+          </p>
+        </Link>
       </div>
     </div>
   )
