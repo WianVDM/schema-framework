@@ -6,12 +6,12 @@
     "column-reorder-grid-schema.ts": {
       "export": "columnReorderGridSchema",
       "type": "const",
-      "desc": "columnReorderGridSchema"
+      "desc": "Grid schema with drag-and-drop column reordering enabled"
     },
     "contact-form-schema.ts": {
       "export": "contactFormSchema",
       "type": "const",
-      "desc": "contactFormSchema"
+      "desc": "Contact form with name, email, phone, and message fields"
     },
     "index.ts": {
       "export": "*",
@@ -21,67 +21,67 @@
     "mock-orders.ts": {
       "export": "mockOrders",
       "type": "const",
-      "desc": "mockOrders"
+      "desc": "Static order data for grid demos (50 rows)"
     },
     "mock-users.ts": {
       "export": "mockUsers",
       "type": "const",
-      "desc": "mockUsers"
+      "desc": "Static user data for grid demos (50 rows)"
     },
     "mock-virtual-data.ts": {
       "export": "mockVirtualData",
       "type": "const",
-      "desc": "mockVirtualData"
+      "desc": "Generated 10k-row dataset for virtual scroll demo"
     },
     "multiselect-form-schema.ts": {
       "export": "multiselectFormSchema",
       "type": "const",
-      "desc": "multiselectFormSchema"
+      "desc": "Form schema demonstrating multi-select/tag input fields"
     },
     "order-grid-schema.ts": {
       "export": "orderGridSchema",
       "type": "const",
-      "desc": "orderGridSchema"
+      "desc": "Order grid schema with status rendering and pagination"
     },
     "order-row.ts": {
       "export": "OrderRow",
       "type": "interface",
-      "desc": "OrderRow"
+      "desc": "Row shape for order data (id, customer, amount, status)"
     },
     "primitive-mappings.tsx": {
       "export": "primitives",
       "type": "const",
-      "desc": "primitives"
+      "desc": "Maps shadcn/ui components to PrimitiveComponents interface"
     },
     "registration-form-schema.ts": {
       "export": "registrationFormSchema",
       "type": "const",
-      "desc": "registrationFormSchema"
+      "desc": "User registration form with address sub-fields and validation"
     },
     "support-ticket-form-schema.ts": {
       "export": "supportTicketFormSchema",
       "type": "const",
-      "desc": "supportTicketFormSchema"
+      "desc": "Support ticket form with priority, category, and file upload"
     },
     "user-grid-schema.ts": {
       "export": "userGridSchema",
       "type": "const",
-      "desc": "userGridSchema"
+      "desc": "User grid schema with column visibility and filtering"
     },
     "user-row.ts": {
       "export": "UserRow",
       "type": "interface",
-      "desc": "UserRow"
+      "desc": "Row shape for user data (id, name, email, role, status)"
     },
     "virtual-grid-row.ts": {
       "export": "VirtualGridRow",
       "type": "interface",
-      "desc": "VirtualGridRow"
+      "desc": "Row shape for virtual scroll demo data (id, name, category, value)"
     },
     "virtual-grid-schema.ts": {
       "export": "virtualGridSchema",
       "type": "const",
-      "desc": "virtualGridSchema"
+      "desc": "Grid schema with virtual scrolling enabled for 10k rows"
     },
     "wizard-form-schema.ts": {
       "export": "wizardFormSchema",

@@ -16,7 +16,7 @@
     "default-fallback-component.tsx": {
       "export": "DefaultFallbackComponent",
       "type": "function",
-      "desc": "DefaultFallbackComponent"
+      "desc": "Default fallback component shown when a renderer fails"
     },
     "i18n.ts": {
       "export": "resolveMessage",
@@ -31,7 +31,7 @@
     "is-field-visible.ts": {
       "export": "isFieldVisible",
       "type": "function",
-      "desc": "isFieldVisible"
+      "desc": "Determines if a field should be visible based on conditions"
     }
   },
   "extDeps": {

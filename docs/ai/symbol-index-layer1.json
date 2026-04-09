@@ -1,0 +1,45 @@
+{
+  "$schema": "schemas/symbol-index-schema.json",
+  "symbols": {
+    "AddressData": {
+      "file": "packages/core/src/primitives/address-data.ts",
+      "type": "interface",
+      "layer": 1
+    },
+    "AddressInput": {
+      "file": "packages/core/src/primitives/address-input.tsx",
+      "type": "function",
+      "layer": 1
+    },
+    "AddressPlaceholders": {
+      "file": "packages/core/src/primitives/address-placeholders.ts",
+      "type": "interface",
+      "layer": 1
+    },
+    "DatePicker": {
+      "file": "packages/core/src/primitives/date-picker.tsx",
+      "type": "function",
+      "layer": 1
+    },
+    "FileUpload": {
+      "file": "packages/core/src/primitives/file-upload.tsx",
+      "type": "function",
+      "layer": 1
+    },
+    "StatusBadge": {
+      "file": "packages/core/src/primitives/status-badge.tsx",
+      "type": "function",
+      "layer": 1
+    },
+    "TagInputProps": {
+      "file": "packages/core/src/primitives/tag-input.tsx",
+      "type": "interface",
+      "layer": 1
+    },
+    "TagInput": {
+      "file": "packages/core/src/primitives/tag-input.tsx",
+      "type": "function",
+      "layer": 1
+    }
+  }
+}

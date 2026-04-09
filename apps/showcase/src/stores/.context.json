@@ -6,7 +6,7 @@
     "selection-store.ts": {
       "export": "createSelectionStore",
       "type": "function",
-      "desc": "createSelectionStore"
+      "desc": "Zustand store factory for grid row selection state"
     }
   },
   "extDeps": {

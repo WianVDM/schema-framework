@@ -6,7 +6,7 @@
     "router.tsx": {
       "export": "getRouter",
       "type": "function",
-      "desc": "getRouter"
+      "desc": "Creates TanStack Router instance with route tree and context"
     }
   },
   "extDeps": {

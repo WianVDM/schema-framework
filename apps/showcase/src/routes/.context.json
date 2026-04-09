@@ -6,67 +6,67 @@
     "__root.tsx": {
       "export": "Route",
       "type": "const",
-      "desc": "Route"
+      "desc": "Root layout route with sidebar navigation"
     },
     "demo-column-reordering.tsx": {
       "export": "Route",
       "type": "const",
-      "desc": "Route"
+      "desc": "Drag-and-drop column reorder demo (/demo-column-reordering)"
     },
     "demo-date-picker.tsx": {
       "export": "Route",
       "type": "const",
-      "desc": "Route"
+      "desc": "DatePicker calendar field demo (/demo-date-picker)"
     },
     "demo-form-wizard.tsx": {
       "export": "Route",
       "type": "const",
-      "desc": "Form wizard demo route"
+      "desc": "Multi-step form wizard demo (/demo-form-wizard)"
     },
     "demo-form.tsx": {
       "export": "Route",
       "type": "const",
-      "desc": "Route"
+      "desc": "Contact form with validation demo (/demo-form)"
     },
     "demo-grid.tsx": {
       "export": "Route",
       "type": "const",
-      "desc": "Route"
+      "desc": "User grid with sorting, filtering, pagination (/demo-grid)"
     },
     "demo-multi-select.tsx": {
       "export": "Route",
       "type": "const",
-      "desc": "Route"
+      "desc": "Multi-select/tag input form demo (/demo-multi-select)"
     },
     "demo-orders.tsx": {
       "export": "Route",
       "type": "const",
-      "desc": "Route"
+      "desc": "Order grid with status badges (/demo-orders)"
     },
     "demo-registration.tsx": {
       "export": "Route",
       "type": "const",
-      "desc": "Route"
+      "desc": "Registration form with address sub-fields (/demo-registration)"
     },
     "demo-support-ticket.tsx": {
       "export": "Route",
       "type": "const",
-      "desc": "Route"
+      "desc": "Support ticket form with file upload (/demo-support-ticket)"
     },
     "demo-virtual-grid.tsx": {
       "export": "Route",
       "type": "const",
-      "desc": "Route"
+      "desc": "Virtual-scrolled grid with 10k rows (/demo-virtual-grid)"
     },
     "demo.tsx": {
       "export": "Route",
       "type": "const",
-      "desc": "Route"
+      "desc": "Demo index page linking to all showcase routes"
     },
     "index.tsx": {
       "export": "Route",
       "type": "const",
-      "desc": "Route"
+      "desc": "Home page route"
     }
   },
   "extDeps": {

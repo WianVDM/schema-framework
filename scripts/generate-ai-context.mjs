@@ -492,6 +492,28 @@ function main() {
     for (const w of warnings) console.log(`     ⚠️  ${w}`)
   }
 
+  // Generate layer-specific symbol indices for smaller AI context loads
+  const layerNames = { 1: 'layer1', 2: 'layer2', 3: 'layer3' }
+  for (const [layer, name] of Object.entries(layerNames)) {
+    const layerSymbols = Object.fromEntries(
+      Object.entries(symbolIndex.symbols).filter(([, v]) => v.layer === Number(layer))
+    )
+    const layerIndex = {
+      $schema: 'schemas/symbol-index-schema.json',
+      symbols: layerSymbols,
+    }
+    const layerPath = join(ROOT, 'docs', 'ai', `symbol-index-${name}.json`)
+    const layerContent = JSON.stringify(layerIndex, null, 2) + '\n'
+    writeFileSync(layerPath, layerContent, 'utf-8')
+
+    const layerTokens = estimateTokens(layerContent, true)
+    console.log(`  ✅ docs/ai/symbol-index-${name}.json (${layerTokens} tokens, ${Object.keys(layerSymbols).length} symbols)`)
+    const layerWarnings = validateTokenBudget(layerPath, layerContent)
+    if (layerWarnings) {
+      for (const w of layerWarnings) console.log(`     ⚠️  ${w}`)
+    }
+  }
+
   console.log(`\n✨ AI context generation complete! (${regenerated} regenerated, ${skipped} skipped)`)
 }
 
