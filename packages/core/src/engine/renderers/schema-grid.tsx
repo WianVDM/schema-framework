@@ -71,6 +71,8 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
     return visibility
   }, [schema.columns])
 
+  const isColumnVisible = (id: string) => columnVisibility[id] !== false
+
   const isColumnReorderEnabled = schema.columnReorder === true
 
   const handleDragEnd = useCallback((event: DragEndEvent) => {
@@ -81,7 +83,7 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
     const overId = String(over.id)
 
     // NOTE: Compute reorder against visible columns only, preserving hidden column positions.
-    const visibleIds = columnOrder.filter(id => columnVisibility[id] !== false)
+    const visibleIds = columnOrder.filter(id => isColumnVisible(id))
     const oldVisIndex = visibleIds.indexOf(activeId)
     const newVisIndex = visibleIds.indexOf(overId)
     if (oldVisIndex === -1 || newVisIndex === -1) return
@@ -91,7 +93,7 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
     // Merge reordered visible IDs back into full columnOrder
     let visIdx = 0
     const mergedOrder = columnOrder.map(id =>
-      columnVisibility[id] !== false ? reorderedVisible[visIdx++] : id
+      isColumnVisible(id) ? reorderedVisible[visIdx++] : id
     )
 
     setColumnOrder(mergedOrder)
@@ -216,7 +218,7 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
     : table.getFilteredRowModel().rows.length
 
   const sortableColumnIds = useMemo(
-    () => columnOrder.filter(id => columnVisibility[id] !== false),
+    () => columnOrder.filter(id => isColumnVisible(id)),
     [columnOrder, columnVisibility]
   )
 
