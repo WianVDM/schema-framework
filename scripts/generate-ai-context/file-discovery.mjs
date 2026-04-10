@@ -61,7 +61,7 @@ export function resolveImport(importPath, fromFile) {
   for (const ext of ['', '.ts', '.tsx', '/index.ts', '/index.tsx']) {
     if (existsSync(resolved + ext)) return resolved + ext
   }
-  return resolved
+  return null
 }
 
 /**
@@ -82,12 +82,14 @@ export function detectLanguage(dirPath) {
  * Returns false if context doesn't exist or any source file is newer.
  */
 export function isContextFresh(dirPath) {
-  const contextPath = join(resolve(ROOT, dirPath), '.context.json')
+  const absDir = resolve(ROOT, dirPath)
+  const contextPath = join(absDir, '.context.json')
   if (!existsSync(contextPath)) return false
   try {
     const contextMtime = statSync(contextPath).mtimeMs
-    for (const file of getSourceFiles(resolve(ROOT, dirPath))) {
-      if (statSync(join(resolve(ROOT, dirPath), file)).mtimeMs > contextMtime) return false
+    // NOTE: Pass original dirPath — getSourceFiles resolves against ROOT internally.
+    for (const file of getSourceFiles(dirPath)) {
+      if (statSync(join(absDir, file)).mtimeMs > contextMtime) return false
     }
     return true
   } catch {

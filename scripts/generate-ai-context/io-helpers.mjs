@@ -46,9 +46,13 @@ export function writeContextFile(dirPath, content) {
  * NOTE: Checks if an existing file matches expected content (for --check mode).
  * Compares JSON structure while ignoring `generatedAt` timestamps.
  * Logs stale/missing status. Returns true if fresh, false if stale or missing.
+ *
+ * @param {string} fileName        — name used for display and default path resolution
+ * @param {string} expectedContent — the content that should be on disk
+ * @param {string} [absolutePath]  — explicit path when file lives outside TIER2_OUTPUT_DIR
  */
-export function checkFileFreshness(fileName, expectedContent) {
-  const filePath = join(ROOT, TIER2_OUTPUT_DIR, fileName)
+export function checkFileFreshness(fileName, expectedContent, absolutePath) {
+  const filePath = absolutePath ?? join(ROOT, TIER2_OUTPUT_DIR, fileName)
   if (!existsSync(filePath)) {
     console.log(`  ❌ ${fileName} — missing`)
     return false

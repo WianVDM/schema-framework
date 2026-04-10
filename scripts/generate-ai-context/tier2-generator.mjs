@@ -1,7 +1,6 @@
 // NOTE: Tier 2 artifact generators — symbol indexes, impact graph, directory index.
 // NOTE: All outputs are compressed JSON written to docs/ai/.
 
-import { existsSync } from 'fs'
 import { join, posix } from 'path'
 import { ROOT, TIER2_OUTPUT_DIR } from './constants.mjs'
 import { inferCategory } from './infer-category.mjs'
@@ -19,6 +18,7 @@ export function generateSymbolIndexes(contexts) {
   for (const { dirPath, context, symbolTypes } of contexts) {
     for (const [file, meta] of Object.entries(context.files)) {
       if (meta.type === 're-export') continue
+      if (!meta.export) continue
       const names = meta.export.split(',').map(n => n.trim())
       for (const name of names) {
         if (name === '*') continue
@@ -131,7 +131,7 @@ function normalizePath(dep) {
   const parts = dep.split('/')
   const resolved = []
   for (const part of parts) {
-    if (part === '..') resolved.pop()
+    if (part === '..') { if (resolved.length === 0 || resolved[resolved.length - 1] === '..') resolved.push('..'); else resolved.pop() }
     else if (part !== '.') resolved.push(part)
   }
   return resolved.join('/')

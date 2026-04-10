@@ -14,9 +14,8 @@ import { parseFileExports } from './export-parser.mjs'
  */
 export function buildContextForDir(dirPath) {
   const absDir = resolve(ROOT, dirPath)
-  if (!getSourceFiles(dirPath).length) return null
-
-  const files = getSourceFiles(dirPath)
+  const files = getSourceFiles(absDir)
+  if (!files.length) return null
   const layer = getLayer(dirPath)
   const language = detectLanguage(dirPath)
   const filesMap = {}
@@ -78,7 +77,11 @@ function buildFileEntry(file, exports, existing) {
 
   // NOTE: Single re-export (barrel file)
   if (exports.length === 1 && exports[0].type === 're-export') {
-    return { export: '*', type: 're-export', desc: 'Barrel re-exports' }
+    return preserveManualFields({
+      export: '*',
+      type: 're-export',
+      desc: 'Barrel re-exports',
+    }, existing)
   }
 
   // NOTE: Single named export

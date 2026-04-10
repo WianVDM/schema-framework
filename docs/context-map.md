@@ -10,8 +10,8 @@ graph TD
     L1["Layer 1: Primitives<br/>(packages/core/src/primitives)"]
     L2["Layer 2: Engine<br/>(packages/core/src/engine)"]
     L3["Layer 3: Composition<br/>(apps/showcase/src)"]
-    L1 -->|consumes| L2
-    L2 -->|consumes| L3
+    L3 -->|consumes| L2
+    L2 -->|consumes| L1
 ```
 
 ## Layer 1: Primitives

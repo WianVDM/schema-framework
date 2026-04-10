@@ -1,9 +1,6 @@
 // NOTE: Auto-generates docs/context-map.md from collected .context.json data.
 // NOTE: Replaces the need for manual context-map.md maintenance per .clinerules rules.
 
-import { writeFileSync, mkdirSync } from 'fs'
-import { join, dirname } from 'path'
-import { ROOT } from './constants.mjs'
 import { estimateTokens } from './token-budget.mjs'
 
 /**
@@ -34,8 +31,8 @@ export function generateContextMap(contexts) {
     '    L1["Layer 1: Primitives<br/>(packages/core/src/primitives)"]',
     '    L2["Layer 2: Engine<br/>(packages/core/src/engine)"]',
     '    L3["Layer 3: Composition<br/>(apps/showcase/src)"]',
-    '    L1 -->|consumes| L2',
-    '    L2 -->|consumes| L3',
+    '    L3 -->|consumes| L2',
+    '    L2 -->|consumes| L1',
     '```',
     '',
   ]
@@ -99,11 +96,8 @@ export function generateContextMap(contexts) {
   lines.push('')
 
   const content = lines.join('\n')
-  const outputPath = join(ROOT, 'docs', 'context-map.md')
-  mkdirSync(dirname(outputPath), { recursive: true })
-  writeFileSync(outputPath, content, 'utf-8')
 
-  return { path: 'docs/context-map.md', tokens: estimateTokens(content, false) }
+  return { path: 'docs/context-map.md', content, tokens: estimateTokens(content, false) }
 }
 
 // NOTE: Truncates a string to maxLen, appending '...' if truncated.

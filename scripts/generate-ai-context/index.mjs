@@ -20,7 +20,9 @@
  *   node scripts/generate-ai-context/index.mjs --check --verbose
  */
 
-import { options, SCAN_ROOTS } from './constants.mjs'
+import { writeFileSync, mkdirSync } from 'fs'
+import { join, dirname } from 'path'
+import { options, SCAN_ROOTS, ROOT } from './constants.mjs'
 import { discoverAllDirs, isContextFresh, loadExistingContext } from './file-discovery.mjs'
 import { buildContextForDir, parseSymbolTypesForDir } from './context-builder.mjs'
 import { generateSymbolIndexes, generateImpactGraph, generateDirectoryIndex } from './tier2-generator.mjs'
@@ -86,6 +88,11 @@ function runCheckMode(allDirs, budgets) {
   }
   if (!checkFileFreshness('impact-graph.json', impactOutput.content)) allFresh = false
   if (!checkFileFreshness('directory-index.json', dirIndexOutput.content)) allFresh = false
+
+  // NOTE: Check docs/context-map.md against expected content
+  const mapResult = generateContextMap(contexts)
+  const mapAbsPath = join(ROOT, mapResult.path)
+  if (!checkFileFreshness(mapResult.path, mapResult.content, mapAbsPath)) allFresh = false
 
   if (allFresh) {
     console.log('\n✅ All AI context files are fresh.')
@@ -156,6 +163,9 @@ function runGenerateMode(allDirs, budgets) {
 
   // NOTE: Step 3 — Auto-generate docs/context-map.md
   const mapResult = generateContextMap(contexts)
+  const mapOutPath = join(ROOT, mapResult.path)
+  mkdirSync(dirname(mapOutPath), { recursive: true })
+  writeFileSync(mapOutPath, mapResult.content, 'utf-8')
   console.log(`  ✅ ${mapResult.path} (${mapResult.tokens} tokens)`)
 
   console.log(`\n✨ AI context generation complete! (${regenerated} regenerated, ${skipped} skipped)`)
