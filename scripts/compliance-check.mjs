@@ -15,12 +15,8 @@
  */
 
 import { readFileSync, existsSync, statSync, readdirSync } from 'fs'
-import { join, resolve, dirname, relative } from 'path'
-import { fileURLToPath } from 'url'
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
-const ROOT = resolve(__dirname, '..')
+import { join, resolve, relative } from 'path'
+import { ROOT, SCAN_ROOTS, SKIP_DIRS } from './generate-ai-context/constants.mjs'
 
 // --- Output helpers ---
 
@@ -150,13 +146,7 @@ function checkChangelogs() {
 // --- Context map freshness ---
 
 function checkContextFreshness() {
-  const scanRoots = [
-    'packages/core/src/primitives',
-    'packages/core/src/engine',
-    'apps/showcase/src',
-  ]
-
-  for (const root of scanRoots) {
+  for (const root of SCAN_ROOTS) {
     const absRoot = resolve(ROOT, root)
     if (!existsSync(absRoot)) continue
     checkDirRecursive(absRoot)
@@ -165,7 +155,7 @@ function checkContextFreshness() {
 
 function checkDirRecursive(dirPath) {
   const entries = readdirSync(dirPath, { withFileTypes: true })
-  const skipDirs = new Set(['node_modules', '.git', 'dist', '.next', '.turbo', 'ui'])
+  const skipDirs = new Set([...SKIP_DIRS, 'ui'])
 
   // Check if this dir has a .context.json
   const hasContextJson = entries.some(e => e.name === '.context.json')
