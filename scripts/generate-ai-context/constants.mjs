@@ -1,18 +1,13 @@
-// NOTE: Shared constants and configuration for the AI context generation system.
+// NOTE: Constants and configuration for the AI context generation system.
+// NOTE: ROOT, SCAN_ROOTS, SKIP_DIRS are re-exported from scripts/shared/ for backward compatibility.
 // NOTE: Consumed by index.mjs, context-builder.mjs, tier2-generator.mjs,
-//       context-map-generator.mjs, and external scripts (compliance-check.mjs).
+//       context-map-generator.mjs, and external scripts (compliance-check/index.mjs).
 // NOTE: Utility functions extracted to single-export modules per coding standards:
 //       getLayer → get-layer.mjs, classifyExport → classify-export.mjs,
 //       inferCategory → infer-category.mjs
 
-import { resolve, dirname } from 'path'
-import { fileURLToPath } from 'url'
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
-
-// NOTE: Project root — two levels up from this file (scripts/generate-ai-context/)
-export const ROOT = resolve(__dirname, '..', '..')
+// NOTE: Re-export shared constants — canonical source is scripts/shared/constants.mjs
+export { ROOT, SCAN_ROOTS, SKIP_DIRS } from '../shared/constants.mjs'
 
 // NOTE: Mutable CLI options — set by index.mjs before any work begins.
 export const options = {
@@ -20,16 +15,6 @@ export const options = {
   force: false,
   check: false,
 }
-
-// NOTE: Root directories to scan recursively (relative to ROOT).
-export const SCAN_ROOTS = [
-  'packages/core/src/primitives',
-  'packages/core/src/engine',
-  'apps/showcase/src',
-]
-
-// NOTE: Directory names to skip during recursive walking.
-export const SKIP_DIRS = new Set(['node_modules', '.git', 'dist', '.next', '.turbo'])
 
 // NOTE: Output directory for Tier 2 files (relative to ROOT).
 export const TIER2_OUTPUT_DIR = 'docs/ai'

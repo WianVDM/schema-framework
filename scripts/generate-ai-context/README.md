@@ -45,7 +45,7 @@ graph TD
 | Module | Purpose | Primary Export |
 |--------|---------|---------------|
 | `index.mjs` | CLI entry point, orchestrates check/generate modes | `main()` |
-| `constants.mjs` | Shared config, CLI options, regex patterns | `ROOT`, `SCAN_ROOTS`, `options` |
+| `constants.mjs` | CLI options, regex patterns (re-exports `ROOT`, `SCAN_ROOTS`, `SKIP_DIRS` from shared) | `options`, `EXPORT_PATTERNS`, `RE_EXPORT_PATTERNS` |
 | `get-layer.mjs` | Maps directory paths to architectural layer numbers | `getLayer()` |
 | `classify-export.mjs` | Maps export keywords to normalized type strings | `classifyExport()` |
 | `infer-category.mjs` | Infers directory category from path segments | `inferCategory()` |
@@ -97,4 +97,6 @@ Auto-generated Mermaid diagrams showing layer dependencies, per-layer directory 
 
 ## External Consumers
 
-- `scripts/compliance-check.mjs` — Imports `ROOT`, `SCAN_ROOTS`, and `SKIP_DIRS` from `constants.mjs`
+- `scripts/shared/constants.mjs` — Canonical source for `ROOT`, `SCAN_ROOTS`, `SKIP_DIRS` (this module re-exports them)
+- `scripts/compliance-check/` — Imports `ROOT`, `SCAN_ROOTS`, `SKIP_DIRS` directly from `scripts/shared/`
+- `scripts/auto-changeset/` — Imports `ROOT` and `isSourceFile` from `scripts/shared/`

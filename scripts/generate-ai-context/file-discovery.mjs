@@ -9,6 +9,7 @@ import {
 } from 'fs'
 import { join, resolve, dirname, basename, relative } from 'path'
 import { ROOT, SKIP_DIRS } from './constants.mjs'
+import { isSourceFile } from '../shared/file-helpers.mjs'
 
 /**
  * NOTE: Recursively discovers all directories containing TypeScript source files
@@ -116,11 +117,6 @@ export function loadExistingContext(dirPath) {
  */
 export function discoverAllDirs(scanRoots) {
   return scanRoots.flatMap(root => discoverSourceDirs(root))
-}
-
-// NOTE: Helper — checks if a filename is a TypeScript source file.
-function isSourceFile(name) {
-  return /\.(ts|tsx)$/.test(name) && !name.endsWith('.d.ts') && !name.endsWith('.gen.ts')
 }
 
 // NOTE: Helper — converts absolute path to relative path from ROOT with forward slashes.
