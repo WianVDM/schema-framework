@@ -1,6 +1,7 @@
 {
   "$schema": "../../../../docs/ai/schemas/context-schema.json",
   "layer": 3,
+  "language": "typescript",
   "purpose": "Zustand state stores for demo data (users, orders, form schemas)",
   "files": {
     "selection-store.ts": {

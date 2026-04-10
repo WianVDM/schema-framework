@@ -1,6 +1,7 @@
 {
   "$schema": "../../../../../docs/ai/schemas/context-schema.json",
   "layer": 2,
+  "language": "typescript",
   "purpose": "Zod schemas and runtime validation functions.",
   "files": {
     "evaluate-condition.ts": {

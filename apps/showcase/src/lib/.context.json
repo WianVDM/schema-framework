@@ -1,6 +1,7 @@
 {
   "$schema": "../../../../docs/ai/schemas/context-schema.json",
   "layer": 3,
+  "language": "typescript-jsx",
   "purpose": "Shared utility functions (cn helper, serialization)",
   "files": {
     "query-client.tsx": {

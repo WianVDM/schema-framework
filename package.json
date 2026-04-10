@@ -13,6 +13,7 @@
     "postbuild": "node scripts/compliance-check.mjs",
     "generate-context": "node scripts/generate-ai-context.mjs",
     "generate-context:force": "node scripts/generate-ai-context.mjs --force",
+    "generate-context:check": "node scripts/generate-ai-context.mjs --check",
     "compliance": "node scripts/compliance-check.mjs"
   },
   "packageManager": "pnpm@10.33.0",

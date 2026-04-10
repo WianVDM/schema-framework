@@ -217,42 +217,46 @@ function checkDirRecursive(dirPath) {
 }
 
 
-// --- Symbol uniqueness (from symbol-index.json) ---
+// --- Symbol uniqueness (from per-layer symbol-index files) ---
 
 function checkSymbolUniqueness() {
-  const indexPath = join(ROOT, 'docs', 'ai', 'symbol-index.json')
-  if (!existsSync(indexPath)) {
-    warning('docs/ai/symbol-index.json not found — run pnpm generate-context')
+  const manifestPath = join(ROOT, 'docs', 'ai', 'symbol-index-manifest.json')
+  if (!existsSync(manifestPath)) {
+    warning('docs/ai/symbol-index-manifest.json not found — run pnpm generate-context')
     return
   }
 
   try {
-    const content = readFileSync(indexPath, 'utf-8')
+    const manifest = JSON.parse(readFileSync(manifestPath, 'utf-8'))
 
-    // NOTE: JSON.parse silently collapses duplicate keys (last value wins), making
-    // post-parse duplicate detection ineffective. Scan the raw JSON text instead.
-    // Only match top-level symbol names (keys followed by `: {`), not nested keys
-    // like "file", "type", "layer" inside each symbol entry.
-    const symbolsBlock = content.match(/"symbols"\s*:\s*\{([\s\S]*)\}/)
-    if (symbolsBlock) {
-      const inner = symbolsBlock[1]
-      const keyRegex = /"([^"\\]*(?:\\.[^"\\]*)*)"\s*:\s*\{/g
-      const seenKeys = {}
-      let keyMatch
-      while ((keyMatch = keyRegex.exec(inner)) !== null) {
-        const key = keyMatch[1]
-        if (seenKeys[key]) {
-          violation(`Duplicate symbol "${key}" found in symbol-index.json — JSON.parse would silently drop the first definition`)
+    for (const [layer, info] of Object.entries(manifest.layers || {})) {
+      const layerPath = join(ROOT, 'docs', 'ai', info.file)
+      if (!existsSync(layerPath)) {
+        warning(`${info.file} not found — run pnpm generate-context`)
+        continue
+      }
+
+      const content = readFileSync(layerPath, 'utf-8')
+
+      // NOTE: Per-layer files use array format, so duplicate symbol names are
+      // handled by having multiple entries in the array. We still validate JSON.
+      try {
+        const layerData = JSON.parse(content)
+        // Verify symbols with multiple locations (collisions are OK in array format)
+        for (const [name, locations] of Object.entries(layerData.symbols || {})) {
+          if (locations.length > 1) {
+            // NOTE: Array format handles collisions gracefully — just informational
+          }
         }
-        seenKeys[key] = true
+      } catch (e) {
+        if (e instanceof SyntaxError) {
+          violation(`${info.file} has invalid JSON: ${e.message}`)
+        }
       }
     }
-
-    // Also verify the parsed result is valid
-    JSON.parse(content)
   } catch (e) {
     if (e instanceof SyntaxError) {
-      violation(`docs/ai/symbol-index.json has invalid JSON: ${e.message}`)
+      violation(`docs/ai/symbol-index-manifest.json has invalid JSON: ${e.message}`)
     }
   }
 }

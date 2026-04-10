@@ -4,7 +4,7 @@
   "title": "Directory Context",
   "description": "Schema for .context.json files that document directory contents and relationships",
   "type": "object",
-  "required": ["$schema", "layer", "purpose", "files"],
+  "required": ["$schema", "layer", "language", "purpose", "files"],
   "additionalProperties": false,
   "properties": {
     "$schema": {
@@ -16,6 +16,11 @@
       "minimum": 1,
       "maximum": 3,
       "description": "Architecture layer: 1=Primitives, 2=Engine, 3=Composition"
+    },
+    "language": {
+      "type": "string",
+      "description": "Primary language of source files in this directory",
+      "enum": ["typescript", "typescript-jsx", "javascript", "json", "markdown"]
     },
     "purpose": {
       "type": "string",
@@ -35,13 +40,21 @@
           },
           "type": {
             "type": "string",
-            "enum": ["interface", "type", "function", "const", "component", "re-export"],
+            "enum": ["interface", "type", "function", "const", "component", "re-export", "utility", "config"],
             "description": "Export type classification"
           },
           "desc": {
             "type": "string",
             "maxLength": 60,
             "description": "Brief description (max 8 words)"
+          },
+          "deprecated": {
+            "type": "boolean",
+            "description": "Whether this file's export is deprecated"
+          },
+          "tests": {
+            "type": "string",
+            "description": "Path to the test file for this source file"
           }
         }
       }

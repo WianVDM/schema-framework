@@ -1,6 +1,7 @@
 {
   "$schema": "../../../../docs/ai/schemas/context-schema.json",
   "layer": 3,
+  "language": "typescript-jsx",
   "purpose": "App-level providers (primitives context, query client, theme)",
   "files": {
     "entry-client.tsx": {

@@ -1,6 +1,7 @@
 {
   "$schema": "../../../../docs/ai/schemas/context-schema.json",
   "layer": 2,
+  "language": "typescript",
   "purpose": "Schema parsing, validation, and rendering. Imports Layer 1 only.",
   "files": {
     "index.ts": {

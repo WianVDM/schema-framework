@@ -1,6 +1,7 @@
 {
   "$schema": "../../../../../docs/ai/schemas/context-schema.json",
   "layer": 2,
+  "language": "typescript",
   "purpose": "All schema type definitions (one per file). Pure TS, no runtime deps.",
   "files": {
     "branded.ts": {

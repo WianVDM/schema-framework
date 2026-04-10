@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "file-placement-schema.json",
+  "title": "File Placement Rules",
+  "description": "Schema for docs/ai/file-placement.json — where to put new files",
+  "type": "object",
+  "required": ["$schema", "rules"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string", "description": "Relative path to this schema file" },
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["when", "put", "file", "update"],
+        "additionalProperties": false,
+        "properties": {
+          "when": { "type": "string", "description": "Scenario description" },
+          "put": { "type": "string", "description": "Target directory for the new file" },
+          "file": { "type": "string", "description": "File naming convention" },
+          "update": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Files/directories that must also be updated"
+          }
+        }
+      }
+    }
+  }
+}

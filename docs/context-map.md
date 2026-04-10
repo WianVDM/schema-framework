@@ -36,7 +36,21 @@ graph TD
     routes -->|imports| renderers
     server -->|imports| data
     routes -->|fetches via useQuery| server
-```
+    ```
+
+## Tier 2 Lookup Files
+
+For quick symbol and dependency lookups, see the auto-generated and hand-crafted files in `docs/ai/`:
+
+| File | Purpose | Source |
+|------|---------|--------|
+| `docs/ai/symbol-index-manifest.json` | Symbol count per layer | Auto-generated |
+| `docs/ai/symbol-index-layer{1,2,3}.json` | Export→file lookup per layer | Auto-generated |
+| `docs/ai/impact-graph.json` | Reverse dependency graph | Auto-generated |
+| `docs/ai/directory-index.json` | Directory→purpose mapping | Auto-generated |
+| `docs/ai/flows.json` | Data flow descriptions | Hand-crafted |
+| `docs/ai/config-schema.json` | Configuration schema reference | Hand-crafted |
+| `docs/ai/error-taxonomy.json` | Error catalog with fixes | Hand-crafted |
 
 ## Key Barrel Files
 
