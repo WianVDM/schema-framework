@@ -14,7 +14,7 @@ import { parseFileExports } from './export-parser.mjs'
  */
 export function buildContextForDir(dirPath) {
   const absDir = resolve(ROOT, dirPath)
-  const files = getSourceFiles(absDir)
+  const files = getSourceFiles(dirPath)
   if (!files.length) return null
   const layer = getLayer(dirPath)
   const language = detectLanguage(dirPath)
