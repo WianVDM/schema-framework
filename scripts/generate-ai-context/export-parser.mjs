@@ -1,11 +1,10 @@
-#!/usr/bin/env node
-
 // NOTE: Single-pass TypeScript export and import parser.
 // NOTE: Reads each file only once, extracting both exports and imports.
 
 import { readFileSync } from 'fs'
 import { basename } from 'path'
-import { EXPORT_PATTERNS, RE_EXPORT_PATTERNS, classifyExport, options } from './constants.mjs'
+import { EXPORT_PATTERNS, RE_EXPORT_PATTERNS, options } from './constants.mjs'
+import { classifyExport } from './classify-export.mjs'
 
 /**
  * NOTE: Parses a single TypeScript file, extracting both exports and imports.

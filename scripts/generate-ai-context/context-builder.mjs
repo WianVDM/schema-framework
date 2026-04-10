@@ -1,11 +1,9 @@
-#!/usr/bin/env node
-
 // NOTE: Builds .context.json data for individual directories.
 // NOTE: Handles export classification, dependency mapping, and merge with existing context.
 
-import { join, resolve, dirname, basename, extname } from 'path'
-import { posix } from 'path'
-import { getLayer, classifyExport, options } from './constants.mjs'
+import { join, resolve, dirname, basename, extname, posix } from 'path'
+import { ROOT } from './constants.mjs'
+import { getLayer } from './get-layer.mjs'
 import { getSourceFiles, detectLanguage, loadExistingContext, resolveImport } from './file-discovery.mjs'
 import { parseFileExports } from './export-parser.mjs'
 
@@ -15,7 +13,7 @@ import { parseFileExports } from './export-parser.mjs'
  * Merges hand-crafted `desc`, `deprecated`, and `tests` fields from existing .context.json.
  */
 export function buildContextForDir(dirPath) {
-  const absDir = resolve(resolve('./'), dirPath)
+  const absDir = resolve(ROOT, dirPath)
   if (!getSourceFiles(dirPath).length) return null
 
   const files = getSourceFiles(dirPath)
@@ -155,7 +153,7 @@ function classifyImports(imports, filePath, absDir, currentFile, allFiles) {
  * Used when a directory is skipped but we still need symbol data for Tier 2 generation.
  */
 export function parseSymbolTypesForDir(dirPath) {
-  const absDir = resolve(resolve('./'), dirPath)
+  const absDir = resolve(ROOT, dirPath)
   const files = getSourceFiles(dirPath)
   const symbolTypes = {}
 

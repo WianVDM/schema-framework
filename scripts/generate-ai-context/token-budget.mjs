@@ -1,11 +1,9 @@
-#!/usr/bin/env node
-
 // NOTE: Token budget estimation and validation for AI context files.
 // NOTE: Loads budget configuration from docs/ai/token-budgets.json.
 
 import { readFileSync, existsSync } from 'fs'
 import { join } from 'path'
-import { ROOT, options } from './constants.mjs'
+import { ROOT } from './constants.mjs'
 
 // NOTE: Default budgets used when token-budgets.json is missing or invalid.
 const DEFAULT_BUDGETS = {

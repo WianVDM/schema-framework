@@ -34,11 +34,7 @@ options.check = process.argv.includes('--check')
 options.verbose = process.argv.includes('--verbose')
 
 /**
- * NOTE: Main orchestration function.
- * 1. Discovers all source directories across scan roots.
- * 2. Builds or skips .context.json per directory (Tier 1).
- * 3. Generates symbol indexes, impact graph, directory index (Tier 2).
- * 4. Auto-generates docs/context-map.md from collected context data.
+ * NOTE: Main entry point. Delegates to check or generate mode.
  */
 function main() {
   if (options.check) {
@@ -47,25 +43,70 @@ function main() {
     console.log('🔄 Generating AI context files...\n')
   }
 
-  // NOTE: Load token budgets once at startup
   const budgets = loadBudgets()
-
-  // NOTE: Step 1 — Discover all source directories
   const allDirs = discoverAllDirs(SCAN_ROOTS)
   console.log(options.check
     ? `  📂 Checking ${allDirs.length} directories\n`
     : `  📂 Discovered ${allDirs.length} directories with source files\n`
   )
 
-  // NOTE: Step 2 — Build or load Tier 1 contexts
+  if (options.check) {
+    runCheckMode(allDirs, budgets)
+  } else {
+    runGenerateMode(allDirs, budgets)
+  }
+}
+
+/**
+ * NOTE: Check mode — verifies all context files are fresh without writing.
+ * Collects existing contexts for Tier 2 comparison, then exits 1 on drift.
+ */
+function runCheckMode(allDirs, budgets) {
   const contexts = []
-  let regenerated = 0
-  let skipped = 0
   let allFresh = true
 
   for (const dirPath of allDirs) {
-    // NOTE: Skip fresh directories in normal mode (unless --force)
-    if (!options.force && !options.check && isContextFresh(dirPath)) {
+    if (!isContextFresh(dirPath)) {
+      console.log(`  ❌ ${dirPath}/.context.json — stale or missing`)
+      allFresh = false
+    }
+    const existing = loadExistingContext(dirPath)
+    if (existing) {
+      contexts.push({ dirPath, context: existing, symbolTypes: parseSymbolTypesForDir(dirPath) })
+    }
+  }
+
+  // NOTE: Check Tier 2 files against expected content
+  const symbolOutputs = generateSymbolIndexes(contexts)
+  const impactOutput = generateImpactGraph(contexts)
+  const dirIndexOutput = generateDirectoryIndex(contexts)
+
+  for (const { file, content } of symbolOutputs) {
+    if (!checkFileFreshness(file, content)) allFresh = false
+  }
+  if (!checkFileFreshness('impact-graph.json', impactOutput.content)) allFresh = false
+  if (!checkFileFreshness('directory-index.json', dirIndexOutput.content)) allFresh = false
+
+  if (allFresh) {
+    console.log('\n✅ All AI context files are fresh.')
+  } else {
+    console.log('\n❌ Some AI context files are stale. Run pnpm generate-context to update.')
+    process.exit(1)
+  }
+}
+
+/**
+ * NOTE: Generate mode — builds and writes all context files.
+ * Skips fresh directories unless --force is set.
+ */
+function runGenerateMode(allDirs, budgets) {
+  const contexts = []
+  let regenerated = 0
+  let skipped = 0
+
+  // NOTE: Step 1 — Build or load Tier 1 contexts
+  for (const dirPath of allDirs) {
+    if (!options.force && isContextFresh(dirPath)) {
       const existing = loadExistingContext(dirPath)
       if (existing) {
         contexts.push({ dirPath, context: existing, symbolTypes: parseSymbolTypesForDir(dirPath) })
@@ -74,18 +115,6 @@ function main() {
       continue
     }
 
-    // NOTE: In check mode, verify freshness
-    if (options.check) {
-      if (!isContextFresh(dirPath)) {
-        console.log(`  ❌ ${dirPath}/.context.json — stale or missing`)
-        allFresh = false
-      }
-      const existing = loadExistingContext(dirPath)
-      if (existing) contexts.push({ dirPath, context: existing, symbolTypes: parseSymbolTypesForDir(dirPath) })
-      continue
-    }
-
-    // NOTE: Build context for stale/missing directories
     const result = buildContextForDir(dirPath)
     if (!result) continue
 
@@ -102,33 +131,15 @@ function main() {
     regenerated++
   }
 
-  if (skipped > 0 && !options.check) {
+  if (skipped > 0) {
     console.log(`  ⏭️  ${skipped} directories skipped (context fresh)\n`)
   }
 
-  // NOTE: Step 3 — Generate Tier 2 files
-  const symbolOutputs = generateSymbolIndexes(contexts, options.check)
+  // NOTE: Step 2 — Generate and write Tier 2 files
+  const symbolOutputs = generateSymbolIndexes(contexts)
   const impactOutput = generateImpactGraph(contexts)
   const dirIndexOutput = generateDirectoryIndex(contexts)
 
-  if (options.check) {
-    // NOTE: Check all Tier 2 files against expected content
-    for (const { file, content } of symbolOutputs) {
-      if (!checkFileFreshness(file, content)) allFresh = false
-    }
-    if (!checkFileFreshness('impact-graph.json', impactOutput.content)) allFresh = false
-    if (!checkFileFreshness('directory-index.json', dirIndexOutput.content)) allFresh = false
-
-    if (allFresh) {
-      console.log('\n✅ All AI context files are fresh.')
-    } else {
-      console.log('\n❌ Some AI context files are stale. Run pnpm generate-context to update.')
-      process.exit(1)
-    }
-    return
-  }
-
-  // NOTE: Write symbol index files
   for (const { file, content, count, tokens } of symbolOutputs) {
     writeTier2File(file, content)
     const label = `docs/ai/${file}`
@@ -137,15 +148,13 @@ function main() {
     if (warnings) for (const w of warnings) console.log(`     ⚠️  ${w}`)
   }
 
-  // NOTE: Write impact graph
   writeTier2File('impact-graph.json', impactOutput.content)
   console.log(`  ✅ docs/ai/impact-graph.json (${impactOutput.tokens} tokens, ${impactOutput.entries} entries)`)
 
-  // NOTE: Write directory index
   writeTier2File('directory-index.json', dirIndexOutput.content)
   console.log(`  ✅ docs/ai/directory-index.json (${dirIndexOutput.tokens} tokens, ${dirIndexOutput.count} directories)`)
 
-  // NOTE: Step 4 — Auto-generate docs/context-map.md
+  // NOTE: Step 3 — Auto-generate docs/context-map.md
   const mapResult = generateContextMap(contexts)
   console.log(`  ✅ ${mapResult.path} (${mapResult.tokens} tokens)`)
 

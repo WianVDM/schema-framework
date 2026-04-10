@@ -1,22 +1,10 @@
-#!/usr/bin/env node
-
 // NOTE: Auto-generates docs/context-map.md from collected .context.json data.
 // NOTE: Replaces the need for manual context-map.md maintenance per .clinerules rules.
 
-import { writeFileSync, existsSync, mkdirSync } from 'fs'
+import { writeFileSync, mkdirSync } from 'fs'
 import { join, dirname } from 'path'
 import { ROOT } from './constants.mjs'
 import { estimateTokens } from './token-budget.mjs'
-
-// NOTE: Relationship type labels matching .clinerules/workspace-file-structure.md
-const REL_LABELS = {
-  'uses-type': 'imports type/interface from',
-  implements: 'implements interface from',
-  validates: 'validates shape defined in',
-  renders: 'renders UI based on',
-  consumes: 'calls/uses function from',
-  're-exports': 'barrel re-exports',
-}
 
 /**
  * NOTE: Generates docs/context-map.md from all collected context data.
@@ -70,7 +58,7 @@ export function generateContextMap(contexts) {
 
     if (dirs.length > 0) {
       lines.push('```mermaid')
-      lines.push(`graph TD`)
+      lines.push('graph TD')
       for (const { dirPath, context } of dirs) {
         const dirId = dirPath.replace(/[/.]/g, '_').replace(/_+/g, '_')
         const purpose = context.purpose ? ` — ${truncate(context.purpose, 60)}` : ''
@@ -118,6 +106,7 @@ export function generateContextMap(contexts) {
   return { path: 'docs/context-map.md', tokens: estimateTokens(content, false) }
 }
 
+// NOTE: Truncates a string to maxLen, appending '...' if truncated.
 function truncate(str, maxLen) {
   if (str.length <= maxLen) return str
   return str.slice(0, maxLen - 3) + '...'

@@ -17,6 +17,9 @@ graph TD
     cmap["context-map-generator.mjs<br/>(docs/context-map.md)"]
     io["io-helpers.mjs<br/>(File I/O)"]
     budget["token-budget.mjs<br/>(Budget Validation)"]
+    getlayer["get-layer.mjs<br/>(Layer Mapping)"]
+    classify["classify-export.mjs<br/>(Export Classification)"]
+    infer["infer-category.mjs<br/>(Category Inference)"]
 
     index -->|consumes| constants
     index -->|consumes| discovery
@@ -25,28 +28,34 @@ graph TD
     index -->|consumes| cmap
     index -->|consumes| io
     index -->|consumes| budget
-    builder -->|uses-type| discovery
-    builder -->|uses-type| parser
-    tier2 -->|uses-type| io
-    tier2 -->|uses-type| budget
-    cmap -->|uses-type| budget
-    parser -->|uses-type| constants
-    discovery -->|uses-type| constants
+    builder -->|consumes| getlayer
+    builder -->|consumes| discovery
+    builder -->|consumes| parser
+    parser -->|consumes| classify
+    parser -->|consumes| constants
+    tier2 -->|consumes| infer
+    tier2 -->|consumes| budget
+    tier2 -->|consumes| io
+    cmap -->|consumes| budget
+    discovery -->|consumes| constants
 ```
 
 ## Module Responsibilities
 
 | Module | Purpose | Primary Export |
 |--------|---------|---------------|
-| `index.mjs` | CLI entry point, orchestration | `main()` |
-| `constants.mjs` | Shared config, layer mapping, regex patterns | `ROOT`, `SCAN_ROOTS`, `getLayer()` |
-| `file-discovery.mjs` | Recursive directory walking, source file listing | `discoverSourceDirs()`, `getSourceFiles()` |
+| `index.mjs` | CLI entry point, orchestrates check/generate modes | `main()` |
+| `constants.mjs` | Shared config, CLI options, regex patterns | `ROOT`, `SCAN_ROOTS`, `options` |
+| `get-layer.mjs` | Maps directory paths to architectural layer numbers | `getLayer()` |
+| `classify-export.mjs` | Maps export keywords to normalized type strings | `classifyExport()` |
+| `infer-category.mjs` | Infers directory category from path segments | `inferCategory()` |
+| `file-discovery.mjs` | Recursive directory walking, source file listing, import resolution | `discoverSourceDirs()`, `getSourceFiles()` |
 | `export-parser.mjs` | Single-pass TypeScript export/import extraction | `parseFileExports()` |
 | `token-budget.mjs` | Token estimation and budget validation | `estimateTokens()`, `validateTokenBudget()` |
-| `io-helpers.mjs` | JSON serialization, file writing, check mode | `writeTier2File()`, `serializePretty()` |
-| `context-builder.mjs` | Per-directory context building, merge logic | `buildContextForDir()` |
+| `io-helpers.mjs` | JSON serialization, file writing, check mode comparison | `writeTier2File()`, `serializePretty()` |
+| `context-builder.mjs` | Per-directory context building, merge with existing | `buildContextForDir()` |
 | `tier2-generator.mjs` | Symbol indexes, impact graph, directory index | `generateSymbolIndexes()` |
-| `context-map-generator.mjs` | Auto-generates `docs/context-map.md` | `generateContextMap()` |
+| `context-map-generator.mjs` | Auto-generates `docs/context-map.md` with Mermaid diagrams | `generateContextMap()` |
 
 ## Usage
 
@@ -88,4 +97,4 @@ Auto-generated Mermaid diagrams showing layer dependencies, per-layer directory 
 
 ## External Consumers
 
-- `scripts/compliance-check.mjs` — Imports `ROOT`, `SCAN_ROOTS`, and `getLayer()` from `constants.mjs`
+- `scripts/compliance-check.mjs` — Imports `ROOT`, `SCAN_ROOTS`, and `SKIP_DIRS` from `constants.mjs`

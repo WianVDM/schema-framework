@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 // NOTE: File discovery utilities for the AI context generation system.
 // NOTE: Handles recursive directory walking, source file listing, and import resolution.
 
@@ -9,8 +7,8 @@ import {
   readdirSync,
   statSync,
 } from 'fs'
-import { join, resolve, dirname, basename, extname, relative } from 'path'
-import { ROOT, SKIP_DIRS, options } from './constants.mjs'
+import { join, resolve, dirname, basename, relative } from 'path'
+import { ROOT, SKIP_DIRS } from './constants.mjs'
 
 /**
  * NOTE: Recursively discovers all directories containing TypeScript source files

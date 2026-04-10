@@ -1,11 +1,9 @@
-#!/usr/bin/env node
-
 // NOTE: I/O helpers for reading and writing context files.
 // NOTE: Provides compressed/pretty JSON serialization, file writing, and check mode.
 
 import { writeFileSync, existsSync, readFileSync, mkdirSync, unlinkSync } from 'fs'
 import { join, dirname, resolve } from 'path'
-import { ROOT, TIER2_OUTPUT_DIR, options } from './constants.mjs'
+import { ROOT, TIER2_OUTPUT_DIR } from './constants.mjs'
 
 /**
  * NOTE: Serializes data to compressed JSON (no whitespace).
@@ -56,21 +54,16 @@ export function checkFileFreshness(fileName, expectedContent) {
     return false
   }
   const actual = readFileSync(filePath, 'utf-8')
-  // NOTE: Compare JSON structure, ignoring generatedAt timestamps
+
   try {
-    const actualObj = JSON.parse(actual)
-    const expectedObj = JSON.parse(expectedContent)
-    delete actualObj.generatedAt
-    delete expectedObj.generatedAt
-    // NOTE: Also compare layer-level generatedAt inside symbols
-    if (actualObj.symbols && expectedObj.symbols) {
-      // Symbols content is what matters, not timestamps
-    }
-    if (JSON.stringify(actualObj) === JSON.stringify(expectedObj)) return true
+    const { generatedAt: _a, ...actualRest } = JSON.parse(actual)
+    const { generatedAt: _e, ...expectedRest } = JSON.parse(expectedContent)
+    if (JSON.stringify(actualRest) === JSON.stringify(expectedRest)) return true
   } catch {
     // NOTE: Fall back to exact string comparison if JSON parse fails
     if (actual === expectedContent) return true
   }
+
   console.log(`  ❌ ${fileName} — stale`)
   return false
 }
@@ -85,4 +78,3 @@ export function removeFile(filePath) {
   }
   return false
 }
-
