@@ -26,7 +26,7 @@ graph TD
 
 | Directory | Purpose | Files |
 |-----------|---------|-------|
-| `packages/core/src/primitives` | Generic UI wrappers with no schema knowledge. Imports only React. | 8 |
+| `packages/core/src/primitives` | Generic UI wrappers with no schema knowledge. Imports only React. | 10 |
 
 ## Layer 2: Engine
 
@@ -46,11 +46,11 @@ graph TD
 | Directory | Purpose | Files |
 |-----------|---------|-------|
 | `packages/core/src/engine` | Schema parsing, validation, and rendering. Imports Layer 1 only. | 1 |
-| `packages/core/src/engine/context` | React context for injecting shadcn primitives into engine renderers. | 1 |
-| `packages/core/src/engine/helpers` | Utility functions: i18n, immutability, branded type helpers. | 6 |
+| `packages/core/src/engine/context` | React context for injecting shadcn primitives into engine renderers. | 3 |
+| `packages/core/src/engine/helpers` | Utility functions: i18n, immutability, branded type helpers. | 8 |
 | `packages/core/src/engine/renderers` | React renderers that consume schemas via PrimitivesContext. | 12 |
-| `packages/core/src/engine/types` | All schema type definitions (one per file). Pure TS, no runtime deps. | 37 |
-| `packages/core/src/engine/validators` | Zod schemas and runtime validation functions. | 8 |
+| `packages/core/src/engine/types` | All schema type definitions (one per file). Pure TS, no runtime deps. | 50 |
+| `packages/core/src/engine/validators` | Zod schemas and runtime validation functions. | 13 |
 
 ## Layer 3: Composition
 
@@ -73,7 +73,7 @@ graph TD
 |-----------|---------|-------|
 | `apps/showcase/src` | Showcase app entry point. TanStack Start file-based routing. | 1 |
 | `apps/showcase/src/app` | App-level providers (primitives context, query client, theme) | 3 |
-| `apps/showcase/src/components/ui` | — | 10 |
+| `apps/showcase/src/components/ui` | — | 17 |
 | `apps/showcase/src/data` | Mock schema definitions and static data for showcase demos | 17 |
 | `apps/showcase/src/lib` | Shared utility functions (cn helper, serialization) | 4 |
 | `apps/showcase/src/routes` | TanStack Start file-based routes for showcase app pages and demos | 13 |
@@ -84,6 +84,16 @@ graph TD
 
 ```mermaid
 graph LR
+    packages_core_src_engine_context -->|imports| packages_core_src_engine_types
+    packages_core_src_engine_context -->|imports| packages_core_src_engine
+    packages_core_src_engine_context -->|imports| packages_core_src_engine
+    packages_core_src_engine_helpers -->|imports| packages_core_src_engine_types
+    packages_core_src_engine_helpers -->|imports| packages_core_src_engine_types
+    packages_core_src_engine_helpers -->|imports| packages_core_src_engine_types
+    packages_core_src_engine_helpers -->|imports| packages_core_src_engine_types
+    packages_core_src_engine_helpers -->|imports| packages_core_src_engine_types
+    packages_core_src_engine_helpers -->|imports| packages_core_src_engine_types
+    packages_core_src_engine_helpers -->|imports| packages_core_src_engine_types
     packages_core_src_engine_helpers -->|imports| packages_core_src_engine_types
     packages_core_src_engine_helpers -->|imports| packages_core_src_engine_types
     packages_core_src_engine_helpers -->|imports| packages_core_src_engine
@@ -123,6 +133,7 @@ graph LR
     packages_core_src_engine_validators -->|imports| packages_core_src_engine
     packages_core_src_engine_validators -->|imports| packages_core_src_engine
     packages_core_src_engine_validators -->|imports| packages_core_src_engine_types
+    apps_showcase_src_app -->|imports| apps_showcase_src_data
     apps_showcase_src_routes -->|imports| apps_showcase_src_app
     apps_showcase_src_routes -->|imports| apps_showcase_src_lib
     apps_showcase_src_routes -->|imports| apps_showcase_src_server

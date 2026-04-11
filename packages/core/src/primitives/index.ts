@@ -10,3 +10,9 @@ export { TagInput } from './tag-input'
 export type { AddressData } from './address-data'
 export type { AddressPlaceholders } from './address-placeholders'
 export { FileUpload } from './file-upload'
+
+// Layout primitives
+export { Panel } from './panel'
+export type { PanelProps } from './panel'
+export { Splitter } from './splitter'
+export type { SplitterProps } from './splitter'

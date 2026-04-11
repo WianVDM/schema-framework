@@ -15,23 +15,26 @@
 - [x] Investigate `changesets/action` workflow for changelog generation
 - [x] `pnpm build` passes
 
-### Slice 1: Layout Types, Validators & Primitives (v0.3.1)
-- [ ] Create `LayoutType` union type
-- [ ] Create `ResponsiveConfig` interface
-- [ ] Create `LayoutRegion` interface
-- [ ] Create `ContentSchema` discriminated union
-- [ ] Create `LayoutSchema` interface
-- [ ] Create `TabItem` interface
-- [ ] Create `TabSchema` interface
-- [ ] Create `DashboardSchema` interface
-- [ ] Create `LayoutRendererProps`, `DashboardRendererProps`, `TabsRendererProps`
-- [ ] Create Zod validators for all new types
-- [ ] Create `Panel` primitive in Layer 1
-- [ ] Create `Splitter` primitive in Layer 1
-- [ ] Install shadcn components (tabs, accordion, card, separator, collapsible, scroll-area, resizable)
-- [ ] Update `PrimitiveComponents` interface with new primitive slots
-- [ ] Update `primitive-mappings.tsx` with new components
-- [ ] `pnpm build` passes
+### Slice 1: Layout Types, Validators & Primitives (v0.3.1) — COMPLETE ✅
+- [x] Create `LayoutType` union type
+- [x] Create `ResponsiveConfig` interface
+- [x] Create `LayoutRegion` interface
+- [x] Create `ContentSchema` discriminated union
+- [x] Create `LayoutSchema` interface
+- [x] Create `TabItem` interface
+- [x] Create `TabSchema` interface
+- [x] Create `DashboardSchema` interface
+- [x] Create `LayoutRendererProps`, `DashboardRendererProps`, `TabsRendererProps`
+- [x] Create Zod validators for all new types
+- [x] Create `Panel` primitive in Layer 1
+- [x] Create `Splitter` primitive in Layer 1
+- [x] Install shadcn components (tabs, accordion, card, separator, collapsible, scroll-area, resizable)
+- [x] Create `LayoutPrimitiveComponents` interface (separate from `PrimitiveComponents`)
+- [x] Create `LayoutPrimitivesContext` + `CustomComponentContext`
+- [x] Create helpers (`applyResponsiveClasses`, content type guards)
+- [x] Update `primitive-mappings.tsx` with layout primitives
+- [x] Update `primitives-provider.tsx` with new context providers
+- [x] `pnpm build` passes
 
 ### Slice 2: Border Layout & SchemaPanel (v0.3.2)
 - [ ] Create `ContentRenderer` renderer

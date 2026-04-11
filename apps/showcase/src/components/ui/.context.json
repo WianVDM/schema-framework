@@ -4,6 +4,11 @@
   "language": "typescript-jsx",
   "purpose": "",
   "files": {
+    "accordion.tsx": {
+      "export": "*",
+      "type": "component",
+      "desc": "TODO: describe accordion"
+    },
     "badge.tsx": {
       "export": "*",
       "type": "component",
@@ -14,10 +19,20 @@
       "type": "component",
       "desc": "Button component (variants, sizes, loading state)"
     },
+    "card.tsx": {
+      "export": "*",
+      "type": "component",
+      "desc": "TODO: describe card"
+    },
     "checkbox.tsx": {
       "export": "*",
       "type": "component",
       "desc": "Checkbox component with label"
+    },
+    "collapsible.tsx": {
+      "export": "*",
+      "type": "component",
+      "desc": "TODO: describe collapsible"
     },
     "dialog.tsx": {
       "export": "*",
@@ -39,15 +54,35 @@
       "type": "component",
       "desc": "Form label component"
     },
+    "resizable.tsx": {
+      "export": "*",
+      "type": "component",
+      "desc": "TODO: describe resizable"
+    },
+    "scroll-area.tsx": {
+      "export": "*",
+      "type": "component",
+      "desc": "TODO: describe scroll-area"
+    },
     "select.tsx": {
       "export": "*",
       "type": "component",
       "desc": "Select dropdown component (trigger, content, items)"
     },
+    "separator.tsx": {
+      "export": "*",
+      "type": "component",
+      "desc": "TODO: describe separator"
+    },
     "table.tsx": {
       "export": "*",
       "type": "component",
       "desc": "HTML table primitives (header, row, cell)"
+    },
+    "tabs.tsx": {
+      "export": "*",
+      "type": "component",
+      "desc": "TODO: describe tabs"
     },
     "textarea.tsx": {
       "export": "*",
@@ -56,6 +91,11 @@
     }
   },
   "extDeps": {
+    "accordion.tsx": [
+      "@base-ui/react/accordion",
+      "@/lib/utils",
+      "lucide-react"
+    ],
     "badge.tsx": [
       "@base-ui/react/merge-props",
       "@base-ui/react/use-render",
@@ -67,10 +107,17 @@
       "class-variance-authority",
       "@/lib/utils"
     ],
+    "card.tsx": [
+      "react",
+      "@/lib/utils"
+    ],
     "checkbox.tsx": [
       "@base-ui/react/checkbox",
       "@/lib/utils",
       "lucide-react"
+    ],
+    "collapsible.tsx": [
+      "@base-ui/react/collapsible"
     ],
     "dialog.tsx": [
       "react",
@@ -94,14 +141,32 @@
       "react",
       "@/lib/utils"
     ],
+    "resizable.tsx": [
+      "react-resizable-panels",
+      "@/lib/utils"
+    ],
+    "scroll-area.tsx": [
+      "react",
+      "@base-ui/react/scroll-area",
+      "@/lib/utils"
+    ],
     "select.tsx": [
       "react",
       "@base-ui/react/select",
       "@/lib/utils",
       "lucide-react"
     ],
+    "separator.tsx": [
+      "@base-ui/react/separator",
+      "@/lib/utils"
+    ],
     "table.tsx": [
       "react",
+      "@/lib/utils"
+    ],
+    "tabs.tsx": [
+      "@base-ui/react/tabs",
+      "class-variance-authority",
       "@/lib/utils"
     ],
     "textarea.tsx": [

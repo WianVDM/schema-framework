@@ -31,7 +31,8 @@
     ],
     "primitives-provider.tsx": [
       "react",
-      "@my-framework/core"
+      "@my-framework/core",
+      "../data/primitive-mappings.tsx"
     ]
   }
 }

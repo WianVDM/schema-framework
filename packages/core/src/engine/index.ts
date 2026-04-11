@@ -40,6 +40,21 @@ export type {
   WizardSchema,
   StepIndicatorProps,
   SchemaWizardProps,
+  // Layout types
+  LayoutType,
+  ResponsiveConfig,
+  CustomComponentRegistry,
+  LayoutPrimitiveComponents,
+  ContentSchema,
+  TabItem,
+  TabSchema,
+  LayoutRegion,
+  LayoutSchema,
+  DashboardSchema,
+  LayoutRendererProps,
+  DashboardRendererProps,
+  TabsRendererProps,
+  ContentRendererProps,
 } from './types'
 
 // Validators (one-export-per-file via barrel)
@@ -55,16 +70,25 @@ export {
   evaluateCondition,
   wizardSchemaValidator,
   validateWizardSchema,
+  // Layout validators
+  validateResponsiveConfig,
+  validateTabSchema,
+  validateLayoutSchema,
+  validateDashboardSchema,
+  validateContentSchema,
 } from './validators'
 
 export type { ValidationResult } from './validators'
 
 // Context
 export { PrimitivesProvider, usePrimitives } from './context/primitives-context'
+export { LayoutPrimitivesProvider, useLayoutPrimitives } from './context/layout-primitives-context'
+export { CustomComponentProvider, useCustomComponents } from './context/custom-component-context'
 
 // Helpers
 export { resolveMessage } from './helpers/i18n'
 export { deepFreeze, asDataKey } from './helpers'
+export { applyResponsiveClasses, isFormContent, isGridContent, isWizardContent, isTabsContent, isLayoutContent, isCustomContent } from './helpers'
 
 // Renderers
 export { SchemaForm } from './renderers/schema-form'

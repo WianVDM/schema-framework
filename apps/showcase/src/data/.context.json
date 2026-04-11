@@ -50,7 +50,7 @@
       "desc": "Row shape for order data (id, customer, amount, status)"
     },
     "primitive-mappings.tsx": {
-      "export": "primitives",
+      "export": "primitives, layoutPrimitives",
       "type": "const",
       "desc": "Maps shadcn/ui components to PrimitiveComponents interface"
     },
@@ -131,7 +131,14 @@
       "@/components/ui/dialog",
       "@/components/ui/dropdown-menu",
       "@/components/ui/select",
-      "@/components/ui/table"
+      "@/components/ui/table",
+      "@/components/ui/tabs",
+      "@/components/ui/accordion",
+      "@/components/ui/card",
+      "@/components/ui/separator",
+      "@/components/ui/collapsible",
+      "@/components/ui/scroll-area",
+      "@/components/ui/resizable"
     ],
     "registration-form-schema.ts": [
       "@my-framework/core"

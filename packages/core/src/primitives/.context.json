@@ -34,6 +34,16 @@
       "type": "re-export",
       "desc": "Barrel re-exports"
     },
+    "panel.tsx": {
+      "export": "PanelProps, Panel",
+      "type": "const",
+      "desc": "TODO: describe PanelProps (+1 more)"
+    },
+    "splitter.tsx": {
+      "export": "SplitterProps, Splitter",
+      "type": "const",
+      "desc": "TODO: describe SplitterProps (+1 more)"
+    },
     "status-badge.tsx": {
       "export": "StatusBadge",
       "type": "function",
@@ -61,6 +71,12 @@
       "date-fns"
     ],
     "file-upload.tsx": [
+      "react"
+    ],
+    "panel.tsx": [
+      "react"
+    ],
+    "splitter.tsx": [
       "react"
     ],
     "tag-input.tsx": [

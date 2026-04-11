@@ -24,6 +24,21 @@
       "type": "type",
       "desc": "Condition operator literal union"
     },
+    "content-schema.ts": {
+      "export": "ContentSchema",
+      "type": "type",
+      "desc": "TODO: describe ContentSchema"
+    },
+    "custom-component-registry.ts": {
+      "export": "CustomComponentRegistry",
+      "type": "interface",
+      "desc": "TODO: describe CustomComponentRegistry"
+    },
+    "dashboard-schema.ts": {
+      "export": "DashboardSchema",
+      "type": "interface",
+      "desc": "TODO: describe DashboardSchema"
+    },
     "date-picker-config.ts": {
       "export": "DatePickerConfig",
       "type": "interface",
@@ -84,6 +99,31 @@
       "type": "re-export",
       "desc": "Barrel re-exports"
     },
+    "layout-primitive-components.ts": {
+      "export": "LayoutPrimitiveComponents",
+      "type": "interface",
+      "desc": "TODO: describe LayoutPrimitiveComponents"
+    },
+    "layout-region.ts": {
+      "export": "LayoutRegion",
+      "type": "interface",
+      "desc": "TODO: describe LayoutRegion"
+    },
+    "layout-renderer-props.ts": {
+      "export": "LayoutRendererProps, DashboardRendererProps, TabsRendererProps, ContentRendererProps",
+      "type": "interface",
+      "desc": "TODO: describe LayoutRendererProps (+3 more)"
+    },
+    "layout-schema.ts": {
+      "export": "LayoutSchema",
+      "type": "interface",
+      "desc": "TODO: describe LayoutSchema"
+    },
+    "layout-type.ts": {
+      "export": "LayoutType",
+      "type": "type",
+      "desc": "TODO: describe LayoutType"
+    },
     "multi-select-config.ts": {
       "export": "MultiSelectConfig",
       "type": "interface",
@@ -94,6 +134,11 @@
       "type": "interface",
       "desc": "Client-side pagination"
     },
+    "panel-props.ts": {
+      "export": "PanelProps",
+      "type": "interface",
+      "desc": "TODO: describe PanelProps"
+    },
     "primitive-components.ts": {
       "export": "PrimitiveComponents",
       "type": "interface",
@@ -103,6 +148,11 @@
       "export": "ReadonlyDeep, DeepFrozen",
       "type": "type",
       "desc": "Recursive readonly wrappers"
+    },
+    "responsive-config.ts": {
+      "export": "ResponsiveConfig",
+      "type": "interface",
+      "desc": "TODO: describe ResponsiveConfig"
     },
     "review-step-config.ts": {
       "export": "ReviewStepConfig",
@@ -144,6 +194,11 @@
       "type": "interface",
       "desc": "Server-side pagination"
     },
+    "splitter-props.ts": {
+      "export": "SplitterProps",
+      "type": "interface",
+      "desc": "TODO: describe SplitterProps"
+    },
     "status-config.ts": {
       "export": "StatusConfig",
       "type": "interface",
@@ -153,6 +208,16 @@
       "export": "StepIndicatorProps",
       "type": "interface",
       "desc": "Step indicator primitive props"
+    },
+    "tab-item.ts": {
+      "export": "TabItem",
+      "type": "interface",
+      "desc": "TODO: describe TabItem"
+    },
+    "tab-schema.ts": {
+      "export": "TabSchema",
+      "type": "interface",
+      "desc": "TODO: describe TabSchema"
     },
     "theme-config.ts": {
       "export": "ThemeConfig",
@@ -194,6 +259,17 @@
     "cell-value-renderer.ts": [
       "grid-column-schema.ts"
     ],
+    "content-schema.ts": [
+      "form-schema.ts",
+      "grid-schema.ts",
+      "wizard-schema.ts",
+      "layout-schema.ts",
+      "tab-schema.ts"
+    ],
+    "dashboard-schema.ts": [
+      "layout-schema.ts",
+      "i18n-config.ts"
+    ],
     "field-condition.ts": [
       "condition-operator.ts"
     ],
@@ -225,6 +301,23 @@
       "virtual-scroll-config.ts",
       "branded.ts"
     ],
+    "layout-region.ts": [
+      "responsive-config.ts",
+      "content-schema.ts",
+      "i18n-config.ts"
+    ],
+    "layout-renderer-props.ts": [
+      "layout-schema.ts",
+      "dashboard-schema.ts",
+      "tab-schema.ts",
+      "content-schema.ts",
+      "custom-component-registry.ts"
+    ],
+    "layout-schema.ts": [
+      "layout-type.ts",
+      "layout-region.ts",
+      "i18n-config.ts"
+    ],
     "multi-select-config.ts": [
       "select-option.ts"
     ],
@@ -241,6 +334,13 @@
     "schema-wizard-props.ts": [
       "wizard-schema.ts",
       "form-submit-handler.ts"
+    ],
+    "tab-item.ts": [
+      "content-schema.ts"
+    ],
+    "tab-schema.ts": [
+      "tab-item.ts",
+      "i18n-config.ts"
     ],
     "validation-rule.ts": [
       "validation-type.ts"
@@ -259,7 +359,19 @@
     "cell-value-renderer.ts": [
       "react"
     ],
+    "custom-component-registry.ts": [
+      "react"
+    ],
+    "layout-primitive-components.ts": [
+      "react"
+    ],
+    "panel-props.ts": [
+      "react"
+    ],
     "primitive-components.ts": [
+      "react"
+    ],
+    "splitter-props.ts": [
       "react"
     ]
   }
