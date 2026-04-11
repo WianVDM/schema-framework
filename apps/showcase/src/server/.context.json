@@ -68,48 +68,73 @@
   "extDeps": {
     "get-column-reorder-grid-schema.ts": [
       "@tanstack/react-start",
-      "@my-framework/core"
+      "@my-framework/core",
+      "../lib/to-serializable.ts",
+      "../data/column-reorder-grid-schema.ts"
     ],
     "get-contact-form-schema.ts": [
       "@tanstack/react-start",
-      "@my-framework/core"
+      "@my-framework/core",
+      "../lib/to-serializable.ts",
+      "../data/contact-form-schema.ts"
     ],
     "get-multiselect-form-schema.ts": [
       "@tanstack/react-start",
-      "@my-framework/core"
+      "@my-framework/core",
+      "../lib/to-serializable.ts",
+      "../data/multiselect-form-schema.ts"
     ],
     "get-order-grid-schema.ts": [
       "@tanstack/react-start",
-      "@my-framework/core"
+      "@my-framework/core",
+      "../lib/to-serializable.ts",
+      "../data/order-grid-schema.ts"
     ],
     "get-orders.ts": [
-      "@tanstack/react-start"
+      "@tanstack/react-start",
+      "../lib/serializable-record.ts",
+      "../data/mock-orders.ts"
     ],
     "get-registration-form-schema.ts": [
       "@tanstack/react-start",
-      "@my-framework/core"
+      "@my-framework/core",
+      "../lib/to-serializable.ts",
+      "../data/registration-form-schema.ts"
     ],
     "get-support-ticket-form-schema.ts": [
       "@tanstack/react-start",
-      "@my-framework/core"
+      "@my-framework/core",
+      "../lib/to-serializable.ts",
+      "../data/support-ticket-form-schema.ts"
     ],
     "get-user-grid-schema.ts": [
       "@tanstack/react-start",
-      "@my-framework/core"
+      "@my-framework/core",
+      "../lib/to-serializable.ts",
+      "../data/user-grid-schema.ts"
     ],
     "get-users.ts": [
-      "@tanstack/react-start"
+      "@tanstack/react-start",
+      "../lib/serializable-record.ts",
+      "../data/mock-users.ts"
     ],
     "get-virtual-data.ts": [
-      "@tanstack/react-start"
+      "@tanstack/react-start",
+      "../lib/serializable-record.ts",
+      "../data/mock-virtual-data.ts",
+      "../lib/to-serializable.ts"
     ],
     "get-virtual-grid-schema.ts": [
       "@tanstack/react-start",
-      "@my-framework/core"
+      "@my-framework/core",
+      "../lib/to-serializable.ts",
+      "../data/virtual-grid-schema.ts"
     ],
     "get-wizard-form-schema.ts": [
       "@tanstack/react-start",
-      "@my-framework/core"
+      "@my-framework/core",
+      "../lib/to-serializable.ts",
+      "../data/wizard-form-schema.ts"
     ]
   }
 }
