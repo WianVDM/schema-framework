@@ -37,11 +37,13 @@ jobs:
       - name: Build
         run: pnpm build
 
-      - name: Create Release Pull Request or Publish
+      # NOTE: npm publishing is disabled during the 0.x.x development phase.
+      # Re-enable by adding `publish: pnpm changeset publish` and configuring
+      # the NPM_TOKEN secret when ready to publish (target: v1.0.0).
+      - name: Create Release Pull Request or Version
         id: changesets
         uses: changesets/action@v1
         with:
-          publish: pnpm changeset publish
           version: pnpm changeset version
           title: "chore: version packages"
           commit: "chore: version packages"
@@ -50,35 +52,30 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create GitHub Release
-        if: steps.changesets.outputs.published == 'true'
+        if: steps.changesets.outputs.hasChangesets == 'false'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # NOTE: changesets/action outputs published packages as JSON.
-          # Create a GitHub Release for each published package version.
-          PACKAGES='${{ steps.changesets.outputs.publishedPackages }}'
-          echo "Published packages: $PACKAGES"
-
-          # Extract the core package version for the release tag
-          CORE_VERSION=$(echo "$PACKAGES" | node -e "
-            const data = JSON.parse(require('fs').readFileSync('/dev/stdin', 'utf8'));
-            const core = data.find(p => p.name === '@my-framework/core');
-            if (core) console.log(core.version);
-          " 2>/dev/null || true)
+          # NOTE: Since npm publishing is disabled, we read the version directly
+          # from packages/core/package.json and create a GitHub Release if one
+          # doesn't already exist for this version.
+          CORE_VERSION=$(node -p "require('./packages/core/package.json').version")
 
           if [ -z "$CORE_VERSION" ]; then
-            echo "No @my-framework/core package found in published output — skipping release creation"
+            echo "Could not read version from packages/core/package.json — skipping release creation"
             exit 0
           fi
 
           TAG="v${CORE_VERSION}"
-          echo "Creating GitHub Release for tag: $TAG"
+          echo "Checking GitHub Release for tag: $TAG"
 
-          # Check if release already exists on GitHub remote (not just local tags)
+          # Check if release already exists on GitHub remote
           if gh release view "$TAG" 2>/dev/null; then
-            echo "Tag $TAG already exists — skipping release creation"
+            echo "Release for tag $TAG already exists — skipping release creation"
             exit 0
           fi
+
+          echo "Creating GitHub Release for tag: $TAG"
 
           # Extract changelog section for this version
           CHANGELOG=""
