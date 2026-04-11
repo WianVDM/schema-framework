@@ -137,10 +137,17 @@ function classifyImports(imports, filePath, absDir, currentFile, allFiles) {
       if (resolved) {
         const resolvedDir = dirname(resolved)
         if (resolvedDir === absDir) {
+          // NOTE: Same-directory import — record as internal dependency
           const depFile = basename(resolved)
           if (depFile !== currentFile && allFiles.includes(depFile)) {
             internalDeps.push(depFile)
           }
+        } else {
+          // NOTE: Cross-directory relative import — record as external dependency
+          // so it appears in extDeps for context-map-generator and impact graph.
+          const absDirPosix = absDir.replace(/\\/g, '/')
+          const resolvedPosix = resolved.replace(/\\/g, '/')
+          externalDepList.push(posix.relative(absDirPosix, resolvedPosix))
         }
       }
     } else {

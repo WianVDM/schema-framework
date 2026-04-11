@@ -40,12 +40,16 @@ export function checkSymbolUniqueness(collector) {
       } catch (e) {
         if (e instanceof SyntaxError) {
           collector.addViolation(`${info.file} has invalid JSON: ${e.message}`)
+        } else {
+          collector.addViolation(`${info.file} unexpected error: ${e.message}`)
         }
       }
     }
   } catch (e) {
     if (e instanceof SyntaxError) {
       collector.addViolation(`docs/ai/symbol-index-manifest.json has invalid JSON: ${e.message}`)
+    } else {
+      collector.addViolation(`docs/ai/symbol-index-manifest.json unexpected error: ${e.message}`)
     }
   }
 }

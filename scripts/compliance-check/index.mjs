@@ -11,7 +11,7 @@
  * - Symbol uniqueness (no duplicate exports across files)
  *
  * Output: Structured report with violations and suggestions.
- * Exit code: 0 always (violations are informational for AI, not build-blocking).
+ * Exit code: 0 if no violations, 1 if any violations found.
  */
 
 import { SeverityCollector } from '../shared/output-helpers.mjs'
@@ -31,6 +31,10 @@ function main() {
   checkSymbolUniqueness(collector)
 
   collector.printReport()
+
+  if (collector.hasViolations) {
+    process.exit(1)
+  }
 }
 
 main()

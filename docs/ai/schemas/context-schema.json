@@ -54,7 +54,8 @@
           },
           "tests": {
             "type": "string",
-            "description": "Path to the test file for this source file"
+            "description": "Repo-relative path to the test file for this source file",
+            "pattern": "^(?!/)(?!https?://).+$"
           }
         }
       }

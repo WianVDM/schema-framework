@@ -20,9 +20,13 @@ export class SeverityCollector {
     return this._violations.length > 0 || this._warnings.length > 0 || this._suggestions.length > 0
   }
 
+  get hasViolations() {
+    return this._violations.length > 0
+  }
+
   printReport() {
     if (!this.hasIssues) {
-      console.log('  ✅ All checks passed — no violations or suggestions\n')
+      console.log('  ✅ All checks passed — no issues found\n')
       return
     }
 

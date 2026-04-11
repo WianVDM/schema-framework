@@ -69,7 +69,11 @@ export function checkVersionStatus(collector) {
     const activeMilestoneMatch = content.match(/##\s*Active Milestone:\s*(.+)$/m)
     if (activeMilestoneMatch) {
       const activeName = activeMilestoneMatch[1].trim()
-      if (upcomingSection[1].includes(activeName)) {
+      const upcomingItems = upcomingSection[1]
+        .split('\n')
+        .map(line => line.replace(/^[\s-*]+/, '').trim().toLowerCase())
+        .filter(Boolean)
+      if (upcomingItems.some(item => item === activeName.toLowerCase())) {
         collector.addWarning(`VERSION_STATUS.md: Active milestone "${activeName}" also appears in "Upcoming Milestones" — should be removed from upcoming`)
       }
     }

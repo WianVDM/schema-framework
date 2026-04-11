@@ -37,7 +37,12 @@ export function loadBudgets() {
   }
   try {
     const raw = JSON.parse(readFileSync(budgetPath, 'utf-8'))
-    return raw.budgets || DEFAULT_BUDGETS
+    // NOTE: Validate raw.budgets is a non-empty plain object before returning
+    if (raw.budgets && typeof raw.budgets === 'object' && !Array.isArray(raw.budgets) && Object.keys(raw.budgets).length > 0) {
+      return raw.budgets
+    }
+    console.warn('WARNING: token-budgets.json has empty or invalid budgets — using defaults')
+    return DEFAULT_BUDGETS
   } catch (err) {
     console.warn(`WARNING: Failed to load token-budgets.json: ${err.message}`)
     return DEFAULT_BUDGETS

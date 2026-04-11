@@ -60,7 +60,10 @@ function checkDirRecursive(dirPath, collector) {
         const relPath = relative(ROOT, contextPath).replace(/\\/g, '/')
         collector.addSuggestion(`Purpose field empty: ${relPath} — add a short purpose describing this directory`)
       }
-    } catch { /* ignore parse errors */ }
+    } catch (err) {
+      const relPath = relative(ROOT, contextPath).replace(/\\/g, '/')
+      collector.addWarning(`Failed to parse ${relPath}: ${err.message}`)
+    }
   }
 
   // NOTE: Recurse into subdirectories

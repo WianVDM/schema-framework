@@ -8,12 +8,21 @@ import { createHash } from 'crypto'
  * Derives a short description from file names and creates a unique ID.
  */
 export function generateChangeset(files, packageName) {
+  // NOTE: Guard against empty files list to prevent "Update " description
+  if (files.length === 0) {
+    return { filename: `auto-empty-${Date.now()}.md`, content: `---\n"${packageName}": patch\n---\nNo changes detected\n` }
+  }
+
   const summaries = files.map(f => {
     const parts = f.replace('packages/core/src/', '').split('/')
     return parts[parts.length - 1].replace(/\.(ts|tsx)$/, '')
   })
 
   const uniqueSummaries = [...new Set(summaries)]
+  if (uniqueSummaries.length === 0) {
+    return { filename: `auto-empty-${Date.now()}.md`, content: `---\n"${packageName}": patch\n---\nNo changes detected\n` }
+  }
+
   const description = uniqueSummaries.length <= 3
     ? `Update ${uniqueSummaries.join(', ')}`
     : `Update ${uniqueSummaries.slice(0, 3).join(', ')} and ${uniqueSummaries.length - 3} more`

@@ -84,4 +84,35 @@ graph TD
 
 ```mermaid
 graph LR
+    packages_core_src_engine_renderers -->|imports| packages_core_src_engine
+    packages_core_src_engine_renderers -->|imports| packages_core_src_primitives
+    packages_core_src_engine_renderers -->|imports| packages_core_src_engine_context
+    packages_core_src_engine_renderers -->|imports| packages_core_src_engine_helpers
+    packages_core_src_engine_renderers -->|imports| packages_core_src_engine
+    packages_core_src_engine_renderers -->|imports| packages_core_src_engine_context
+    packages_core_src_engine_renderers -->|imports| packages_core_src_engine
+    packages_core_src_engine_renderers -->|imports| packages_core_src_engine_context
+    packages_core_src_engine_renderers -->|imports| packages_core_src_engine_helpers
+    packages_core_src_engine_renderers -->|imports| packages_core_src_engine
+    packages_core_src_engine_renderers -->|imports| packages_core_src_engine_context
+    packages_core_src_engine_renderers -->|imports| packages_core_src_engine_helpers
+    packages_core_src_engine_renderers -->|imports| packages_core_src_engine
+    packages_core_src_engine_renderers -->|imports| packages_core_src_engine
+    packages_core_src_engine_renderers -->|imports| packages_core_src_engine_context
+    packages_core_src_engine_renderers -->|imports| packages_core_src_engine_helpers
+    packages_core_src_engine_renderers -->|imports| packages_core_src_engine_helpers
+    packages_core_src_engine_renderers -->|imports| packages_core_src_engine
+    packages_core_src_engine_renderers -->|imports| packages_core_src_engine_context
+    packages_core_src_engine_renderers -->|imports| packages_core_src_engine_helpers
+    packages_core_src_engine_renderers -->|imports| packages_core_src_engine
+    packages_core_src_engine_renderers -->|imports| packages_core_src_engine
+    packages_core_src_engine_renderers -->|imports| packages_core_src_engine_helpers
+    packages_core_src_engine_renderers -->|imports| packages_core_src_engine_context
+    packages_core_src_engine_renderers -->|imports| packages_core_src_engine_helpers
+    packages_core_src_engine_renderers -->|imports| packages_core_src_engine
+    packages_core_src_engine_renderers -->|imports| packages_core_src_engine
+    packages_core_src_engine_renderers -->|imports| packages_core_src_engine
+    packages_core_src_engine_renderers -->|imports| packages_core_src_engine
+    packages_core_src_engine_renderers -->|imports| packages_core_src_engine_helpers
+    packages_core_src_engine_renderers -->|imports| packages_core_src_engine_context
 ```

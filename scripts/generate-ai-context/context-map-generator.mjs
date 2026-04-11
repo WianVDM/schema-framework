@@ -1,6 +1,7 @@
 // NOTE: Auto-generates docs/context-map.md from collected .context.json data.
 // NOTE: Replaces the need for manual context-map.md maintenance per .clinerules rules.
 
+import { posix } from 'path'
 import { estimateTokens } from './token-budget.mjs'
 
 /**
@@ -69,7 +70,7 @@ export function generateContextMap(contexts) {
     lines.push('| Directory | Purpose | Files |')
     lines.push('|-----------|---------|-------|')
     for (const { dirPath, context } of dirs) {
-      const fileCount = Object.keys(context.files).length
+      const fileCount = (typeof context.files === 'object' && context.files !== null) ? Object.keys(context.files).length : 0
       const purpose = context.purpose || '—'
       lines.push(`| \`${dirPath}\` | ${truncate(purpose, 80)} | ${fileCount} |`)
     }
@@ -81,13 +82,28 @@ export function generateContextMap(contexts) {
   lines.push('')
   lines.push('```mermaid')
   lines.push('graph LR')
+
+  // NOTE: Build lookup map for resolving relative deps to known context node IDs
+  const dirPathToId = new Map()
+  for (const { dirPath } of contexts) {
+    const dirId = dirPath.replace(/[/.]/g, '_').replace(/_+/g, '_')
+    dirPathToId.set(dirPath.replace(/\\/g, '/'), dirId)
+  }
+
   for (const { dirPath, context } of contexts) {
     if (!context.extDeps) continue
-    const dirId = dirPath.replace(/[/.]/g, '_').replace(/_+/g, '_')
+    const normalizedDir = dirPath.replace(/\\/g, '/')
+    const dirId = dirPathToId.get(normalizedDir)
     for (const [file, deps] of Object.entries(context.extDeps)) {
       for (const dep of deps) {
         if (dep.startsWith('.')) {
-          lines.push(`    ${dirId} -->|imports| ${dep.replace(/[/.]/g, '_').replace(/_+/g, '_')}`)
+          // NOTE: Resolve relative dep against source directory to find target context
+          const depDir = posix.dirname(dep)
+          const resolvedDir = posix.normalize(posix.join(normalizedDir, depDir))
+          const targetId = dirPathToId.get(resolvedDir)
+          if (targetId && targetId !== dirId) {
+            lines.push(`    ${dirId} -->|imports| ${targetId}`)
+          }
         }
       }
     }

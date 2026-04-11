@@ -131,8 +131,18 @@ function normalizePath(dep) {
   const parts = dep.split('/')
   const resolved = []
   for (const part of parts) {
-    if (part === '..') { if (resolved.length === 0 || resolved[resolved.length - 1] === '..') resolved.push('..'); else resolved.pop() }
-    else if (part !== '.') resolved.push(part)
+    if (part === '..') {
+      // NOTE: If stack is empty or top is already '..', push another '..'
+      if (resolved.length === 0 || resolved[resolved.length - 1] === '..') {
+        resolved.push('..')
+      } else {
+        // NOTE: Cancel out the previous segment
+        resolved.pop()
+      }
+    } else if (part !== '.') {
+      // NOTE: Normal segment — push onto stack
+      resolved.push(part)
+    }
   }
   return resolved.join('/')
 }

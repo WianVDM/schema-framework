@@ -218,7 +218,7 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
     : table.getFilteredRowModel().rows.length
 
   const sortableColumnIds = useMemo(
-    () => columnOrder.filter(id => isColumnVisible(id)),
+    () => columnOrder.filter(id => columnVisibility[id] !== false),
     [columnOrder, columnVisibility]
   )
 

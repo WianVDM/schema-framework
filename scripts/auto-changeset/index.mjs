@@ -52,7 +52,7 @@ function main() {
     mkdirSync(changesetDir, { recursive: true })
   }
 
-  // NOTE: Skip if a changeset already exists
+  // NOTE: Skip if a changeset already exists — manual changeset takes precedence over auto-generated
   const existingChangesets = readdirSync(changesetDir).filter(f => f.endsWith('.md') && f !== 'README.md')
   if (existingChangesets.length > 0) {
     console.log(`ℹ️  Changeset already exists (${existingChangesets[0]}). Skipping auto-generation.`)
@@ -66,6 +66,9 @@ function main() {
   if (writeChangeset(filePath, content)) {
     console.log(`✅ Auto-generated changeset: .changeset/${filename}`)
     console.log(`   ${content.split('\n').find(l => l.trim() && !l.startsWith('---') && !l.startsWith('"'))?.trim()}`)
+  } else {
+    console.error(`❌ Failed to write changeset: ${filePath}`)
+    process.exitCode = 1
   }
 }
 
