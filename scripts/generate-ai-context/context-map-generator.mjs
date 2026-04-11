@@ -59,7 +59,7 @@ export function generateContextMap(contexts) {
       lines.push('graph TD')
       for (const { dirPath, context } of dirs) {
         const dirId = dirPath.replace(/[/.]/g, '_').replace(/_+/g, '_')
-        const purpose = context.purpose ? ` — ${truncate(context.purpose, 60)}` : ''
+        const purpose = ` — ${resolvePurpose(context.purpose, 60)}`
         lines.push(`    ${dirId}["${dirPath}${purpose}"]`)
       }
       lines.push('```')
@@ -71,8 +71,8 @@ export function generateContextMap(contexts) {
     lines.push('|-----------|---------|-------|')
     for (const { dirPath, context } of dirs) {
       const fileCount = (typeof context.files === 'object' && context.files !== null) ? Object.keys(context.files).length : 0
-      const purpose = context.purpose || '—'
-      lines.push(`| \`${dirPath}\` | ${truncate(purpose, 80)} | ${fileCount} |`)
+      const purpose = resolvePurpose(context.purpose, 80)
+      lines.push(`| \`${dirPath}\` | ${purpose} | ${fileCount} |`)
     }
     lines.push('')
   }
@@ -90,6 +90,8 @@ export function generateContextMap(contexts) {
     dirPathToId.set(dirPath.replace(/\\/g, '/'), dirId)
   }
 
+  // NOTE: Deduplicate edges — multiple files in a directory may import from the same target directory
+  const seenEdges = new Set()
   for (const { dirPath, context } of contexts) {
     if (!context.extDeps) continue
     const normalizedDir = dirPath.replace(/\\/g, '/')
@@ -102,7 +104,11 @@ export function generateContextMap(contexts) {
           const resolvedDir = posix.normalize(posix.join(normalizedDir, depDir))
           const targetId = dirPathToId.get(resolvedDir)
           if (targetId && targetId !== dirId) {
-            lines.push(`    ${dirId} -->|imports| ${targetId}`)
+            const edgeKey = `${dirId}|imports|${targetId}`
+            if (!seenEdges.has(edgeKey)) {
+              seenEdges.add(edgeKey)
+              lines.push(`    ${dirId} -->|imports| ${targetId}`)
+            }
           }
         }
       }
@@ -120,4 +126,11 @@ export function generateContextMap(contexts) {
 function truncate(str, maxLen) {
   if (str.length <= maxLen) return str
   return str.slice(0, maxLen - 3) + '...'
+}
+
+// NOTE: Resolves a purpose string, falling back to a clear placeholder when missing or empty.
+const MISSING_PURPOSE = 'TODO: describe purpose'
+function resolvePurpose(purpose, maxLen) {
+  const trimmed = typeof purpose === 'string' ? purpose.trim() : ''
+  return trimmed.length > 0 ? truncate(trimmed, maxLen) : truncate(MISSING_PURPOSE, maxLen)
 }

@@ -61,7 +61,7 @@ graph TD
 graph TD
     apps_showcase_src["apps/showcase/src — Showcase app entry point. TanStack Start file-based routing."]
     apps_showcase_src_app["apps/showcase/src/app — App-level providers (primitives context, query client, th..."]
-    apps_showcase_src_components_ui["apps/showcase/src/components/ui"]
+    apps_showcase_src_components_ui["apps/showcase/src/components/ui — TODO: describe purpose"]
     apps_showcase_src_data["apps/showcase/src/data — Mock schema definitions and static data for showcase demos"]
     apps_showcase_src_lib["apps/showcase/src/lib — Shared utility functions (cn helper, serialization)"]
     apps_showcase_src_routes["apps/showcase/src/routes — TanStack Start file-based routes for showcase app pages a..."]
@@ -73,7 +73,7 @@ graph TD
 |-----------|---------|-------|
 | `apps/showcase/src` | Showcase app entry point. TanStack Start file-based routing. | 1 |
 | `apps/showcase/src/app` | App-level providers (primitives context, query client, theme) | 3 |
-| `apps/showcase/src/components/ui` | — | 17 |
+| `apps/showcase/src/components/ui` | TODO: describe purpose | 17 |
 | `apps/showcase/src/data` | Mock schema definitions and static data for showcase demos | 17 |
 | `apps/showcase/src/lib` | Shared utility functions (cn helper, serialization) | 4 |
 | `apps/showcase/src/routes` | TanStack Start file-based routes for showcase app pages and demos | 13 |
@@ -86,51 +86,12 @@ graph TD
 graph LR
     packages_core_src_engine_context -->|imports| packages_core_src_engine_types
     packages_core_src_engine_context -->|imports| packages_core_src_engine
-    packages_core_src_engine_context -->|imports| packages_core_src_engine
     packages_core_src_engine_helpers -->|imports| packages_core_src_engine_types
-    packages_core_src_engine_helpers -->|imports| packages_core_src_engine_types
-    packages_core_src_engine_helpers -->|imports| packages_core_src_engine_types
-    packages_core_src_engine_helpers -->|imports| packages_core_src_engine_types
-    packages_core_src_engine_helpers -->|imports| packages_core_src_engine_types
-    packages_core_src_engine_helpers -->|imports| packages_core_src_engine_types
-    packages_core_src_engine_helpers -->|imports| packages_core_src_engine_types
-    packages_core_src_engine_helpers -->|imports| packages_core_src_engine_types
-    packages_core_src_engine_helpers -->|imports| packages_core_src_engine_types
-    packages_core_src_engine_helpers -->|imports| packages_core_src_engine
-    packages_core_src_engine_helpers -->|imports| packages_core_src_engine
     packages_core_src_engine_helpers -->|imports| packages_core_src_engine
     packages_core_src_engine_renderers -->|imports| packages_core_src_engine
     packages_core_src_engine_renderers -->|imports| packages_core_src_primitives
     packages_core_src_engine_renderers -->|imports| packages_core_src_engine_context
     packages_core_src_engine_renderers -->|imports| packages_core_src_engine_helpers
-    packages_core_src_engine_renderers -->|imports| packages_core_src_engine
-    packages_core_src_engine_renderers -->|imports| packages_core_src_engine_context
-    packages_core_src_engine_renderers -->|imports| packages_core_src_engine
-    packages_core_src_engine_renderers -->|imports| packages_core_src_engine_context
-    packages_core_src_engine_renderers -->|imports| packages_core_src_engine_helpers
-    packages_core_src_engine_renderers -->|imports| packages_core_src_engine
-    packages_core_src_engine_renderers -->|imports| packages_core_src_engine_context
-    packages_core_src_engine_renderers -->|imports| packages_core_src_engine_helpers
-    packages_core_src_engine_renderers -->|imports| packages_core_src_engine
-    packages_core_src_engine_renderers -->|imports| packages_core_src_engine
-    packages_core_src_engine_renderers -->|imports| packages_core_src_engine_context
-    packages_core_src_engine_renderers -->|imports| packages_core_src_engine_helpers
-    packages_core_src_engine_renderers -->|imports| packages_core_src_engine_helpers
-    packages_core_src_engine_renderers -->|imports| packages_core_src_engine
-    packages_core_src_engine_renderers -->|imports| packages_core_src_engine_context
-    packages_core_src_engine_renderers -->|imports| packages_core_src_engine_helpers
-    packages_core_src_engine_renderers -->|imports| packages_core_src_engine
-    packages_core_src_engine_renderers -->|imports| packages_core_src_engine
-    packages_core_src_engine_renderers -->|imports| packages_core_src_engine_helpers
-    packages_core_src_engine_renderers -->|imports| packages_core_src_engine_context
-    packages_core_src_engine_renderers -->|imports| packages_core_src_engine_helpers
-    packages_core_src_engine_renderers -->|imports| packages_core_src_engine
-    packages_core_src_engine_renderers -->|imports| packages_core_src_engine
-    packages_core_src_engine_renderers -->|imports| packages_core_src_engine
-    packages_core_src_engine_renderers -->|imports| packages_core_src_engine
-    packages_core_src_engine_renderers -->|imports| packages_core_src_engine_helpers
-    packages_core_src_engine_renderers -->|imports| packages_core_src_engine_context
-    packages_core_src_engine_validators -->|imports| packages_core_src_engine
     packages_core_src_engine_validators -->|imports| packages_core_src_engine
     packages_core_src_engine_validators -->|imports| packages_core_src_engine_types
     apps_showcase_src_app -->|imports| apps_showcase_src_data
@@ -138,42 +99,7 @@ graph LR
     apps_showcase_src_routes -->|imports| apps_showcase_src_lib
     apps_showcase_src_routes -->|imports| apps_showcase_src_server
     apps_showcase_src_routes -->|imports| apps_showcase_src_data
-    apps_showcase_src_routes -->|imports| apps_showcase_src_server
-    apps_showcase_src_routes -->|imports| apps_showcase_src_server
-    apps_showcase_src_routes -->|imports| apps_showcase_src_server
-    apps_showcase_src_routes -->|imports| apps_showcase_src_server
     apps_showcase_src_routes -->|imports| apps_showcase_src_stores
-    apps_showcase_src_routes -->|imports| apps_showcase_src_data
-    apps_showcase_src_routes -->|imports| apps_showcase_src_server
-    apps_showcase_src_routes -->|imports| apps_showcase_src_server
-    apps_showcase_src_routes -->|imports| apps_showcase_src_server
-    apps_showcase_src_routes -->|imports| apps_showcase_src_server
-    apps_showcase_src_routes -->|imports| apps_showcase_src_server
-    apps_showcase_src_routes -->|imports| apps_showcase_src_server
-    apps_showcase_src_routes -->|imports| apps_showcase_src_server
-    apps_showcase_src_server -->|imports| apps_showcase_src_lib
-    apps_showcase_src_server -->|imports| apps_showcase_src_data
-    apps_showcase_src_server -->|imports| apps_showcase_src_lib
-    apps_showcase_src_server -->|imports| apps_showcase_src_data
-    apps_showcase_src_server -->|imports| apps_showcase_src_lib
-    apps_showcase_src_server -->|imports| apps_showcase_src_data
-    apps_showcase_src_server -->|imports| apps_showcase_src_lib
-    apps_showcase_src_server -->|imports| apps_showcase_src_data
-    apps_showcase_src_server -->|imports| apps_showcase_src_lib
-    apps_showcase_src_server -->|imports| apps_showcase_src_data
-    apps_showcase_src_server -->|imports| apps_showcase_src_lib
-    apps_showcase_src_server -->|imports| apps_showcase_src_data
-    apps_showcase_src_server -->|imports| apps_showcase_src_lib
-    apps_showcase_src_server -->|imports| apps_showcase_src_data
-    apps_showcase_src_server -->|imports| apps_showcase_src_lib
-    apps_showcase_src_server -->|imports| apps_showcase_src_data
-    apps_showcase_src_server -->|imports| apps_showcase_src_lib
-    apps_showcase_src_server -->|imports| apps_showcase_src_data
-    apps_showcase_src_server -->|imports| apps_showcase_src_lib
-    apps_showcase_src_server -->|imports| apps_showcase_src_data
-    apps_showcase_src_server -->|imports| apps_showcase_src_lib
-    apps_showcase_src_server -->|imports| apps_showcase_src_lib
-    apps_showcase_src_server -->|imports| apps_showcase_src_data
     apps_showcase_src_server -->|imports| apps_showcase_src_lib
     apps_showcase_src_server -->|imports| apps_showcase_src_data
 ```

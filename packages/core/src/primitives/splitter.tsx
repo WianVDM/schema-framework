@@ -26,6 +26,9 @@ export function Splitter({
     initialSizes ? [...initialSizes] : Array(panelCount).fill(defaultSize),
   )
   const containerRef = useRef<HTMLDivElement>(null)
+  const sizesRef = useRef(sizes)
+  sizesRef.current = sizes
+  const prevInitialSizesRef = useRef<readonly number[] | undefined>(initialSizes)
 
   const handleDragStart = useCallback(
     (index: number) => (e: React.MouseEvent) => {
@@ -38,17 +41,33 @@ export function Splitter({
       const totalSize = isHorizontal ? container.offsetWidth : container.offsetHeight
       const startPos = isHorizontal ? e.clientX : e.clientY
 
+      // NOTE: Snapshot sizes at drag start so handleDragMove uses a stable base
+      const startSizes = [...sizesRef.current]
+
       const handleDragMove = (moveEvent: globalThis.MouseEvent) => {
         const currentPos = isHorizontal ? moveEvent.clientX : moveEvent.clientY
         const diff = currentPos - startPos
-        const percentDiff = (diff / totalSize) * defaultSize
+        // NOTE: Convert pixel difference to percentage points of the total container
+        const percentDiff = (diff / totalSize) * 100
 
-        const newSizes = [...sizes]
-        const clampedUp = Math.min(Math.max(newSizes[index] + percentDiff, minSize / totalSize * 100), maxSize / totalSize * 100)
-        const clampedDown = Math.min(Math.max(newSizes[index + 1] - percentDiff, minSize / totalSize * 100), maxSize / totalSize * 100)
+        // Clamp the delta so both panels stay within [minPct, maxPct] simultaneously.
+        // This preserves the sum-invariant (newSizes[index] + newSizes[index+1] stays constant).
+        const minPct = (minSize / totalSize) * 100
+        const maxPct = (maxSize / totalSize) * 100
 
-        newSizes[index] = clampedUp
-        newSizes[index + 1] = clampedDown
+        const leftMin = minPct - startSizes[index]
+        const leftMax = maxPct - startSizes[index]
+        const rightMin = startSizes[index + 1] - maxPct
+        const rightMax = startSizes[index + 1] - minPct
+
+        const allowedDelta = Math.min(
+          Math.max(percentDiff, Math.max(leftMin, rightMin)),
+          Math.min(leftMax, rightMax),
+        )
+
+        const newSizes = [...startSizes]
+        newSizes[index] = startSizes[index] + allowedDelta
+        newSizes[index + 1] = startSizes[index + 1] - allowedDelta
         setSizes(newSizes)
         onResize?.(newSizes)
       }
@@ -61,11 +80,15 @@ export function Splitter({
       document.addEventListener('mousemove', handleDragMove)
       document.addEventListener('mouseup', handleDragEnd)
     },
-    [direction, sizes, minSize, maxSize, defaultSize, onResize],
+    [direction, minSize, maxSize, onResize],
   )
 
   useEffect(() => {
-    if (initialSizes) {
+    if (
+      initialSizes &&
+      JSON.stringify(initialSizes) !== JSON.stringify(prevInitialSizesRef.current)
+    ) {
+      prevInitialSizesRef.current = initialSizes
       setSizes([...initialSizes])
     }
   }, [initialSizes])

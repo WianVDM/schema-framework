@@ -7,12 +7,12 @@
     "content-schema.ts": {
       "export": "validateContentSchema, contentSchemaValidator",
       "type": "const",
-      "desc": "TODO: describe validateContentSchema (+1 more)"
+      "desc": "Discriminated union content block validator"
     },
     "dashboard-schema.ts": {
       "export": "validateDashboardSchema, dashboardSchemaValidator",
       "type": "const",
-      "desc": "TODO: describe validateDashboardSchema (+1 more)"
+      "desc": "DashboardSchema Zod validator"
     },
     "evaluate-condition.ts": {
       "export": "evaluateCondition",
@@ -47,12 +47,12 @@
     "layout-schema.ts": {
       "export": "validateLayoutSchema, layoutSchemaValidator",
       "type": "const",
-      "desc": "TODO: describe validateLayoutSchema (+1 more)"
+      "desc": "LayoutSchema Zod validator"
     },
     "responsive-config.ts": {
       "export": "validateResponsiveConfig, responsiveConfigValidator",
       "type": "const",
-      "desc": "TODO: describe validateResponsiveConfig (+1 more)"
+      "desc": "Responsive breakpoint config validator"
     },
     "shared-schemas.ts": {
       "export": "ValidationResult, fieldTypeSchema, selectOptionSchema, validationRuleSchema, fieldConditionSchema, fileUploadConfigSchema, datePickerConfigSchema, multiSelectConfigSchema, paginationConfigSchema, columnFilterConfigSchema, statusConfigSchema, serverPaginationConfigSchema, i18nConfigSchema, virtualScrollConfigSchema",
@@ -62,7 +62,7 @@
     "tab-schema.ts": {
       "export": "validateTabSchema, tabSchemaValidator",
       "type": "const",
-      "desc": "TODO: describe validateTabSchema (+1 more)"
+      "desc": "TabSchema Zod validator"
     },
     "wizard-schema.ts": {
       "export": "validateWizardSchema, wizardSchemaValidator",

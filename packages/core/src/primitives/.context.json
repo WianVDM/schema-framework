@@ -37,12 +37,12 @@
     "panel.tsx": {
       "export": "PanelProps, Panel",
       "type": "const",
-      "desc": "TODO: describe PanelProps (+1 more)"
+      "desc": "Collapsible container; header, footer, toolbar, scrollable"
     },
     "splitter.tsx": {
       "export": "SplitterProps, Splitter",
       "type": "const",
-      "desc": "TODO: describe SplitterProps (+1 more)"
+      "desc": "Resizable pane divider; direction, sizes, min/max, onResize"
     },
     "status-badge.tsx": {
       "export": "StatusBadge",
