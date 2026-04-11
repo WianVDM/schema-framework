@@ -1,5 +1,15 @@
 # @my-framework/core
 
+## 0.3.0
+
+### Minor Changes
+
+- [#16](https://github.com/WianVDM/schema-framework/pull/16) [`8b2f0bc`](https://github.com/WianVDM/schema-framework/commit/8b2f0bc38fc64ab41c789c690e01808e9cc08ed4) Thanks [@WianVDM](https://github.com/WianVDM)! - Add column reordering via @dnd-kit, onStepChange/onColumnOrderChange callbacks, shared isFieldVisible helper, and named DefaultFallbackComponent
+
+### Patch Changes
+
+- [#15](https://github.com/WianVDM/schema-framework/pull/15) [`303589e`](https://github.com/WianVDM/schema-framework/commit/303589e3cb183b5af1ef1e813d686d9a8deab996) Thanks [@WianVDM](https://github.com/WianVDM)! - Update wizard-schema
+
 ## 0.2.0
 
 ### Minor Changes

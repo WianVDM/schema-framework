@@ -1,5 +1,12 @@
 # showcase
 
+## 0.2.1
+
+### Patch Changes
+
+- Updated dependencies [[`303589e`](https://github.com/WianVDM/schema-framework/commit/303589e3cb183b5af1ef1e813d686d9a8deab996), [`8b2f0bc`](https://github.com/WianVDM/schema-framework/commit/8b2f0bc38fc64ab41c789c690e01808e9cc08ed4)]:
+  - @my-framework/core@0.3.0
+
 ## 0.1.2
 
 ### Patch Changes
