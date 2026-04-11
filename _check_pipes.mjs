@@ -1,5 +1,4 @@
 import { readFileSync } from 'fs'
-import { join } from 'path'
 
 const files = [
   'apps/showcase/src/.context.json',
