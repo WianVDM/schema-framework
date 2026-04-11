@@ -73,12 +73,15 @@
   "extDeps": {
     "__root.tsx": [
       "react",
-      "@tanstack/react-router"
+      "@tanstack/react-router",
+      "../app/primitives-provider.tsx",
+      "../lib/query-client.tsx"
     ],
     "demo-column-reordering.tsx": [
       "@tanstack/react-router",
       "@tanstack/react-query",
-      "@my-framework/core"
+      "@my-framework/core",
+      "../server/get-column-reorder-grid-schema.ts"
     ],
     "demo-date-picker.tsx": [
       "@tanstack/react-router",
@@ -88,41 +91,55 @@
     "demo-form-wizard.tsx": [
       "react",
       "@tanstack/react-router",
-      "@my-framework/core"
+      "@my-framework/core",
+      "../data/primitive-mappings.tsx",
+      "../server/get-wizard-form-schema.ts"
     ],
     "demo-form.tsx": [
       "@tanstack/react-router",
       "@tanstack/react-query",
-      "@my-framework/core"
+      "@my-framework/core",
+      "../server/get-contact-form-schema.ts"
     ],
     "demo-grid.tsx": [
       "@tanstack/react-router",
       "@tanstack/react-query",
-      "@my-framework/core"
+      "@my-framework/core",
+      "../server/get-user-grid-schema.ts",
+      "../server/get-users.ts",
+      "../stores/selection-store.ts"
     ],
     "demo-multi-select.tsx": [
       "@tanstack/react-router",
-      "@my-framework/core"
+      "@my-framework/core",
+      "../data/primitive-mappings.tsx",
+      "../server/get-multiselect-form-schema.ts"
     ],
     "demo-orders.tsx": [
       "@tanstack/react-router",
       "@tanstack/react-query",
-      "@my-framework/core"
+      "@my-framework/core",
+      "../server/get-order-grid-schema.ts",
+      "../server/get-orders.ts"
     ],
     "demo-registration.tsx": [
       "@tanstack/react-router",
       "@tanstack/react-query",
-      "@my-framework/core"
+      "@my-framework/core",
+      "../server/get-registration-form-schema.ts"
     ],
     "demo-support-ticket.tsx": [
       "@tanstack/react-router",
       "@tanstack/react-query",
-      "@my-framework/core"
+      "@my-framework/core",
+      "../server/get-support-ticket-form-schema.ts"
     ],
     "demo-virtual-grid.tsx": [
       "@tanstack/react-router",
       "@tanstack/react-query",
-      "@my-framework/core"
+      "@my-framework/core",
+      "../server/get-virtual-grid-schema.ts",
+      "../server/get-virtual-data.ts"
     ],
     "demo.tsx": [
       "@tanstack/react-router"

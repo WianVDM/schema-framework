@@ -36,8 +36,21 @@
     }
   },
   "extDeps": {
+    "as-data-key.ts": [
+      "../types/branded.ts"
+    ],
+    "deep-freeze.ts": [
+      "../types/readonly-deep.ts"
+    ],
     "default-fallback-component.tsx": [
       "react"
+    ],
+    "i18n.ts": [
+      "../types"
+    ],
+    "is-field-visible.ts": [
+      "../types",
+      "../validators"
     ]
   }
 }

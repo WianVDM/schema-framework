@@ -14,7 +14,8 @@
     "generate-context": "node scripts/generate-ai-context/index.mjs",
     "generate-context:force": "node scripts/generate-ai-context/index.mjs --force",
     "generate-context:check": "node scripts/generate-ai-context/index.mjs --check",
-    "compliance": "node scripts/compliance-check/index.mjs"
+    "compliance": "node scripts/compliance-check/index.mjs",
+    "preflight": "node scripts/ci-check/index.mjs"
   },
   "packageManager": "pnpm@10.33.0",
   "devDependencies": {
