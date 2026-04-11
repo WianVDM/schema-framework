@@ -28,7 +28,9 @@ export function Splitter({
   const containerRef = useRef<HTMLDivElement>(null)
   const sizesRef = useRef(sizes)
   sizesRef.current = sizes
-  const prevInitialSizesRef = useRef<readonly number[] | undefined>(initialSizes)
+  const prevInitialSizesRef = useRef<readonly number[] | undefined>(
+    initialSizes ? [...initialSizes] : undefined,
+  )
 
   const handleDragStart = useCallback(
     (index: number) => (e: React.MouseEvent) => {
@@ -88,7 +90,7 @@ export function Splitter({
       initialSizes &&
       JSON.stringify(initialSizes) !== JSON.stringify(prevInitialSizesRef.current)
     ) {
-      prevInitialSizesRef.current = initialSizes
+      prevInitialSizesRef.current = [...initialSizes]
       setSizes([...initialSizes])
     }
   }, [initialSizes])

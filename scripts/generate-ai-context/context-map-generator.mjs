@@ -59,7 +59,7 @@ export function generateContextMap(contexts) {
       lines.push('graph TD')
       for (const { dirPath, context } of dirs) {
         const dirId = dirPath.replace(/[/.]/g, '_').replace(/_+/g, '_')
-        const purpose = ` — ${resolvePurpose(context.purpose, 60)}`
+        const purpose = ` — ${sanitizeMermaid(resolvePurpose(context.purpose, 60))}`
         lines.push(`    ${dirId}["${dirPath}${purpose}"]`)
       }
       lines.push('```')
@@ -126,6 +126,15 @@ export function generateContextMap(contexts) {
 function truncate(str, maxLen) {
   if (str.length <= maxLen) return str
   return str.slice(0, maxLen - 3) + '...'
+}
+
+// NOTE: Sanitizes a string for safe use inside Mermaid node label quotes.
+function sanitizeMermaid(str) {
+  return str
+    .replace(/\\/g, '\\\\')   // backslashes first to avoid double-escaping
+    .replace(/"/g, '\\"')     // double quotes
+    .replace(/]/g, '\\]')     // closing brackets
+    .replace(/[\r\n]+/g, ' ') // newlines/carriage returns → spaces
 }
 
 // NOTE: Resolves a purpose string, falling back to a clear placeholder when missing or empty.
