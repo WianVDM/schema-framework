@@ -1,12 +1,13 @@
 {
   "$schema": "../../../../docs/ai/schemas/context-schema.json",
   "layer": 3,
-  "purpose": "",
+  "language": "typescript",
+  "purpose": "Zustand state stores for demo data (users, orders, form schemas)",
   "files": {
     "selection-store.ts": {
       "export": "createSelectionStore",
       "type": "function",
-      "desc": "createSelectionStore"
+      "desc": "Zustand store factory for grid row selection state"
     }
   },
   "extDeps": {

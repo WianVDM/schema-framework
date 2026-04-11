@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "symbol-index-manifest-schema.json",
+  "title": "Symbol Index Manifest",
+  "description": "Schema for docs/ai/symbol-index-manifest.json — layer to symbol index file map",
+  "type": "object",
+  "required": ["$schema", "generatedAt", "layers"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string", "description": "Relative path to this schema file" },
+    "generatedAt": { "type": "string", "format": "date-time", "description": "ISO 8601 timestamp of generation" },
+    "layers": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["file", "symbolCount"],
+        "additionalProperties": false,
+        "properties": {
+          "file": { "type": "string", "description": "Path to the layer's symbol index file" },
+          "symbolCount": { "type": "integer", "minimum": 0, "description": "Number of symbols in this layer" },
+          "description": { "type": "string", "description": "What this layer contains" }
+        }
+      }
+    }
+  }
+}

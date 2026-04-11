@@ -1,9 +1,10 @@
 import { useForm } from '@tanstack/react-form'
 import type { SchemaFormProps, FieldSchema } from '../types'
-import { validateFieldValue, evaluateCondition } from '../validators'
+import { validateFieldValue } from '../validators'
 import { FieldRenderer } from './field-renderer'
 import { usePrimitives } from '../context/primitives-context'
 import { resolveMessage } from '../helpers/i18n'
+import { isFieldVisible } from '../helpers/is-field-visible'
 
 export function SchemaForm({ schema, onSubmit, initialValues, onCancel }: SchemaFormProps) {
   const { Button } = usePrimitives()
@@ -120,14 +121,6 @@ export function SchemaForm({ schema, onSubmit, initialValues, onCancel }: Schema
       </form>
     </div>
   )
-}
-
-function isFieldVisible(
-  field: FieldSchema,
-  formValues: Record<string, unknown>
-): boolean {
-  if (!field.visibleWhen) return true
-  return evaluateCondition(field.visibleWhen, formValues)
 }
 
 function buildDefaults(

@@ -1,22 +1,23 @@
 {
   "$schema": "../../../../docs/ai/schemas/context-schema.json",
   "layer": 3,
-  "purpose": "",
+  "language": "typescript-jsx",
+  "purpose": "App-level providers (primitives context, query client, theme)",
   "files": {
     "entry-client.tsx": {
       "export": "*",
       "type": "component",
-      "desc": "entry-client"
+      "desc": "Client-side hydration entry point"
     },
     "entry-server.tsx": {
       "export": "*",
       "type": "component",
-      "desc": "entry-server"
+      "desc": "Server-side rendering entry point"
     },
     "primitives-provider.tsx": {
       "export": "AppPrimitivesProvider",
       "type": "function",
-      "desc": "AppPrimitivesProvider"
+      "desc": "Root provider wiring shadcn/ui components into PrimitivesContext"
     }
   },
   "extDeps": {

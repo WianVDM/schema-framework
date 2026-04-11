@@ -1,0 +1,21 @@
+graph LR
+    subgraph Authoring
+        DEV["Developer writes<br/>JSON schema"]
+    end
+    subgraph Data["Data Layer"]
+        MOCK["data/<br/>Mock schema files"]
+        SERVER["server/<br/>createServerFn"]
+    end
+    subgraph Core["Core Engine"]
+        VALIDATE["validators/<br/>Zod validation"]
+        RENDER["renderers/<br/>SchemaForm/Grid/Wizard"]
+    end
+    subgraph UI["UI Layer"]
+        ROUTE["routes/<br/>TanStack Start"]
+    end
+    DEV -->|defines| MOCK
+    MOCK -->|loaded by| SERVER
+    SERVER -->|useQuery| ROUTE
+    ROUTE -->|passes schema| VALIDATE
+    VALIDATE -->|validated schema| RENDER
+    RENDER -->|renders components| ROUTE

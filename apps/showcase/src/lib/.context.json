@@ -1,27 +1,28 @@
 {
   "$schema": "../../../../docs/ai/schemas/context-schema.json",
   "layer": 3,
-  "purpose": "",
+  "language": "typescript-jsx",
+  "purpose": "Shared utility functions (cn helper, serialization)",
   "files": {
     "query-client.tsx": {
       "export": "AppQueryProvider",
       "type": "function",
-      "desc": "AppQueryProvider"
+      "desc": "TanStack Query provider wrapper for the app"
     },
     "serializable-record.ts": {
       "export": "SerializableRecord",
       "type": "type",
-      "desc": "SerializableRecord"
+      "desc": "Type for JSON-serializable key-value records"
     },
     "to-serializable.ts": {
       "export": "toSerializable",
       "type": "function",
-      "desc": "toSerializable"
+      "desc": "Converts form data to SerializableRecord format"
     },
     "utils.ts": {
       "export": "cn",
       "type": "function",
-      "desc": "cn"
+      "desc": "Tailwind class merge utility (clsx + tailwind-merge)"
     }
   },
   "extDeps": {

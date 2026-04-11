@@ -1,5 +1,5 @@
 {
-  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$schema": "schemas/file-placement-schema.json",
   "rules": [
     { "when": "New schema type", "put": "packages/core/src/engine/types/", "file": "kebab-case.ts", "update": ["types/index.ts", "validators/", "renderers/field-renderer.tsx"] },
     { "when": "New Zod validator", "put": "packages/core/src/engine/validators/", "file": "kebab-case.ts", "update": ["validators/index.ts"] },

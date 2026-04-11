@@ -1,6 +1,7 @@
 {
   "$schema": "../../../../../docs/ai/schemas/context-schema.json",
   "layer": 2,
+  "language": "typescript-jsx",
   "purpose": "Utility functions: i18n, immutability, branded type helpers.",
   "files": {
     "as-data-key.ts": {
@@ -13,6 +14,11 @@
       "type": "function",
       "desc": "Recursively freezes objects"
     },
+    "default-fallback-component.tsx": {
+      "export": "DefaultFallbackComponent",
+      "type": "function",
+      "desc": "Default fallback component shown when a renderer fails"
+    },
     "i18n.ts": {
       "export": "resolveMessage",
       "type": "function",
@@ -22,6 +28,16 @@
       "export": "*",
       "type": "re-export",
       "desc": "Barrel re-exports"
+    },
+    "is-field-visible.ts": {
+      "export": "isFieldVisible",
+      "type": "function",
+      "desc": "Determines if a field should be visible based on conditions"
     }
+  },
+  "extDeps": {
+    "default-fallback-component.tsx": [
+      "react"
+    ]
   }
 }

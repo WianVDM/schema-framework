@@ -1,9 +1,9 @@
 name: Release
 
 on:
-  workflow_run:
-    workflows: ["CI"]
-    types: [completed]
+  # NOTE: Direct push trigger on main is intentional for the solo-developer 0.x.x phase.
+  # CI (build) runs within the release job itself, so every push is validated.
+  push:
     branches: [main]
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
@@ -16,12 +16,9 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    if: github.event.workflow_run.conclusion == 'success'
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -51,3 +48,48 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create GitHub Release
+        if: steps.changesets.outputs.published == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # NOTE: changesets/action outputs published packages as JSON.
+          # Create a GitHub Release for each published package version.
+          PACKAGES='${{ steps.changesets.outputs.publishedPackages }}'
+          echo "Published packages: $PACKAGES"
+
+          # Extract the core package version for the release tag
+          CORE_VERSION=$(echo "$PACKAGES" | node -e "
+            const data = JSON.parse(require('fs').readFileSync('/dev/stdin', 'utf8'));
+            const core = data.find(p => p.name === '@my-framework/core');
+            if (core) console.log(core.version);
+          " 2>/dev/null || true)
+
+          if [ -z "$CORE_VERSION" ]; then
+            echo "No @my-framework/core package found in published output — skipping release creation"
+            exit 0
+          fi
+
+          TAG="v${CORE_VERSION}"
+          echo "Creating GitHub Release for tag: $TAG"
+
+          # Check if release already exists on GitHub remote (not just local tags)
+          if gh release view "$TAG" 2>/dev/null; then
+            echo "Tag $TAG already exists — skipping release creation"
+            exit 0
+          fi
+
+          # Extract changelog section for this version
+          CHANGELOG=""
+          if [ -f "packages/core/CHANGELOG.md" ]; then
+            ESCAPED_VERSION=$(printf '%s' "$CORE_VERSION" | sed 's/[.^$*+?{}[\]|()\\]/\\&/g')
+            CHANGELOG=$(awk "/^## ${ESCAPED_VERSION}/{flag=1; next} /^## /{flag=0} flag" packages/core/CHANGELOG.md | head -100)
+          fi
+
+          BODY="${CHANGELOG:-Automated release for version ${CORE_VERSION}}"
+
+          gh release create "$TAG" \
+            --title "$TAG" \
+            --notes "$BODY" \
+            --target main

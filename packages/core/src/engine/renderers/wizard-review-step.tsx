@@ -1,5 +1,5 @@
 import type { FieldSchema, SelectOption } from '../types'
-import { evaluateCondition } from '../validators'
+import { isFieldVisible } from '../helpers/is-field-visible'
 import { usePrimitives } from '../context/primitives-context'
 
 interface WizardReviewStepProps {
@@ -56,14 +56,6 @@ export function WizardReviewStep({ steps, values, onEditStep, editable }: Wizard
       ))}
     </div>
   )
-}
-
-function isFieldVisible(
-  field: FieldSchema,
-  formValues: Record<string, unknown>
-): boolean {
-  if (!field.visibleWhen) return true
-  return evaluateCondition(field.visibleWhen, formValues)
 }
 
 function formatDisplayValue(value: unknown, field: FieldSchema): string {

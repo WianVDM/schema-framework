@@ -1,6 +1,7 @@
 {
   "$schema": "../../../../docs/ai/schemas/context-schema.json",
   "layer": 1,
+  "language": "typescript-jsx",
   "purpose": "Generic UI wrappers with no schema knowledge. Imports only React.",
   "files": {
     "address-data.ts": {

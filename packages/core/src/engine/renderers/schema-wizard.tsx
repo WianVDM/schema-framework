@@ -1,13 +1,14 @@
 import { useState, useCallback, useRef, useMemo } from 'react'
 import { useForm, type AnyFieldMetaBase } from '@tanstack/react-form'
 import type { SchemaWizardProps, FieldSchema, StepIndicatorProps } from '../types'
-import { validateFieldValue, evaluateCondition } from '../validators'
+import { validateFieldValue } from '../validators'
+import { isFieldVisible } from '../helpers/is-field-visible'
 import { FieldRenderer } from './field-renderer'
 import { WizardReviewStep } from './wizard-review-step'
 import { usePrimitives } from '../context/primitives-context'
 import { resolveMessage } from '../helpers/i18n'
 
-export function SchemaWizard({ schema, onSubmit, initialValues, onCancel }: SchemaWizardProps) {
+export function SchemaWizard({ schema, onSubmit, initialValues, onCancel, onStepChange }: SchemaWizardProps) {
   const { Button, StepIndicator } = usePrimitives()
   const [currentStep, setCurrentStep] = useState(0)
   const [visitedSteps, setVisitedSteps] = useState<ReadonlySet<number>>(() => new Set([0]))
@@ -60,17 +61,21 @@ export function SchemaWizard({ schema, onSubmit, initialValues, onCancel }: Sche
     const nextStep = currentStep + 1
     setVisitedSteps((prev) => new Set([...prev, nextStep]))
     setCurrentStep(nextStep)
-  }, [currentStep, currentFields, currentStepData.optional, form, hasReviewStep, isLastStep, validationMode, schema.steps])
+    onStepChange?.(nextStep, 'next')
+  }, [currentStep, currentFields, currentStepData.optional, form, hasReviewStep, isLastStep, validationMode, schema.steps, onStepChange])
 
   const handlePrevious = useCallback(() => {
     if (showReview) {
       setShowReview(false)
+      onStepChange?.(currentStep, 'previous')
       return
     }
     if (currentStep > 0) {
-      setCurrentStep(currentStep - 1)
+      const prevStep = currentStep - 1
+      setCurrentStep(prevStep)
+      onStepChange?.(prevStep, 'previous')
     }
-  }, [currentStep, showReview])
+  }, [currentStep, showReview, onStepChange])
 
   const handleEditStep = useCallback((stepIndex: number) => {
     setShowReview(false)
@@ -82,7 +87,8 @@ export function SchemaWizard({ schema, onSubmit, initialValues, onCancel }: Sche
     if (!visitedSteps.has(stepIndex)) return
     setShowReview(false)
     setCurrentStep(stepIndex)
-  }, [isNonLinear, visitedSteps])
+    onStepChange?.(stepIndex, 'jump')
+  }, [isNonLinear, visitedSteps, onStepChange])
 
   const StepIndicatorComponent = StepIndicator ?? DefaultStepIndicator
 
@@ -309,14 +315,6 @@ function buildWizardDefaults(
     }
   }
   return defaults
-}
-
-function isFieldVisible(
-  field: FieldSchema,
-  formValues: Record<string, unknown>
-): boolean {
-  if (!field.visibleWhen) return true
-  return evaluateCondition(field.visibleWhen, formValues)
 }
 
 async function validateStepFields(

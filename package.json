@@ -9,12 +9,16 @@
     "changeset": "changeset",
     "changeset:version": "changeset version",
     "changeset:publish": "changeset publish",
-    "prebuild": "node scripts/generate-ai-context.mjs",
-    "generate-context": "node scripts/generate-ai-context.mjs",
-    "generate-context:force": "node scripts/generate-ai-context.mjs --force"
+    "prebuild": "node scripts/generate-ai-context/index.mjs",
+    "postbuild": "node scripts/compliance-check/index.mjs",
+    "generate-context": "node scripts/generate-ai-context/index.mjs",
+    "generate-context:force": "node scripts/generate-ai-context/index.mjs --force",
+    "generate-context:check": "node scripts/generate-ai-context/index.mjs --check",
+    "compliance": "node scripts/compliance-check/index.mjs"
   },
   "packageManager": "pnpm@10.33.0",
   "devDependencies": {
+    "@changesets/changelog-github": "^0.6.0",
     "@changesets/cli": "^2.30.0",
     "turbo": "^2",
     "typescript": "^5.8"

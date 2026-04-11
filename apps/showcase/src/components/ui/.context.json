@@ -1,57 +1,58 @@
 {
   "$schema": "../../../../../docs/ai/schemas/context-schema.json",
   "layer": 3,
+  "language": "typescript-jsx",
   "purpose": "",
   "files": {
     "badge.tsx": {
       "export": "*",
       "type": "component",
-      "desc": "badge"
+      "desc": "Badge component (status variants, colors)"
     },
     "button.tsx": {
       "export": "*",
       "type": "component",
-      "desc": "button"
+      "desc": "Button component (variants, sizes, loading state)"
     },
     "checkbox.tsx": {
       "export": "*",
       "type": "component",
-      "desc": "checkbox"
+      "desc": "Checkbox component with label"
     },
     "dialog.tsx": {
       "export": "*",
       "type": "component",
-      "desc": "dialog"
+      "desc": "Modal dialog component (title, description, actions)"
     },
     "dropdown-menu.tsx": {
       "export": "*",
       "type": "component",
-      "desc": "dropdown-menu"
+      "desc": "Dropdown menu component (items, separators, groups)"
     },
     "input.tsx": {
       "export": "*",
       "type": "component",
-      "desc": "input"
+      "desc": "Text input component with error styling"
     },
     "label.tsx": {
       "export": "*",
       "type": "component",
-      "desc": "label"
+      "desc": "Form label component"
     },
     "select.tsx": {
       "export": "*",
       "type": "component",
-      "desc": "select"
+      "desc": "Select dropdown component (trigger, content, items)"
     },
     "table.tsx": {
       "export": "*",
       "type": "component",
-      "desc": "table"
+      "desc": "HTML table primitives (header, row, cell)"
     },
     "textarea.tsx": {
       "export": "*",
       "type": "component",
-      "desc": "textarea"
+      "desc": "Multi-line textarea component"
     }
   },
   "extDeps": {

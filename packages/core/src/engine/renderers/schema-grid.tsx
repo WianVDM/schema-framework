@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback, useRef } from 'react'
+import { useMemo, useState, useCallback, useRef, useEffect } from 'react'
 import {
   useReactTable,
   getCoreRowModel,
@@ -8,11 +8,15 @@ import {
   flexRender,
 } from '@tanstack/react-table'
 import { useVirtualizer } from '@tanstack/react-virtual'
+import { DndContext, closestCenter } from '@dnd-kit/core'
+import { SortableContext, arrayMove } from '@dnd-kit/sortable'
+import type { DragEndEvent } from '@dnd-kit/core'
 import type { SchemaGridProps, GridColumnSchema, VirtualScrollConfig } from '../types'
 import { usePrimitives } from '../context/primitives-context'
 import { GridToolbar } from './grid-toolbar'
 import { GridPagination } from './grid-pagination'
 import { GridColumnHeader } from './grid-column-header'
+import { SortableColumnHeader } from './sortable-column-header'
 import { resolveMessage } from '../helpers/i18n'
 
 const DEFAULT_OVERSCAN = 10
@@ -29,7 +33,7 @@ function resolveVirtualScrollConfig(
   return config
 }
 
-export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterChange }: SchemaGridProps) {
+export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterChange, onColumnOrderChange }: SchemaGridProps) {
   const {
     Table,
     TableHeader,
@@ -42,15 +46,20 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
 
   const [sorting, setSorting] = useState<import('@tanstack/react-table').SortingState>([])
   const [columnFilters, setColumnFilters] = useState<Record<string, string>>({})
+  const [columnOrder, setColumnOrder] = useState<string[]>(() => schema.columns.map((c) => c.key))
 
-  const virtualConfig = resolveVirtualScrollConfig(schema.virtualScroll)
-  const isVirtualScroll = virtualConfig !== null
-
-  const paginationConfig = typeof schema.pagination === 'object'
-    ? schema.pagination
-    : { pageSize: 10 }
-
-  const isServerMode = !!schema.serverPagination
+  // NOTE: Reconcile columnOrder when schema.columns changes (e.g. dynamic schemas).
+  // Adds any new keys and removes keys no longer in the schema.
+  useEffect(() => {
+    const schemaKeys = schema.columns.map((c) => c.key)
+    setColumnOrder((prev) => {
+      const existing = prev.filter((key) => schemaKeys.includes(key))
+      const added = schemaKeys.filter((key) => !prev.includes(key))
+      return added.length > 0 || existing.length !== prev.length
+        ? [...existing, ...added]
+        : prev
+    })
+  }, [schema.columns])
 
   const columnVisibility = useMemo(() => {
     const visibility: Record<string, boolean> = {}
@@ -61,6 +70,44 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
     }
     return visibility
   }, [schema.columns])
+
+  const isColumnVisible = (id: string) => columnVisibility[id] !== false
+
+  const isColumnReorderEnabled = schema.columnReorder === true
+
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+
+    const activeId = String(active.id)
+    const overId = String(over.id)
+
+    // NOTE: Compute reorder against visible columns only, preserving hidden column positions.
+    const visibleIds = columnOrder.filter(id => isColumnVisible(id))
+    const oldVisIndex = visibleIds.indexOf(activeId)
+    const newVisIndex = visibleIds.indexOf(overId)
+    if (oldVisIndex === -1 || newVisIndex === -1) return
+
+    const reorderedVisible = arrayMove(visibleIds, oldVisIndex, newVisIndex)
+
+    // Merge reordered visible IDs back into full columnOrder
+    let visIdx = 0
+    const mergedOrder = columnOrder.map(id =>
+      isColumnVisible(id) ? reorderedVisible[visIdx++] : id
+    )
+
+    setColumnOrder(mergedOrder)
+    onColumnOrderChange?.(mergedOrder)
+  }, [onColumnOrderChange, columnOrder, columnVisibility])
+
+  const virtualConfig = resolveVirtualScrollConfig(schema.virtualScroll)
+  const isVirtualScroll = virtualConfig !== null
+
+  const paginationConfig = typeof schema.pagination === 'object'
+    ? schema.pagination
+    : { pageSize: 10 }
+
+  const isServerMode = !!schema.serverPagination
 
   const columns = useMemo<import('@tanstack/react-table').ColumnDef<Record<string, unknown>>[]>(
     () => buildColumns(schema.columns, Badge, isServerMode),
@@ -78,7 +125,7 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
   const table = useReactTable({
     data: data as Record<string, unknown>[],
     columns,
-    state: { sorting },
+    state: { sorting, ...(isColumnReorderEnabled ? { columnOrder } : {}) },
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     ...(shouldPaginate
@@ -170,6 +217,11 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
     ? schema.serverPagination!.totalRecords
     : table.getFilteredRowModel().rows.length
 
+  const sortableColumnIds = useMemo(
+    () => columnOrder.filter(id => columnVisibility[id] !== false),
+    [columnOrder, columnVisibility]
+  )
+
   const renderHeaderRows = () =>
     table.getHeaderGroups().map((headerGroup) => (
       <TableRow key={headerGroup.id} aria-rowindex={1}>
@@ -177,22 +229,37 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
           const colDef = schema.columns.find(
             (c) => c.key === header.id
           )
+          const headerProps = {
+            header,
+            column: colDef,
+            filterValue: columnFilters[header.id] ?? '',
+            onFilterChange: (val: string) =>
+              handleFilterChange(header.id, val),
+            enableResizing: schema.resizable ?? false,
+            filterDisabled: disableFilters,
+          }
+          if (isColumnReorderEnabled) {
+            return (
+              <SortableColumnHeader key={header.id} {...headerProps} />
+            )
+          }
           return (
-            <GridColumnHeader
-              key={header.id}
-              header={header}
-              column={colDef}
-              filterValue={columnFilters[header.id] ?? ''}
-              onFilterChange={(val) =>
-                handleFilterChange(header.id, val)
-              }
-              enableResizing={schema.resizable ?? false}
-              filterDisabled={disableFilters}
-            />
+            <GridColumnHeader key={header.id} {...headerProps} />
           )
         })}
       </TableRow>
     ))
+
+  const wrapWithDndContext = (content: React.ReactNode) => {
+    if (!isColumnReorderEnabled) return content
+    return (
+      <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <SortableContext items={sortableColumnIds}>
+          {content}
+        </SortableContext>
+      </DndContext>
+    )
+  }
 
   const renderRow = (row: import('@tanstack/react-table').Row<Record<string, unknown>>, rowIndex: number) => (
     <TableRow
@@ -245,15 +312,16 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
         <GridToolbar table={table} columns={schema.columns} i18n={schema.i18n} disabled={isServerMode} />
       )}
       {isVirtualScroll ? (
-        <div
-          ref={scrollContainerRef}
-          className={borderedClasses}
-          style={{ overflow: 'auto', height: `${virtualConfig?.containerHeight ?? VIRTUAL_CONTAINER_HEIGHT}px` }}
-        >
-          <Table role="grid" aria-label={schema.title ?? 'Data grid'} aria-rowcount={totalRows + 1} style={{ width: '100%' }}>
-            <TableHeader>
-              {renderHeaderRows()}
-            </TableHeader>
+        wrapWithDndContext(
+          <div
+            ref={scrollContainerRef}
+            className={borderedClasses}
+            style={{ overflow: 'auto', height: `${virtualConfig?.containerHeight ?? VIRTUAL_CONTAINER_HEIGHT}px` }}
+          >
+            <Table role="grid" aria-label={schema.title ?? 'Data grid'} aria-rowcount={totalRows + 1} style={{ width: '100%' }}>
+              <TableHeader>
+                {renderHeaderRows()}
+              </TableHeader>
             <TableBody>
               {allRows.length === 0 ? (
                 <TableRow>
@@ -292,7 +360,8 @@ export function SchemaGrid({ schema, data, onRowClick, onPageChange, onFilterCha
             </TableBody>
           </Table>
         </div>
-      ) : (
+        )
+      ) : wrapWithDndContext(
         <div className={borderedClasses}>
           <Table role="grid" aria-label={schema.title ?? 'Data grid'} aria-rowcount={totalRows + 1}>
             <TableHeader>

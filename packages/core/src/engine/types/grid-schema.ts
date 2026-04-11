@@ -21,4 +21,5 @@ export interface GridSchema {
   readonly columnVisibility?: Readonly<Record<string, boolean>>
   readonly i18n?: I18nConfig
   readonly virtualScroll?: VirtualScrollConfig | boolean
+  readonly columnReorder?: boolean
 }

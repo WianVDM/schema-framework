@@ -1,42 +1,48 @@
 {
   "$schema": "../../../../docs/ai/schemas/context-schema.json",
   "layer": 3,
+  "language": "typescript",
   "purpose": "Server functions for data fetching (TanStack Start createServerFn).",
   "files": {
+    "get-column-reorder-grid-schema.ts": {
+      "export": "getColumnReorderGridSchema",
+      "type": "const",
+      "desc": "Server function returning column reorder grid schema"
+    },
     "get-contact-form-schema.ts": {
       "export": "getContactFormSchema",
       "type": "const",
-      "desc": "getContactFormSchema"
+      "desc": "Server function returning contact form schema"
     },
     "get-multiselect-form-schema.ts": {
       "export": "getMultiselectFormSchema",
       "type": "const",
-      "desc": "getMultiselectFormSchema"
+      "desc": "Server function returning multiselect form schema"
     },
     "get-order-grid-schema.ts": {
       "export": "getOrderGridSchema",
       "type": "const",
-      "desc": "getOrderGridSchema"
+      "desc": "Server function returning order grid schema"
     },
     "get-orders.ts": {
       "export": "getOrders",
       "type": "const",
-      "desc": "getOrders"
+      "desc": "Server function returning mock order data"
     },
     "get-registration-form-schema.ts": {
       "export": "getRegistrationFormSchema",
       "type": "const",
-      "desc": "getRegistrationFormSchema"
+      "desc": "Server function returning registration form schema"
     },
     "get-support-ticket-form-schema.ts": {
       "export": "getSupportTicketFormSchema",
       "type": "const",
-      "desc": "getSupportTicketFormSchema"
+      "desc": "Server function returning support ticket form schema"
     },
     "get-user-grid-schema.ts": {
       "export": "getUserGridSchema",
       "type": "const",
-      "desc": "getUserGridSchema"
+      "desc": "Server function returning user grid schema"
     },
     "get-users.ts": {
       "export": "getUsers",
@@ -46,12 +52,12 @@
     "get-virtual-data.ts": {
       "export": "getVirtualData",
       "type": "const",
-      "desc": "getVirtualData"
+      "desc": "Server function returning 10k-row virtual scroll dataset"
     },
     "get-virtual-grid-schema.ts": {
       "export": "getVirtualGridSchema",
       "type": "const",
-      "desc": "getVirtualGridSchema"
+      "desc": "Server function returning virtual scroll grid schema"
     },
     "get-wizard-form-schema.ts": {
       "export": "getWizardFormSchema",
@@ -60,6 +66,10 @@
     }
   },
   "extDeps": {
+    "get-column-reorder-grid-schema.ts": [
+      "@tanstack/react-start",
+      "@my-framework/core"
+    ],
     "get-contact-form-schema.ts": [
       "@tanstack/react-start",
       "@my-framework/core"

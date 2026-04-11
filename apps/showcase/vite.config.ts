@@ -13,6 +13,18 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return
+          if (id.includes('@tanstack')) return 'vendor-tanstack'
+          if (id.includes('lucide-react') || id.includes('@base-ui') || id.includes('class-variance-authority')) return 'vendor-ui'
+          if (id.includes('date-fns') || id.includes('zustand') || id.includes('/zod/')) return 'vendor-data'
+        },
+      },
+    },
+  },
   plugins: [
     tailwindcss(),
     tanstackStart(),

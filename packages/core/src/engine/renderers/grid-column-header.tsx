@@ -10,6 +10,14 @@ interface GridColumnHeaderProps {
   onFilterChange: (value: string) => void
   enableResizing: boolean
   filterDisabled?: boolean
+  dragHandleProps?: Record<string, unknown>
+  // NOTE: thRef/thStyle/thAttributes are injected by sortable wrappers to
+  // attach dnd-kit's ref, transform, and ARIA attributes directly to the <th>,
+  // preserving table semantics. role="columnheader" is set after the spread to
+  // override dnd-kit's default role="button".
+  thRef?: React.Ref<HTMLTableCellElement>
+  thStyle?: React.CSSProperties
+  thAttributes?: React.HTMLAttributes<HTMLTableCellElement>
 }
 
 export function GridColumnHeader({
@@ -19,6 +27,10 @@ export function GridColumnHeader({
   onFilterChange,
   enableResizing,
   filterDisabled = false,
+  dragHandleProps,
+  thRef,
+  thStyle,
+  thAttributes,
 }: GridColumnHeaderProps) {
   const { TableHead, Input } = usePrimitives()
 
@@ -28,8 +40,11 @@ export function GridColumnHeader({
 
   return (
     <TableHead
+      ref={thRef}
       key={header.id}
+      {...thAttributes}
       style={{
+        ...thStyle,
         width: column?.width,
         minWidth: isResizable ? 50 : undefined,
         position: 'relative',
@@ -45,6 +60,15 @@ export function GridColumnHeader({
       role="columnheader"
     >
       <div className="flex items-center gap-1">
+        {dragHandleProps && (
+          <span
+            {...dragHandleProps}
+            className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground select-none"
+            aria-label="Drag to reorder column"
+          >
+            ⠿
+          </span>
+        )}
         {header.column.getCanSort() ? (
           <button
             type="button"

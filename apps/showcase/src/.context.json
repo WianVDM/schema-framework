@@ -1,12 +1,13 @@
 {
   "$schema": "../../../docs/ai/schemas/context-schema.json",
   "layer": 3,
+  "language": "typescript-jsx",
   "purpose": "Showcase app entry point. TanStack Start file-based routing.",
   "files": {
     "router.tsx": {
       "export": "getRouter",
       "type": "function",
-      "desc": "getRouter"
+      "desc": "Creates TanStack Router instance with route tree and context"
     }
   },
   "extDeps": {

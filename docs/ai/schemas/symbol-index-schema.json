@@ -1,36 +1,28 @@
 {
   "$schema": "https://json-schema.org/draft-07/schema#",
   "$id": "symbol-index-schema.json",
-  "title": "Symbol Index",
-  "description": "Master lookup of all public exports across the codebase",
+  "title": "Symbol Index (Per-Layer)",
+  "description": "Schema for per-layer symbol index files. Symbols use array format for collision handling.",
   "type": "object",
-  "required": ["$schema", "symbols"],
+  "required": ["$schema", "layer", "generatedAt", "symbols"],
   "additionalProperties": false,
   "properties": {
-    "$schema": {
-      "type": "string",
-      "description": "Relative path to this schema file"
-    },
+    "$schema": { "type": "string" },
+    "layer": { "type": "integer", "minimum": 1, "maximum": 3 },
+    "generatedAt": { "type": "string", "format": "date-time" },
     "symbols": {
       "type": "object",
+      "description": "Map of export name → array of locations (handles name collisions)",
       "additionalProperties": {
-        "type": "object",
-        "required": ["file", "type", "layer"],
-        "additionalProperties": false,
-        "properties": {
-          "file": {
-            "type": "string",
-            "description": "Relative file path from monorepo root"
-          },
-          "type": {
-            "type": "string",
-            "enum": ["interface", "type", "function", "const", "component"],
-            "description": "Export type classification"
-          },
-          "layer": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 3
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["file", "type", "category"],
+          "additionalProperties": false,
+          "properties": {
+            "file": { "type": "string", "description": "Relative file path from project root" },
+            "type": { "type": "string", "enum": ["interface", "type", "function", "const", "component", "utility", "config"] },
+            "category": { "type": "string", "enum": ["dto", "component", "utility", "controller", "service", "config", "other"] }
           }
         }
       }

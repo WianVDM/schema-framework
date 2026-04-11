@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "error-taxonomy-schema.json",
+  "title": "Error Taxonomy",
+  "description": "Schema for docs/ai/error-taxonomy.json — exception hierarchy and usage context",
+  "type": "object",
+  "required": ["$schema", "exceptions"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string", "description": "Relative path to this schema file" },
+    "exceptions": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["namespace", "use", "retryable", "example"],
+        "additionalProperties": false,
+        "properties": {
+          "namespace": { "type": "string", "description": "Module or package where the exception is defined" },
+          "use": { "type": "string", "description": "When to throw this exception" },
+          "retryable": { "type": "boolean", "description": "Whether the operation can be retried after this error" },
+          "example": { "type": "string", "description": "Example throw statement" }
+        }
+      }
+    }
+  }
+}

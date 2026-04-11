@@ -2,6 +2,7 @@ import type { FieldRendererProps, SelectOption } from '../types'
 import type { AddressData } from '../../primitives/address-data'
 import { useEffect } from 'react'
 import { usePrimitives } from '../context/primitives-context'
+import { DefaultFallbackComponent } from '../helpers/default-fallback-component'
 
 export function FieldRenderer({ schema, value, onChange, error }: FieldRendererProps) {
   const {
@@ -155,7 +156,7 @@ export function FieldRenderer({ schema, value, onChange, error }: FieldRendererP
       )
 
     case 'date': {
-      const DatePickerComponent = DatePicker ?? (() => null)
+      const DatePickerComponent = DatePicker ?? DefaultFallbackComponent
       return (
         <div className="space-y-1">
           {labelElement}

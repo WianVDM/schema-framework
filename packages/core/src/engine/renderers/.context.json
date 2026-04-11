@@ -1,6 +1,7 @@
 {
   "$schema": "../../../../../docs/ai/schemas/context-schema.json",
   "layer": 2,
+  "language": "typescript-jsx",
   "purpose": "React renderers that consume schemas via PrimitivesContext.",
   "files": {
     "field-renderer.tsx": {
@@ -43,6 +44,11 @@
       "type": "function",
       "desc": "Renders multi-step wizard with form API validation and touched-state management"
     },
+    "sortable-column-header.tsx": {
+      "export": "SortableColumnHeader",
+      "type": "function",
+      "desc": "Drag-and-drop column header wrapper using @dnd-kit/sortable"
+    },
     "theme-provider.tsx": {
       "export": "ThemeProvider, ThemeContext",
       "type": "const",
@@ -66,11 +72,15 @@
     "schema-grid.tsx": [
       "grid-toolbar.tsx",
       "grid-pagination.tsx",
-      "grid-column-header.tsx"
+      "grid-column-header.tsx",
+      "sortable-column-header.tsx"
     ],
     "schema-wizard.tsx": [
       "field-renderer.tsx",
       "wizard-review-step.tsx"
+    ],
+    "sortable-column-header.tsx": [
+      "grid-column-header.tsx"
     ],
     "use-theme.ts": [
       "theme-provider.tsx"
@@ -78,35 +88,74 @@
   },
   "extDeps": {
     "field-renderer.tsx": [
-      "react"
+      "../types",
+      "../../primitives/address-data.ts",
+      "react",
+      "../context/primitives-context.tsx",
+      "../helpers/default-fallback-component.tsx"
     ],
     "grid-column-header.tsx": [
-      "@tanstack/react-table"
+      "@tanstack/react-table",
+      "../types",
+      "../context/primitives-context.tsx"
     ],
     "grid-pagination.tsx": [
-      "@tanstack/react-table"
+      "@tanstack/react-table",
+      "../types",
+      "../context/primitives-context.tsx",
+      "../helpers/i18n.ts"
     ],
     "grid-toolbar.tsx": [
       "react",
-      "@tanstack/react-table"
+      "@tanstack/react-table",
+      "../types",
+      "../context/primitives-context.tsx",
+      "../helpers/i18n.ts"
     ],
     "schema-form.tsx": [
-      "@tanstack/react-form"
+      "@tanstack/react-form",
+      "../types",
+      "../validators",
+      "../context/primitives-context.tsx",
+      "../helpers/i18n.ts",
+      "../helpers/is-field-visible.ts"
     ],
     "schema-grid.tsx": [
       "react",
       "@tanstack/react-table",
-      "@tanstack/react-virtual"
+      "@tanstack/react-virtual",
+      "@dnd-kit/core",
+      "@dnd-kit/sortable",
+      "../types",
+      "../context/primitives-context.tsx",
+      "../helpers/i18n.ts"
     ],
     "schema-wizard.tsx": [
       "react",
-      "@tanstack/react-form"
+      "@tanstack/react-form",
+      "../types",
+      "../validators",
+      "../helpers/is-field-visible.ts",
+      "../context/primitives-context.tsx",
+      "../helpers/i18n.ts"
+    ],
+    "sortable-column-header.tsx": [
+      "@dnd-kit/sortable",
+      "@tanstack/react-table",
+      "../types"
     ],
     "theme-provider.tsx": [
-      "react"
+      "react",
+      "../types"
     ],
     "use-theme.ts": [
-      "react"
+      "react",
+      "../types"
+    ],
+    "wizard-review-step.tsx": [
+      "../types",
+      "../helpers/is-field-visible.ts",
+      "../context/primitives-context.tsx"
     ]
   }
 }
