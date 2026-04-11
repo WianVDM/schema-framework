@@ -1,43 +1,61 @@
 # Version Status
 
-## Current Version: 0.2.0
-## Target Version: 0.3.0
+## Current Version: 0.3.0
+## Target Version: 0.3.1
 ## Active Milestone: Layout System
-## Milestone Status: NOT STARTED
+## Milestone Status: IN PROGRESS
 
-## Milestone Checklist (v0.3.0) — NOT STARTED
+## Milestone Checklist (v0.3.x) — IN PROGRESS
 
-### Slice 1: Layout Types & Panel Primitive
-- [ ] Add `LayoutType` union type (`border`, `accordion`, `card`, `hbox`, `vbox`)
-- [ ] Add `LayoutRegion` type (position, size, resizable, collapsible, min/max)
-- [ ] Add `LayoutPanel` type (title, content, collapsed state)
-- [ ] Add `LayoutSchema` type (layout type, regions, children)
-- [ ] Add `DashboardSchema` type (root dashboard composing layouts)
-- [ ] Add Zod validators for all layout types
-- [ ] Create `Panel` primitive in Layer 1 (collapsible, title-bearing container)
-- [ ] Create `Splitter` primitive in Layer 1 (draggable resize handle)
+### Slice 0: Housekeeping & Fixes (v0.3.0) — COMPLETE ✅
+- [x] Consume pending changesets via `pnpm changeset version`
+- [x] Mark v0.2.0 exit criteria in `docs/roadmap.md` as complete
+- [x] Create ADR-007 (`docs/decisions/007-layout-architecture.md`)
+- [x] Update `docs/VERSION_STATUS.md` with enhanced slice structure
+- [x] Investigate `changesets/action` workflow for changelog generation
+- [x] `pnpm build` passes
+
+### Slice 1: Layout Types, Validators & Primitives (v0.3.1)
+- [ ] Create `LayoutType` union type
+- [ ] Create `ResponsiveConfig` interface
+- [ ] Create `LayoutRegion` interface
+- [ ] Create `ContentSchema` discriminated union
+- [ ] Create `LayoutSchema` interface
+- [ ] Create `TabItem` interface
+- [ ] Create `TabSchema` interface
+- [ ] Create `DashboardSchema` interface
+- [ ] Create `LayoutRendererProps`, `DashboardRendererProps`, `TabsRendererProps`
+- [ ] Create Zod validators for all new types
+- [ ] Create `Panel` primitive in Layer 1
+- [ ] Create `Splitter` primitive in Layer 1
+- [ ] Install shadcn components (tabs, accordion, card, separator, collapsible, scroll-area, resizable)
+- [ ] Update `PrimitiveComponents` interface with new primitive slots
+- [ ] Update `primitive-mappings.tsx` with new components
 - [ ] `pnpm build` passes
 
-### Slice 2: Border Layout & SchemaLayout Renderer
-- [ ] Create `SchemaLayout` renderer supporting border layout
-- [ ] Implement resizable regions with Splitter primitive
-- [ ] Support north/south/east/west/center regions
+### Slice 2: Border Layout & SchemaPanel (v0.3.2)
+- [ ] Create `ContentRenderer` renderer
+- [ ] Create `SchemaPanel` renderer
+- [ ] Create `SchemaLayout` renderer (border layout)
+- [ ] Create mock data for border layout
 - [ ] Create showcase demo route (`/demo-border-layout`)
 - [ ] `pnpm build` passes
 
-### Slice 3: Accordion, Card, HBox, VBox Layouts
-- [ ] Implement accordion layout (vertically stacked collapsible panels)
-- [ ] Implement card/stack layout (one child at a time)
-- [ ] Implement hbox layout (horizontal flexbox)
-- [ ] Implement vbox layout (vertical flexbox)
+### Slice 3: Accordion, Card, HBox, VBox Layouts (v0.3.3)
+- [ ] Add accordion layout rendering to `SchemaLayout`
+- [ ] Add card/stack layout rendering to `SchemaLayout`
+- [ ] Add hbox layout rendering to `SchemaLayout`
+- [ ] Add vbox layout rendering to `SchemaLayout`
+- [ ] Create mock data for each layout type
 - [ ] Create showcase demo routes for each layout type
 - [ ] `pnpm build` passes
 
-### Slice 4: SchemaTabs & SchemaDashboard
-- [ ] Add `TabSchema`, `TabItem` types + Zod validators
+### Slice 4: SchemaTabs & SchemaDashboard (v0.3.4)
 - [ ] Create `SchemaTabs` renderer with lazy rendering
-- [ ] Create `SchemaDashboard` renderer (top-level composition)
-- [ ] Create showcase demo route (`/demo-dashboard`)
+- [ ] Create `SchemaDashboard` renderer
+- [ ] Create mock data for tabs and dashboard
+- [ ] Create showcase demo routes (`/demo-tabs`, `/demo-dashboard`)
+- [ ] Run `pnpm generate-context` to update all context maps
 - [ ] Ensure all layouts are responsive
 - [ ] `pnpm build` passes
 

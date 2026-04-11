@@ -78,13 +78,13 @@ See `docs/VERSION_STATUS.md` for the current target version and milestone progre
 - `SchemaWizard` — step-based form renderer
 
 **Exit Criteria:**
-- [ ] Grid with 10k+ rows scrolls smoothly via virtualization
-- [ ] DatePicker renders a calendar overlay for `type: 'date'` fields
-- [ ] Multi-select field allows adding/removing multiple values
-- [ ] Form wizard navigates between steps with per-step validation
-- [ ] Grid columns can be reordered via drag-and-drop
-- [ ] All new features have showcase demo routes
-- [ ] `pnpm build` passes with zero errors
+- [x] Grid with 10k+ rows scrolls smoothly via virtualization
+- [x] DatePicker renders a calendar overlay for `type: 'date'` fields
+- [x] Multi-select field allows adding/removing multiple values
+- [x] Form wizard navigates between steps with per-step validation
+- [x] Grid columns can be reordered via drag-and-drop
+- [x] All new features have showcase demo routes
+- [x] `pnpm build` passes with zero errors
 
 ---
 

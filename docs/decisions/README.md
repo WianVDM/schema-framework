@@ -35,3 +35,5 @@ Files are numbered sequentially: `001-short-title.md`, `002-short-title.md`, etc
 | 003 | [SemVer Changesets](003-semver-changesets.md) | Accepted |
 | 004 | [Version Branch Strategy (Staging Branches)](004-version-branch-strategy.md) | Superseded by ADR-005 |
 | 005 | [Versioned GitHub Flow](005-versioned-github-flow.md) | Accepted |
+| 006 | [AI Context System Optimization](006-ai-context-optimization.md) | Accepted |
+| 007 | [Layout System Architecture](007-layout-architecture.md) | Accepted |
