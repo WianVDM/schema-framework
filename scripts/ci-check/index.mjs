@@ -57,6 +57,7 @@ function main() {
 
   const allPassed = results.every(r => r.ok)
   const totalSteps = results.length
+  const passedCount = results.filter(r => r.ok).length
 
   console.log(`\n${COLORS.bold}═══ Summary ═══${COLORS.reset}`)
 
@@ -69,7 +70,7 @@ function main() {
     console.log(`\n${COLORS.green}${COLORS.bold}✅ All ${totalSteps}/${TURBO_PIPELINE.length} checks passed — safe to push${COLORS.reset}\n`)
     process.exit(0)
   } else {
-    console.log(`\n${COLORS.red}${COLORS.bold}❌ ${totalSteps}/${TURBO_PIPELINE.length} checks passed — fix failures before pushing${COLORS.reset}\n`)
+    console.log(`\n${COLORS.red}${COLORS.bold}❌ ${passedCount}/${TURBO_PIPELINE.length} checks passed — fix failures before pushing${COLORS.reset}\n`)
     process.exit(1)
   }
 }
