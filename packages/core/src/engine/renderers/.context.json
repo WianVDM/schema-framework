@@ -42,7 +42,7 @@
     "schema-wizard.tsx": {
       "export": "SchemaWizard",
       "type": "function",
-      "desc": "Renders multi-step wizard with form API validation and touched-state management"
+      "desc": "Renders multi-step wizard with API validation"
     },
     "sortable-column-header.tsx": {
       "export": "SortableColumnHeader",
@@ -62,7 +62,7 @@
     "wizard-review-step.tsx": {
       "export": "WizardReviewStep",
       "type": "function",
-      "desc": "Review step with conditional field filtering and select label resolution"
+      "desc": "Review step with conditional field filtering"
     }
   },
   "rels": {

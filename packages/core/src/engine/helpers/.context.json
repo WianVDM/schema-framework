@@ -4,10 +4,20 @@
   "language": "typescript-jsx",
   "purpose": "Utility functions: i18n, immutability, branded type helpers.",
   "files": {
+    "apply-responsive-classes.ts": {
+      "export": "applyResponsiveClasses",
+      "type": "function",
+      "desc": "Converts ResponsiveConfig to Tailwind utility classes"
+    },
     "as-data-key.ts": {
       "export": "asDataKey",
       "type": "function",
       "desc": "Constructs branded DataKey"
+    },
+    "content-type-guards.ts": {
+      "export": "isFormContent, isGridContent, isWizardContent, isTabsContent, isLayoutContent, isCustomContent",
+      "type": "function",
+      "desc": "Type guards for ContentSchema discrimination"
     },
     "deep-freeze.ts": {
       "export": "deepFreeze",
@@ -36,8 +46,19 @@
     }
   },
   "extDeps": {
+    "apply-responsive-classes.ts": [
+      "../types/responsive-config.ts"
+    ],
     "as-data-key.ts": [
       "../types/branded.ts"
+    ],
+    "content-type-guards.ts": [
+      "../types/content-schema.ts",
+      "../types/form-schema.ts",
+      "../types/grid-schema.ts",
+      "../types/wizard-schema.ts",
+      "../types/tab-schema.ts",
+      "../types/layout-schema.ts"
     ],
     "deep-freeze.ts": [
       "../types/readonly-deep.ts"

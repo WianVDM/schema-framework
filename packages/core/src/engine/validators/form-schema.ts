@@ -1,6 +1,6 @@
 import { z } from 'zod'
-import type { ZodIssue } from 'zod'
 import { fieldSchemaValidator } from './field-schema'
+import { formatZodIssue } from './shared-schemas'
 import type { ValidationResult } from './shared-schemas'
 
 export const formSchemaValidator = z.object({
@@ -21,10 +21,6 @@ export function validateFormSchema(data: unknown): ValidationResult {
   }
   return {
     success: false,
-    errors: result.error.issues.map(
-      (issue: ZodIssue) => issue.path.length > 0
-        ? `${issue.path.join('.')}: ${issue.message}`
-        : issue.message
-    ),
+    errors: result.error.issues.map(formatZodIssue),
   }
 }

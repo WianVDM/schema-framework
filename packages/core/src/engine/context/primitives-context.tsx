@@ -35,6 +35,7 @@ const primitivesContextDefaultValue: PrimitiveComponents = {
 export const PrimitivesContext = createContext<PrimitiveComponents>(
   primitivesContextDefaultValue
 )
+PrimitivesContext.displayName = 'PrimitivesContext'
 
 export function PrimitivesProvider({
   primitives,

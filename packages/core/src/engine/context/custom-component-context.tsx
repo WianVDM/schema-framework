@@ -1,0 +1,29 @@
+import { createContext, useContext } from 'react'
+import type { ReactNode } from 'react'
+import type { CustomComponentRegistry } from '../types/custom-component-registry'
+
+/** Silent empty fallback — custom components are always optional */
+const customComponentDefaultValue: CustomComponentRegistry = {}
+
+export const CustomComponentContext = createContext<CustomComponentRegistry>(
+  customComponentDefaultValue
+)
+CustomComponentContext.displayName = 'CustomComponentContext'
+
+export function CustomComponentProvider({
+  components,
+  children,
+}: {
+  components: CustomComponentRegistry
+  children: ReactNode
+}) {
+  return (
+    <CustomComponentContext.Provider value={components}>
+      {children}
+    </CustomComponentContext.Provider>
+  )
+}
+
+export function useCustomComponents(): CustomComponentRegistry {
+  return useContext(CustomComponentContext)
+}

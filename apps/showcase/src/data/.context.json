@@ -50,14 +50,14 @@
       "desc": "Row shape for order data (id, customer, amount, status)"
     },
     "primitive-mappings.tsx": {
-      "export": "primitives",
+      "export": "primitives, layoutPrimitives",
       "type": "const",
-      "desc": "Maps shadcn/ui components to PrimitiveComponents interface"
+      "desc": "Maps shadcn/ui to primitives and layoutPrimitives exports"
     },
     "registration-form-schema.ts": {
       "export": "registrationFormSchema",
       "type": "const",
-      "desc": "User registration form with address sub-fields and validation"
+      "desc": "User registration form with address sub-fields"
     },
     "support-ticket-form-schema.ts": {
       "export": "supportTicketFormSchema",
@@ -77,7 +77,7 @@
     "virtual-grid-row.ts": {
       "export": "VirtualGridRow",
       "type": "interface",
-      "desc": "Row shape for virtual scroll demo data (id, name, category, value)"
+      "desc": "Row shape for virtual scroll demo data"
     },
     "virtual-grid-schema.ts": {
       "export": "virtualGridSchema",
@@ -131,7 +131,14 @@
       "@/components/ui/dialog",
       "@/components/ui/dropdown-menu",
       "@/components/ui/select",
-      "@/components/ui/table"
+      "@/components/ui/table",
+      "@/components/ui/tabs",
+      "@/components/ui/accordion",
+      "@/components/ui/card",
+      "@/components/ui/separator",
+      "@/components/ui/collapsible",
+      "@/components/ui/scroll-area",
+      "@/components/ui/resizable"
     ],
     "registration-form-schema.ts": [
       "@my-framework/core"

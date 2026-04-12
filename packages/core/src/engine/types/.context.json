@@ -24,6 +24,31 @@
       "type": "type",
       "desc": "Condition operator literal union"
     },
+    "content-renderer-props.ts": {
+      "export": "ContentRendererProps",
+      "type": "interface",
+      "desc": "Props for ContentRenderer (content + custom components)"
+    },
+    "content-schema.ts": {
+      "export": "ContentSchema",
+      "type": "type",
+      "desc": "Discriminated union of all content types"
+    },
+    "custom-component-registry.ts": {
+      "export": "CustomComponentRegistry",
+      "type": "interface",
+      "desc": "Key-value map of injectable custom components"
+    },
+    "dashboard-renderer-props.ts": {
+      "export": "DashboardRendererProps",
+      "type": "interface",
+      "desc": "Props for SchemaDashboard renderer"
+    },
+    "dashboard-schema.ts": {
+      "export": "DashboardSchema",
+      "type": "interface",
+      "desc": "Root schema for dashboard layout with regions"
+    },
     "date-picker-config.ts": {
       "export": "DatePickerConfig",
       "type": "interface",
@@ -84,6 +109,41 @@
       "type": "re-export",
       "desc": "Barrel re-exports"
     },
+    "layout-primitive-components.ts": {
+      "export": "LayoutPrimitiveComponents",
+      "type": "interface",
+      "desc": "Map of layout primitives (Panel, Splitter, etc.)"
+    },
+    "layout-region.ts": {
+      "export": "LayoutRegion",
+      "type": "interface",
+      "desc": "Single region within a layout (position, size, content)"
+    },
+    "layout-renderer-props.ts": {
+      "export": "LayoutRendererProps",
+      "type": "interface",
+      "desc": "Props for SchemaLayout renderer"
+    },
+    "layout-schema.ts": {
+      "export": "LayoutSchema",
+      "type": "interface",
+      "desc": "Multi-region layout with type, regions, and optional spacing"
+    },
+    "panel-collapse-handler.ts": {
+      "export": "PanelCollapseHandler",
+      "type": "type",
+      "desc": "Callback type for panel collapse events"
+    },
+    "region-resize-handler.ts": {
+      "export": "RegionResizeHandler",
+      "type": "type",
+      "desc": "Callback type for region resize events"
+    },
+    "layout-type.ts": {
+      "export": "LayoutType",
+      "type": "type",
+      "desc": "Literal union of layout type strings"
+    },
     "multi-select-config.ts": {
       "export": "MultiSelectConfig",
       "type": "interface",
@@ -103,6 +163,11 @@
       "export": "ReadonlyDeep, DeepFrozen",
       "type": "type",
       "desc": "Recursive readonly wrappers"
+    },
+    "responsive-config.ts": {
+      "export": "ResponsiveConfig",
+      "type": "interface",
+      "desc": "Responsive breakpoints (hiddenBelow, collapsedBelow, etc.)"
     },
     "review-step-config.ts": {
       "export": "ReviewStepConfig",
@@ -154,6 +219,21 @@
       "type": "interface",
       "desc": "Step indicator primitive props"
     },
+    "tab-item.ts": {
+      "export": "TabItem",
+      "type": "interface",
+      "desc": "Single tab with id, label, and content"
+    },
+    "tab-schema.ts": {
+      "export": "TabSchema",
+      "type": "interface",
+      "desc": "Tab container with items and defaultTab"
+    },
+    "tabs-renderer-props.ts": {
+      "export": "TabsRendererProps",
+      "type": "interface",
+      "desc": "Props for SchemaTabs renderer"
+    },
     "theme-config.ts": {
       "export": "ThemeConfig",
       "type": "interface",
@@ -194,6 +274,24 @@
     "cell-value-renderer.ts": [
       "grid-column-schema.ts"
     ],
+    "content-renderer-props.ts": [
+      "content-schema.ts",
+      "custom-component-registry.ts"
+    ],
+    "content-schema.ts": [
+      "form-schema.ts",
+      "grid-schema.ts",
+      "wizard-schema.ts",
+      "layout-schema.ts",
+      "tab-schema.ts"
+    ],
+    "dashboard-renderer-props.ts": [
+      "dashboard-schema.ts"
+    ],
+    "dashboard-schema.ts": [
+      "layout-schema.ts",
+      "i18n-config.ts"
+    ],
     "field-condition.ts": [
       "condition-operator.ts"
     ],
@@ -225,6 +323,19 @@
       "virtual-scroll-config.ts",
       "branded.ts"
     ],
+    "layout-region.ts": [
+      "responsive-config.ts",
+      "content-schema.ts",
+      "i18n-config.ts"
+    ],
+    "layout-renderer-props.ts": [
+      "layout-schema.ts"
+    ],
+    "layout-schema.ts": [
+      "layout-type.ts",
+      "layout-region.ts",
+      "i18n-config.ts"
+    ],
     "multi-select-config.ts": [
       "select-option.ts"
     ],
@@ -242,6 +353,16 @@
       "wizard-schema.ts",
       "form-submit-handler.ts"
     ],
+    "tab-item.ts": [
+      "content-schema.ts"
+    ],
+    "tab-schema.ts": [
+      "tab-item.ts",
+      "i18n-config.ts"
+    ],
+    "tabs-renderer-props.ts": [
+      "tab-schema.ts"
+    ],
     "validation-rule.ts": [
       "validation-type.ts"
     ],
@@ -257,6 +378,12 @@
   },
   "extDeps": {
     "cell-value-renderer.ts": [
+      "react"
+    ],
+    "custom-component-registry.ts": [
+      "react"
+    ],
+    "layout-primitive-components.ts": [
       "react"
     ],
     "primitive-components.ts": [

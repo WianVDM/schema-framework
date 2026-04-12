@@ -34,6 +34,16 @@
       "type": "re-export",
       "desc": "Barrel re-exports"
     },
+    "panel.tsx": {
+      "export": "PanelProps, Panel",
+      "type": "const",
+      "desc": "Collapsible container; header, footer, toolbar, scrollable"
+    },
+    "splitter.tsx": {
+      "export": "SplitterProps, Splitter",
+      "type": "const",
+      "desc": "Resizable pane divider; direction, sizes, min/max, onResize"
+    },
     "status-badge.tsx": {
       "export": "StatusBadge",
       "type": "function",
@@ -61,6 +71,9 @@
       "date-fns"
     ],
     "file-upload.tsx": [
+      "react"
+    ],
+    "panel.tsx": [
       "react"
     ],
     "tag-input.tsx": [

@@ -4,6 +4,16 @@
   "language": "typescript-jsx",
   "purpose": "React context for injecting shadcn primitives into engine renderers.",
   "files": {
+    "custom-component-context.tsx": {
+      "export": "CustomComponentProvider, useCustomComponents, CustomComponentContext",
+      "type": "const",
+      "desc": "Context for custom component registry injection"
+    },
+    "layout-primitives-context.tsx": {
+      "export": "LayoutPrimitivesProvider, useLayoutPrimitives, LayoutPrimitivesContext",
+      "type": "const",
+      "desc": "Context for layout primitives (Panel, Splitter, etc.)"
+    },
     "primitives-context.tsx": {
       "export": "PrimitivesProvider, usePrimitives, PrimitivesContext",
       "type": "const",
@@ -11,8 +21,17 @@
     }
   },
   "extDeps": {
+    "custom-component-context.tsx": [
+      "react",
+      "../types/custom-component-registry.ts"
+    ],
+    "layout-primitives-context.tsx": [
+      "react",
+      "../types"
+    ],
     "primitives-context.tsx": [
-      "react"
+      "react",
+      "../types"
     ]
   }
 }

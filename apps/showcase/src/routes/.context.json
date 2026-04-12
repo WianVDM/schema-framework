@@ -47,7 +47,7 @@
     "demo-registration.tsx": {
       "export": "Route",
       "type": "const",
-      "desc": "Registration form with address sub-fields (/demo-registration)"
+      "desc": "Registration form with address sub-fields"
     },
     "demo-support-ticket.tsx": {
       "export": "Route",
