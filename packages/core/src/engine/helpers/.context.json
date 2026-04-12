@@ -7,7 +7,7 @@
     "apply-responsive-classes.ts": {
       "export": "applyResponsiveClasses",
       "type": "function",
-      "desc": "TODO: describe applyResponsiveClasses"
+      "desc": "Converts ResponsiveConfig to Tailwind utility classes"
     },
     "as-data-key.ts": {
       "export": "asDataKey",
@@ -17,7 +17,7 @@
     "content-type-guards.ts": {
       "export": "isFormContent, isGridContent, isWizardContent, isTabsContent, isLayoutContent, isCustomContent",
       "type": "function",
-      "desc": "TODO: describe isFormContent (+5 more)"
+      "desc": "Type guards for ContentSchema discrimination"
     },
     "deep-freeze.ts": {
       "export": "deepFreeze",

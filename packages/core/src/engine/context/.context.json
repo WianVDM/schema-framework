@@ -7,12 +7,12 @@
     "custom-component-context.tsx": {
       "export": "CustomComponentProvider, useCustomComponents, CustomComponentContext",
       "type": "const",
-      "desc": "TODO: describe CustomComponentProvider (+2 more)"
+      "desc": "Context for custom component registry injection"
     },
     "layout-primitives-context.tsx": {
       "export": "LayoutPrimitivesProvider, useLayoutPrimitives, LayoutPrimitivesContext",
       "type": "const",
-      "desc": "TODO: describe LayoutPrimitivesProvider (+2 more)"
+      "desc": "Context for layout primitives (Panel, Splitter, etc.)"
     },
     "primitives-context.tsx": {
       "export": "PrimitivesProvider, usePrimitives, PrimitivesContext",

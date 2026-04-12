@@ -1,4 +1,5 @@
 import { createContext, useContext } from 'react'
+import type { ReactNode } from 'react'
 import type { CustomComponentRegistry } from '../types/custom-component-registry'
 
 /** Silent empty fallback — custom components are always optional */
@@ -13,7 +14,7 @@ export function CustomComponentProvider({
   children,
 }: {
   components: CustomComponentRegistry
-  children: React.ReactNode
+  children: ReactNode
 }) {
   return (
     <CustomComponentContext.Provider value={components}>

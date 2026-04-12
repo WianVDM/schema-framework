@@ -97,6 +97,66 @@ export function Splitter({
 
   const isHorizontal = direction === 'horizontal'
 
+  const handleKeyDown = useCallback(
+    (index: number) => (e: React.KeyboardEvent) => {
+      const container = containerRef.current
+      if (!container) return
+
+      const totalSize = isHorizontal ? container.offsetWidth : container.offsetHeight
+      const step = totalSize * 0.02 // 2% per key press
+      const pageStep = totalSize * 0.1 // 10% per PageUp/Down
+
+      let delta = 0
+      switch (e.key) {
+        case isHorizontal ? 'ArrowLeft' : 'ArrowUp':
+          delta = -step
+          break
+        case isHorizontal ? 'ArrowRight' : 'ArrowDown':
+          delta = step
+          break
+        case 'Home':
+          delta = -sizesRef.current[index]
+          break
+        case 'End': {
+          const neighborSize = sizesRef.current[index + 1] ?? 0
+          delta = neighborSize
+          break
+        }
+        case 'PageUp':
+          delta = -pageStep
+          break
+        case 'PageDown':
+          delta = pageStep
+          break
+        default:
+          return
+      }
+
+      e.preventDefault()
+      const currentSizes = [...sizesRef.current]
+      const minPct = (minSize / totalSize) * 100
+      const maxPct = (maxSize / totalSize) * 100
+
+      const leftMin = minPct - currentSizes[index]
+      const rightMin = currentSizes[index + 1] - maxPct
+      const leftMax = maxPct - currentSizes[index]
+      const rightMax = currentSizes[index + 1] - minPct
+
+      const allowedDelta = Math.min(
+        Math.max(delta, Math.max(leftMin, rightMin)),
+        Math.min(leftMax, rightMax),
+      )
+
+      if (Math.abs(allowedDelta) < 0.01) return
+
+      currentSizes[index] += allowedDelta
+      currentSizes[index + 1] -= allowedDelta
+      setSizes(currentSizes)
+      onResize?.(currentSizes)
+    },
+    [isHorizontal, minSize, maxSize, onResize],
+  )
+
   return (
     <div
       ref={containerRef}
@@ -111,6 +171,8 @@ export function Splitter({
           {index < panelCount - 1 && (
             <div
               onMouseDown={handleDragStart(index)}
+              onKeyDown={handleKeyDown(index)}
+              tabIndex={0}
               className={`flex-shrink-0 ${
                 isHorizontal
                   ? 'w-1 cursor-col-resize hover:bg-primary/20'
@@ -118,6 +180,9 @@ export function Splitter({
               } bg-border transition-colors`}
               role="separator"
               aria-orientation={isHorizontal ? 'vertical' : 'horizontal'}
+              aria-valuenow={sizes[index]}
+              aria-valuemin={0}
+              aria-valuemax={100}
             />
           )}
         </Fragment>

@@ -27,10 +27,10 @@ export const layoutSchemaValidator = z.object({
   regions: z
     .array(layoutRegionValidator)
     .min(1, 'LayoutSchema must have at least one region'),
-  gap: z.number().int().min(0).optional(),
+  gap: z.number().min(0).optional(),
   padding: z.union([
-    z.number().int().min(0),
-    z.tuple([z.number().int().min(0), z.number().int().min(0)]),
+    z.number().min(0),
+    z.tuple([z.number().min(0), z.number().min(0)]),
   ]).optional(),
   className: z.string().optional(),
   i18n: i18nConfigSchema.optional(),

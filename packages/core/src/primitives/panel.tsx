@@ -30,9 +30,11 @@ export function Panel({
 
   const handleToggle = useCallback(() => {
     const next = !isCollapsed
-    setInternalCollapsed(next)
+    if (controlledCollapsed === undefined) {
+      setInternalCollapsed(next)
+    }
     onCollapse?.(next)
-  }, [isCollapsed, onCollapse])
+  }, [isCollapsed, onCollapse, controlledCollapsed])
 
   return (
     <div className={`rounded-lg border bg-card text-card-foreground shadow-sm ${className}`}>

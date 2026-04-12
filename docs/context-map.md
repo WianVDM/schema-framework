@@ -61,7 +61,7 @@ graph TD
 graph TD
     apps_showcase_src["apps/showcase/src — Showcase app entry point. TanStack Start file-based routing."]
     apps_showcase_src_app["apps/showcase/src/app — App-level providers (primitives context, query client, th..."]
-    apps_showcase_src_components_ui["apps/showcase/src/components/ui — TODO: describe purpose"]
+    apps_showcase_src_components_ui["apps/showcase/src/components/ui — shadcn/ui-style components built on base-ui primitives"]
     apps_showcase_src_data["apps/showcase/src/data — Mock schema definitions and static data for showcase demos"]
     apps_showcase_src_lib["apps/showcase/src/lib — Shared utility functions (cn helper, serialization)"]
     apps_showcase_src_routes["apps/showcase/src/routes — TanStack Start file-based routes for showcase app pages a..."]
@@ -73,7 +73,7 @@ graph TD
 |-----------|---------|-------|
 | `apps/showcase/src` | Showcase app entry point. TanStack Start file-based routing. | 1 |
 | `apps/showcase/src/app` | App-level providers (primitives context, query client, theme) | 3 |
-| `apps/showcase/src/components/ui` | TODO: describe purpose | 17 |
+| `apps/showcase/src/components/ui` | shadcn/ui-style components built on base-ui primitives | 17 |
 | `apps/showcase/src/data` | Mock schema definitions and static data for showcase demos | 17 |
 | `apps/showcase/src/lib` | Shared utility functions (cn helper, serialization) | 4 |
 | `apps/showcase/src/routes` | TanStack Start file-based routes for showcase app pages and demos | 13 |

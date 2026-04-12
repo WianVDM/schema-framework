@@ -1,4 +1,5 @@
 import { createContext, useContext } from 'react'
+import type { ReactNode } from 'react'
 import type { LayoutPrimitiveComponents } from '../types'
 
 const layoutPrimitivesDefaultValue: LayoutPrimitiveComponents = {
@@ -24,7 +25,7 @@ export function LayoutPrimitivesProvider({
   children,
 }: {
   primitives: LayoutPrimitiveComponents
-  children: React.ReactNode
+  children: ReactNode
 }) {
   return (
     <LayoutPrimitivesContext.Provider value={primitives}>
@@ -33,12 +34,15 @@ export function LayoutPrimitivesProvider({
   )
 }
 
+let warnedMissingProvider = false
+
 export function useLayoutPrimitives(): LayoutPrimitiveComponents {
   const ctx = useContext(LayoutPrimitivesContext)
 
   const isDefault =
     ctx === layoutPrimitivesDefaultValue
-  if (isDefault) {
+  if (isDefault && !warnedMissingProvider) {
+    warnedMissingProvider = true
     console.warn(
       'useLayoutPrimitives: No LayoutPrimitivesProvider found. ' +
         'Ensure your app wraps routes with <LayoutPrimitivesProvider>.'

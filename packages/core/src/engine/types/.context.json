@@ -27,17 +27,17 @@
     "content-schema.ts": {
       "export": "ContentSchema",
       "type": "type",
-      "desc": "TODO: describe ContentSchema"
+      "desc": "Discriminated union of all content types"
     },
     "custom-component-registry.ts": {
       "export": "CustomComponentRegistry",
       "type": "interface",
-      "desc": "TODO: describe CustomComponentRegistry"
+      "desc": "Key-value map of injectable custom components"
     },
     "dashboard-schema.ts": {
       "export": "DashboardSchema",
       "type": "interface",
-      "desc": "TODO: describe DashboardSchema"
+      "desc": "Root schema for dashboard layout with regions"
     },
     "date-picker-config.ts": {
       "export": "DatePickerConfig",
@@ -102,27 +102,27 @@
     "layout-primitive-components.ts": {
       "export": "LayoutPrimitiveComponents",
       "type": "interface",
-      "desc": "TODO: describe LayoutPrimitiveComponents"
+      "desc": "Map of layout primitives (Panel, Splitter, etc.)"
     },
     "layout-region.ts": {
       "export": "LayoutRegion",
       "type": "interface",
-      "desc": "TODO: describe LayoutRegion"
+      "desc": "Single region within a layout (position, size, content)"
     },
     "layout-renderer-props.ts": {
       "export": "LayoutRendererProps, DashboardRendererProps, TabsRendererProps, ContentRendererProps",
       "type": "interface",
-      "desc": "TODO: describe LayoutRendererProps (+3 more)"
+      "desc": "Renderer props for layout, dashboard, tabs, content"
     },
     "layout-schema.ts": {
       "export": "LayoutSchema",
       "type": "interface",
-      "desc": "TODO: describe LayoutSchema"
+      "desc": "Multi-region layout with direction and gap"
     },
     "layout-type.ts": {
       "export": "LayoutType",
       "type": "type",
-      "desc": "TODO: describe LayoutType"
+      "desc": "Literal union of layout type strings"
     },
     "multi-select-config.ts": {
       "export": "MultiSelectConfig",
@@ -137,7 +137,7 @@
     "panel-props.ts": {
       "export": "PanelProps",
       "type": "interface",
-      "desc": "TODO: describe PanelProps"
+      "desc": "Props for Panel primitive (collapsible, scrollable)"
     },
     "primitive-components.ts": {
       "export": "PrimitiveComponents",
@@ -152,7 +152,7 @@
     "responsive-config.ts": {
       "export": "ResponsiveConfig",
       "type": "interface",
-      "desc": "TODO: describe ResponsiveConfig"
+      "desc": "Responsive breakpoints (hiddenBelow, collapsedBelow, etc.)"
     },
     "review-step-config.ts": {
       "export": "ReviewStepConfig",
@@ -197,7 +197,7 @@
     "splitter-props.ts": {
       "export": "SplitterProps",
       "type": "interface",
-      "desc": "TODO: describe SplitterProps"
+      "desc": "Props for Splitter primitive (direction, min/max size)"
     },
     "status-config.ts": {
       "export": "StatusConfig",
@@ -212,12 +212,12 @@
     "tab-item.ts": {
       "export": "TabItem",
       "type": "interface",
-      "desc": "TODO: describe TabItem"
+      "desc": "Single tab with id, label, and content"
     },
     "tab-schema.ts": {
       "export": "TabSchema",
       "type": "interface",
-      "desc": "TODO: describe TabSchema"
+      "desc": "Tab container with items and defaultTab"
     },
     "theme-config.ts": {
       "export": "ThemeConfig",

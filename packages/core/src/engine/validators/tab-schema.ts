@@ -16,12 +16,24 @@ const tabItemValidator = z.object({
 export const tabSchemaValidator = z.object({
   tabs: z
     .array(tabItemValidator)
-    .min(1, 'TabSchema must have at least one tab'),
+    .min(1, 'TabSchema must have at least one tab')
+    .refine(
+      (tabs) => new Set(tabs.map((t) => t.id)).size === tabs.length,
+      { message: 'Tab IDs must be unique within a TabSchema' }
+    ),
   defaultTab: z.string().optional(),
   lazy: z.boolean().optional(),
   className: z.string().optional(),
   i18n: i18nConfigSchema.optional(),
-}).strict()
+}).strict().superRefine((schema, ctx) => {
+  if (schema.defaultTab !== undefined && !schema.tabs.some((t) => t.id === schema.defaultTab)) {
+    ctx.addIssue({
+      code: 'custom',
+      path: ['defaultTab'],
+      message: `defaultTab "${schema.defaultTab}" does not match any tab ID`,
+    })
+  }
+})
 
 export function validateTabSchema(data: unknown): ValidationResult {
   const result = tabSchemaValidator.safeParse(data)

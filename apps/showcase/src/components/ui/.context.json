@@ -2,12 +2,12 @@
   "$schema": "../../../../../docs/ai/schemas/context-schema.json",
   "layer": 3,
   "language": "typescript-jsx",
-  "purpose": "",
+  "purpose": "shadcn/ui-style components built on base-ui primitives",
   "files": {
     "accordion.tsx": {
       "export": "*",
       "type": "component",
-      "desc": "TODO: describe accordion"
+      "desc": "Accordion with expand/collapse sections"
     },
     "badge.tsx": {
       "export": "*",
@@ -22,7 +22,7 @@
     "card.tsx": {
       "export": "*",
       "type": "component",
-      "desc": "TODO: describe card"
+      "desc": "Card container with header, content, footer"
     },
     "checkbox.tsx": {
       "export": "*",
@@ -32,7 +32,7 @@
     "collapsible.tsx": {
       "export": "*",
       "type": "component",
-      "desc": "TODO: describe collapsible"
+      "desc": "Collapsible section with toggle trigger"
     },
     "dialog.tsx": {
       "export": "*",
@@ -57,12 +57,12 @@
     "resizable.tsx": {
       "export": "*",
       "type": "component",
-      "desc": "TODO: describe resizable"
+      "desc": "Resizable panel group with drag handles"
     },
     "scroll-area.tsx": {
       "export": "*",
       "type": "component",
-      "desc": "TODO: describe scroll-area"
+      "desc": "Scrollable area with custom scrollbar"
     },
     "select.tsx": {
       "export": "*",
@@ -72,7 +72,7 @@
     "separator.tsx": {
       "export": "*",
       "type": "component",
-      "desc": "TODO: describe separator"
+      "desc": "Horizontal or vertical divider line"
     },
     "table.tsx": {
       "export": "*",
@@ -82,7 +82,7 @@
     "tabs.tsx": {
       "export": "*",
       "type": "component",
-      "desc": "TODO: describe tabs"
+      "desc": "Tabs with list, triggers, and panels"
     },
     "textarea.tsx": {
       "export": "*",

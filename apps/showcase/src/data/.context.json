@@ -52,7 +52,7 @@
     "primitive-mappings.tsx": {
       "export": "primitives, layoutPrimitives",
       "type": "const",
-      "desc": "Maps shadcn/ui components to PrimitiveComponents interface"
+      "desc": "Maps shadcn/ui to primitives and layoutPrimitives exports"
     },
     "registration-form-schema.ts": {
       "export": "registrationFormSchema",
