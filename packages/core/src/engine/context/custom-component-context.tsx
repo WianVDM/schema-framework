@@ -8,6 +8,7 @@ const customComponentDefaultValue: CustomComponentRegistry = {}
 export const CustomComponentContext = createContext<CustomComponentRegistry>(
   customComponentDefaultValue
 )
+CustomComponentContext.displayName = 'CustomComponentContext'
 
 export function CustomComponentProvider({
   components,

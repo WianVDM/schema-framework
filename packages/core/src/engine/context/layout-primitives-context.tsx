@@ -19,6 +19,7 @@ const layoutPrimitivesDefaultValue: LayoutPrimitiveComponents = {
 export const LayoutPrimitivesContext = createContext<LayoutPrimitiveComponents>(
   layoutPrimitivesDefaultValue
 )
+LayoutPrimitivesContext.displayName = 'LayoutPrimitivesContext'
 
 export function LayoutPrimitivesProvider({
   primitives,

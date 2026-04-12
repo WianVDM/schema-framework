@@ -23,6 +23,8 @@ Thumbs.db
 
 # AI-specific rules, hooks, and workflows
 .clinerules/
+.agent/
+AGENTS.md
 
 # Docs — implementation plans are ephemeral working documents, not tracked
 docs/plans/

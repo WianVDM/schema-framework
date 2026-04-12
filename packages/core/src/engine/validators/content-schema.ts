@@ -1,10 +1,10 @@
 import { z } from 'zod'
-import type { ZodIssue } from 'zod'
 import { formSchemaValidator } from './form-schema'
 import { gridSchemaValidator } from './grid-schema'
 import { wizardSchemaValidator } from './wizard-schema'
 import { tabSchemaValidator } from './tab-schema'
 import { layoutSchemaValidator } from './layout-schema'
+import { formatZodIssue } from './shared-schemas'
 import type { ValidationResult } from './shared-schemas'
 
 // NOTE: Circular dependency chain: content-schema ↔ tab-schema, content-schema ↔ layout-schema.
@@ -46,10 +46,6 @@ export function validateContentSchema(data: unknown): ValidationResult {
   }
   return {
     success: false,
-    errors: result.error.issues.map(
-      (issue: ZodIssue) => issue.path.length > 0
-        ? `${issue.path.join('.')}: ${issue.message}`
-        : issue.message
-    ),
+    errors: result.error.issues.map(formatZodIssue),
   }
 }

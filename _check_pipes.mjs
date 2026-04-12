@@ -1,22 +1,23 @@
-import { readFileSync } from 'fs'
+import { readFileSync, readdirSync } from 'fs'
+import { join } from 'path'
+import { SCAN_ROOTS } from './scripts/shared/constants.mjs'
 
-const files = [
-  'apps/showcase/src/.context.json',
-  'apps/showcase/src/app/.context.json',
-  'apps/showcase/src/components/ui/.context.json',
-  'apps/showcase/src/data/.context.json',
-  'apps/showcase/src/lib/.context.json',
-  'apps/showcase/src/routes/.context.json',
-  'apps/showcase/src/server/.context.json',
-  'apps/showcase/src/stores/.context.json',
-  'packages/core/src/engine/.context.json',
-  'packages/core/src/engine/context/.context.json',
-  'packages/core/src/engine/helpers/.context.json',
-  'packages/core/src/engine/renderers/.context.json',
-  'packages/core/src/engine/types/.context.json',
-  'packages/core/src/engine/validators/.context.json',
-  'packages/core/src/primitives/.context.json',
-]
+const files = []
+for (const root of SCAN_ROOTS) {
+  try {
+    const entries = readdirSync(root, { recursive: true, withFileTypes: true })
+    for (const entry of entries) {
+      if (entry.isFile() && entry.name === '.context.json') {
+        // Handle Node.js < 20 where parentPath is not available
+        const parentPath = entry.parentPath || entry.path
+        files.push(join(parentPath, entry.name))
+      }
+    }
+  } catch (e) {
+    console.error(`Failed to scan directory ${root}: ${e.message}`)
+    process.exitCode = 1
+  }
+}
 
 let found = false
 for (const f of files) {
@@ -25,7 +26,12 @@ for (const f of files) {
     if (d.purpose && d.purpose.includes('|')) {
       console.log('PIPE FOUND in:', f, '-- purpose:', d.purpose)
       found = true
+      process.exitCode = 1
     }
-  } catch (e) {}
+  } catch (e) {
+    console.error(`Failed to read or parse ${f}: ${e.message}`)
+    process.exitCode = 1
+  }
 }
+
 if (!found) console.log('No pipe characters found in any purpose field.')

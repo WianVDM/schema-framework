@@ -72,7 +72,8 @@ export function generateContextMap(contexts) {
     for (const { dirPath, context } of dirs) {
       const fileCount = (typeof context.files === 'object' && context.files !== null) ? Object.keys(context.files).length : 0
       const purpose = resolvePurpose(context.purpose, 80)
-      lines.push(`| \`${dirPath}\` | ${purpose} | ${fileCount} |`)
+      const escapedPurpose = purpose.replace(/\|/g, '\\|').replace(/[\r\n]+/g, ' ')
+      lines.push(`| \`${dirPath}\` | ${escapedPurpose} | ${fileCount} |`)
     }
     lines.push('')
   }

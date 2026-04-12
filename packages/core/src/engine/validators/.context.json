@@ -55,7 +55,7 @@
       "desc": "Responsive breakpoint config validator"
     },
     "shared-schemas.ts": {
-      "export": "ValidationResult, fieldTypeSchema, selectOptionSchema, validationRuleSchema, fieldConditionSchema, fileUploadConfigSchema, datePickerConfigSchema, multiSelectConfigSchema, paginationConfigSchema, columnFilterConfigSchema, statusConfigSchema, serverPaginationConfigSchema, i18nConfigSchema, virtualScrollConfigSchema",
+      "export": "ValidationResult, formatZodIssue, fieldTypeSchema, selectOptionSchema, validationRuleSchema, fieldConditionSchema, fileUploadConfigSchema, datePickerConfigSchema, multiSelectConfigSchema, paginationConfigSchema, columnFilterConfigSchema, statusConfigSchema, serverPaginationConfigSchema, i18nConfigSchema, virtualScrollConfigSchema",
       "type": "const",
       "desc": "Shared Zod schemas"
     },

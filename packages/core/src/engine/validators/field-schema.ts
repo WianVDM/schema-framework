@@ -1,5 +1,4 @@
 import { z } from 'zod'
-import type { ZodIssue } from 'zod'
 import {
   fieldTypeSchema,
   selectOptionSchema,
@@ -8,6 +7,7 @@ import {
   fileUploadConfigSchema,
   datePickerConfigSchema,
   multiSelectConfigSchema,
+  formatZodIssue,
 } from './shared-schemas'
 import type { ValidationResult } from './shared-schemas'
 
@@ -49,8 +49,6 @@ export function validateFieldSchema(data: unknown): ValidationResult {
   }
   return {
     success: false,
-    errors: result.error.issues.map(
-      (issue: ZodIssue) => `${issue.path.join('.')}: ${issue.message}`
-    ),
+    errors: result.error.issues.map(formatZodIssue),
   }
 }

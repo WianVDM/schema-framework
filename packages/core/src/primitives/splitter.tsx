@@ -98,9 +98,22 @@ export function Splitter({
   const isHorizontal = direction === 'horizontal'
 
   // NOTE: Compute container size for ARIA range calculations (percentage-based constraints)
-  const containerSize = containerRef.current
-    ? (isHorizontal ? containerRef.current.offsetWidth : containerRef.current.offsetHeight)
-    : 0
+  const [containerSize, setContainerSize] = useState(0)
+
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    setContainerSize(isHorizontal ? container.offsetWidth : container.offsetHeight)
+
+    const observer = new ResizeObserver(() => {
+      setContainerSize(isHorizontal ? container.offsetWidth : container.offsetHeight)
+    })
+    
+    observer.observe(container)
+    return () => observer.disconnect()
+  }, [isHorizontal])
+
   const ariaMinPct = containerSize > 0 ? (minSize / containerSize) * 100 : 0
 
   const handleKeyDown = useCallback(
@@ -169,33 +182,36 @@ export function Splitter({
       className={`flex ${isHorizontal ? 'flex-row' : 'flex-col'} ${className}`}
       style={{ width: '100%', height: '100%' }}
     >
-      {childArray.map((child, index) => (
-        <Fragment key={index}>
-          <div style={{ flex: `${sizes[index]} 0 0`, overflow: 'hidden' }}>
-            {child}
-          </div>
-          {index < panelCount - 1 && (
-            <div
-              onMouseDown={handleDragStart(index)}
-              onKeyDown={handleKeyDown(index)}
-              tabIndex={0}
-              className={`flex-shrink-0 ${
-                isHorizontal
-                  ? 'w-1 cursor-col-resize hover:bg-primary/20'
-                  : 'h-1 cursor-row-resize hover:bg-primary/20'
-              } bg-border transition-colors`}
-              role="separator"
-              aria-orientation={isHorizontal ? 'vertical' : 'horizontal'}
-              aria-valuenow={sizes[index]}
-              aria-valuemin={ariaMinPct}
-              aria-valuemax={Math.max(
-                sizes[index] + (sizes[index + 1] ?? 0) - ariaMinPct,
-                ariaMinPct,
-              )}
-            />
-          )}
-        </Fragment>
-      ))}
+      {childArray.map((child, index) => {
+        const childKey = (child as React.ReactElement)?.key ?? index
+        return (
+          <Fragment key={childKey}>
+            <div style={{ flex: `${sizes[index]} 0 0`, overflow: 'hidden' }}>
+              {child}
+            </div>
+            {index < panelCount - 1 && (
+              <div
+                onMouseDown={handleDragStart(index)}
+                onKeyDown={handleKeyDown(index)}
+                tabIndex={0}
+                className={`flex-shrink-0 ${
+                  isHorizontal
+                    ? 'w-1 cursor-col-resize hover:bg-primary/20'
+                    : 'h-1 cursor-row-resize hover:bg-primary/20'
+                } bg-border transition-colors`}
+                role="separator"
+                aria-orientation={isHorizontal ? 'vertical' : 'horizontal'}
+                aria-valuenow={sizes[index]}
+                aria-valuemin={ariaMinPct}
+                aria-valuemax={Math.max(
+                  sizes[index] + (sizes[index + 1] ?? 0) - ariaMinPct,
+                  ariaMinPct,
+                )}
+              />
+            )}
+          </Fragment>
+        )
+      })}
     </div>
   )
 }

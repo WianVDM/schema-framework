@@ -1,1 +1,1 @@
-{"$schema":"schemas/symbol-index-manifest-schema.json","generatedAt":"2026-04-12T00:33:00.090Z","totalSymbols":172,"layers":{"1":{"file":"symbol-index-layer1.json","symbols":12},"2":{"file":"symbol-index-layer2.json","symbols":123},"3":{"file":"symbol-index-layer3.json","symbols":37}}}
+{"$schema":"schemas/symbol-index-manifest-schema.json","generatedAt":"2026-04-12T14:59:37.909Z","totalSymbols":173,"layers":{"1":{"file":"symbol-index-layer1.json","symbols":12},"2":{"file":"symbol-index-layer2.json","symbols":124},"3":{"file":"symbol-index-layer3.json","symbols":37}}}

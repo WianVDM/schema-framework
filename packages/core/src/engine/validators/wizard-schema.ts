@@ -1,7 +1,6 @@
 import { z } from 'zod'
-import type { ZodIssue } from 'zod'
 import { formSchemaValidator } from './form-schema'
-import { i18nConfigSchema } from './shared-schemas'
+import { i18nConfigSchema, formatZodIssue } from './shared-schemas'
 import type { ValidationResult } from './shared-schemas'
 
 const wizardNavigationConfigValidator = z.object({
@@ -46,10 +45,6 @@ export function validateWizardSchema(data: unknown): ValidationResult {
   }
   return {
     success: false,
-    errors: result.error.issues.map(
-      (issue: ZodIssue) => issue.path.length > 0
-        ? `${issue.path.join('.')}: ${issue.message}`
-        : issue.message
-    ),
+    errors: result.error.issues.map(formatZodIssue),
   }
 }

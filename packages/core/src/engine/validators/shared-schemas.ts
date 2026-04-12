@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import type { ZodIssue } from 'zod'
 
 export const fieldTypeSchema = z.enum([
   'text',
@@ -114,3 +115,9 @@ export interface ValidationResult {
   success: boolean
   errors: string[]
 }
+
+export function formatZodIssue(issue: ZodIssue): string {
+  return issue.path.length > 0
+    ? `${issue.path.join('.')}: ${issue.message}`
+    : issue.message
+}
