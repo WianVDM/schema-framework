@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect, Fragment } from 'react'
+import React, { useState, useCallback, useRef, useEffect, Fragment } from 'react'
 
 export interface SplitterProps {
   readonly direction: 'horizontal' | 'vertical'
@@ -19,7 +19,7 @@ export function Splitter({
   className = '',
   children,
 }: SplitterProps) {
-  const childArray = Array.isArray(children) ? children : [children]
+  const childArray = React.Children.toArray(children)
   const panelCount = childArray.length
   const defaultSize = 100 / panelCount
   const [sizes, setSizes] = useState<number[]>(
