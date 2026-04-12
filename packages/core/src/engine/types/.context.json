@@ -127,7 +127,17 @@
     "layout-schema.ts": {
       "export": "LayoutSchema",
       "type": "interface",
-      "desc": "Multi-region layout with direction and gap"
+      "desc": "Multi-region layout with type, regions, and optional spacing"
+    },
+    "panel-collapse-handler.ts": {
+      "export": "PanelCollapseHandler",
+      "type": "type",
+      "desc": "Callback type for panel collapse events"
+    },
+    "region-resize-handler.ts": {
+      "export": "RegionResizeHandler",
+      "type": "type",
+      "desc": "Callback type for region resize events"
     },
     "layout-type.ts": {
       "export": "LayoutType",

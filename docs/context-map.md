@@ -49,7 +49,7 @@ graph TD
 | `packages/core/src/engine/context` | React context for injecting shadcn primitives into engine renderers. | 3 |
 | `packages/core/src/engine/helpers` | Utility functions: i18n, immutability, branded type helpers. | 8 |
 | `packages/core/src/engine/renderers` | React renderers that consume schemas via PrimitivesContext. | 12 |
-| `packages/core/src/engine/types` | All schema type definitions (one per file). Pure TS, no runtime deps. | 51 |
+| `packages/core/src/engine/types` | All schema type definitions (one per file). Pure TS, no runtime deps. | 53 |
 | `packages/core/src/engine/validators` | Zod schemas and runtime validation functions. | 13 |
 
 ## Layer 3: Composition

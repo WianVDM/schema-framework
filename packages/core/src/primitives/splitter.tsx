@@ -1,5 +1,19 @@
 import React, { useState, useCallback, useRef, useEffect, Fragment } from 'react'
 
+function normalizeSizes(
+  initialSizes: readonly number[] | undefined,
+  panelCount: number,
+  defaultSize: number
+): number[] {
+  if (panelCount === 0) return []
+  if (initialSizes && initialSizes.length === panelCount) return [...initialSizes]
+  if (initialSizes && initialSizes.length > panelCount) return initialSizes.slice(0, panelCount)
+  if (initialSizes && initialSizes.length < panelCount) {
+    return [...initialSizes, ...Array(panelCount - initialSizes.length).fill(defaultSize)]
+  }
+  return Array(panelCount).fill(defaultSize)
+}
+
 export interface SplitterProps {
   readonly direction: 'horizontal' | 'vertical'
   readonly onResize?: (sizes: readonly number[]) => void
@@ -21,20 +35,8 @@ export function Splitter({
 }: SplitterProps) {
   const childArray = React.Children.toArray(children)
   const panelCount = childArray.length
-  const defaultSize = 100 / panelCount
-  const [sizes, setSizes] = useState<number[]>(() => {
-    if (initialSizes && initialSizes.length === panelCount) {
-      return [...initialSizes]
-    } else if (initialSizes && initialSizes.length > panelCount) {
-      return initialSizes.slice(0, panelCount)
-    } else if (initialSizes && initialSizes.length < panelCount) {
-      return [
-        ...initialSizes,
-        ...Array(panelCount - initialSizes.length).fill(defaultSize)
-      ]
-    }
-    return Array(panelCount).fill(defaultSize)
-  })
+  const defaultSize = panelCount > 0 ? 100 / panelCount : 0
+  const [sizes, setSizes] = useState<number[]>(() => normalizeSizes(initialSizes, panelCount, defaultSize))
   const containerRef = useRef<HTMLDivElement>(null)
   const sizesRef = useRef(sizes)
   sizesRef.current = sizes
@@ -115,30 +117,15 @@ export function Splitter({
   )
 
   useEffect(() => {
-    const defaultSize = 100 / panelCount
     const initialSizesChanged = initialSizes !== undefined && JSON.stringify(initialSizes) !== JSON.stringify(prevInitialSizesRef.current)
     const panelCountChanged = panelCount !== prevPanelCountRef.current
 
     if (initialSizesChanged || panelCountChanged) {
       prevInitialSizesRef.current = initialSizes ? [...initialSizes] : undefined
       prevPanelCountRef.current = panelCount
-
-      let nextSizes: number[]
-      if (initialSizes && initialSizes.length === panelCount) {
-        nextSizes = [...initialSizes]
-      } else if (initialSizes && initialSizes.length > panelCount) {
-        nextSizes = initialSizes.slice(0, panelCount)
-      } else if (initialSizes && initialSizes.length < panelCount) {
-        nextSizes = [
-          ...initialSizes,
-          ...Array(panelCount - initialSizes.length).fill(defaultSize),
-        ]
-      } else {
-        nextSizes = Array(panelCount).fill(defaultSize)
-      }
-      setSizes(nextSizes)
+      setSizes(normalizeSizes(initialSizes, panelCount, defaultSize))
     }
-  }, [initialSizes, panelCount])
+  }, [initialSizes, panelCount, defaultSize])
 
   const isHorizontal = direction === 'horizontal'
 
@@ -245,6 +232,7 @@ export function Splitter({
                     : 'h-1 cursor-row-resize hover:bg-primary/20'
                 } bg-border transition-colors`}
                 role="separator"
+                aria-label={`Resize panel ${index + 1} and panel ${index + 2}`}
                 aria-orientation={isHorizontal ? 'vertical' : 'horizontal'}
                 aria-valuenow={sizes[index]}
                 aria-valuemin={ariaMinPct}
