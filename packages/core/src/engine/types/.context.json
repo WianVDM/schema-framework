@@ -24,6 +24,11 @@
       "type": "type",
       "desc": "Condition operator literal union"
     },
+    "content-renderer-props.ts": {
+      "export": "ContentRendererProps",
+      "type": "interface",
+      "desc": "Props for ContentRenderer (content + custom components)"
+    },
     "content-schema.ts": {
       "export": "ContentSchema",
       "type": "type",
@@ -33,6 +38,11 @@
       "export": "CustomComponentRegistry",
       "type": "interface",
       "desc": "Key-value map of injectable custom components"
+    },
+    "dashboard-renderer-props.ts": {
+      "export": "DashboardRendererProps",
+      "type": "interface",
+      "desc": "Props for SchemaDashboard renderer"
     },
     "dashboard-schema.ts": {
       "export": "DashboardSchema",
@@ -110,9 +120,9 @@
       "desc": "Single region within a layout (position, size, content)"
     },
     "layout-renderer-props.ts": {
-      "export": "LayoutRendererProps, DashboardRendererProps, TabsRendererProps, ContentRendererProps",
+      "export": "LayoutRendererProps",
       "type": "interface",
-      "desc": "Renderer props for layout, dashboard, tabs, content"
+      "desc": "Props for SchemaLayout renderer"
     },
     "layout-schema.ts": {
       "export": "LayoutSchema",
@@ -133,11 +143,6 @@
       "export": "PaginationConfig",
       "type": "interface",
       "desc": "Client-side pagination"
-    },
-    "panel-props.ts": {
-      "export": "PanelProps",
-      "type": "interface",
-      "desc": "Props for Panel primitive (collapsible, scrollable)"
     },
     "primitive-components.ts": {
       "export": "PrimitiveComponents",
@@ -194,11 +199,6 @@
       "type": "interface",
       "desc": "Server-side pagination"
     },
-    "splitter-props.ts": {
-      "export": "SplitterProps",
-      "type": "interface",
-      "desc": "Props for Splitter primitive (direction, min/max size)"
-    },
     "status-config.ts": {
       "export": "StatusConfig",
       "type": "interface",
@@ -218,6 +218,11 @@
       "export": "TabSchema",
       "type": "interface",
       "desc": "Tab container with items and defaultTab"
+    },
+    "tabs-renderer-props.ts": {
+      "export": "TabsRendererProps",
+      "type": "interface",
+      "desc": "Props for SchemaTabs renderer"
     },
     "theme-config.ts": {
       "export": "ThemeConfig",
@@ -259,12 +264,19 @@
     "cell-value-renderer.ts": [
       "grid-column-schema.ts"
     ],
+    "content-renderer-props.ts": [
+      "content-schema.ts",
+      "custom-component-registry.ts"
+    ],
     "content-schema.ts": [
       "form-schema.ts",
       "grid-schema.ts",
       "wizard-schema.ts",
       "layout-schema.ts",
       "tab-schema.ts"
+    ],
+    "dashboard-renderer-props.ts": [
+      "dashboard-schema.ts"
     ],
     "dashboard-schema.ts": [
       "layout-schema.ts",
@@ -307,11 +319,7 @@
       "i18n-config.ts"
     ],
     "layout-renderer-props.ts": [
-      "layout-schema.ts",
-      "dashboard-schema.ts",
-      "tab-schema.ts",
-      "content-schema.ts",
-      "custom-component-registry.ts"
+      "layout-schema.ts"
     ],
     "layout-schema.ts": [
       "layout-type.ts",
@@ -342,6 +350,9 @@
       "tab-item.ts",
       "i18n-config.ts"
     ],
+    "tabs-renderer-props.ts": [
+      "tab-schema.ts"
+    ],
     "validation-rule.ts": [
       "validation-type.ts"
     ],
@@ -365,13 +376,7 @@
     "layout-primitive-components.ts": [
       "react"
     ],
-    "panel-props.ts": [
-      "react"
-    ],
     "primitive-components.ts": [
-      "react"
-    ],
-    "splitter-props.ts": [
       "react"
     ]
   }

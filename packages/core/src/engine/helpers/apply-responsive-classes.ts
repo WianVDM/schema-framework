@@ -9,8 +9,12 @@ export function applyResponsiveClasses(config: ResponsiveConfig): string {
   }
 
   if (config.collapsedBelow !== undefined) {
-    classes.push(`max-[${config.collapsedBelow}px]:hidden`)
+    // TODO: Implement collapsed responsive behavior in Slice 2 (SchemaLayout renderer).
+    // Collapsed panels must show their title bar but hide their content body — not fully hidden.
+    // The correct approach depends on how the Panel primitive handles collapse state,
+    // which is designed when SchemaLayout is built.
   }
+
 
   if (config.stackBelow !== undefined) {
     classes.push(`max-[${config.stackBelow}px]:flex-col`)

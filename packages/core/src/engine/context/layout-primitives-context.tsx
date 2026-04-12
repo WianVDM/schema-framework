@@ -35,20 +35,6 @@ export function LayoutPrimitivesProvider({
   )
 }
 
-let warnedMissingProvider = false
-
 export function useLayoutPrimitives(): LayoutPrimitiveComponents {
-  const ctx = useContext(LayoutPrimitivesContext)
-
-  const isDefault =
-    ctx === layoutPrimitivesDefaultValue
-  if (isDefault && !warnedMissingProvider) {
-    warnedMissingProvider = true
-    console.warn(
-      'useLayoutPrimitives: No LayoutPrimitivesProvider found. ' +
-        'Ensure your app wraps routes with <LayoutPrimitivesProvider>.'
-    )
-  }
-
-  return ctx
+  return useContext(LayoutPrimitivesContext)
 }

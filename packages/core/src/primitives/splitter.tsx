@@ -22,15 +22,39 @@ export function Splitter({
   const childArray = React.Children.toArray(children)
   const panelCount = childArray.length
   const defaultSize = 100 / panelCount
-  const [sizes, setSizes] = useState<number[]>(
-    initialSizes ? [...initialSizes] : Array(panelCount).fill(defaultSize),
-  )
+  const [sizes, setSizes] = useState<number[]>(() => {
+    if (initialSizes && initialSizes.length === panelCount) {
+      return [...initialSizes]
+    } else if (initialSizes && initialSizes.length > panelCount) {
+      return initialSizes.slice(0, panelCount)
+    } else if (initialSizes && initialSizes.length < panelCount) {
+      return [
+        ...initialSizes,
+        ...Array(panelCount - initialSizes.length).fill(defaultSize)
+      ]
+    }
+    return Array(panelCount).fill(defaultSize)
+  })
   const containerRef = useRef<HTMLDivElement>(null)
   const sizesRef = useRef(sizes)
   sizesRef.current = sizes
   const prevInitialSizesRef = useRef<readonly number[] | undefined>(
     initialSizes ? [...initialSizes] : undefined,
   )
+  const prevPanelCountRef = useRef(panelCount)
+  const dragMoveRef = useRef<((e: globalThis.MouseEvent) => void) | null>(null)
+  const dragEndRef = useRef<(() => void) | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (dragMoveRef.current) {
+        document.removeEventListener('mousemove', dragMoveRef.current)
+      }
+      if (dragEndRef.current) {
+        document.removeEventListener('mouseup', dragEndRef.current)
+      }
+    }
+  }, [])
 
   const handleDragStart = useCallback(
     (index: number) => (e: React.MouseEvent) => {
@@ -77,7 +101,12 @@ export function Splitter({
       const handleDragEnd = () => {
         document.removeEventListener('mousemove', handleDragMove)
         document.removeEventListener('mouseup', handleDragEnd)
+        dragMoveRef.current = null
+        dragEndRef.current = null
       }
+
+      dragMoveRef.current = handleDragMove
+      dragEndRef.current = handleDragEnd
 
       document.addEventListener('mousemove', handleDragMove)
       document.addEventListener('mouseup', handleDragEnd)
@@ -86,14 +115,30 @@ export function Splitter({
   )
 
   useEffect(() => {
-    if (
-      initialSizes &&
-      JSON.stringify(initialSizes) !== JSON.stringify(prevInitialSizesRef.current)
-    ) {
-      prevInitialSizesRef.current = [...initialSizes]
-      setSizes([...initialSizes])
+    const defaultSize = 100 / panelCount
+    const initialSizesChanged = initialSizes !== undefined && JSON.stringify(initialSizes) !== JSON.stringify(prevInitialSizesRef.current)
+    const panelCountChanged = panelCount !== prevPanelCountRef.current
+
+    if (initialSizesChanged || panelCountChanged) {
+      prevInitialSizesRef.current = initialSizes ? [...initialSizes] : undefined
+      prevPanelCountRef.current = panelCount
+
+      let nextSizes: number[]
+      if (initialSizes && initialSizes.length === panelCount) {
+        nextSizes = [...initialSizes]
+      } else if (initialSizes && initialSizes.length > panelCount) {
+        nextSizes = initialSizes.slice(0, panelCount)
+      } else if (initialSizes && initialSizes.length < panelCount) {
+        nextSizes = [
+          ...initialSizes,
+          ...Array(panelCount - initialSizes.length).fill(defaultSize),
+        ]
+      } else {
+        nextSizes = Array(panelCount).fill(defaultSize)
+      }
+      setSizes(nextSizes)
     }
-  }, [initialSizes])
+  }, [initialSizes, panelCount])
 
   const isHorizontal = direction === 'horizontal'
 
@@ -204,7 +249,10 @@ export function Splitter({
                 aria-valuenow={sizes[index]}
                 aria-valuemin={ariaMinPct}
                 aria-valuemax={Math.max(
-                  sizes[index] + (sizes[index + 1] ?? 0) - ariaMinPct,
+                  Math.min(
+                    sizes[index] + (sizes[index + 1] ?? 0) - ariaMinPct,
+                    containerSize > 0 ? (maxSize / containerSize) * 100 : 100,
+                  ),
                   ariaMinPct,
                 )}
               />

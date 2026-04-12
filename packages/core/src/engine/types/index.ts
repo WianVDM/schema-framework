@@ -40,7 +40,11 @@ export type { LayoutSchema } from './layout-schema'
 export type { TabItem } from './tab-item'
 export type { TabSchema } from './tab-schema'
 export type { DashboardSchema } from './dashboard-schema'
-export type { LayoutRendererProps, DashboardRendererProps, TabsRendererProps, ContentRendererProps } from './layout-renderer-props'
+export type { LayoutRendererProps } from './layout-renderer-props'
+export type { DashboardRendererProps } from './dashboard-renderer-props'
+export type { TabsRendererProps } from './tabs-renderer-props'
+export type { ContentRendererProps } from './content-renderer-props'
+
 export type { LayoutPrimitiveComponents } from './layout-primitive-components'
 export type { CustomComponentRegistry } from './custom-component-registry'
 
