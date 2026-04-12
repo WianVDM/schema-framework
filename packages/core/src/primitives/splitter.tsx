@@ -6,12 +6,23 @@ function normalizeSizes(
   defaultSize: number
 ): number[] {
   if (panelCount === 0) return []
-  if (initialSizes && initialSizes.length === panelCount) return [...initialSizes]
-  if (initialSizes && initialSizes.length > panelCount) return initialSizes.slice(0, panelCount)
-  if (initialSizes && initialSizes.length < panelCount) {
-    return [...initialSizes, ...Array(panelCount - initialSizes.length).fill(defaultSize)]
+
+  // NOTE: Build the raw array from whichever branch applies
+  let raw: number[]
+  if (initialSizes && initialSizes.length === panelCount) {
+    raw = [...initialSizes]
+  } else if (initialSizes && initialSizes.length > panelCount) {
+    raw = initialSizes.slice(0, panelCount)
+  } else if (initialSizes && initialSizes.length < panelCount) {
+    raw = [...initialSizes, ...Array(panelCount - initialSizes.length).fill(defaultSize)]
+  } else {
+    raw = Array(panelCount).fill(defaultSize)
   }
-  return Array(panelCount).fill(defaultSize)
+
+  // NOTE: Normalize so the output always sums to exactly 100 percentage points
+  const sum = raw.reduce((a, b) => a + b, 0)
+  if (sum === 0) return Array(panelCount).fill(100 / panelCount)
+  return raw.map((v) => (v / sum) * 100)
 }
 
 export interface SplitterProps {
@@ -67,6 +78,10 @@ export function Splitter({
 
       const isHorizontal = direction === 'horizontal'
       const totalSize = isHorizontal ? container.offsetWidth : container.offsetHeight
+
+      // NOTE: Bail out if the container has no measurable size to avoid division-by-zero
+      if (totalSize <= 0) return
+
       const startPos = isHorizontal ? e.clientX : e.clientY
 
       // NOTE: Snapshot sizes at drag start so handleDragMove uses a stable base
@@ -78,7 +93,7 @@ export function Splitter({
         // NOTE: Convert pixel difference to percentage points of the total container
         const percentDiff = (diff / totalSize) * 100
 
-        // Clamp the delta so both panels stay within [minPct, maxPct] simultaneously.
+        // NOTE: Clamp the delta so both panels stay within [minPct, maxPct] simultaneously.
         // This preserves the sum-invariant (newSizes[index] + newSizes[index+1] stays constant).
         const minPct = (minSize / totalSize) * 100
         const maxPct = (maxSize / totalSize) * 100
@@ -87,6 +102,9 @@ export function Splitter({
         const leftMax = maxPct - startSizes[index]
         const rightMin = startSizes[index + 1] - maxPct
         const rightMax = startSizes[index + 1] - minPct
+
+        // NOTE: If constraints conflict (no feasible delta range), skip this move event
+        if (Math.max(leftMin, rightMin) > Math.min(leftMax, rightMax)) return
 
         const allowedDelta = Math.min(
           Math.max(percentDiff, Math.max(leftMin, rightMin)),
@@ -117,7 +135,8 @@ export function Splitter({
   )
 
   useEffect(() => {
-    const initialSizesChanged = initialSizes !== undefined && JSON.stringify(initialSizes) !== JSON.stringify(prevInitialSizesRef.current)
+    // NOTE: Detect any change including transitions to/from undefined
+    const initialSizesChanged = JSON.stringify(initialSizes) !== JSON.stringify(prevInitialSizesRef.current)
     const panelCountChanged = panelCount !== prevPanelCountRef.current
 
     if (initialSizesChanged || panelCountChanged) {
@@ -235,7 +254,12 @@ export function Splitter({
                 aria-label={`Resize panel ${index + 1} and panel ${index + 2}`}
                 aria-orientation={isHorizontal ? 'vertical' : 'horizontal'}
                 aria-valuenow={sizes[index]}
-                aria-valuemin={ariaMinPct}
+                aria-valuemin={Math.max(
+                  ariaMinPct,
+                  // NOTE: Account for neighbor panel's maxSize constraint
+                  (sizes[index] + (sizes[index + 1] ?? 0)) -
+                    (containerSize > 0 ? (maxSize / containerSize) * 100 : 100),
+                )}
                 aria-valuemax={Math.max(
                   Math.min(
                     sizes[index] + (sizes[index + 1] ?? 0) - ariaMinPct,
