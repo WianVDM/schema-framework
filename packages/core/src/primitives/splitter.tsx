@@ -97,14 +97,20 @@ export function Splitter({
 
   const isHorizontal = direction === 'horizontal'
 
+  // NOTE: Compute container size for ARIA range calculations (percentage-based constraints)
+  const containerSize = containerRef.current
+    ? (isHorizontal ? containerRef.current.offsetWidth : containerRef.current.offsetHeight)
+    : 0
+  const ariaMinPct = containerSize > 0 ? (minSize / containerSize) * 100 : 0
+
   const handleKeyDown = useCallback(
     (index: number) => (e: React.KeyboardEvent) => {
       const container = containerRef.current
       if (!container) return
 
       const totalSize = isHorizontal ? container.offsetWidth : container.offsetHeight
-      const step = totalSize * 0.02 // 2% per key press
-      const pageStep = totalSize * 0.1 // 10% per PageUp/Down
+      const step = 2 // 2 percentage points per key press
+      const pageStep = 10 // 10 percentage points per PageUp/Down
 
       let delta = 0
       switch (e.key) {
@@ -181,8 +187,11 @@ export function Splitter({
               role="separator"
               aria-orientation={isHorizontal ? 'vertical' : 'horizontal'}
               aria-valuenow={sizes[index]}
-              aria-valuemin={0}
-              aria-valuemax={100}
+              aria-valuemin={ariaMinPct}
+              aria-valuemax={Math.max(
+                sizes[index] + (sizes[index + 1] ?? 0) - ariaMinPct,
+                ariaMinPct,
+              )}
             />
           )}
         </Fragment>
