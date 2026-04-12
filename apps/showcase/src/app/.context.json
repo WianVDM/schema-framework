@@ -17,7 +17,7 @@
     "primitives-provider.tsx": {
       "export": "AppPrimitivesProvider",
       "type": "function",
-      "desc": "Root provider wiring shadcn/ui components into PrimitivesContext"
+      "desc": "Root provider wiring shadcn/ui to PrimitivesContext"
     }
   },
   "extDeps": {

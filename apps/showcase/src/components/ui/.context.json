@@ -70,8 +70,8 @@
       "desc": "Select dropdown component (trigger, content, items)"
     },
     "separator.tsx": {
-      "export": "*",
-      "type": "component",
+      "export": "SeparatorProps",
+      "type": "interface",
       "desc": "Horizontal or vertical divider line"
     },
     "table.tsx": {

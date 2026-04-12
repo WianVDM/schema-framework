@@ -76,9 +76,6 @@
     "panel.tsx": [
       "react"
     ],
-    "splitter.tsx": [
-      "react"
-    ],
     "tag-input.tsx": [
       "react"
     ]

@@ -57,7 +57,7 @@
     "registration-form-schema.ts": {
       "export": "registrationFormSchema",
       "type": "const",
-      "desc": "User registration form with address sub-fields and validation"
+      "desc": "User registration form with address sub-fields"
     },
     "support-ticket-form-schema.ts": {
       "export": "supportTicketFormSchema",
@@ -77,7 +77,7 @@
     "virtual-grid-row.ts": {
       "export": "VirtualGridRow",
       "type": "interface",
-      "desc": "Row shape for virtual scroll demo data (id, name, category, value)"
+      "desc": "Row shape for virtual scroll demo data"
     },
     "virtual-grid-schema.ts": {
       "export": "virtualGridSchema",
