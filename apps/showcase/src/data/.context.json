@@ -1,0 +1,159 @@
+{
+  "$schema": "../../../../docs/ai/schemas/context-schema.json",
+  "layer": 3,
+  "language": "typescript-jsx",
+  "purpose": "Mock schema definitions and static data for showcase demos",
+  "files": {
+    "column-reorder-grid-schema.ts": {
+      "export": "columnReorderGridSchema",
+      "type": "const",
+      "desc": "Grid schema with drag-and-drop column reordering enabled"
+    },
+    "contact-form-schema.ts": {
+      "export": "contactFormSchema",
+      "type": "const",
+      "desc": "Contact form with name, email, phone, and message fields"
+    },
+    "index.ts": {
+      "export": "*",
+      "type": "re-export",
+      "desc": "Barrel re-exports"
+    },
+    "mock-orders.ts": {
+      "export": "mockOrders",
+      "type": "const",
+      "desc": "Static order data for grid demos (50 rows)"
+    },
+    "mock-users.ts": {
+      "export": "mockUsers",
+      "type": "const",
+      "desc": "Static user data for grid demos (50 rows)"
+    },
+    "mock-virtual-data.ts": {
+      "export": "mockVirtualData",
+      "type": "const",
+      "desc": "Generated 10k-row dataset for virtual scroll demo"
+    },
+    "multiselect-form-schema.ts": {
+      "export": "multiselectFormSchema",
+      "type": "const",
+      "desc": "Form schema demonstrating multi-select/tag input fields"
+    },
+    "order-grid-schema.ts": {
+      "export": "orderGridSchema",
+      "type": "const",
+      "desc": "Order grid schema with status rendering and pagination"
+    },
+    "order-row.ts": {
+      "export": "OrderRow",
+      "type": "interface",
+      "desc": "Row shape for order data (id, customer, amount, status)"
+    },
+    "primitive-mappings.tsx": {
+      "export": "primitives, layoutPrimitives",
+      "type": "const",
+      "desc": "Maps shadcn/ui to primitives and layoutPrimitives exports"
+    },
+    "registration-form-schema.ts": {
+      "export": "registrationFormSchema",
+      "type": "const",
+      "desc": "User registration form with address sub-fields"
+    },
+    "support-ticket-form-schema.ts": {
+      "export": "supportTicketFormSchema",
+      "type": "const",
+      "desc": "Support ticket form with priority, category, and file upload"
+    },
+    "user-grid-schema.ts": {
+      "export": "userGridSchema",
+      "type": "const",
+      "desc": "User grid schema with column visibility and filtering"
+    },
+    "user-row.ts": {
+      "export": "UserRow",
+      "type": "interface",
+      "desc": "Row shape for user data (id, name, email, role, status)"
+    },
+    "virtual-grid-row.ts": {
+      "export": "VirtualGridRow",
+      "type": "interface",
+      "desc": "Row shape for virtual scroll demo data"
+    },
+    "virtual-grid-schema.ts": {
+      "export": "virtualGridSchema",
+      "type": "const",
+      "desc": "Grid schema with virtual scrolling enabled for 10k rows"
+    },
+    "wizard-form-schema.ts": {
+      "export": "wizardFormSchema",
+      "type": "const",
+      "desc": "Event registration wizard schema"
+    }
+  },
+  "rels": {
+    "mock-orders.ts": [
+      "order-row.ts"
+    ],
+    "mock-users.ts": [
+      "user-row.ts"
+    ],
+    "mock-virtual-data.ts": [
+      "virtual-grid-row.ts"
+    ]
+  },
+  "extDeps": {
+    "column-reorder-grid-schema.ts": [
+      "@my-framework/core"
+    ],
+    "contact-form-schema.ts": [
+      "@my-framework/core"
+    ],
+    "mock-orders.ts": [
+      "@my-framework/core"
+    ],
+    "mock-users.ts": [
+      "@my-framework/core"
+    ],
+    "multiselect-form-schema.ts": [
+      "@my-framework/core"
+    ],
+    "order-grid-schema.ts": [
+      "@my-framework/core"
+    ],
+    "primitive-mappings.tsx": [
+      "@my-framework/core",
+      "@/components/ui/input",
+      "@/components/ui/label",
+      "@/components/ui/textarea",
+      "@/components/ui/checkbox",
+      "@/components/ui/button",
+      "@/components/ui/badge",
+      "@/components/ui/dialog",
+      "@/components/ui/dropdown-menu",
+      "@/components/ui/select",
+      "@/components/ui/table",
+      "@/components/ui/tabs",
+      "@/components/ui/accordion",
+      "@/components/ui/card",
+      "@/components/ui/separator",
+      "@/components/ui/collapsible",
+      "@/components/ui/scroll-area",
+      "@/components/ui/resizable"
+    ],
+    "registration-form-schema.ts": [
+      "@my-framework/core"
+    ],
+    "support-ticket-form-schema.ts": [
+      "@my-framework/core"
+    ],
+    "user-grid-schema.ts": [
+      "@my-framework/core"
+    ],
+    "virtual-grid-schema.ts": [
+      "@my-framework/core"
+    ],
+    "wizard-form-schema.ts": [
+      "@my-framework/core"
+    ]
+  }
+}

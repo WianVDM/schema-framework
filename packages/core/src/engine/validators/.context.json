@@ -1,0 +1,152 @@
+{
+  "$schema": "../../../../../docs/ai/schemas/context-schema.json",
+  "layer": 2,
+  "language": "typescript",
+  "purpose": "Zod schemas and runtime validation functions.",
+  "files": {
+    "content-schema.ts": {
+      "export": "validateContentSchema, contentSchemaValidator",
+      "type": "const",
+      "desc": "Discriminated union content block validator"
+    },
+    "dashboard-schema.ts": {
+      "export": "validateDashboardSchema, dashboardSchemaValidator",
+      "type": "const",
+      "desc": "DashboardSchema Zod validator"
+    },
+    "evaluate-condition.ts": {
+      "export": "evaluateCondition",
+      "type": "function",
+      "desc": "Evaluates FieldCondition"
+    },
+    "field-schema.ts": {
+      "export": "validateFieldSchema, fieldSchemaValidator",
+      "type": "const",
+      "desc": "FieldSchema Zod validator"
+    },
+    "field-value.ts": {
+      "export": "validateFieldValue",
+      "type": "function",
+      "desc": "Runtime field value validation"
+    },
+    "form-schema.ts": {
+      "export": "validateFormSchema, formSchemaValidator",
+      "type": "const",
+      "desc": "FormSchema Zod validator"
+    },
+    "grid-schema.ts": {
+      "export": "validateGridSchema, gridColumnSchemaValidator, gridSchemaValidator",
+      "type": "const",
+      "desc": "GridSchema Zod validators"
+    },
+    "index.ts": {
+      "export": "*",
+      "type": "re-export",
+      "desc": "Barrel re-exports"
+    },
+    "layout-schema.ts": {
+      "export": "validateLayoutSchema, layoutSchemaValidator",
+      "type": "const",
+      "desc": "LayoutSchema Zod validator"
+    },
+    "responsive-config.ts": {
+      "export": "validateResponsiveConfig, responsiveConfigValidator",
+      "type": "const",
+      "desc": "Responsive breakpoint config validator"
+    },
+    "shared-schemas.ts": {
+      "export": "ValidationResult, formatZodIssue, fieldTypeSchema, selectOptionSchema, validationRuleSchema, fieldConditionSchema, fileUploadConfigSchema, datePickerConfigSchema, multiSelectConfigSchema, paginationConfigSchema, columnFilterConfigSchema, statusConfigSchema, serverPaginationConfigSchema, i18nConfigSchema, virtualScrollConfigSchema",
+      "type": "const",
+      "desc": "Shared Zod schemas"
+    },
+    "tab-schema.ts": {
+      "export": "validateTabSchema, tabSchemaValidator",
+      "type": "const",
+      "desc": "TabSchema Zod validator"
+    },
+    "wizard-schema.ts": {
+      "export": "validateWizardSchema, wizardSchemaValidator",
+      "type": "const",
+      "desc": "WizardSchema Zod validator"
+    }
+  },
+  "rels": {
+    "content-schema.ts": [
+      "form-schema.ts",
+      "grid-schema.ts",
+      "wizard-schema.ts",
+      "tab-schema.ts",
+      "layout-schema.ts",
+      "shared-schemas.ts"
+    ],
+    "dashboard-schema.ts": [
+      "layout-schema.ts",
+      "shared-schemas.ts"
+    ],
+    "field-schema.ts": [
+      "shared-schemas.ts"
+    ],
+    "form-schema.ts": [
+      "field-schema.ts",
+      "shared-schemas.ts"
+    ],
+    "grid-schema.ts": [
+      "shared-schemas.ts"
+    ],
+    "layout-schema.ts": [
+      "responsive-config.ts",
+      "content-schema.ts",
+      "shared-schemas.ts"
+    ],
+    "responsive-config.ts": [
+      "shared-schemas.ts"
+    ],
+    "tab-schema.ts": [
+      "content-schema.ts",
+      "shared-schemas.ts"
+    ],
+    "wizard-schema.ts": [
+      "form-schema.ts",
+      "shared-schemas.ts"
+    ]
+  },
+  "extDeps": {
+    "content-schema.ts": [
+      "zod"
+    ],
+    "dashboard-schema.ts": [
+      "zod"
+    ],
+    "evaluate-condition.ts": [
+      "../types"
+    ],
+    "field-schema.ts": [
+      "zod"
+    ],
+    "field-value.ts": [
+      "../types"
+    ],
+    "form-schema.ts": [
+      "zod"
+    ],
+    "grid-schema.ts": [
+      "zod",
+      "../types/branded.ts"
+    ],
+    "layout-schema.ts": [
+      "zod"
+    ],
+    "responsive-config.ts": [
+      "zod"
+    ],
+    "shared-schemas.ts": [
+      "zod"
+    ],
+    "tab-schema.ts": [
+      "zod"
+    ],
+    "wizard-schema.ts": [
+      "zod"
+    ]
+  }
+}

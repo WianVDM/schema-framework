@@ -1,0 +1,83 @@
+{
+  "$schema": "../../../../docs/ai/schemas/context-schema.json",
+  "layer": 1,
+  "language": "typescript-jsx",
+  "purpose": "Generic UI wrappers with no schema knowledge. Imports only React.",
+  "files": {
+    "address-data.ts": {
+      "export": "AddressData",
+      "type": "interface",
+      "desc": "Structured address data"
+    },
+    "address-input.tsx": {
+      "export": "AddressInput",
+      "type": "function",
+      "desc": "Composite address component"
+    },
+    "address-placeholders.ts": {
+      "export": "AddressPlaceholders",
+      "type": "interface",
+      "desc": "Address sub-field placeholders"
+    },
+    "date-picker.tsx": {
+      "export": "DatePicker",
+      "type": "function",
+      "desc": "Date picker with calendar popup"
+    },
+    "file-upload.tsx": {
+      "export": "FileUpload",
+      "type": "function",
+      "desc": "File upload with drag-and-drop"
+    },
+    "index.ts": {
+      "export": "*",
+      "type": "re-export",
+      "desc": "Barrel re-exports"
+    },
+    "panel.tsx": {
+      "export": "PanelProps, Panel",
+      "type": "const",
+      "desc": "Collapsible container; header, footer, toolbar, scrollable"
+    },
+    "splitter.tsx": {
+      "export": "SplitterProps, Splitter",
+      "type": "const",
+      "desc": "Resizable pane divider; direction, sizes, min/max, onResize"
+    },
+    "status-badge.tsx": {
+      "export": "StatusBadge",
+      "type": "function",
+      "desc": "Status indicator badge"
+    },
+    "tag-input.tsx": {
+      "export": "TagInputProps, TagInput",
+      "type": "const",
+      "desc": "Multi-select tag input"
+    }
+  },
+  "rels": {
+    "address-input.tsx": [
+      "address-data.ts",
+      "address-placeholders.ts"
+    ]
+  },
+  "extDeps": {
+    "address-input.tsx": [
+      "react"
+    ],
+    "date-picker.tsx": [
+      "react",
+      "react-day-picker",
+      "date-fns"
+    ],
+    "file-upload.tsx": [
+      "react"
+    ],
+    "panel.tsx": [
+      "react"
+    ],
+    "tag-input.tsx": [
+      "react"
+    ]
+  }
+}

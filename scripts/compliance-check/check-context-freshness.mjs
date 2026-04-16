@@ -58,6 +58,10 @@ function checkDirRecursive(dirPath, collector) {
             const relPath = relative(ROOT, contextPath).replace(/\\/g, '/')
             collector.addWarning(`Description too long (${meta.desc.length} chars, max 60): ${relPath} → ${fileName}`)
           }
+          if (meta.desc && typeof meta.desc === 'string' && meta.desc.length > 60) {
+            const relPath = relative(ROOT, contextPath).replace(/\\/g, '/')
+            collector.addWarning(`Description too long (${meta.desc.length} chars, max 60): ${relPath} → ${fileName}`)
+          }
         }
       }
       if (!context.purpose || context.purpose.trim() === '') {

@@ -1,0 +1,151 @@
+{
+  "$schema": "../../../../docs/ai/schemas/context-schema.json",
+  "layer": 3,
+  "language": "typescript-jsx",
+  "purpose": "TanStack Start file-based routes for showcase app pages and demos",
+  "files": {
+    "__root.tsx": {
+      "export": "Route",
+      "type": "const",
+      "desc": "Root layout route with sidebar navigation"
+    },
+    "demo-column-reordering.tsx": {
+      "export": "Route",
+      "type": "const",
+      "desc": "Drag-and-drop column reorder demo (/demo-column-reordering)"
+    },
+    "demo-date-picker.tsx": {
+      "export": "Route",
+      "type": "const",
+      "desc": "DatePicker calendar field demo (/demo-date-picker)"
+    },
+    "demo-form-wizard.tsx": {
+      "export": "Route",
+      "type": "const",
+      "desc": "Multi-step form wizard demo (/demo-form-wizard)"
+    },
+    "demo-form.tsx": {
+      "export": "Route",
+      "type": "const",
+      "desc": "Contact form with validation demo (/demo-form)"
+    },
+    "demo-grid.tsx": {
+      "export": "Route",
+      "type": "const",
+      "desc": "User grid with sorting, filtering, pagination (/demo-grid)"
+    },
+    "demo-multi-select.tsx": {
+      "export": "Route",
+      "type": "const",
+      "desc": "Multi-select/tag input form demo (/demo-multi-select)"
+    },
+    "demo-orders.tsx": {
+      "export": "Route",
+      "type": "const",
+      "desc": "Order grid with status badges (/demo-orders)"
+    },
+    "demo-registration.tsx": {
+      "export": "Route",
+      "type": "const",
+      "desc": "Registration form with address sub-fields"
+    },
+    "demo-support-ticket.tsx": {
+      "export": "Route",
+      "type": "const",
+      "desc": "Support ticket form with file upload (/demo-support-ticket)"
+    },
+    "demo-virtual-grid.tsx": {
+      "export": "Route",
+      "type": "const",
+      "desc": "Virtual-scrolled grid with 10k rows (/demo-virtual-grid)"
+    },
+    "demo.tsx": {
+      "export": "Route",
+      "type": "const",
+      "desc": "Demo index page linking to all showcase routes"
+    },
+    "index.tsx": {
+      "export": "Route",
+      "type": "const",
+      "desc": "Home page route"
+    }
+  },
+  "extDeps": {
+    "__root.tsx": [
+      "react",
+      "@tanstack/react-router",
+      "../app/primitives-provider.tsx",
+      "../lib/query-client.tsx"
+    ],
+    "demo-column-reordering.tsx": [
+      "@tanstack/react-router",
+      "@tanstack/react-query",
+      "@my-framework/core",
+      "../server/get-column-reorder-grid-schema.ts"
+    ],
+    "demo-date-picker.tsx": [
+      "@tanstack/react-router",
+      "react",
+      "@my-framework/core"
+    ],
+    "demo-form-wizard.tsx": [
+      "react",
+      "@tanstack/react-router",
+      "@my-framework/core",
+      "../data/primitive-mappings.tsx",
+      "../server/get-wizard-form-schema.ts"
+    ],
+    "demo-form.tsx": [
+      "@tanstack/react-router",
+      "@tanstack/react-query",
+      "@my-framework/core",
+      "../server/get-contact-form-schema.ts"
+    ],
+    "demo-grid.tsx": [
+      "@tanstack/react-router",
+      "@tanstack/react-query",
+      "@my-framework/core",
+      "../server/get-user-grid-schema.ts",
+      "../server/get-users.ts",
+      "../stores/selection-store.ts"
+    ],
+    "demo-multi-select.tsx": [
+      "@tanstack/react-router",
+      "@my-framework/core",
+      "../data/primitive-mappings.tsx",
+      "../server/get-multiselect-form-schema.ts"
+    ],
+    "demo-orders.tsx": [
+      "@tanstack/react-router",
+      "@tanstack/react-query",
+      "@my-framework/core",
+      "../server/get-order-grid-schema.ts",
+      "../server/get-orders.ts"
+    ],
+    "demo-registration.tsx": [
+      "@tanstack/react-router",
+      "@tanstack/react-query",
+      "@my-framework/core",
+      "../server/get-registration-form-schema.ts"
+    ],
+    "demo-support-ticket.tsx": [
+      "@tanstack/react-router",
+      "@tanstack/react-query",
+      "@my-framework/core",
+      "../server/get-support-ticket-form-schema.ts"
+    ],
+    "demo-virtual-grid.tsx": [
+      "@tanstack/react-router",
+      "@tanstack/react-query",
+      "@my-framework/core",
+      "../server/get-virtual-grid-schema.ts",
+      "../server/get-virtual-data.ts"
+    ],
+    "demo.tsx": [
+      "@tanstack/react-router"
+    ],
+    "index.tsx": [
+      "@tanstack/react-router"
+    ]
+  }
+}

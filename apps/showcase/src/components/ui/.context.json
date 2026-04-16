@@ -1,0 +1,177 @@
+{
+  "$schema": "../../../../../docs/ai/schemas/context-schema.json",
+  "layer": 3,
+  "language": "typescript-jsx",
+  "purpose": "shadcn/ui-style components built on base-ui primitives",
+  "files": {
+    "accordion.tsx": {
+      "export": "*",
+      "type": "component",
+      "desc": "Accordion with expand/collapse sections"
+    },
+    "badge.tsx": {
+      "export": "*",
+      "type": "component",
+      "desc": "Badge component (status variants, colors)"
+    },
+    "button.tsx": {
+      "export": "*",
+      "type": "component",
+      "desc": "Button component (variants, sizes, loading state)"
+    },
+    "card.tsx": {
+      "export": "*",
+      "type": "component",
+      "desc": "Card container with header, content, footer"
+    },
+    "checkbox.tsx": {
+      "export": "*",
+      "type": "component",
+      "desc": "Checkbox component with label"
+    },
+    "collapsible.tsx": {
+      "export": "*",
+      "type": "component",
+      "desc": "Collapsible section with toggle trigger"
+    },
+    "dialog.tsx": {
+      "export": "*",
+      "type": "component",
+      "desc": "Modal dialog component (title, description, actions)"
+    },
+    "dropdown-menu.tsx": {
+      "export": "*",
+      "type": "component",
+      "desc": "Dropdown menu component (items, separators, groups)"
+    },
+    "input.tsx": {
+      "export": "*",
+      "type": "component",
+      "desc": "Text input component with error styling"
+    },
+    "label.tsx": {
+      "export": "*",
+      "type": "component",
+      "desc": "Form label component"
+    },
+    "resizable.tsx": {
+      "export": "*",
+      "type": "component",
+      "desc": "Resizable panel group with drag handles"
+    },
+    "scroll-area.tsx": {
+      "export": "*",
+      "type": "component",
+      "desc": "Scrollable area with custom scrollbar"
+    },
+    "select.tsx": {
+      "export": "*",
+      "type": "component",
+      "desc": "Select dropdown component (trigger, content, items)"
+    },
+    "separator.tsx": {
+      "export": "SeparatorProps",
+      "type": "interface",
+      "desc": "Horizontal or vertical divider line"
+    },
+    "table.tsx": {
+      "export": "*",
+      "type": "component",
+      "desc": "HTML table primitives (header, row, cell)"
+    },
+    "tabs.tsx": {
+      "export": "*",
+      "type": "component",
+      "desc": "Tabs with list, triggers, and panels"
+    },
+    "textarea.tsx": {
+      "export": "*",
+      "type": "component",
+      "desc": "Multi-line textarea component"
+    }
+  },
+  "extDeps": {
+    "accordion.tsx": [
+      "@base-ui/react/accordion",
+      "@/lib/utils",
+      "lucide-react"
+    ],
+    "badge.tsx": [
+      "@base-ui/react/merge-props",
+      "@base-ui/react/use-render",
+      "class-variance-authority",
+      "@/lib/utils"
+    ],
+    "button.tsx": [
+      "@base-ui/react/button",
+      "class-variance-authority",
+      "@/lib/utils"
+    ],
+    "card.tsx": [
+      "react",
+      "@/lib/utils"
+    ],
+    "checkbox.tsx": [
+      "@base-ui/react/checkbox",
+      "@/lib/utils",
+      "lucide-react"
+    ],
+    "collapsible.tsx": [
+      "@base-ui/react/collapsible"
+    ],
+    "dialog.tsx": [
+      "react",
+      "@base-ui/react/dialog",
+      "@/lib/utils",
+      "@/components/ui/button",
+      "lucide-react"
+    ],
+    "dropdown-menu.tsx": [
+      "react",
+      "@base-ui/react/menu",
+      "@/lib/utils",
+      "lucide-react"
+    ],
+    "input.tsx": [
+      "react",
+      "@base-ui/react/input",
+      "@/lib/utils"
+    ],
+    "label.tsx": [
+      "react",
+      "@/lib/utils"
+    ],
+    "resizable.tsx": [
+      "react-resizable-panels",
+      "@/lib/utils"
+    ],
+    "scroll-area.tsx": [
+      "react",
+      "@base-ui/react/scroll-area",
+      "@/lib/utils"
+    ],
+    "select.tsx": [
+      "react",
+      "@base-ui/react/select",
+      "@/lib/utils",
+      "lucide-react"
+    ],
+    "separator.tsx": [
+      "@base-ui/react/separator",
+      "@/lib/utils"
+    ],
+    "table.tsx": [
+      "react",
+      "@/lib/utils"
+    ],
+    "tabs.tsx": [
+      "@base-ui/react/tabs",
+      "class-variance-authority",
+      "@/lib/utils"
+    ],
+    "textarea.tsx": [
+      "react",
+      "@/lib/utils"
+    ]
+  }
+}
