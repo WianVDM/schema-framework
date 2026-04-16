@@ -402,6 +402,9 @@ export function generateLastDiff(currentOutputs) {
     }
   }
 
+  // NOTE: Add metadata key to currentState so it doesn't appear as "removed" vs previousState
+  currentState._generatedAt = new Date().toISOString()
+
   // NOTE: Compute diff
   const allFiles = new Set([...Object.keys(currentState), ...Object.keys(previousState)])
   for (const file of allFiles) {

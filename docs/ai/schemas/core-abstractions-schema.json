@@ -44,12 +44,17 @@
                         }
                     },
                     "consumerCount": {
-                        "type": "integer"
+                        "type": "integer",
+                        "minimum": 0,
+                        "description": "Number of consumers; should equal consumedBy.length (validate in application code)"
                     },
                     "layerSpan": {
                         "type": "array",
+                        "minItems": 1,
+                        "uniqueItems": true,
                         "items": {
-                            "type": "integer"
+                            "type": "integer",
+                            "minimum": 1
                         }
                     }
                 }

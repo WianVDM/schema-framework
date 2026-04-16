@@ -28,9 +28,16 @@ function readCoreVersion() {
 
 /**
  * NOTE: Calculates the next patch version (e.g., "0.3.1" → "0.3.2").
+ * Validates strict semver core format (three dot-separated numeric parts, no prerelease/build).
  */
 function nextPatch(version) {
+    if (!/^\d+\.\d+\.\d+$/.test(version)) {
+        throw new Error(`Invalid semver core version: "${version}" (expected format X.Y.Z with no prerelease/build metadata)`)
+    }
     const parts = version.split('.').map(Number)
+    if (!parts.every(p => Number.isFinite(p))) {
+        throw new Error(`Invalid semver core version: "${version}" (parts must be finite numbers)`)
+    }
     parts[2] += 1
     return parts.join('.')
 }
@@ -46,7 +53,17 @@ function syncVersionStatus() {
         process.exit(1)
     }
 
-    let content = readFileSync(STATUS_PATH, 'utf-8')
+    let content
+    try {
+        content = readFileSync(STATUS_PATH, 'utf-8')
+    } catch (err) {
+        if (err.code === 'ENOENT') {
+            console.error(`ERROR: VERSION_STATUS.md not found at ${STATUS_PATH}`)
+            process.exit(1)
+        }
+        console.error(`ERROR: Failed to read ${STATUS_PATH}: ${err.message}`)
+        process.exit(1)
+    }
 
     const currentVersionMatch = content.match(/##\s*Current Version:\s*(\S+)/)
     if (!currentVersionMatch) {

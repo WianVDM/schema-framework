@@ -37,6 +37,7 @@
                             "sourceLayer",
                             "targetLayer"
                         ],
+                        "additionalProperties": false,
                         "properties": {
                             "source": {
                                 "type": "string"
@@ -65,6 +66,7 @@
                             "consumerCount",
                             "layerSpan"
                         ],
+                        "additionalProperties": false,
                         "properties": {
                             "file": {
                                 "type": "string"
@@ -88,6 +90,7 @@
                         "required": [
                             "cycle"
                         ],
+                        "additionalProperties": false,
                         "properties": {
                             "cycle": {
                                 "type": "array",

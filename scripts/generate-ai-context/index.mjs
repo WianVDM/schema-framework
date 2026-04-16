@@ -167,14 +167,20 @@ function runGenerateMode(allDirs, budgets) {
   const coreAbsOutput = generateCoreAbstractions(contexts, impactOutput.content)
   writeTier2File(coreAbsOutput.file, coreAbsOutput.content)
   console.log(`  ✅ docs/ai/${coreAbsOutput.file} (${coreAbsOutput.tokens} tokens, ${coreAbsOutput.count} abstractions)`)
+  const coreAbsWarnings = validateTokenBudget(`docs/ai/${coreAbsOutput.file}`, coreAbsOutput.content, budgets)
+  if (coreAbsWarnings) for (const w of coreAbsWarnings) console.log(`     ⚠️  ${w}`)
 
   const insightsOutput = generateInsights(contexts, impactOutput.content)
   writeTier2File(insightsOutput.file, insightsOutput.content)
   console.log(`  ✅ docs/ai/${insightsOutput.file} (${insightsOutput.tokens} tokens)`)
+  const insightsWarnings = validateTokenBudget(`docs/ai/${insightsOutput.file}`, insightsOutput.content, budgets)
+  if (insightsWarnings) for (const w of insightsWarnings) console.log(`     ⚠️  ${w}`)
 
   const communityOutput = generateCommunityMap(contexts)
   writeTier2File(communityOutput.file, communityOutput.content)
   console.log(`  ✅ docs/ai/${communityOutput.file} (${communityOutput.tokens} tokens, ${communityOutput.count} communities)`)
+  const communityWarnings = validateTokenBudget(`docs/ai/${communityOutput.file}`, communityOutput.content, budgets)
+  if (communityWarnings) for (const w of communityWarnings) console.log(`     ⚠️  ${w}`)
 
   // NOTE: Step 2c — Generate last-diff if --diff flag is set
   if (options.diff) {
@@ -188,7 +194,12 @@ function runGenerateMode(allDirs, budgets) {
     ]
     const diffOutput = generateLastDiff(allTier2Outputs)
     writeTier2File(diffOutput.file, diffOutput.content)
-    console.log(`  ✅ docs/ai/${diffOutput.file} (${diffOutput.tokens} tokens) — ${JSON.parse(diffOutput.content).summary}`)
+    let diffSummary = 'summary unavailable'
+    try {
+      const parsed = JSON.parse(diffOutput.content)
+      if (parsed.summary) diffSummary = parsed.summary
+    } catch { /* NOTE: Fall back to default if parsing fails */ }
+    console.log(`  ✅ docs/ai/${diffOutput.file} (${diffOutput.tokens} tokens) — ${diffSummary}`)
 
     // NOTE: Persist state for next diff comparison
     const statePath = join(ROOT, 'docs', 'ai', '.last-state.json')

@@ -45,22 +45,27 @@ export function buildContextForDir(dirPath) {
     if (internalDeps.length > 0) rels[file] = dedupeByPath(internalDeps)
     if (externalDepList.length > 0) extDeps[file] = dedupeByPath(externalDepList)
 
-    // NOTE: Deep mode — extract type references from file content
+    // NOTE: Deep mode — extract type references from file content (pass 1: store refs only)
     if (options.deep) {
       const internalRefs = parseInternalRefs(filePath)
       if (internalRefs.length > 0) {
         filesMap[file].internalRefs = internalRefs
-        // NOTE: Enrich rels with inferred type-level references within the directory
-        for (const ref of internalRefs) {
-          // NOTE: Find if this type is exported by another file in the same directory
-          for (const [otherFile, otherMeta] of Object.entries(filesMap)) {
-            if (otherFile === file) continue
-            const otherExports = (otherMeta.export || '').split(',').map(n => n.trim())
-            if (otherExports.includes(ref)) {
-              if (!rels[file]) rels[file] = []
-              const already = rels[file].some(r => r.path === otherFile)
-              if (!already) rels[file].push({ path: otherFile, confidence: 'inferred' })
-            }
+      }
+    }
+  }
+
+  // NOTE: Deep mode pass 2 — now that all files are in filesMap, infer type-level refs
+  if (options.deep) {
+    for (const [file, meta] of Object.entries(filesMap)) {
+      if (!meta.internalRefs) continue
+      for (const ref of meta.internalRefs) {
+        for (const [otherFile, otherMeta] of Object.entries(filesMap)) {
+          if (otherFile === file) continue
+          const otherExports = (otherMeta.export || '').split(',').map(n => n.trim())
+          if (otherExports.includes(ref)) {
+            if (!rels[file]) rels[file] = []
+            const already = rels[file].some(r => r.path === otherFile)
+            if (!already) rels[file].push({ path: otherFile, confidence: 'inferred' })
           }
         }
       }
