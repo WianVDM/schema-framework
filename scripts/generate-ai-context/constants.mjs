@@ -14,7 +14,15 @@ export const options = {
   verbose: false,
   force: false,
   check: false,
+  deep: false,
+  diff: false,
 }
+
+// NOTE: Fields preserved from existing .context.json during regeneration.
+export const MERGE_PRESERVE_FIELDS = ['desc', 'purpose', 'deprecated', 'tests']
+
+// NOTE: Glob patterns for context output files (used by --diff mode).
+export const CONTEXT_FILE_GLOBS = ['docs/ai/**/*.json', 'docs/ai/**/*.md', 'docs/ai/**/*.mmd']
 
 // NOTE: Output directory for Tier 2 files (relative to ROOT).
 export const TIER2_OUTPUT_DIR = 'docs/ai'

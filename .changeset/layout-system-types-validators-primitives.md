@@ -1,5 +1,5 @@
 ---
-"@my-framework/core": minor
+"@my-framework/core": patch
 ---
 
 Add layout system types, validators, primitives, contexts, and helpers

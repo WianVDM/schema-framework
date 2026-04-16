@@ -1,9 +1,13 @@
-// NOTE: Tier 2 artifact generators — symbol indexes, impact graph, directory index.
+// NOTE: Tier 2 artifact generators — symbol indexes, impact graph, directory index,
+//       core abstractions, insights, community map, last diff.
 // NOTE: All outputs are compressed JSON written to docs/ai/.
 
 import { join, posix } from 'path'
+import { existsSync, readFileSync } from 'fs'
+import { createHash } from 'crypto'
 import { ROOT, TIER2_OUTPUT_DIR } from './constants.mjs'
 import { inferCategory } from './infer-category.mjs'
+import { getLayer } from './get-layer.mjs'
 import { estimateTokens } from './token-budget.mjs'
 import { removeFile } from './io-helpers.mjs'
 
@@ -89,10 +93,12 @@ export function generateImpactGraph(contexts) {
   for (const { dirPath, context } of contexts) {
     if (!context.extDeps) continue
     for (const [file, deps] of Object.entries(context.extDeps)) {
-      for (const dep of deps) {
-        if (!dep.startsWith('.')) continue
+      for (const depEntry of deps) {
+        // NOTE: Support both old string format and new { path, confidence } format
+        const depPath = typeof depEntry === 'string' ? depEntry : depEntry.path
+        if (!depPath.startsWith('.')) continue
         const fromPath = posix.join(dirPath, file)
-        const normalizedDep = normalizePath(dep)
+        const normalizedDep = normalizePath(depPath)
         if (!consumedBy[normalizedDep]) consumedBy[normalizedDep] = []
         if (!consumedBy[normalizedDep].includes(fromPath)) consumedBy[normalizedDep].push(fromPath)
       }
@@ -145,4 +151,326 @@ function normalizePath(dep) {
     }
   }
   return resolved.join('/')
+}
+
+/**
+ * NOTE: Generates core-abstractions.json — top N most-depended-on exports.
+ * Uses the impact graph data to find "god nodes" consumed by many files.
+ * Returns { file, content, tokens, count }.
+ */
+export function generateCoreAbstractions(contexts, impactData) {
+  const consumedBy = JSON.parse(impactData).consumedBy || {}
+  const abstractions = []
+
+  // NOTE: Build a map from filePath to its export info across all contexts
+  const fileExportMap = {}
+  for (const { dirPath, context } of contexts) {
+    for (const [file, meta] of Object.entries(context.files)) {
+      const fullPath = posix.join(dirPath, file)
+      fileExportMap[fullPath] = { export: meta.export, dirPath, layer: context.layer }
+    }
+  }
+
+  for (const [filePath, consumers] of Object.entries(consumedBy)) {
+    if (consumers.length < 3) continue
+    const info = fileExportMap[filePath]
+    if (!info) continue
+
+    // NOTE: Collect unique layers where this file is consumed
+    const consumerLayers = new Set()
+    for (const consumer of consumers) {
+      const consumerLayer = getLayer(consumer)
+      if (consumerLayer) consumerLayers.add(consumerLayer)
+    }
+    const producerLayer = info.layer || getLayer(info.dirPath)
+    if (producerLayer) consumerLayers.add(producerLayer)
+
+    abstractions.push({
+      export: info.export,
+      file: filePath,
+      consumedBy: consumers,
+      consumerCount: consumers.length,
+      layerSpan: [...consumerLayers].sort(),
+    })
+  }
+
+  // NOTE: Sort by consumer count descending, take top 10
+  abstractions.sort((a, b) => b.consumerCount - a.consumerCount)
+  const top = abstractions.slice(0, 10)
+
+  const data = {
+    $schema: 'schemas/core-abstractions-schema.json',
+    generatedAt: new Date().toISOString(),
+    abstractions: top,
+  }
+  const content = JSON.stringify(data)
+  return { file: 'core-abstractions.json', content, tokens: estimateTokens(content, true), count: top.length }
+}
+
+/**
+ * NOTE: Generates insights.json — cross-layer deps, high-impact files, circular warnings.
+ * Returns { file, content, tokens }.
+ */
+export function generateInsights(contexts, impactData) {
+  const crossLayerDeps = []
+  const highImpactFiles = []
+  const circularWarnings = []
+
+  // NOTE: Detect cross-layer dependencies
+  for (const { dirPath, context } of contexts) {
+    if (!context.extDeps) continue
+    const sourceLayer = context.layer
+    for (const [file, deps] of Object.entries(context.extDeps)) {
+      for (const depEntry of deps) {
+        const depPath = typeof depEntry === 'string' ? depEntry : depEntry.path
+        if (!depPath.startsWith('.')) continue
+        const normalizedDep = normalizePath(depPath)
+        const targetLayer = getLayer(normalizedDep)
+        if (targetLayer && targetLayer !== sourceLayer) {
+          crossLayerDeps.push({
+            source: posix.join(dirPath, file),
+            target: normalizedDep,
+            sourceLayer,
+            targetLayer,
+            note: targetLayer < sourceLayer ? 'downward dependency (valid)' : 'upward dependency (violation)',
+          })
+        }
+      }
+    }
+  }
+
+  // NOTE: Detect high-impact files from impact graph
+  const consumedBy = JSON.parse(impactData).consumedBy || {}
+  for (const [filePath, consumers] of Object.entries(consumedBy)) {
+    if (consumers.length < 2) continue
+    const layers = new Set()
+    for (const consumer of consumers) {
+      const layer = getLayer(consumer)
+      if (layer) layers.add(layer)
+    }
+    highImpactFiles.push({
+      file: filePath,
+      consumerCount: consumers.length,
+      layerSpan: [...layers].sort(),
+    })
+  }
+  highImpactFiles.sort((a, b) => b.consumerCount - a.consumerCount)
+
+  // NOTE: Detect circular dependencies via DFS
+  const adjList = buildDirectoryAdjacencyList(contexts)
+  const visited = new Set()
+  const recStack = new Set()
+  const cycles = []
+
+  function dfs(node, path) {
+    visited.add(node)
+    recStack.add(node)
+    for (const neighbor of (adjList[node] || [])) {
+      if (!visited.has(neighbor)) {
+        dfs(neighbor, [...path, neighbor])
+      } else if (recStack.has(neighbor)) {
+        // NOTE: Found a cycle — extract the cycle path
+        const cycleStart = path.indexOf(neighbor)
+        if (cycleStart >= 0) {
+          cycles.push(path.slice(cycleStart))
+        }
+      }
+    }
+    recStack.delete(node)
+  }
+
+  for (const node of Object.keys(adjList)) {
+    if (!visited.has(node)) dfs(node, [node])
+  }
+
+  for (const cycle of cycles) {
+    circularWarnings.push({ cycle })
+  }
+
+  const data = {
+    $schema: 'schemas/insights-schema.json',
+    generatedAt: new Date().toISOString(),
+    insights: {
+      crossLayerDeps,
+      highImpactFiles: highImpactFiles.slice(0, 20),
+      circularWarnings,
+    },
+  }
+  const content = JSON.stringify(data)
+  return { file: 'insights.json', content, tokens: estimateTokens(content, true) }
+}
+
+/**
+ * NOTE: Generates community-map.json — directory clusters by shared external dependencies.
+ * Uses Jaccard similarity on extDeps to find related directories.
+ * Returns { file, content, tokens, count }.
+ */
+export function generateCommunityMap(contexts) {
+  // NOTE: Build extDeps sets per directory
+  const dirExtDeps = {}
+  for (const { dirPath, context } of contexts) {
+    const deps = new Set()
+    if (context.extDeps) {
+      for (const depsList of Object.values(context.extDeps)) {
+        for (const depEntry of depsList) {
+          const depPath = typeof depEntry === 'string' ? depEntry : depEntry.path
+          if (!depPath.startsWith('.')) deps.add(depPath)
+        }
+      }
+    }
+    dirExtDeps[dirPath] = deps
+  }
+
+  // NOTE: Compute Jaccard similarity between all directory pairs
+  const dirs = Object.keys(dirExtDeps)
+  const communities = []
+  const assigned = new Set()
+
+  for (let i = 0; i < dirs.length; i++) {
+    if (assigned.has(dirs[i])) continue
+    const community = [dirs[i]]
+    assigned.add(dirs[i])
+
+    for (let j = i + 1; j < dirs.length; j++) {
+      if (assigned.has(dirs[j])) continue
+      const similarity = jaccardSimilarity(dirExtDeps[dirs[i]], dirExtDeps[dirs[j]])
+      if (similarity >= 0.3) {
+        community.push(dirs[j])
+        assigned.add(dirs[j])
+      }
+    }
+
+    if (community.length > 1) {
+      // NOTE: Find shared deps across community members
+      const sharedDeps = [...dirExtDeps[community[0]]]
+      for (let k = 1; k < community.length; k++) {
+        const currentDeps = dirExtDeps[community[k]]
+        for (let d = sharedDeps.length - 1; d >= 0; d--) {
+          if (!currentDeps.has(sharedDeps[d])) sharedDeps.splice(d, 1)
+        }
+      }
+
+      // NOTE: Compute cohesion score
+      const allDeps = new Set()
+      for (const dir of community) {
+        for (const dep of dirExtDeps[dir]) allDeps.add(dep)
+      }
+      const cohesionScore = allDeps.size > 0 ? sharedDeps.length / allDeps.size : 0
+
+      communities.push({
+        label: community.map(d => d.split('/').pop()).join(' + '),
+        directories: community,
+        sharedDeps,
+        cohesionScore: Math.round(cohesionScore * 100) / 100,
+      })
+    }
+  }
+
+  const data = {
+    $schema: 'schemas/community-map-schema.json',
+    generatedAt: new Date().toISOString(),
+    communities,
+  }
+  const content = JSON.stringify(data)
+  return { file: 'community-map.json', content, tokens: estimateTokens(content, true), count: communities.length }
+}
+
+/**
+ * NOTE: Generates last-diff.json — tracks what changed since last generation.
+ * Compares current output hashes against previously stored state.
+ * Returns { file, content, tokens }.
+ */
+export function generateLastDiff(currentOutputs) {
+  const statePath = join(ROOT, TIER2_OUTPUT_DIR, '.last-state.json')
+  const added = []
+  const removed = []
+  const modified = []
+
+  // NOTE: Build current state map: file → content hash
+  const currentState = {}
+  for (const { file, content } of currentOutputs) {
+    currentState[file] = hashContent(content)
+  }
+
+  // NOTE: Load previous state
+  let previousState = {}
+  if (existsSync(statePath)) {
+    try {
+      previousState = JSON.parse(readFileSync(statePath, 'utf-8'))
+    } catch {
+      previousState = {}
+    }
+  }
+
+  // NOTE: Compute diff
+  const allFiles = new Set([...Object.keys(currentState), ...Object.keys(previousState)])
+  for (const file of allFiles) {
+    if (!previousState[file]) {
+      added.push(file)
+    } else if (!currentState[file]) {
+      removed.push(file)
+    } else if (previousState[file] !== currentState[file]) {
+      modified.push(file)
+    }
+  }
+
+  const summary = `${added.length} added, ${removed.length} removed, ${modified.length} modified`
+
+  const data = {
+    $schema: 'schemas/last-diff-schema.json',
+    generatedAt: new Date().toISOString(),
+    added,
+    removed,
+    modified,
+    summary,
+  }
+  const content = JSON.stringify(data)
+
+  // NOTE: Store current state for next diff comparison
+  currentState._generatedAt = new Date().toISOString()
+
+  return {
+    file: 'last-diff.json',
+    content,
+    tokens: estimateTokens(content, true),
+    newState: JSON.stringify(currentState),
+  }
+}
+
+// NOTE: Computes Jaccard similarity between two sets: |A∩B| / |A∪B|.
+function jaccardSimilarity(setA, setB) {
+  if (setA.size === 0 && setB.size === 0) return 1
+  let intersection = 0
+  for (const item of setA) {
+    if (setB.has(item)) intersection++
+  }
+  const union = new Set([...setA, ...setB]).size
+  return union === 0 ? 0 : intersection / union
+}
+
+// NOTE: Builds a directory-level adjacency list from extDeps for circular dependency detection.
+function buildDirectoryAdjacencyList(contexts) {
+  const adjList = {}
+  for (const { dirPath, context } of contexts) {
+    if (!context.extDeps) continue
+    adjList[dirPath] = adjList[dirPath] || []
+    for (const deps of Object.values(context.extDeps)) {
+      for (const depEntry of deps) {
+        const depPath = typeof depEntry === 'string' ? depEntry : depEntry.path
+        if (!depPath.startsWith('.')) continue
+        // NOTE: Resolve to directory level
+        const normalizedDep = normalizePath(depPath)
+        const depDir = posix.dirname(normalizedDep)
+        if (depDir !== dirPath && !(adjList[dirPath] || []).includes(depDir)) {
+          adjList[dirPath].push(depDir)
+        }
+      }
+    }
+  }
+  return adjList
+}
+
+// NOTE: Hashes content using MD5 for fast change detection.
+function hashContent(content) {
+  return createHash('md5').update(content).digest('hex')
 }

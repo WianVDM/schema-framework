@@ -98,10 +98,12 @@ export function generateContextMap(contexts) {
     const normalizedDir = dirPath.replace(/\\/g, '/')
     const dirId = dirPathToId.get(normalizedDir)
     for (const [file, deps] of Object.entries(context.extDeps)) {
-      for (const dep of deps) {
-        if (dep.startsWith('.')) {
+      for (const depEntry of deps) {
+        // NOTE: Support both old string format and new { path, confidence } format
+        const depPath = typeof depEntry === 'string' ? depEntry : depEntry.path
+        if (depPath.startsWith('.')) {
           // NOTE: Resolve relative dep against source directory to find target context
-          const depDir = posix.dirname(dep)
+          const depDir = posix.dirname(depPath)
           const resolvedDir = posix.normalize(posix.join(normalizedDir, depDir))
           const targetId = dirPathToId.get(resolvedDir)
           if (targetId && targetId !== dirId) {

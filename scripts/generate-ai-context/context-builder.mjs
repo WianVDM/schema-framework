@@ -2,10 +2,11 @@
 // NOTE: Handles export classification, dependency mapping, and merge with existing context.
 
 import { join, resolve, dirname, basename, extname, posix } from 'path'
-import { ROOT } from './constants.mjs'
+import { ROOT, options } from './constants.mjs'
 import { getLayer } from './get-layer.mjs'
 import { getSourceFiles, detectLanguage, loadExistingContext, resolveImport } from './file-discovery.mjs'
 import { parseFileExports } from './export-parser.mjs'
+import { parseInternalRefs } from './ast-parser.mjs'
 
 /**
  * NOTE: Builds the complete context object for a single directory.
@@ -41,8 +42,29 @@ export function buildContextForDir(dirPath) {
 
     // NOTE: Classify imports into internal (within directory) and external
     const { internalDeps, externalDepList } = classifyImports(imports, filePath, absDir, file, files)
-    if (internalDeps.length > 0) rels[file] = [...new Set(internalDeps)]
-    if (externalDepList.length > 0) extDeps[file] = [...new Set(externalDepList)]
+    if (internalDeps.length > 0) rels[file] = dedupeByPath(internalDeps)
+    if (externalDepList.length > 0) extDeps[file] = dedupeByPath(externalDepList)
+
+    // NOTE: Deep mode — extract type references from file content
+    if (options.deep) {
+      const internalRefs = parseInternalRefs(filePath)
+      if (internalRefs.length > 0) {
+        filesMap[file].internalRefs = internalRefs
+        // NOTE: Enrich rels with inferred type-level references within the directory
+        for (const ref of internalRefs) {
+          // NOTE: Find if this type is exported by another file in the same directory
+          for (const [otherFile, otherMeta] of Object.entries(filesMap)) {
+            if (otherFile === file) continue
+            const otherExports = (otherMeta.export || '').split(',').map(n => n.trim())
+            if (otherExports.includes(ref)) {
+              if (!rels[file]) rels[file] = []
+              const already = rels[file].some(r => r.path === otherFile)
+              if (!already) rels[file].push({ path: otherFile, confidence: 'inferred' })
+            }
+          }
+        }
+      }
+    }
   }
 
   const schemaRelPath = posix.relative(dirPath, 'docs/ai/schemas/context-schema.json')
@@ -125,7 +147,7 @@ function preserveManualFields(entry, existing) {
 
 /**
  * NOTE: Splits imports into internal (same directory) and external dependencies.
- * Returns { internalDeps: string[], externalDepList: string[] }.
+ * Returns confidence-tagged objects: { internalDeps: { path, confidence }[], externalDepList: { path, confidence }[] }.
  */
 function classifyImports(imports, filePath, absDir, currentFile, allFiles) {
   const internalDeps = []
@@ -140,22 +162,38 @@ function classifyImports(imports, filePath, absDir, currentFile, allFiles) {
           // NOTE: Same-directory import — record as internal dependency
           const depFile = basename(resolved)
           if (depFile !== currentFile && allFiles.includes(depFile)) {
-            internalDeps.push(depFile)
+            internalDeps.push({ path: depFile, confidence: 'explicit' })
           }
         } else {
           // NOTE: Cross-directory relative import — record as external dependency
           // so it appears in extDeps for context-map-generator and impact graph.
           const absDirPosix = absDir.replace(/\\/g, '/')
           const resolvedPosix = resolved.replace(/\\/g, '/')
-          externalDepList.push(posix.relative(absDirPosix, resolvedPosix))
+          externalDepList.push({ path: posix.relative(absDirPosix, resolvedPosix), confidence: 'explicit' })
         }
       }
     } else {
-      externalDepList.push(imp)
+      externalDepList.push({ path: imp, confidence: 'explicit' })
     }
   }
 
   return { internalDeps, externalDepList }
+}
+
+/**
+ * NOTE: Deduplicates an array of { path, confidence } objects by path.
+ * Keeps the first occurrence when duplicates exist.
+ */
+function dedupeByPath(entries) {
+  const seen = new Set()
+  const result = []
+  for (const entry of entries) {
+    if (!seen.has(entry.path)) {
+      seen.add(entry.path)
+      result.push(entry)
+    }
+  }
+  return result
 }
 
 /**

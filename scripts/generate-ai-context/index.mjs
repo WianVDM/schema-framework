@@ -25,7 +25,7 @@ import { join, dirname } from 'path'
 import { options, SCAN_ROOTS, ROOT } from './constants.mjs'
 import { discoverAllDirs, isContextFresh, loadExistingContext } from './file-discovery.mjs'
 import { buildContextForDir, parseSymbolTypesForDir } from './context-builder.mjs'
-import { generateSymbolIndexes, generateImpactGraph, generateDirectoryIndex } from './tier2-generator.mjs'
+import { generateSymbolIndexes, generateImpactGraph, generateDirectoryIndex, generateCoreAbstractions, generateInsights, generateCommunityMap, generateLastDiff } from './tier2-generator.mjs'
 import { generateContextMap } from './context-map-generator.mjs'
 import { serializePretty, writeTier2File, writeContextFile, checkFileFreshness } from './io-helpers.mjs'
 import { estimateTokens, loadBudgets, validateTokenBudget } from './token-budget.mjs'
@@ -34,6 +34,8 @@ import { estimateTokens, loadBudgets, validateTokenBudget } from './token-budget
 options.force = process.argv.includes('--force')
 options.check = process.argv.includes('--check')
 options.verbose = process.argv.includes('--verbose')
+options.deep = process.argv.includes('--deep')
+options.diff = process.argv.includes('--diff')
 
 /**
  * NOTE: Main entry point. Delegates to check or generate mode.
@@ -160,6 +162,39 @@ function runGenerateMode(allDirs, budgets) {
 
   writeTier2File('directory-index.json', dirIndexOutput.content)
   console.log(`  ✅ docs/ai/directory-index.json (${dirIndexOutput.tokens} tokens, ${dirIndexOutput.count} directories)`)
+
+  // NOTE: Step 2b — Generate new Tier 2 analysis files
+  const coreAbsOutput = generateCoreAbstractions(contexts, impactOutput.content)
+  writeTier2File(coreAbsOutput.file, coreAbsOutput.content)
+  console.log(`  ✅ docs/ai/${coreAbsOutput.file} (${coreAbsOutput.tokens} tokens, ${coreAbsOutput.count} abstractions)`)
+
+  const insightsOutput = generateInsights(contexts, impactOutput.content)
+  writeTier2File(insightsOutput.file, insightsOutput.content)
+  console.log(`  ✅ docs/ai/${insightsOutput.file} (${insightsOutput.tokens} tokens)`)
+
+  const communityOutput = generateCommunityMap(contexts)
+  writeTier2File(communityOutput.file, communityOutput.content)
+  console.log(`  ✅ docs/ai/${communityOutput.file} (${communityOutput.tokens} tokens, ${communityOutput.count} communities)`)
+
+  // NOTE: Step 2c — Generate last-diff if --diff flag is set
+  if (options.diff) {
+    const allTier2Outputs = [
+      ...symbolOutputs.map(o => ({ file: o.file, content: o.content })),
+      { file: 'impact-graph.json', content: impactOutput.content },
+      { file: 'directory-index.json', content: dirIndexOutput.content },
+      { file: coreAbsOutput.file, content: coreAbsOutput.content },
+      { file: insightsOutput.file, content: insightsOutput.content },
+      { file: communityOutput.file, content: communityOutput.content },
+    ]
+    const diffOutput = generateLastDiff(allTier2Outputs)
+    writeTier2File(diffOutput.file, diffOutput.content)
+    console.log(`  ✅ docs/ai/${diffOutput.file} (${diffOutput.tokens} tokens) — ${JSON.parse(diffOutput.content).summary}`)
+
+    // NOTE: Persist state for next diff comparison
+    const statePath = join(ROOT, 'docs', 'ai', '.last-state.json')
+    mkdirSync(dirname(statePath), { recursive: true })
+    writeFileSync(statePath, diffOutput.newState, 'utf-8')
+  }
 
   // NOTE: Step 3 — Auto-generate docs/context-map.md
   const mapResult = generateContextMap(contexts)

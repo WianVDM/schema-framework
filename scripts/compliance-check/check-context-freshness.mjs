@@ -52,7 +52,7 @@ function checkDirRecursive(dirPath, collector) {
         for (const [fileName, meta] of Object.entries(context.files)) {
           if (meta.desc && typeof meta.desc === 'string' && meta.desc.startsWith('TODO: ')) {
             const relPath = relative(ROOT, contextPath).replace(/\\/g, '/')
-            collector.addSuggestion(`Description needed: ${relPath} → ${fileName} ("${meta.desc}")`)
+            collector.addViolation(`Description needed: ${relPath} → ${fileName} ("${meta.desc}")`)
           }
           if (meta.desc && typeof meta.desc === 'string' && meta.desc.length > 60) {
             const relPath = relative(ROOT, contextPath).replace(/\\/g, '/')
