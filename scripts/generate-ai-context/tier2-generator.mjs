@@ -20,6 +20,7 @@ export function generateSymbolIndexes(contexts) {
   const layerData = { 1: {}, 2: {}, 3: {} }
 
   for (const { dirPath, context, symbolTypes } of contexts) {
+    if (!layerData[context.layer]) continue // NOTE: Skip contexts with invalid/missing layer
     for (const [file, meta] of Object.entries(context.files)) {
       if (meta.type === 're-export') continue
       if (!meta.export) continue

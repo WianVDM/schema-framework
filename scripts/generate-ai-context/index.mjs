@@ -121,6 +121,17 @@ function runCheckMode(allDirs, _budgets) {
   if (!checkFileFreshness('impact-graph.json', impactOutput.content)) allFresh = false
   if (!checkFileFreshness('directory-index.json', dirIndexOutput.content)) allFresh = false
 
+  // NOTE: Parse impact data once and share across generators
+  const parsedImpact = JSON.parse(impactOutput.content)
+  const consumedBy = parsedImpact.consumedBy || {}
+
+  const coreAbsOutput = generateCoreAbstractions(contexts, consumedBy)
+  if (!checkFileFreshness(coreAbsOutput.file, coreAbsOutput.content)) allFresh = false
+  const insightsOutput = generateInsights(contexts, consumedBy)
+  if (!checkFileFreshness(insightsOutput.file, insightsOutput.content)) allFresh = false
+  const communityOutput = generateCommunityMap(contexts)
+  if (!checkFileFreshness(communityOutput.file, communityOutput.content)) allFresh = false
+
   // NOTE: Check docs/context-map.md against expected content
   const mapResult = generateContextMap(contexts)
   const mapAbsPath = join(ROOT, mapResult.path)
