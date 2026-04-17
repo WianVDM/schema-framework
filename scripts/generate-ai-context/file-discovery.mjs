@@ -1,15 +1,10 @@
 // NOTE: File discovery utilities for the AI context generation system.
 // NOTE: Handles recursive directory walking, source file listing, and import resolution.
 
-import {
-  readFileSync,
-  existsSync,
-  readdirSync,
-  statSync,
-} from 'fs'
-import { join, resolve, dirname, basename, relative } from 'path'
-import { ROOT, SKIP_DIRS } from './constants.mjs'
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
+import { dirname, join, relative, resolve } from 'node:path'
 import { isSourceFile } from '../shared/file-helpers.mjs'
+import { ROOT, SKIP_DIRS } from './constants.mjs'
 
 /**
  * NOTE: Recursively discovers all directories containing TypeScript source files

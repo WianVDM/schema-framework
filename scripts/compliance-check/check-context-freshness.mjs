@@ -1,8 +1,8 @@
 // NOTE: Context map freshness and description quality validation.
 // NOTE: Uses shared isSourceFile() instead of inline regex.
 
-import { readFileSync, existsSync, statSync, readdirSync } from 'fs'
-import { join, resolve, relative } from 'path'
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
+import { join, relative, resolve } from 'node:path'
 import { ROOT, SCAN_ROOTS, SKIP_DIRS } from '../shared/constants.mjs'
 import { isSourceFile } from '../shared/file-helpers.mjs'
 
@@ -56,17 +56,17 @@ function checkDirRecursive(dirPath, collector) {
           }
           if (meta.desc && typeof meta.desc === 'string' && meta.desc.length > 60) {
             const relPath = relative(ROOT, contextPath).replace(/\\/g, '/')
-            collector.addWarning(`Description too long (${meta.desc.length} chars, max 60): ${relPath} → ${fileName}`)
-          }
-          if (meta.desc && typeof meta.desc === 'string' && meta.desc.length > 60) {
-            const relPath = relative(ROOT, contextPath).replace(/\\/g, '/')
-            collector.addWarning(`Description too long (${meta.desc.length} chars, max 60): ${relPath} → ${fileName}`)
+            collector.addWarning(
+              `Description too long (${meta.desc.length} chars, max 60): ${relPath} → ${fileName}`,
+            )
           }
         }
       }
       if (!context.purpose || context.purpose.trim() === '') {
         const relPath = relative(ROOT, contextPath).replace(/\\/g, '/')
-        collector.addSuggestion(`Purpose field empty: ${relPath} — add a short purpose describing this directory`)
+        collector.addSuggestion(
+          `Purpose field empty: ${relPath} — add a short purpose describing this directory`,
+        )
       }
     } catch (err) {
       const relPath = relative(ROOT, contextPath).replace(/\\/g, '/')

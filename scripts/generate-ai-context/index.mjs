@@ -13,21 +13,37 @@
  *   --force     Regenerate all files regardless of mtime
  *   --check     Compare without writing; exit 1 on drift
  *   --verbose   Show detailed progress output
+ *   --deep      Enable deep scanning with AST type-reference extraction
+ *   --diff      Generate last-diff.json tracking changes since last generation
  *
  * Usage:
  *   node scripts/generate-ai-context/index.mjs
  *   node scripts/generate-ai-context/index.mjs --force
  *   node scripts/generate-ai-context/index.mjs --check --verbose
+ *   node scripts/generate-ai-context/index.mjs --deep --diff
  */
 
-import { writeFileSync, mkdirSync } from 'fs'
-import { join, dirname } from 'path'
-import { options, SCAN_ROOTS, ROOT } from './constants.mjs'
-import { discoverAllDirs, isContextFresh, loadExistingContext } from './file-discovery.mjs'
+import { mkdirSync, writeFileSync } from 'node:fs'
+import { dirname, join } from 'node:path'
+import { options, ROOT, SCAN_ROOTS } from './constants.mjs'
 import { buildContextForDir, parseSymbolTypesForDir } from './context-builder.mjs'
-import { generateSymbolIndexes, generateImpactGraph, generateDirectoryIndex, generateCoreAbstractions, generateInsights, generateCommunityMap, generateLastDiff } from './tier2-generator.mjs'
 import { generateContextMap } from './context-map-generator.mjs'
-import { serializePretty, writeTier2File, writeContextFile, checkFileFreshness } from './io-helpers.mjs'
+import { discoverAllDirs, isContextFresh, loadExistingContext } from './file-discovery.mjs'
+import {
+  checkFileFreshness,
+  serializePretty,
+  writeContextFile,
+  writeTier2File,
+} from './io-helpers.mjs'
+import {
+  generateCommunityMap,
+  generateCoreAbstractions,
+  generateDirectoryIndex,
+  generateImpactGraph,
+  generateInsights,
+  generateLastDiff,
+  generateSymbolIndexes,
+} from './tier2-generator.mjs'
 import { estimateTokens, loadBudgets, validateTokenBudget } from './token-budget.mjs'
 
 // --- Parse CLI flags into shared options ---
@@ -36,6 +52,19 @@ options.check = process.argv.includes('--check')
 options.verbose = process.argv.includes('--verbose')
 options.deep = process.argv.includes('--deep')
 options.diff = process.argv.includes('--diff')
+
+/**
+ * NOTE: Shared helper for writing, logging, and validating Tier 2 artifacts.
+ * Eliminates the duplicated writeTier2File → console.log → validateTokenBudget pattern.
+ */
+function processTier2Artifact(output, countLabel, budgets) {
+  writeTier2File(output.file, output.content)
+  const label = `docs/ai/${output.file}`
+  const countStr = countLabel ? `, ${output.count} ${countLabel}` : ''
+  console.log(`  ✅ ${label} (${output.tokens} tokens${countStr})`)
+  const warnings = validateTokenBudget(label, output.content, budgets)
+  if (warnings) for (const w of warnings) console.log(`     ⚠️  ${w}`)
+}
 
 /**
  * NOTE: Main entry point. Delegates to check or generate mode.
@@ -49,9 +78,10 @@ function main() {
 
   const budgets = loadBudgets()
   const allDirs = discoverAllDirs(SCAN_ROOTS)
-  console.log(options.check
-    ? `  📂 Checking ${allDirs.length} directories\n`
-    : `  📂 Discovered ${allDirs.length} directories with source files\n`
+  console.log(
+    options.check
+      ? `  📂 Checking ${allDirs.length} directories\n`
+      : `  📂 Discovered ${allDirs.length} directories with source files\n`,
   )
 
   if (options.check) {
@@ -65,7 +95,7 @@ function main() {
  * NOTE: Check mode — verifies all context files are fresh without writing.
  * Collects existing contexts for Tier 2 comparison, then exits 1 on drift.
  */
-function runCheckMode(allDirs, budgets) {
+function runCheckMode(allDirs, _budgets) {
   const contexts = []
   let allFresh = true
 
@@ -158,29 +188,26 @@ function runGenerateMode(allDirs, budgets) {
   }
 
   writeTier2File('impact-graph.json', impactOutput.content)
-  console.log(`  ✅ docs/ai/impact-graph.json (${impactOutput.tokens} tokens, ${impactOutput.entries} entries)`)
+  console.log(
+    `  ✅ docs/ai/impact-graph.json (${impactOutput.tokens} tokens, ${impactOutput.entries} entries)`,
+  )
 
   writeTier2File('directory-index.json', dirIndexOutput.content)
-  console.log(`  ✅ docs/ai/directory-index.json (${dirIndexOutput.tokens} tokens, ${dirIndexOutput.count} directories)`)
+  console.log(
+    `  ✅ docs/ai/directory-index.json (${dirIndexOutput.tokens} tokens, ${dirIndexOutput.count} directories)`,
+  )
 
   // NOTE: Step 2b — Generate new Tier 2 analysis files
-  const coreAbsOutput = generateCoreAbstractions(contexts, impactOutput.content)
-  writeTier2File(coreAbsOutput.file, coreAbsOutput.content)
-  console.log(`  ✅ docs/ai/${coreAbsOutput.file} (${coreAbsOutput.tokens} tokens, ${coreAbsOutput.count} abstractions)`)
-  const coreAbsWarnings = validateTokenBudget(`docs/ai/${coreAbsOutput.file}`, coreAbsOutput.content, budgets)
-  if (coreAbsWarnings) for (const w of coreAbsWarnings) console.log(`     ⚠️  ${w}`)
+  // NOTE: Parse impact data once and share across generators to avoid double-parsing
+  const parsedImpact = JSON.parse(impactOutput.content)
+  const consumedBy = parsedImpact.consumedBy || {}
 
-  const insightsOutput = generateInsights(contexts, impactOutput.content)
-  writeTier2File(insightsOutput.file, insightsOutput.content)
-  console.log(`  ✅ docs/ai/${insightsOutput.file} (${insightsOutput.tokens} tokens)`)
-  const insightsWarnings = validateTokenBudget(`docs/ai/${insightsOutput.file}`, insightsOutput.content, budgets)
-  if (insightsWarnings) for (const w of insightsWarnings) console.log(`     ⚠️  ${w}`)
-
+  const coreAbsOutput = generateCoreAbstractions(contexts, consumedBy)
+  processTier2Artifact(coreAbsOutput, 'abstractions', budgets)
+  const insightsOutput = generateInsights(contexts, consumedBy)
+  processTier2Artifact(insightsOutput, '', budgets)
   const communityOutput = generateCommunityMap(contexts)
-  writeTier2File(communityOutput.file, communityOutput.content)
-  console.log(`  ✅ docs/ai/${communityOutput.file} (${communityOutput.tokens} tokens, ${communityOutput.count} communities)`)
-  const communityWarnings = validateTokenBudget(`docs/ai/${communityOutput.file}`, communityOutput.content, budgets)
-  if (communityWarnings) for (const w of communityWarnings) console.log(`     ⚠️  ${w}`)
+  processTier2Artifact(communityOutput, 'communities', budgets)
 
   // NOTE: Step 2c — Generate last-diff if --diff flag is set
   if (options.diff) {
@@ -198,7 +225,9 @@ function runGenerateMode(allDirs, budgets) {
     try {
       const parsed = JSON.parse(diffOutput.content)
       if (parsed.summary) diffSummary = parsed.summary
-    } catch { /* NOTE: Fall back to default if parsing fails */ }
+    } catch {
+      /* NOTE: Fall back to default if parsing fails */
+    }
     console.log(`  ✅ docs/ai/${diffOutput.file} (${diffOutput.tokens} tokens) — ${diffSummary}`)
 
     // NOTE: Persist state for next diff comparison
@@ -214,7 +243,9 @@ function runGenerateMode(allDirs, budgets) {
   writeFileSync(mapOutPath, mapResult.content, 'utf-8')
   console.log(`  ✅ ${mapResult.path} (${mapResult.tokens} tokens)`)
 
-  console.log(`\n✨ AI context generation complete! (${regenerated} regenerated, ${skipped} skipped)`)
+  console.log(
+    `\n✨ AI context generation complete! (${regenerated} regenerated, ${skipped} skipped)`,
+  )
 }
 
 main()

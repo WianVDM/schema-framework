@@ -1,7 +1,7 @@
 // NOTE: CHANGELOG existence validation for published packages.
 
-import { existsSync } from 'fs'
-import { join } from 'path'
+import { existsSync } from 'node:fs'
+import { join } from 'node:path'
 import { ROOT } from '../shared/constants.mjs'
 import { readPackageJson } from '../shared/file-helpers.mjs'
 
@@ -38,7 +38,9 @@ export function checkChangelogs(collector) {
     if (pkgJson.version && compareVersions(pkgJson.version, '0.0.0') > 0) {
       const changelogPath = join(pkg.path, 'CHANGELOG.md')
       if (!existsSync(changelogPath)) {
-        collector.addViolation(`CHANGELOG.md missing for ${pkg.name}@${pkgJson.version} — this will be auto-generated when changesets/action processes pending changesets on merge to main`)
+        collector.addViolation(
+          `CHANGELOG.md missing for ${pkg.name}@${pkgJson.version} — this will be auto-generated when changesets/action processes pending changesets on merge to main`,
+        )
       }
     }
   }

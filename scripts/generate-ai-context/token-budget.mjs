@@ -1,8 +1,8 @@
 // NOTE: Token budget estimation and validation for AI context files.
 // NOTE: Loads budget configuration from docs/ai/token-budgets.json.
 
-import { readFileSync, existsSync } from 'fs'
-import { join } from 'path'
+import { existsSync, readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { ROOT } from './constants.mjs'
 
 // NOTE: Default budgets used when token-budgets.json is missing or invalid.
@@ -38,7 +38,12 @@ export function loadBudgets() {
   try {
     const raw = JSON.parse(readFileSync(budgetPath, 'utf-8'))
     // NOTE: Validate raw.budgets is a non-empty plain object before returning
-    if (raw.budgets && typeof raw.budgets === 'object' && !Array.isArray(raw.budgets) && Object.keys(raw.budgets).length > 0) {
+    if (
+      raw.budgets &&
+      typeof raw.budgets === 'object' &&
+      !Array.isArray(raw.budgets) &&
+      Object.keys(raw.budgets).length > 0
+    ) {
       return raw.budgets
     }
     console.warn('WARNING: token-budgets.json has empty or invalid budgets — using defaults')
@@ -56,7 +61,10 @@ export function loadBudgets() {
 export function validateTokenBudget(filePath, content, budgets) {
   let matched = null
   for (const [suffix, budget] of Object.entries(budgets)) {
-    if (filePath.endsWith(suffix)) { matched = budget; break }
+    if (filePath.endsWith(suffix)) {
+      matched = budget
+      break
+    }
   }
   if (!matched) return null
 

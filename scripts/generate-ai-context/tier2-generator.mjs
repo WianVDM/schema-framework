@@ -2,14 +2,14 @@
 //       core abstractions, insights, community map, last diff.
 // NOTE: All outputs are compressed JSON written to docs/ai/.
 
-import { join, posix } from 'path'
-import { existsSync, readFileSync } from 'fs'
-import { createHash } from 'crypto'
+import { createHash } from 'node:crypto'
+import { existsSync, readFileSync } from 'node:fs'
+import { join, posix } from 'node:path'
 import { ROOT, TIER2_OUTPUT_DIR } from './constants.mjs'
-import { inferCategory } from './infer-category.mjs'
 import { getLayer } from './get-layer.mjs'
-import { estimateTokens } from './token-budget.mjs'
+import { inferCategory } from './infer-category.mjs'
 import { removeFile } from './io-helpers.mjs'
+import { estimateTokens } from './token-budget.mjs'
 
 /**
  * NOTE: Generates per-layer symbol index files and a manifest.
@@ -156,10 +156,11 @@ function normalizePath(dep) {
 /**
  * NOTE: Generates core-abstractions.json — top N most-depended-on exports.
  * Uses the impact graph data to find "god nodes" consumed by many files.
+ * Accepts the parsed consumedBy object directly (no double-parsing).
  * Returns { file, content, tokens, count }.
  */
-export function generateCoreAbstractions(contexts, impactData) {
-  const consumedBy = JSON.parse(impactData).consumedBy || {}
+export function generateCoreAbstractions(contexts, consumedBy) {
+  consumedBy = consumedBy || {}
   const abstractions = []
 
   // NOTE: Build a map from filePath to its export info across all contexts
@@ -179,11 +180,22 @@ export function generateCoreAbstractions(contexts, impactData) {
     // NOTE: Collect unique layers where this file is consumed
     const consumerLayers = new Set()
     for (const consumer of consumers) {
-      const consumerLayer = getLayer(consumer)
-      if (consumerLayer) consumerLayers.add(consumerLayer)
+      try {
+        const consumerLayer = getLayer(consumer)
+        consumerLayers.add(consumerLayer)
+      } catch {
+        // NOTE: Skip consumers in unknown layers
+      }
     }
-    const producerLayer = info.layer || getLayer(info.dirPath)
-    if (producerLayer) consumerLayers.add(producerLayer)
+    try {
+      const producerLayer = info.layer || getLayer(info.dirPath)
+      consumerLayers.add(producerLayer)
+    } catch {
+      // NOTE: Skip if producer layer is unknown
+    }
+
+    // NOTE: Ensure layerSpan is never empty — skip entries with no determinable layer
+    if (consumerLayers.size === 0) continue
 
     abstractions.push({
       export: info.export,
@@ -204,14 +216,20 @@ export function generateCoreAbstractions(contexts, impactData) {
     abstractions: top,
   }
   const content = JSON.stringify(data)
-  return { file: 'core-abstractions.json', content, tokens: estimateTokens(content, true), count: top.length }
+  return {
+    file: 'core-abstractions.json',
+    content,
+    tokens: estimateTokens(content, true),
+    count: top.length,
+  }
 }
 
 /**
  * NOTE: Generates insights.json — cross-layer deps, high-impact files, circular warnings.
+ * Accepts the parsed consumedBy object directly (no double-parsing).
  * Returns { file, content, tokens }.
  */
-export function generateInsights(contexts, impactData) {
+export function generateInsights(contexts, consumedBy) {
   const crossLayerDeps = []
   const highImpactFiles = []
   const circularWarnings = []
@@ -225,14 +243,23 @@ export function generateInsights(contexts, impactData) {
         const depPath = typeof depEntry === 'string' ? depEntry : depEntry.path
         if (!depPath.startsWith('.')) continue
         const normalizedDep = normalizePath(depPath)
-        const targetLayer = getLayer(normalizedDep)
-        if (targetLayer && targetLayer !== sourceLayer) {
+        let targetLayer
+        try {
+          targetLayer = getLayer(normalizedDep)
+        } catch {
+          // NOTE: Skip deps in unknown layers
+          continue
+        }
+        if (targetLayer !== sourceLayer) {
           crossLayerDeps.push({
             source: posix.join(dirPath, file),
             target: normalizedDep,
             sourceLayer,
             targetLayer,
-            note: targetLayer < sourceLayer ? 'downward dependency (valid)' : 'upward dependency (violation)',
+            note:
+              targetLayer < sourceLayer
+                ? 'downward dependency (valid)'
+                : 'upward dependency (violation)',
           })
         }
       }
@@ -240,13 +267,17 @@ export function generateInsights(contexts, impactData) {
   }
 
   // NOTE: Detect high-impact files from impact graph
-  const consumedBy = JSON.parse(impactData).consumedBy || {}
+  consumedBy = consumedBy || {}
   for (const [filePath, consumers] of Object.entries(consumedBy)) {
     if (consumers.length < 2) continue
     const layers = new Set()
     for (const consumer of consumers) {
-      const layer = getLayer(consumer)
-      if (layer) layers.add(layer)
+      try {
+        const layer = getLayer(consumer)
+        layers.add(layer)
+      } catch {
+        // NOTE: Skip consumers in unknown layers
+      }
     }
     highImpactFiles.push({
       file: filePath,
@@ -256,18 +287,20 @@ export function generateInsights(contexts, impactData) {
   }
   highImpactFiles.sort((a, b) => b.consumerCount - a.consumerCount)
 
-  // NOTE: Detect circular dependencies via DFS
+  // NOTE: Detect circular dependencies via DFS with mutable path (avoids O(depth) allocation per step)
   const adjList = buildDirectoryAdjacencyList(contexts)
   const visited = new Set()
   const recStack = new Set()
   const cycles = []
+  const path = []
 
-  function dfs(node, path) {
+  function dfs(node) {
     visited.add(node)
     recStack.add(node)
-    for (const neighbor of (adjList[node] || [])) {
+    path.push(node)
+    for (const neighbor of adjList[node] || []) {
       if (!visited.has(neighbor)) {
-        dfs(neighbor, [...path, neighbor])
+        dfs(neighbor)
       } else if (recStack.has(neighbor)) {
         // NOTE: Found a cycle — extract the cycle path
         const cycleStart = path.indexOf(neighbor)
@@ -276,11 +309,12 @@ export function generateInsights(contexts, impactData) {
         }
       }
     }
+    path.pop()
     recStack.delete(node)
   }
 
   for (const node of Object.keys(adjList)) {
-    if (!visited.has(node)) dfs(node, [node])
+    if (!visited.has(node)) dfs(node)
   }
 
   for (const cycle of cycles) {
@@ -372,7 +406,12 @@ export function generateCommunityMap(contexts) {
     communities,
   }
   const content = JSON.stringify(data)
-  return { file: 'community-map.json', content, tokens: estimateTokens(content, true), count: communities.length }
+  return {
+    file: 'community-map.json',
+    content,
+    tokens: estimateTokens(content, true),
+    count: communities.length,
+  }
 }
 
 /**
@@ -402,12 +441,10 @@ export function generateLastDiff(currentOutputs) {
     }
   }
 
-  // NOTE: Add metadata key to currentState so it doesn't appear as "removed" vs previousState
-  currentState._generatedAt = new Date().toISOString()
-
-  // NOTE: Compute diff
+  // NOTE: Compute diff (exclude metadata keys prefixed with _)
   const allFiles = new Set([...Object.keys(currentState), ...Object.keys(previousState)])
   for (const file of allFiles) {
+    if (file.startsWith('_')) continue
     if (!previousState[file]) {
       added.push(file)
     } else if (!currentState[file]) {
@@ -418,10 +455,11 @@ export function generateLastDiff(currentOutputs) {
   }
 
   const summary = `${added.length} added, ${removed.length} removed, ${modified.length} modified`
+  const generatedAt = new Date().toISOString()
 
   const data = {
     $schema: 'schemas/last-diff-schema.json',
-    generatedAt: new Date().toISOString(),
+    generatedAt,
     added,
     removed,
     modified,
@@ -429,8 +467,8 @@ export function generateLastDiff(currentOutputs) {
   }
   const content = JSON.stringify(data)
 
-  // NOTE: Store current state for next diff comparison
-  currentState._generatedAt = new Date().toISOString()
+  // NOTE: Store current state for next diff comparison (add metadata after diff)
+  currentState._generatedAt = generatedAt
 
   return {
     file: 'last-diff.json',

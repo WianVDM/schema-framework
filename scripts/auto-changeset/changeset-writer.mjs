@@ -1,7 +1,7 @@
 // NOTE: Changeset content generation and file writing for the auto-changeset system.
 
-import { writeFileSync } from 'fs'
-import { createHash } from 'crypto'
+import { createHash } from 'node:crypto'
+import { writeFileSync } from 'node:fs'
 
 /**
  * NOTE: Generates a changeset filename and content from a list of changed files.
@@ -10,7 +10,10 @@ import { createHash } from 'crypto'
 export function generateChangeset(files, packageName) {
   // NOTE: Guard against empty files list to prevent "Update " description
   if (files.length === 0) {
-    return { filename: `auto-empty-${Date.now()}.md`, content: `---\n"${packageName}": patch\n---\nNo changes detected\n` }
+    return {
+      filename: `auto-empty-${Date.now()}.md`,
+      content: `---\n"${packageName}": patch\n---\nNo changes detected\n`,
+    }
   }
 
   const summaries = files.map(f => {
@@ -20,12 +23,16 @@ export function generateChangeset(files, packageName) {
 
   const uniqueSummaries = [...new Set(summaries)]
   if (uniqueSummaries.length === 0) {
-    return { filename: `auto-empty-${Date.now()}.md`, content: `---\n"${packageName}": patch\n---\nNo changes detected\n` }
+    return {
+      filename: `auto-empty-${Date.now()}.md`,
+      content: `---\n"${packageName}": patch\n---\nNo changes detected\n`,
+    }
   }
 
-  const description = uniqueSummaries.length <= 3
-    ? `Update ${uniqueSummaries.join(', ')}`
-    : `Update ${uniqueSummaries.slice(0, 3).join(', ')} and ${uniqueSummaries.length - 3} more`
+  const description =
+    uniqueSummaries.length <= 3
+      ? `Update ${uniqueSummaries.join(', ')}`
+      : `Update ${uniqueSummaries.slice(0, 3).join(', ')} and ${uniqueSummaries.length - 3} more`
 
   const hash = createHash('md5')
     .update(files.join(',') + Date.now())

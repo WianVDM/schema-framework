@@ -1,7 +1,7 @@
 // NOTE: Symbol index validation from per-layer symbol-index files.
 
-import { readFileSync, existsSync } from 'fs'
-import { join } from 'path'
+import { existsSync, readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { ROOT } from '../shared/constants.mjs'
 
 /**
@@ -18,7 +18,7 @@ export function checkSymbolUniqueness(collector) {
   try {
     const manifest = JSON.parse(readFileSync(manifestPath, 'utf-8'))
 
-    for (const [layer, info] of Object.entries(manifest.layers || {})) {
+    for (const [_layer, info] of Object.entries(manifest.layers || {})) {
       const layerPath = join(ROOT, 'docs', 'ai', info.file)
       if (!existsSync(layerPath)) {
         collector.addWarning(`${info.file} not found — run pnpm generate-context`)
@@ -32,7 +32,7 @@ export function checkSymbolUniqueness(collector) {
       try {
         const layerData = JSON.parse(content)
         // NOTE: Array format handles collisions gracefully — just informational
-        for (const [name, locations] of Object.entries(layerData.symbols || {})) {
+        for (const [_name, locations] of Object.entries(layerData.symbols || {})) {
           if (locations.length > 1) {
             // NOTE: Array format handles collisions gracefully — no action needed
           }

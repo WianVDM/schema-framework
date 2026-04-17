@@ -1,7 +1,7 @@
 // NOTE: Auto-generates docs/context-map.md from collected .context.json data.
 // NOTE: Replaces the need for manual context-map.md maintenance per .clinerules rules.
 
-import { posix } from 'path'
+import { posix } from 'node:path'
 import { estimateTokens } from './token-budget.mjs'
 
 /**
@@ -70,7 +70,10 @@ export function generateContextMap(contexts) {
     lines.push('| Directory | Purpose | Files |')
     lines.push('|-----------|---------|-------|')
     for (const { dirPath, context } of dirs) {
-      const fileCount = (typeof context.files === 'object' && context.files !== null) ? Object.keys(context.files).length : 0
+      const fileCount =
+        typeof context.files === 'object' && context.files !== null
+          ? Object.keys(context.files).length
+          : 0
       const purpose = resolvePurpose(context.purpose, 80)
       const escapedPurpose = purpose.replace(/\|/g, '\\|').replace(/[\r\n]+/g, ' ')
       lines.push(`| \`${dirPath}\` | ${escapedPurpose} | ${fileCount} |`)
@@ -97,8 +100,11 @@ export function generateContextMap(contexts) {
     if (!context.extDeps) continue
     const normalizedDir = dirPath.replace(/\\/g, '/')
     const dirId = dirPathToId.get(normalizedDir)
-    for (const [file, deps] of Object.entries(context.extDeps)) {
+    for (const [_file, deps] of Object.entries(context.extDeps)) {
       for (const depEntry of deps) {
+        // NOTE: Guard against null/undefined or malformed entries
+        if (!depEntry || (typeof depEntry !== 'string' && typeof depEntry?.path !== 'string'))
+          continue
         // NOTE: Support both old string format and new { path, confidence } format
         const depPath = typeof depEntry === 'string' ? depEntry : depEntry.path
         if (depPath.startsWith('.')) {
@@ -128,15 +134,15 @@ export function generateContextMap(contexts) {
 // NOTE: Truncates a string to maxLen, appending '...' if truncated.
 function truncate(str, maxLen) {
   if (str.length <= maxLen) return str
-  return str.slice(0, maxLen - 3) + '...'
+  return `${str.slice(0, maxLen - 3)}...`
 }
 
 // NOTE: Sanitizes a string for safe use inside Mermaid node label quotes.
 function sanitizeMermaid(str) {
   return str
-    .replace(/\\/g, '\\\\')   // backslashes first to avoid double-escaping
-    .replace(/"/g, '\\"')     // double quotes
-    .replace(/]/g, '\\]')     // closing brackets
+    .replace(/\\/g, '\\\\') // backslashes first to avoid double-escaping
+    .replace(/"/g, '\\"') // double quotes
+    .replace(/]/g, '\\]') // closing brackets
     .replace(/[\r\n]+/g, ' ') // newlines/carriage returns → spaces
 }
 

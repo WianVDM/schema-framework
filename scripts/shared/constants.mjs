@@ -2,8 +2,8 @@
 // NOTE: Previously duplicated in generate-ai-context/constants.mjs — now the single source of truth.
 // NOTE: Consumed by generate-ai-context, auto-changeset, and compliance-check.
 
-import { resolve, dirname } from 'path'
-import { fileURLToPath } from 'url'
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)

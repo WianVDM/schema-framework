@@ -12,9 +12,15 @@ export class SeverityCollector {
     this._suggestions = []
   }
 
-  addViolation(msg) { this._violations.push(msg) }
-  addWarning(msg) { this._warnings.push(msg) }
-  addSuggestion(msg) { this._suggestions.push(msg) }
+  addViolation(msg) {
+    this._violations.push(msg)
+  }
+  addWarning(msg) {
+    this._warnings.push(msg)
+  }
+  addSuggestion(msg) {
+    this._suggestions.push(msg)
+  }
 
   get hasIssues() {
     return this._violations.length > 0 || this._warnings.length > 0 || this._suggestions.length > 0
@@ -48,6 +54,8 @@ export class SeverityCollector {
       console.log()
     }
 
-    console.log(`  Summary: ${this._violations.length} violations, ${this._warnings.length} warnings, ${this._suggestions.length} suggestions\n`)
+    console.log(
+      `  Summary: ${this._violations.length} violations, ${this._warnings.length} warnings, ${this._suggestions.length} suggestions\n`,
+    )
   }
 }

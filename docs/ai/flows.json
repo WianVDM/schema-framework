@@ -12,8 +12,11 @@
             "entry": "routes/",
             "exit": "renderers/",
             "files": [
-                "apps/showcase/src/server/fetch-schemas.ts",
-                "packages/core/src/engine/validators/*.ts",
+                "packages/core/src/engine/validators/field-schema.ts",
+                "packages/core/src/engine/validators/form-schema.ts",
+                "packages/core/src/engine/validators/grid-schema.ts",
+                "packages/core/src/engine/validators/wizard-schema.ts",
+                "packages/core/src/engine/validators/content-schema.ts",
                 "packages/core/src/engine/renderers/schema-form.tsx",
                 "packages/core/src/engine/renderers/field-renderer.tsx"
             ]
@@ -63,22 +66,6 @@
                 "packages/core/src/engine/renderers/schema-grid.tsx",
                 "packages/core/src/engine/types/grid-schema.ts",
                 "packages/core/src/engine/types/grid-column-schema.ts"
-            ]
-        },
-        "layout-rendering": {
-            "steps": [
-                "SchemaLayout receives layoutSchema",
-                "Regions mapped to layout regions",
-                "Content resolved per region",
-                "Primitives render panels/splitters/tabs",
-                "Responsive breakpoints applied"
-            ],
-            "entry": "renderers/schema-layout.tsx",
-            "exit": "primitives/",
-            "files": [
-                "packages/core/src/engine/renderers/schema-layout.tsx",
-                "packages/core/src/engine/types/layout-schema.ts",
-                "packages/core/src/engine/types/layout-region.ts"
             ]
         },
         "virtual-scroll": {

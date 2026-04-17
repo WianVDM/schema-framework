@@ -1,9 +1,9 @@
 // NOTE: Post-changeset hook that syncs docs/VERSION_STATUS.md with package.json version.
 // NOTE: Called by release.yml after `pnpm changeset version` to keep VERSION_STATUS.md in sync.
 
-import { readFileSync, writeFileSync } from 'fs'
-import { join, resolve, dirname } from 'path'
-import { fileURLToPath } from 'url'
+import { readFileSync, writeFileSync } from 'node:fs'
+import { dirname, join, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -17,13 +17,14 @@ const CORE_PKG_PATH = join(ROOT, 'packages', 'core', 'package.json')
  * Returns the version string or null on failure.
  */
 function readCoreVersion() {
-    try {
-        const raw = readFileSync(CORE_PKG_PATH, 'utf-8')
-        const pkg = JSON.parse(raw)
-        return pkg.version || null
-    } catch {
-        return null
-    }
+  try {
+    const raw = readFileSync(CORE_PKG_PATH, 'utf-8')
+    const pkg = JSON.parse(raw)
+    return pkg.version || null
+  } catch (err) {
+    console.error(`ERROR: readCoreVersion failed for ${CORE_PKG_PATH}: ${err.message}`)
+    return null
+  }
 }
 
 /**
@@ -31,15 +32,14 @@ function readCoreVersion() {
  * Validates strict semver core format (three dot-separated numeric parts, no prerelease/build).
  */
 function nextPatch(version) {
-    if (!/^\d+\.\d+\.\d+$/.test(version)) {
-        throw new Error(`Invalid semver core version: "${version}" (expected format X.Y.Z with no prerelease/build metadata)`)
-    }
-    const parts = version.split('.').map(Number)
-    if (!parts.every(p => Number.isFinite(p))) {
-        throw new Error(`Invalid semver core version: "${version}" (parts must be finite numbers)`)
-    }
-    parts[2] += 1
-    return parts.join('.')
+  if (!/^\d+\.\d+\.\d+$/.test(version)) {
+    throw new Error(
+      `Invalid semver core version: "${version}" (expected format X.Y.Z with no prerelease/build metadata)`,
+    )
+  }
+  const parts = version.split('.').map(Number)
+  parts[2] += 1
+  return parts.join('.')
 }
 
 /**
@@ -47,58 +47,61 @@ function nextPatch(version) {
  * Only updates if the values differ — preserves all other content.
  */
 function syncVersionStatus() {
-    const coreVersion = readCoreVersion()
-    if (!coreVersion) {
-        console.error('ERROR: Could not read version from packages/core/package.json')
-        process.exit(1)
+  const coreVersion = readCoreVersion()
+  if (!coreVersion) {
+    console.error('ERROR: Could not read version from packages/core/package.json')
+    process.exit(1)
+  }
+
+  let content
+  try {
+    content = readFileSync(STATUS_PATH, 'utf-8')
+  } catch (err) {
+    if (err.code === 'ENOENT') {
+      console.error(`ERROR: VERSION_STATUS.md not found at ${STATUS_PATH}`)
+      process.exit(1)
     }
+    console.error(`ERROR: Failed to read ${STATUS_PATH}: ${err.message}`)
+    process.exit(1)
+  }
 
-    let content
-    try {
-        content = readFileSync(STATUS_PATH, 'utf-8')
-    } catch (err) {
-        if (err.code === 'ENOENT') {
-            console.error(`ERROR: VERSION_STATUS.md not found at ${STATUS_PATH}`)
-            process.exit(1)
-        }
-        console.error(`ERROR: Failed to read ${STATUS_PATH}: ${err.message}`)
-        process.exit(1)
-    }
+  const currentVersionMatch = content.match(/##\s*Current Version:\s*(\S+)/)
+  if (!currentVersionMatch) {
+    console.error('ERROR: Could not parse "Current Version" from VERSION_STATUS.md')
+    process.exit(1)
+  }
 
-    const currentVersionMatch = content.match(/##\s*Current Version:\s*(\S+)/)
-    if (!currentVersionMatch) {
-        console.error('ERROR: Could not parse "Current Version" from VERSION_STATUS.md')
-        process.exit(1)
-    }
+  const statedCurrent = currentVersionMatch[1]
+  const newTarget = nextPatch(coreVersion)
 
-    const statedCurrent = currentVersionMatch[1]
-    const newTarget = nextPatch(coreVersion)
+  let changed = false
 
-    let changed = false
+  if (statedCurrent !== coreVersion) {
+    content = content.replace(/##\s*Current Version:\s*\S+/, `## Current Version: ${coreVersion}`)
+    changed = true
+  }
 
-    if (statedCurrent !== coreVersion) {
-        content = content.replace(
-            /##\s*Current Version:\s*\S+/,
-            `## Current Version: ${coreVersion}`
-        )
-        changed = true
-    }
+  const targetVersionMatch = content.match(/##\s*Target Version:\s*(\S+)/)
+  if (!targetVersionMatch) {
+    console.error('ERROR: Could not parse "Target Version" from VERSION_STATUS.md')
+    process.exit(1)
+  }
+  if (targetVersionMatch[1] !== newTarget) {
+    content = content.replace(/##\s*Target Version:\s*\S+/, `## Target Version: ${newTarget}`)
+    changed = true
+  }
 
-    const targetVersionMatch = content.match(/##\s*Target Version:\s*(\S+)/)
-    if (targetVersionMatch && targetVersionMatch[1] !== newTarget) {
-        content = content.replace(
-            /##\s*Target Version:\s*\S+/,
-            `## Target Version: ${newTarget}`
-        )
-        changed = true
-    }
-
-    if (changed) {
-        writeFileSync(STATUS_PATH, content, 'utf-8')
-        console.log(`Synced VERSION_STATUS.md: Current=${coreVersion}, Target=${newTarget}`)
-    } else {
-        console.log('VERSION_STATUS.md already in sync — no changes needed')
-    }
+  if (changed) {
+    writeFileSync(STATUS_PATH, content, 'utf-8')
+    console.log(`Synced VERSION_STATUS.md: Current=${coreVersion}, Target=${newTarget}`)
+  } else {
+    console.log('VERSION_STATUS.md already in sync — no changes needed')
+  }
 }
 
-syncVersionStatus()
+try {
+  syncVersionStatus()
+} catch (err) {
+  console.error(`ERROR: ${err.message}`)
+  process.exit(1)
+}

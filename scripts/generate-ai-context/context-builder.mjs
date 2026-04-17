@@ -1,12 +1,17 @@
 // NOTE: Builds .context.json data for individual directories.
 // NOTE: Handles export classification, dependency mapping, and merge with existing context.
 
-import { join, resolve, dirname, basename, extname, posix } from 'path'
-import { ROOT, options } from './constants.mjs'
-import { getLayer } from './get-layer.mjs'
-import { getSourceFiles, detectLanguage, loadExistingContext, resolveImport } from './file-discovery.mjs'
-import { parseFileExports } from './export-parser.mjs'
+import { basename, dirname, extname, join, posix, resolve } from 'node:path'
 import { parseInternalRefs } from './ast-parser.mjs'
+import { options, ROOT } from './constants.mjs'
+import { parseFileExports } from './export-parser.mjs'
+import {
+  detectLanguage,
+  getSourceFiles,
+  loadExistingContext,
+  resolveImport,
+} from './file-discovery.mjs'
+import { getLayer } from './get-layer.mjs'
 
 /**
  * NOTE: Builds the complete context object for a single directory.
@@ -17,7 +22,12 @@ export function buildContextForDir(dirPath) {
   const absDir = resolve(ROOT, dirPath)
   const files = getSourceFiles(dirPath)
   if (!files.length) return null
-  const layer = getLayer(dirPath)
+  let layer
+  try {
+    layer = getLayer(dirPath)
+  } catch {
+    layer = null
+  }
   const language = detectLanguage(dirPath)
   const filesMap = {}
   const rels = {}
@@ -41,7 +51,13 @@ export function buildContextForDir(dirPath) {
     filesMap[file] = buildFileEntry(file, exports, existing)
 
     // NOTE: Classify imports into internal (within directory) and external
-    const { internalDeps, externalDepList } = classifyImports(imports, filePath, absDir, file, files)
+    const { internalDeps, externalDepList } = classifyImports(
+      imports,
+      filePath,
+      absDir,
+      file,
+      files,
+    )
     if (internalDeps.length > 0) rels[file] = dedupeByPath(internalDeps)
     if (externalDepList.length > 0) extDeps[file] = dedupeByPath(externalDepList)
 
@@ -64,11 +80,15 @@ export function buildContextForDir(dirPath) {
           const otherExports = (otherMeta.export || '').split(',').map(n => n.trim())
           if (otherExports.includes(ref)) {
             if (!rels[file]) rels[file] = []
-            const already = rels[file].some(r => r.path === otherFile)
-            if (!already) rels[file].push({ path: otherFile, confidence: 'inferred' })
+            rels[file].push({ path: otherFile, confidence: 'inferred' })
           }
         }
       }
+    }
+
+    // NOTE: Deduplicate inferred refs that may have been added multiple times
+    for (const file of Object.keys(rels)) {
+      rels[file] = dedupeByPath(rels[file])
     }
   }
 
@@ -95,40 +115,54 @@ export function buildContextForDir(dirPath) {
 function buildFileEntry(file, exports, existing) {
   // NOTE: No exports found — default entry with TODO description
   if (exports.length === 0) {
-    return preserveManualFields({
-      export: '*',
-      type: 'component',
-      desc: `TODO: describe ${basename(file, extname(file))}`,
-    }, existing)
+    return preserveManualFields(
+      {
+        export: '*',
+        type: 'component',
+        desc: `TODO: describe ${basename(file, extname(file))}`,
+      },
+      existing,
+    )
   }
 
   // NOTE: Single re-export (barrel file)
   if (exports.length === 1 && exports[0].type === 're-export') {
-    return preserveManualFields({
-      export: '*',
-      type: 're-export',
-      desc: 'Barrel re-exports',
-    }, existing)
+    return preserveManualFields(
+      {
+        export: '*',
+        type: 're-export',
+        desc: 'Barrel re-exports',
+      },
+      existing,
+    )
   }
 
   // NOTE: Single named export
   if (exports.length === 1) {
     const exp = exports[0]
-    return preserveManualFields({
-      export: exp.name,
-      type: exp.type,
-      desc: existing?.desc || `TODO: describe ${exp.name}`,
-    }, existing)
+    return preserveManualFields(
+      {
+        export: exp.name,
+        type: exp.type,
+        desc: existing?.desc || `TODO: describe ${exp.name}`,
+      },
+      existing,
+    )
   }
 
   // NOTE: Multiple named exports in one file
   const names = exports.map(e => e.name).join(', ')
   const types = [...new Set(exports.map(e => e.type))]
-  return preserveManualFields({
-    export: names,
-    type: types.length === 1 ? types[0] : 'const',
-    desc: existing?.desc || `TODO: describe ${names.split(',')[0].trim()} (+${exports.length - 1} more)`,
-  }, existing)
+  return preserveManualFields(
+    {
+      export: names,
+      type: types.length === 1 ? types[0] : 'const',
+      desc:
+        existing?.desc ||
+        `TODO: describe ${names.split(',')[0].trim()} (+${exports.length - 1} more)`,
+    },
+    existing,
+  )
 }
 
 /**
@@ -174,7 +208,10 @@ function classifyImports(imports, filePath, absDir, currentFile, allFiles) {
           // so it appears in extDeps for context-map-generator and impact graph.
           const absDirPosix = absDir.replace(/\\/g, '/')
           const resolvedPosix = resolved.replace(/\\/g, '/')
-          externalDepList.push({ path: posix.relative(absDirPosix, resolvedPosix), confidence: 'explicit' })
+          externalDepList.push({
+            path: posix.relative(absDirPosix, resolvedPosix),
+            confidence: 'explicit',
+          })
         }
       }
     } else {
@@ -187,18 +224,17 @@ function classifyImports(imports, filePath, absDir, currentFile, allFiles) {
 
 /**
  * NOTE: Deduplicates an array of { path, confidence } objects by path.
- * Keeps the first occurrence when duplicates exist.
+ * Uses a Map for O(1) lookups — keeps the first occurrence when duplicates exist.
+ * Exported as a shared utility for use by other modules.
  */
-function dedupeByPath(entries) {
-  const seen = new Set()
-  const result = []
+export function dedupeByPath(entries) {
+  const map = new Map()
   for (const entry of entries) {
-    if (!seen.has(entry.path)) {
-      seen.add(entry.path)
-      result.push(entry)
+    if (!map.has(entry.path)) {
+      map.set(entry.path, entry)
     }
   }
-  return result
+  return [...map.values()]
 }
 
 /**

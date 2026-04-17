@@ -15,10 +15,10 @@
  */
 
 import { SeverityCollector } from '../shared/output-helpers.mjs'
-import { checkVersionStatus } from './check-version-status.mjs'
 import { checkChangelogs } from './check-changelogs.mjs'
 import { checkContextFreshness } from './check-context-freshness.mjs'
 import { checkSymbolUniqueness } from './check-symbol-uniqueness.mjs'
+import { checkVersionStatus } from './check-version-status.mjs'
 
 function main() {
   console.log('\n🔍 Compliance Check Results:\n')
