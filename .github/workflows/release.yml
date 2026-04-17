@@ -37,24 +37,50 @@ jobs:
       - name: Build
         run: pnpm build:ci
 
+      - name: Check for pending changesets
+        id: check-changesets
+        run: |
+          COUNT=$(find .changeset -name '*.md' ! -name 'README.md' | wc -l)
+          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
+          if [ "$COUNT" -gt 0 ]; then
+            echo "has_changesets=true" >> "$GITHUB_OUTPUT"
+            echo "Found $COUNT pending changeset(s)"
+          else
+            echo "has_changesets=false" >> "$GITHUB_OUTPUT"
+            echo "No pending changesets — skipping changesets action"
+          fi
+
       # NOTE: npm publishing is disabled during the 0.x.x development phase.
       # Re-enable by adding `publish: pnpm changeset publish` and configuring
       # the NPM_TOKEN secret when ready to publish (target: v1.0.0).
       - name: Create Release Pull Request or Version
+        if: steps.check-changesets.outputs.has_changesets == 'true'
         id: changesets
         uses: changesets/action@v1
         with:
-          version: pnpm changeset version && node scripts/sync-version-status.mjs
+          version: node scripts/version-packages.mjs
           title: "chore: version packages"
           commit: "chore: version packages"
         env:
           GITHUB_TOKEN: ${{ secrets.CHANGESETS_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Enable auto-merge for Version Packages PR
+        if: steps.changesets.outputs.hasChangesets == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.CHANGESETS_TOKEN }}
+        run: |
+          PR_NUMBER=$(gh pr list --head changeset-release/main --state open --json number --jq '.[0].number')
+          if [ -n "$PR_NUMBER" ]; then
+            echo "Enabling auto-merge for PR #$PR_NUMBER"
+            gh pr merge "$PR_NUMBER" --auto --merge
+          else
+            echo "No open Version Packages PR found — skipping auto-merge"
+          fi
 
       - name: Create GitHub Release
-        if: steps.changesets.outputs.hasChangesets == 'false'
+        if: steps.check-changesets.outputs.has_changesets == 'false'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.CHANGESETS_TOKEN }}
         run: |
           # NOTE: Since npm publishing is disabled, we read the version directly
           # from packages/core/package.json and create a GitHub Release if one
