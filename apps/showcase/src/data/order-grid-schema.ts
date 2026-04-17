@@ -1,5 +1,5 @@
 import type { GridSchema } from '@my-framework/core'
-import { deepFreeze, asDataKey } from '@my-framework/core'
+import { asDataKey, deepFreeze } from '@my-framework/core'
 
 export const orderGridSchema = deepFreeze<GridSchema>({
   title: 'Orders',

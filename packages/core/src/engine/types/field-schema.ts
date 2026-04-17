@@ -1,10 +1,10 @@
+import type { DatePickerConfig } from './date-picker-config'
+import type { FieldCondition } from './field-condition'
 import type { FieldType } from './field-type'
+import type { FileUploadConfig } from './file-upload-config'
+import type { MultiSelectConfig } from './multi-select-config'
 import type { SelectOption } from './select-option'
 import type { ValidationRule } from './validation-rule'
-import type { FieldCondition } from './field-condition'
-import type { FileUploadConfig } from './file-upload-config'
-import type { DatePickerConfig } from './date-picker-config'
-import type { MultiSelectConfig } from './multi-select-config'
 
 export interface FieldSchema {
   readonly name: string

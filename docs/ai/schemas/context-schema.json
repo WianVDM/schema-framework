@@ -40,7 +40,16 @@
           },
           "type": {
             "type": "string",
-            "enum": ["interface", "type", "function", "const", "component", "re-export", "utility", "config"],
+            "enum": [
+              "interface",
+              "type",
+              "function",
+              "const",
+              "component",
+              "re-export",
+              "utility",
+              "config"
+            ],
             "description": "Export type classification"
           },
           "desc": {
@@ -56,6 +65,13 @@
             "type": "string",
             "description": "Repo-relative path to the test file for this source file",
             "pattern": "^(?!/)(?!https?://).+$"
+          },
+          "internalRefs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "AST-level: types/interfaces referenced within this file (optional deep mode)"
           }
         }
       }
@@ -64,7 +80,21 @@
       "type": "object",
       "additionalProperties": {
         "type": "array",
-        "items": { "type": "string" },
+        "items": {
+          "type": "object",
+          "required": ["path"],
+          "additionalProperties": false,
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "confidence": {
+              "type": "string",
+              "enum": ["explicit", "inferred"],
+              "default": "explicit"
+            }
+          }
+        },
         "description": "Internal file dependencies within this directory"
       },
       "description": "Internal relationship map"
@@ -73,7 +103,21 @@
       "type": "object",
       "additionalProperties": {
         "type": "array",
-        "items": { "type": "string" },
+        "items": {
+          "type": "object",
+          "required": ["path"],
+          "additionalProperties": false,
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "confidence": {
+              "type": "string",
+              "enum": ["explicit", "inferred"],
+              "default": "explicit"
+            }
+          }
+        },
         "description": "External import paths outside this directory"
       },
       "description": "External dependency map"

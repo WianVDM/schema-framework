@@ -1,14 +1,20 @@
-import { useState, useCallback, useRef, useMemo } from 'react'
-import { useForm, type AnyFieldMetaBase } from '@tanstack/react-form'
-import type { SchemaWizardProps, FieldSchema, StepIndicatorProps } from '../types'
-import { validateFieldValue } from '../validators'
-import { isFieldVisible } from '../helpers/is-field-visible'
-import { FieldRenderer } from './field-renderer'
-import { WizardReviewStep } from './wizard-review-step'
+import { type AnyFieldMetaBase, useForm } from '@tanstack/react-form'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { usePrimitives } from '../context/primitives-context'
 import { resolveMessage } from '../helpers/i18n'
+import { isFieldVisible } from '../helpers/is-field-visible'
+import type { FieldSchema, SchemaWizardProps, StepIndicatorProps } from '../types'
+import { validateFieldValue } from '../validators'
+import { FieldRenderer } from './field-renderer'
+import { WizardReviewStep } from './wizard-review-step'
 
-export function SchemaWizard({ schema, onSubmit, initialValues, onCancel, onStepChange }: SchemaWizardProps) {
+export function SchemaWizard({
+  schema,
+  onSubmit,
+  initialValues,
+  onCancel,
+  onStepChange,
+}: SchemaWizardProps) {
   const { Button, StepIndicator } = usePrimitives()
   const [currentStep, setCurrentStep] = useState(0)
   const [visitedSteps, setVisitedSteps] = useState<ReadonlySet<number>>(() => new Set([0]))
@@ -25,12 +31,19 @@ export function SchemaWizard({ schema, onSubmit, initialValues, onCancel, onStep
 
   const nextLabel = resolveMessage('next', i18n, nav?.nextLabel ?? 'Next')
   const previousLabel = resolveMessage('previous', i18n, nav?.previousLabel ?? 'Previous')
-  const submitLabel = resolveMessage('submit', i18n, nav?.submitLabel ?? schema.reviewStep ? 'Review & Submit' : 'Submit')
+  const submitLabel = resolveMessage(
+    'submit',
+    i18n,
+    (nav?.submitLabel ?? schema.reviewStep) ? 'Review & Submit' : 'Submit',
+  )
   const cancelLabel = resolveMessage('cancel', i18n, 'Cancel')
   const reviewTitle = schema.reviewStep?.title ?? 'Review Your Answers'
   const reviewDescription = schema.reviewStep?.description
 
-  const fieldDefaults = useMemo(() => buildWizardDefaults(schema.steps, initialValues), [schema.steps, initialValues])
+  const fieldDefaults = useMemo(
+    () => buildWizardDefaults(schema.steps, initialValues),
+    [schema.steps, initialValues],
+  )
 
   const form = useForm({
     defaultValues: fieldDefaults,
@@ -47,22 +60,39 @@ export function SchemaWizard({ schema, onSubmit, initialValues, onCancel, onStep
 
   const handleNext = useCallback(async () => {
     if (isLastStep && hasReviewStep) {
-      const allValid = await validateAllFields(formRef.current, schema.steps, formRef.current.state.values)
+      const allValid = await validateAllFields(
+        formRef.current,
+        schema.steps,
+        formRef.current.state.values,
+      )
       if (!allValid && validationMode === 'eager') return
       setShowReview(true)
       return
     }
 
     if (validationMode === 'eager' && !currentStepData.optional) {
-      const stepValid = await validateStepFields(formRef.current, currentFields, formRef.current.state.values)
+      const stepValid = await validateStepFields(
+        formRef.current,
+        currentFields,
+        formRef.current.state.values,
+      )
       if (!stepValid) return
     }
 
     const nextStep = currentStep + 1
-    setVisitedSteps((prev) => new Set([...prev, nextStep]))
+    setVisitedSteps(prev => new Set([...prev, nextStep]))
     setCurrentStep(nextStep)
     onStepChange?.(nextStep, 'next')
-  }, [currentStep, currentFields, currentStepData.optional, form, hasReviewStep, isLastStep, validationMode, schema.steps, onStepChange])
+  }, [
+    currentStep,
+    currentFields,
+    currentStepData.optional,
+    hasReviewStep,
+    isLastStep,
+    validationMode,
+    schema.steps,
+    onStepChange,
+  ])
 
   const handlePrevious = useCallback(() => {
     if (showReview) {
@@ -82,13 +112,16 @@ export function SchemaWizard({ schema, onSubmit, initialValues, onCancel, onStep
     setCurrentStep(stepIndex)
   }, [])
 
-  const handleStepClick = useCallback((stepIndex: number) => {
-    if (!isNonLinear) return
-    if (!visitedSteps.has(stepIndex)) return
-    setShowReview(false)
-    setCurrentStep(stepIndex)
-    onStepChange?.(stepIndex, 'jump')
-  }, [isNonLinear, visitedSteps, onStepChange])
+  const handleStepClick = useCallback(
+    (stepIndex: number) => {
+      if (!isNonLinear) return
+      if (!visitedSteps.has(stepIndex)) return
+      setShowReview(false)
+      setCurrentStep(stepIndex)
+      onStepChange?.(stepIndex, 'jump')
+    },
+    [isNonLinear, visitedSteps, onStepChange],
+  )
 
   const StepIndicatorComponent = StepIndicator ?? DefaultStepIndicator
 
@@ -97,16 +130,14 @@ export function SchemaWizard({ schema, onSubmit, initialValues, onCancel, onStep
 
   return (
     <div>
-      {schema.title && (
-        <h2 className="text-xl font-bold mb-1">{schema.title}</h2>
-      )}
+      {schema.title && <h2 className="text-xl font-bold mb-1">{schema.title}</h2>}
       {schema.description && (
         <p className="text-sm text-muted-foreground mb-4">{schema.description}</p>
       )}
 
       {showStepIndicator && (
         <StepIndicatorComponent
-          steps={schema.steps.map((s) => ({ title: s.title, description: s.description }))}
+          steps={schema.steps.map(s => ({ title: s.title, description: s.description }))}
           currentStep={showReview ? totalSteps : currentStep}
           visitedSteps={visitedSteps}
           onStepClick={isNonLinear ? handleStepClick : undefined}
@@ -114,13 +145,12 @@ export function SchemaWizard({ schema, onSubmit, initialValues, onCancel, onStep
       )}
 
       <form
-        onSubmit={(e) => {
+        onSubmit={e => {
           e.preventDefault()
           e.stopPropagation()
           form.handleSubmit()
         }}
         className="space-y-6 mt-6"
-        role="form"
         aria-label={schema.title ?? 'Wizard Form'}
       >
         {isReviewStep ? (
@@ -129,8 +159,8 @@ export function SchemaWizard({ schema, onSubmit, initialValues, onCancel, onStep
             {reviewDescription && (
               <p className="text-sm text-muted-foreground mb-4">{reviewDescription}</p>
             )}
-            <form.Subscribe selector={(state) => state.values}>
-              {(values) => (
+            <form.Subscribe selector={state => state.values}>
+              {values => (
                 <WizardReviewStep
                   steps={schema.steps}
                   values={values}
@@ -146,10 +176,10 @@ export function SchemaWizard({ schema, onSubmit, initialValues, onCancel, onStep
             {currentStepData.description && (
               <p className="text-sm text-muted-foreground mb-4">{currentStepData.description}</p>
             )}
-            <form.Subscribe selector={(state) => state.values}>
-              {(values) => (
+            <form.Subscribe selector={state => state.values}>
+              {values => (
                 <div className="space-y-4">
-                  {currentFields.map((field) => {
+                  {currentFields.map(field => {
                     if (!isFieldVisible(field, values)) return null
 
                     return (
@@ -163,15 +193,14 @@ export function SchemaWizard({ schema, onSubmit, initialValues, onCancel, onStep
                           },
                         }}
                       >
-                        {(fieldApi) => (
+                        {fieldApi => (
                           <FieldRenderer
                             schema={field}
                             value={fieldApi.state.value}
-                            onChange={(val) => fieldApi.handleChange(val)}
+                            onChange={val => fieldApi.handleChange(val)}
                             error={
-                              fieldApi.state.meta.isTouched &&
-                              !fieldApi.state.meta.isValid
-                                ? fieldApi.state.meta.errors.map((err) => String(err)).join(', ')
+                              fieldApi.state.meta.isTouched && !fieldApi.state.meta.isValid
+                                ? fieldApi.state.meta.errors.map(err => String(err)).join(', ')
                                 : undefined
                             }
                           />
@@ -188,12 +217,7 @@ export function SchemaWizard({ schema, onSubmit, initialValues, onCancel, onStep
         <div className="flex justify-between pt-4">
           <div>
             {onCancel && (
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onCancel}
-                aria-label={cancelLabel}
-              >
+              <Button type="button" variant="outline" onClick={onCancel} aria-label={cancelLabel}>
                 {cancelLabel}
               </Button>
             )}
@@ -210,9 +234,7 @@ export function SchemaWizard({ schema, onSubmit, initialValues, onCancel, onStep
               </Button>
             )}
             {isReviewStep ? (
-              <form.Subscribe
-                selector={(state) => [state.canSubmit, state.isSubmitting]}
-              >
+              <form.Subscribe selector={state => [state.canSubmit, state.isSubmitting]}>
                 {([canSubmit, isSubmitting]) => (
                   <Button type="submit" disabled={!canSubmit}>
                     {isSubmitting ? 'Submitting...' : submitLabel}
@@ -220,9 +242,7 @@ export function SchemaWizard({ schema, onSubmit, initialValues, onCancel, onStep
                 )}
               </form.Subscribe>
             ) : isLastStep && !hasReviewStep ? (
-              <form.Subscribe
-                selector={(state) => [state.canSubmit, state.isSubmitting]}
-              >
+              <form.Subscribe selector={state => [state.canSubmit, state.isSubmitting]}>
                 {([canSubmit, isSubmitting]) => (
                   <Button type="submit" disabled={!canSubmit}>
                     {isSubmitting ? 'Submitting...' : submitLabel}
@@ -241,9 +261,14 @@ export function SchemaWizard({ schema, onSubmit, initialValues, onCancel, onStep
   )
 }
 
-function DefaultStepIndicator({ steps, currentStep, visitedSteps, onStepClick }: StepIndicatorProps) {
+function DefaultStepIndicator({
+  steps,
+  currentStep,
+  visitedSteps,
+  onStepClick,
+}: StepIndicatorProps) {
   return (
-    <div className="flex items-center gap-2 mb-6" role="navigation" aria-label="Wizard progress">
+    <nav className="flex items-center gap-2 mb-6" aria-label="Wizard progress">
       {steps.map((step, index) => {
         const isCurrent = index === currentStep
         const isVisited = visitedSteps.has(index)
@@ -264,6 +289,7 @@ function DefaultStepIndicator({ steps, currentStep, visitedSteps, onStepClick }:
         }
 
         return (
+          // biome-ignore lint/suspicious/noArrayIndexKey: steps are static — index is stable
           <div key={index} className="flex items-center">
             {index > 0 && (
               <div
@@ -273,13 +299,23 @@ function DefaultStepIndicator({ steps, currentStep, visitedSteps, onStepClick }:
               />
             )}
             <div className="flex flex-col items-center">
+              {/* biome-ignore lint/a11y/noStaticElementInteractions: role=button set when interactive */}
               <div
                 className={circleClassName}
                 aria-current={isCurrent ? 'step' : undefined}
                 role={canClick ? 'button' : undefined}
                 tabIndex={canClick ? 0 : undefined}
-                onClick={canClick ? () => onStepClick!(index) : undefined}
-                onKeyDown={canClick ? (e: React.KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onStepClick!(index) } } : undefined}
+                onClick={canClick ? () => onStepClick?.(index) : undefined}
+                onKeyDown={
+                  canClick
+                    ? (e: React.KeyboardEvent) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault()
+                          onStepClick?.(index)
+                        }
+                      }
+                    : undefined
+                }
               >
                 {index + 1}
               </div>
@@ -294,23 +330,23 @@ function DefaultStepIndicator({ steps, currentStep, visitedSteps, onStepClick }:
           </div>
         )
       })}
-    </div>
+    </nav>
   )
 }
 
 function buildWizardDefaults(
   steps: readonly { readonly schema: { readonly fields: readonly FieldSchema[] } }[],
-  initialValues?: Record<string, unknown>
+  initialValues?: Record<string, unknown>,
 ): Record<string, unknown> {
   const defaults: Record<string, unknown> = {}
   for (const step of steps) {
     for (const field of step.schema.fields) {
       if (initialValues && field.name in initialValues) {
         defaults[field.name] = initialValues[field.name]
-      } else if (field.defaultValue !== undefined) {
-        defaults[field.name] = field.defaultValue
-      } else {
+      } else if (field.defaultValue === undefined) {
         defaults[field.name] = field.type === 'checkbox' ? false : ''
+      } else {
+        defaults[field.name] = field.defaultValue
       }
     }
   }
@@ -320,12 +356,12 @@ function buildWizardDefaults(
 async function validateStepFields(
   formApi: FormApiForValidation,
   fields: readonly FieldSchema[],
-  formValues: Record<string, unknown>
+  formValues: Record<string, unknown>,
 ): Promise<boolean> {
   let allValid = true
   for (const field of fields) {
     if (!isFieldVisible(field, formValues)) continue
-    formApi.setFieldMeta(field.name, (prev) => ({ ...prev, isTouched: true }))
+    formApi.setFieldMeta(field.name, prev => ({ ...prev, isTouched: true }))
     const errors = await formApi.validateField(field.name, 'change')
     if (errors.length > 0) {
       allValid = false
@@ -337,13 +373,13 @@ async function validateStepFields(
 async function validateAllFields(
   formApi: FormApiForValidation,
   steps: readonly { readonly schema: { readonly fields: readonly FieldSchema[] } }[],
-  formValues: Record<string, unknown>
+  formValues: Record<string, unknown>,
 ): Promise<boolean> {
   let allValid = true
   for (const step of steps) {
     for (const field of step.schema.fields) {
       if (!isFieldVisible(field, formValues)) continue
-      formApi.setFieldMeta(field.name, (prev) => ({ ...prev, isTouched: true }))
+      formApi.setFieldMeta(field.name, prev => ({ ...prev, isTouched: true }))
       const errors = await formApi.validateField(field.name, 'change')
       if (errors.length > 0) {
         allValid = false
@@ -361,7 +397,7 @@ async function validateAllFields(
 interface FormApiForValidation {
   readonly setFieldMeta: (
     field: string,
-    updater: (prev: AnyFieldMetaBase) => AnyFieldMetaBase
+    updater: (prev: AnyFieldMetaBase) => AnyFieldMetaBase,
   ) => void
   // NOTE: Return type intentionally uses `any[]` to match the upstream
   // TanStack FormApi.validateField signature exactly. The upstream library
@@ -369,8 +405,6 @@ interface FormApiForValidation {
   // Using a narrower type like `readonly string[]` would create a type
   // mismatch if the upstream contract changes or if custom validators
   // return non-string error objects.
-  readonly validateField: (
-    field: string,
-    cause: 'change'
-  ) => any[] | Promise<any[]>
+  // biome-ignore lint/suspicious/noExplicitAny: upstream TanStack FormApi.validateField returns any[]
+  readonly validateField: (field: string, cause: 'change') => any[] | Promise<any[]>
 }

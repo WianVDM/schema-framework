@@ -1,10 +1,10 @@
 // NOTE: Single-pass TypeScript export and import parser.
 // NOTE: Reads each file only once, extracting both exports and imports.
 
-import { readFileSync } from 'fs'
-import { basename } from 'path'
-import { EXPORT_PATTERNS, RE_EXPORT_PATTERNS, options } from './constants.mjs'
+import { readFileSync } from 'node:fs'
+import { basename } from 'node:path'
 import { classifyExport } from './classify-export.mjs'
+import { EXPORT_PATTERNS, options, RE_EXPORT_PATTERNS } from './constants.mjs'
 
 /**
  * NOTE: Parses a single TypeScript file, extracting both exports and imports.
@@ -37,9 +37,7 @@ function extractExports(content, filePath) {
   // NOTE: Check for re-export patterns first (barrel detection)
   const reExportMatches = []
   for (const pattern of RE_EXPORT_PATTERNS) {
-    pattern.lastIndex = 0
-    let match
-    while ((match = pattern.exec(content)) !== null) {
+    for (const match of content.matchAll(pattern)) {
       reExportMatches.push(match)
     }
   }
@@ -51,9 +49,7 @@ function extractExports(content, filePath) {
   // NOTE: Extract named exports using all export patterns
   const exports = []
   for (const pattern of EXPORT_PATTERNS) {
-    pattern.lastIndex = 0
-    let match
-    while ((match = pattern.exec(content)) !== null) {
+    for (const match of content.matchAll(pattern)) {
       const keyword = match[0].split(/\s+/)[1]
       exports.push({
         name: match[1],
@@ -76,9 +72,7 @@ function extractImports(content) {
     /import\s+['"]([^'"]+)['"]/g,
   ]
   for (const pattern of patterns) {
-    pattern.lastIndex = 0
-    let match
-    while ((match = pattern.exec(content)) !== null) {
+    for (const match of content.matchAll(pattern)) {
       imports.push(match[1])
     }
   }

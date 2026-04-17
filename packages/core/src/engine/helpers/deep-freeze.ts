@@ -19,7 +19,7 @@ export function deepFreeze<T>(obj: T, visited: WeakSet<object> = new WeakSet()):
   }
 
   if (obj instanceof Set) {
-    for (const value of (obj as Set<unknown>)) {
+    for (const value of obj as Set<unknown>) {
       deepFreeze(value, visited)
     }
     return Object.freeze(obj) as DeepFrozen<T>

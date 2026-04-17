@@ -9,6 +9,6 @@ import type { ComponentType } from 'react'
  * from being registered. This is an intentional upstream type exception.
  */
 export interface CustomComponentRegistry {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // biome-ignore lint/suspicious/noExplicitAny: generic injection point — typed props vary per consumer
   readonly [componentKey: string]: ComponentType<any>
 }

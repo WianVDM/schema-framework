@@ -1,8 +1,8 @@
 // NOTE: I/O helpers for reading and writing context files.
 // NOTE: Provides compressed/pretty JSON serialization, file writing, and check mode.
 
-import { writeFileSync, existsSync, readFileSync, mkdirSync, unlinkSync } from 'fs'
-import { join, dirname, resolve } from 'path'
+import { existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs'
+import { dirname, join, resolve } from 'node:path'
 import { ROOT, TIER2_OUTPUT_DIR } from './constants.mjs'
 
 /**
@@ -18,7 +18,7 @@ export function serializeCompressed(data) {
  * Used for .context.json files which are human-reviewed.
  */
 export function serializePretty(data) {
-  return JSON.stringify(data, null, 2) + '\n'
+  return `${JSON.stringify(data, null, 2)}\n`
 }
 
 /**

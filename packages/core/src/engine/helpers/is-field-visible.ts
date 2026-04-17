@@ -6,10 +6,7 @@ import { evaluateCondition } from '../validators'
  * and the current form values. Extracted as a shared helper used by both
  * SchemaWizard and WizardReviewStep.
  */
-export function isFieldVisible(
-  field: FieldSchema,
-  formValues: Record<string, unknown>
-): boolean {
+export function isFieldVisible(field: FieldSchema, formValues: Record<string, unknown>): boolean {
   if (!field.visibleWhen) return true
   return evaluateCondition(field.visibleWhen, formValues)
 }

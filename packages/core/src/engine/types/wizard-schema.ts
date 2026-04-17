@@ -1,7 +1,7 @@
-import type { WizardStep } from './wizard-step'
-import type { WizardNavigationConfig } from './wizard-navigation-config'
-import type { ReviewStepConfig } from './review-step-config'
 import type { I18nConfig } from './i18n-config'
+import type { ReviewStepConfig } from './review-step-config'
+import type { WizardNavigationConfig } from './wizard-navigation-config'
+import type { WizardStep } from './wizard-step'
 
 export interface WizardSchema {
   readonly title?: string

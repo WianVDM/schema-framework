@@ -22,9 +22,19 @@
               "required": ["type", "consumedBy"],
               "additionalProperties": false,
               "properties": {
-                "type": { "type": "string", "description": "Value type: string, boolean, integer, etc." },
-                "consumedBy": { "type": "string", "description": "Which layer/service consumes this key" },
-                "perTenant": { "type": "boolean", "default": false, "description": "Whether this key varies per tenant" }
+                "type": {
+                  "type": "string",
+                  "description": "Value type: string, boolean, integer, etc."
+                },
+                "consumedBy": {
+                  "type": "string",
+                  "description": "Which layer/service consumes this key"
+                },
+                "perTenant": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "Whether this key varies per tenant"
+                }
               }
             }
           }

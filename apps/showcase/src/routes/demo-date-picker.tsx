@@ -1,6 +1,6 @@
+import { DatePicker } from '@my-framework/core'
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
-import { DatePicker } from '@my-framework/core'
 
 export const Route = createFileRoute('/demo-date-picker')({
   component: DatePickerDemoPage,
@@ -16,8 +16,8 @@ function DatePickerDemoPage() {
       <div>
         <h2 className="text-2xl font-bold mb-2">DatePicker Primitive Demo</h2>
         <p className="text-muted-foreground mb-6">
-          Self-contained date picker using date-fns + react-day-picker.
-          Layer 1 primitive — no schema knowledge required.
+          Self-contained date picker using date-fns + react-day-picker. Layer 1 primitive — no
+          schema knowledge required.
         </p>
       </div>
 
@@ -27,11 +27,7 @@ function DatePickerDemoPage() {
           Default format (yyyy-MM-dd). Type in the input or click the calendar icon.
         </p>
         <div className="max-w-xs">
-          <DatePicker
-            value={basicDate}
-            onChange={setBasicDate}
-            placeholder="Pick a date..."
-          />
+          <DatePicker value={basicDate} onChange={setBasicDate} placeholder="Pick a date..." />
         </div>
         <p className="text-sm">
           Value: <code className="bg-muted px-1 rounded">{basicDate || '(empty)'}</code>
@@ -40,9 +36,7 @@ function DatePickerDemoPage() {
 
       <div className="space-y-4">
         <h3 className="text-lg font-semibold">Custom Format</h3>
-        <p className="text-sm text-muted-foreground">
-          Using dd/MM/yyyy format string.
-        </p>
+        <p className="text-sm text-muted-foreground">Using dd/MM/yyyy format string.</p>
         <div className="max-w-xs">
           <DatePicker
             value={formattedDate}
@@ -77,14 +71,14 @@ function DatePickerDemoPage() {
 
       <div className="space-y-4">
         <h3 className="text-lg font-semibold">Disabled</h3>
-        <p className="text-sm text-muted-foreground">
-          DatePicker in disabled state.
-        </p>
+        <p className="text-sm text-muted-foreground">DatePicker in disabled state.</p>
         <div className="max-w-xs">
           <DatePicker
             value="2025-06-15"
-            onChange={() => {}}
-            disabled
+            onChange={() => {
+              /* no-op */
+            }}
+            disabled={true}
           />
         </div>
       </div>

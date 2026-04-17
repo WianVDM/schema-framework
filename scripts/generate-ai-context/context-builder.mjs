@@ -1,11 +1,17 @@
 // NOTE: Builds .context.json data for individual directories.
 // NOTE: Handles export classification, dependency mapping, and merge with existing context.
 
-import { join, resolve, dirname, basename, extname, posix } from 'path'
-import { ROOT } from './constants.mjs'
-import { getLayer } from './get-layer.mjs'
-import { getSourceFiles, detectLanguage, loadExistingContext, resolveImport } from './file-discovery.mjs'
+import { basename, dirname, extname, join, posix, resolve } from 'node:path'
+import { parseInternalRefs } from './ast-parser.mjs'
+import { options, ROOT } from './constants.mjs'
 import { parseFileExports } from './export-parser.mjs'
+import {
+  detectLanguage,
+  getSourceFiles,
+  loadExistingContext,
+  resolveImport,
+} from './file-discovery.mjs'
+import { getLayer } from './get-layer.mjs'
 
 /**
  * NOTE: Builds the complete context object for a single directory.
@@ -16,7 +22,12 @@ export function buildContextForDir(dirPath) {
   const absDir = resolve(ROOT, dirPath)
   const files = getSourceFiles(dirPath)
   if (!files.length) return null
-  const layer = getLayer(dirPath)
+  let layer
+  try {
+    layer = getLayer(dirPath)
+  } catch {
+    layer = null
+  }
   const language = detectLanguage(dirPath)
   const filesMap = {}
   const rels = {}
@@ -40,9 +51,45 @@ export function buildContextForDir(dirPath) {
     filesMap[file] = buildFileEntry(file, exports, existing)
 
     // NOTE: Classify imports into internal (within directory) and external
-    const { internalDeps, externalDepList } = classifyImports(imports, filePath, absDir, file, files)
-    if (internalDeps.length > 0) rels[file] = [...new Set(internalDeps)]
-    if (externalDepList.length > 0) extDeps[file] = [...new Set(externalDepList)]
+    const { internalDeps, externalDepList } = classifyImports(
+      imports,
+      filePath,
+      absDir,
+      file,
+      files,
+    )
+    if (internalDeps.length > 0) rels[file] = dedupeByPath(internalDeps)
+    if (externalDepList.length > 0) extDeps[file] = dedupeByPath(externalDepList)
+
+    // NOTE: Deep mode — extract type references from file content (pass 1: store refs only)
+    if (options.deep) {
+      const internalRefs = parseInternalRefs(filePath)
+      if (internalRefs.length > 0) {
+        filesMap[file].internalRefs = internalRefs
+      }
+    }
+  }
+
+  // NOTE: Deep mode pass 2 — now that all files are in filesMap, infer type-level refs
+  if (options.deep) {
+    for (const [file, meta] of Object.entries(filesMap)) {
+      if (!meta.internalRefs) continue
+      for (const ref of meta.internalRefs) {
+        for (const [otherFile, otherMeta] of Object.entries(filesMap)) {
+          if (otherFile === file) continue
+          const otherExports = (otherMeta.export || '').split(',').map(n => n.trim())
+          if (otherExports.includes(ref)) {
+            if (!rels[file]) rels[file] = []
+            rels[file].push({ path: otherFile, confidence: 'inferred' })
+          }
+        }
+      }
+    }
+
+    // NOTE: Deduplicate inferred refs that may have been added multiple times
+    for (const file of Object.keys(rels)) {
+      rels[file] = dedupeByPath(rels[file])
+    }
   }
 
   const schemaRelPath = posix.relative(dirPath, 'docs/ai/schemas/context-schema.json')
@@ -68,40 +115,54 @@ export function buildContextForDir(dirPath) {
 function buildFileEntry(file, exports, existing) {
   // NOTE: No exports found — default entry with TODO description
   if (exports.length === 0) {
-    return preserveManualFields({
-      export: '*',
-      type: 'component',
-      desc: `TODO: describe ${basename(file, extname(file))}`,
-    }, existing)
+    return preserveManualFields(
+      {
+        export: '*',
+        type: 'component',
+        desc: `TODO: describe ${basename(file, extname(file))}`,
+      },
+      existing,
+    )
   }
 
   // NOTE: Single re-export (barrel file)
   if (exports.length === 1 && exports[0].type === 're-export') {
-    return preserveManualFields({
-      export: '*',
-      type: 're-export',
-      desc: 'Barrel re-exports',
-    }, existing)
+    return preserveManualFields(
+      {
+        export: '*',
+        type: 're-export',
+        desc: 'Barrel re-exports',
+      },
+      existing,
+    )
   }
 
   // NOTE: Single named export
   if (exports.length === 1) {
     const exp = exports[0]
-    return preserveManualFields({
-      export: exp.name,
-      type: exp.type,
-      desc: existing?.desc || `TODO: describe ${exp.name}`,
-    }, existing)
+    return preserveManualFields(
+      {
+        export: exp.name,
+        type: exp.type,
+        desc: existing?.desc || `TODO: describe ${exp.name}`,
+      },
+      existing,
+    )
   }
 
   // NOTE: Multiple named exports in one file
   const names = exports.map(e => e.name).join(', ')
   const types = [...new Set(exports.map(e => e.type))]
-  return preserveManualFields({
-    export: names,
-    type: types.length === 1 ? types[0] : 'const',
-    desc: existing?.desc || `TODO: describe ${names.split(',')[0].trim()} (+${exports.length - 1} more)`,
-  }, existing)
+  return preserveManualFields(
+    {
+      export: names,
+      type: types.length === 1 ? types[0] : 'const',
+      desc:
+        existing?.desc ||
+        `TODO: describe ${names.split(',')[0].trim()} (+${exports.length - 1} more)`,
+    },
+    existing,
+  )
 }
 
 /**
@@ -125,7 +186,7 @@ function preserveManualFields(entry, existing) {
 
 /**
  * NOTE: Splits imports into internal (same directory) and external dependencies.
- * Returns { internalDeps: string[], externalDepList: string[] }.
+ * Returns confidence-tagged objects: { internalDeps: { path, confidence }[], externalDepList: { path, confidence }[] }.
  */
 function classifyImports(imports, filePath, absDir, currentFile, allFiles) {
   const internalDeps = []
@@ -140,22 +201,40 @@ function classifyImports(imports, filePath, absDir, currentFile, allFiles) {
           // NOTE: Same-directory import — record as internal dependency
           const depFile = basename(resolved)
           if (depFile !== currentFile && allFiles.includes(depFile)) {
-            internalDeps.push(depFile)
+            internalDeps.push({ path: depFile, confidence: 'explicit' })
           }
         } else {
           // NOTE: Cross-directory relative import — record as external dependency
           // so it appears in extDeps for context-map-generator and impact graph.
           const absDirPosix = absDir.replace(/\\/g, '/')
           const resolvedPosix = resolved.replace(/\\/g, '/')
-          externalDepList.push(posix.relative(absDirPosix, resolvedPosix))
+          externalDepList.push({
+            path: posix.relative(absDirPosix, resolvedPosix),
+            confidence: 'explicit',
+          })
         }
       }
     } else {
-      externalDepList.push(imp)
+      externalDepList.push({ path: imp, confidence: 'explicit' })
     }
   }
 
   return { internalDeps, externalDepList }
+}
+
+/**
+ * NOTE: Deduplicates an array of { path, confidence } objects by path.
+ * Uses a Map for O(1) lookups — keeps the first occurrence when duplicates exist.
+ * Exported as a shared utility for use by other modules.
+ */
+export function dedupeByPath(entries) {
+  const map = new Map()
+  for (const entry of entries) {
+    if (!map.has(entry.path)) {
+      map.set(entry.path, entry)
+    }
+  }
+  return [...map.values()]
 }
 
 /**

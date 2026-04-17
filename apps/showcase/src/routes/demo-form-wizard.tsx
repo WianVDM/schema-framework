@@ -1,7 +1,7 @@
-import { useState } from 'react'
-import { createFileRoute } from '@tanstack/react-router'
-import { SchemaWizard, PrimitivesProvider } from '@my-framework/core'
 import type { WizardSchema } from '@my-framework/core'
+import { PrimitivesProvider, SchemaWizard } from '@my-framework/core'
+import { createFileRoute } from '@tanstack/react-router'
+import { useState } from 'react'
 import { primitives } from '../data/primitive-mappings'
 import { getWizardFormSchema } from '../server/get-wizard-form-schema'
 
@@ -17,12 +17,11 @@ function DemoFormWizardPage() {
   const [currentStepLabel, setCurrentStepLabel] = useState<string>('')
 
   const handleSubmit = (values: Record<string, unknown>) => {
-    console.log('Wizard form submitted:', values)
     alert(JSON.stringify(values, null, 2))
   }
 
   const handleCancel = () => {
-    console.log('Wizard cancelled')
+    /* intentional no-op */
   }
 
   const handleStepChange = (stepIndex: number, direction: 'next' | 'previous' | 'jump') => {
@@ -34,16 +33,15 @@ function DemoFormWizardPage() {
     return <div className="p-8 text-center text-muted-foreground">Loading schema...</div>
   }
 
-  const enhancedSchema: WizardSchema = nonLinear
-    ? { ...schema, mode: 'nonlinear' }
-    : schema
+  const enhancedSchema: WizardSchema = nonLinear ? { ...schema, mode: 'nonlinear' } : schema
 
   return (
     <div className="container mx-auto py-10 px-4 max-w-2xl">
       <h1 className="text-3xl font-bold mb-2">Form Wizard</h1>
       <p className="text-muted-foreground mb-6">
-        Demonstrates the <code className="text-sm bg-muted px-1 py-0.5 rounded">SchemaWizard</code> renderer
-        with multi-step navigation, per-step validation, and an optional review step before submission.
+        Demonstrates the <code className="text-sm bg-muted px-1 py-0.5 rounded">SchemaWizard</code>{' '}
+        renderer with multi-step navigation, per-step validation, and an optional review step before
+        submission.
       </p>
 
       <div className="flex items-center gap-4 mb-6 p-4 border rounded-lg bg-muted/50">
@@ -51,7 +49,7 @@ function DemoFormWizardPage() {
           <input
             type="checkbox"
             checked={nonLinear}
-            onChange={(e) => setNonLinear(e.target.checked)}
+            onChange={e => setNonLinear(e.target.checked)}
             className="rounded"
           />
           Non-linear mode (jump to visited steps)

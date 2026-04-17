@@ -1,9 +1,10 @@
 import type { GridSchema } from '@my-framework/core'
-import { deepFreeze, asDataKey } from '@my-framework/core'
+import { asDataKey, deepFreeze } from '@my-framework/core'
 
 export const virtualGridSchema = deepFreeze<GridSchema>({
   title: 'Virtual Scroll Demo',
-  description: '10,000 rows rendered with virtual scrolling. Only visible rows are mounted in the DOM.',
+  description:
+    '10,000 rows rendered with virtual scrolling. Only visible rows are mounted in the DOM.',
   columns: [
     { key: 'id', label: 'ID', type: 'number', sortable: true, width: '80px' },
     { key: 'name', label: 'Name', sortable: true, filterable: true, resizable: true },

@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "insights-schema.json",
+  "title": "Architectural Insights",
+  "description": "Cross-layer deps, high-impact files, circular warnings",
+  "type": "object",
+  "required": ["$schema", "generatedAt", "insights"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "insights": {
+      "type": "object",
+      "required": ["crossLayerDeps", "highImpactFiles", "circularWarnings"],
+      "additionalProperties": false,
+      "properties": {
+        "crossLayerDeps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["source", "target", "sourceLayer", "targetLayer"],
+            "additionalProperties": false,
+            "properties": {
+              "source": {
+                "type": "string"
+              },
+              "target": {
+                "type": "string"
+              },
+              "sourceLayer": {
+                "type": "integer"
+              },
+              "targetLayer": {
+                "type": "integer"
+              },
+              "note": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "highImpactFiles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["file", "consumerCount", "layerSpan"],
+            "additionalProperties": false,
+            "properties": {
+              "file": {
+                "type": "string"
+              },
+              "consumerCount": {
+                "type": "integer"
+              },
+              "layerSpan": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        },
+        "circularWarnings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["cycle"],
+            "additionalProperties": false,
+            "properties": {
+              "cycle": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

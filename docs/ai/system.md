@@ -45,6 +45,10 @@ Layer 3: apps/showcase/src/              — TanStack Start routes, server funct
 | 2 | `docs/ai/symbol-index-layer{1,2,3}.json` | Export→file lookup per layer | Auto |
 | 2 | `docs/ai/impact-graph.json` | Reverse dependency graph (consumedBy) | Auto |
 | 2 | `docs/ai/directory-index.json` | Directory→purpose mapping | Auto |
+| 2 | `docs/ai/core-abstractions.json` | Top N most-depended-on exports (god nodes) | Auto |
+| 2 | `docs/ai/insights.json` | Cross-layer deps, high-impact files, circular warnings | Auto |
+| 2 | `docs/ai/community-map.json` | Directory clusters by shared dependencies | Auto |
+| 2 | `docs/ai/last-diff.json` | What changed since last generation (--diff flag) | Auto |
 | 2 | `docs/ai/flows.json` | User-facing data flow descriptions | Hand-crafted |
 | 2 | `docs/ai/config-schema.json` | Configuration schema reference | Hand-crafted |
 | 2 | `docs/ai/error-taxonomy.json` | Error catalog with fixes | Hand-crafted |
@@ -54,10 +58,12 @@ Layer 3: apps/showcase/src/              — TanStack Start routes, server funct
 
 ## Auto-Generation
 
-Run `pnpm generate-context` to regenerate all `.context.json` files, symbol indexes, impact graph, and directory index.
+Run `pnpm generate-context` to regenerate all `.context.json` files, symbol indexes, impact graph, directory index, and analysis files.
 The script preserves hand-crafted descriptions via merge mode.
 Use `pnpm generate-context:force` to regenerate all regardless of mtime.
 Use `pnpm generate-context:check` to verify freshness without writing (CI gate).
+Add `--deep` flag to include AST-level `internalRefs` (type references within files).
+Add `--diff` flag to generate `last-diff.json` tracking what changed since last generation.
 
 ## File Naming
 

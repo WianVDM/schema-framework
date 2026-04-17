@@ -1,8 +1,8 @@
 // NOTE: VERSION_STATUS.md consistency validation.
 // NOTE: Checks version fields match package.json files and milestone status is consistent.
 
-import { readFileSync, existsSync } from 'fs'
-import { join } from 'path'
+import { existsSync, readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { ROOT } from '../shared/constants.mjs'
 import { readPackageJson } from '../shared/file-helpers.mjs'
 
@@ -39,7 +39,9 @@ export function checkVersionStatus(collector) {
   const showcasePkg = readPackageJson(join(ROOT, 'apps', 'showcase', 'package.json'))
 
   if (corePkg && corePkg.version !== statedCurrent) {
-    collector.addViolation(`VERSION_STATUS.md says "Current Version: ${statedCurrent}" but @my-framework/core is ${corePkg.version}`)
+    collector.addViolation(
+      `VERSION_STATUS.md says "Current Version: ${statedCurrent}" but @my-framework/core is ${corePkg.version}`,
+    )
   }
 
   // NOTE: Showcase version is expected to drift from core — it's an internal demo app.
@@ -48,7 +50,9 @@ export function checkVersionStatus(collector) {
     const coreMajor = statedCurrent.split('.').map(Number)
     const showcaseMajor = showcasePkg.version.split('.').map(Number)
     if (coreMajor[0] > showcaseMajor[0]) {
-      collector.addWarning(`VERSION_STATUS.md says "Current Version: ${statedCurrent}" but showcase app is ${showcasePkg.version} (major version behind)`)
+      collector.addWarning(
+        `VERSION_STATUS.md says "Current Version: ${statedCurrent}" but showcase app is ${showcasePkg.version} (major version behind)`,
+      )
     }
   }
 
@@ -58,7 +62,9 @@ export function checkVersionStatus(collector) {
     const status = milestoneStatusMatch[1].trim()
     if (status === 'COMPLETE') {
       if (statedCurrent !== statedTarget) {
-        collector.addViolation(`VERSION_STATUS.md says milestone COMPLETE but Current Version (${statedCurrent}) ≠ Target Version (${statedTarget})`)
+        collector.addViolation(
+          `VERSION_STATUS.md says milestone COMPLETE but Current Version (${statedCurrent}) ≠ Target Version (${statedTarget})`,
+        )
       }
     }
   }
@@ -71,10 +77,17 @@ export function checkVersionStatus(collector) {
       const activeName = activeMilestoneMatch[1].trim()
       const upcomingItems = upcomingSection[1]
         .split('\n')
-        .map(line => line.replace(/^[\s-*]+/, '').trim().toLowerCase())
+        .map(line =>
+          line
+            .replace(/^[\s-*]+/, '')
+            .trim()
+            .toLowerCase(),
+        )
         .filter(Boolean)
       if (upcomingItems.some(item => item === activeName.toLowerCase())) {
-        collector.addWarning(`VERSION_STATUS.md: Active milestone "${activeName}" also appears in "Upcoming Milestones" — should be removed from upcoming`)
+        collector.addWarning(
+          `VERSION_STATUS.md: Active milestone "${activeName}" also appears in "Upcoming Milestones" — should be removed from upcoming`,
+        )
       }
     }
   }
@@ -86,13 +99,15 @@ export function checkVersionStatus(collector) {
     if (activeMilestoneMatch) {
       const activeName = activeMilestoneMatch[1].trim()
       const blockRegex = new RegExp(
-        `##\\s*Milestone Checklist[^\\n]*${activeName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}[^\\n]*\\n([\\s\\S]*?)(?=\\n## |\\n##[^#]|$)`
+        `##\\s*Milestone Checklist[^\\n]*${activeName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}[^\\n]*\\n([\\s\\S]*?)(?=\\n## |\\n##[^#]|$)`,
       )
       const activeBlock = content.match(blockRegex)
       if (activeBlock) {
         const uncheckedItems = activeBlock[1].match(/- \[ \]/g)
         if (!uncheckedItems) {
-          collector.addWarning('VERSION_STATUS.md: Milestone is IN PROGRESS but all checklist items are checked — should be marked COMPLETE')
+          collector.addWarning(
+            'VERSION_STATUS.md: Milestone is IN PROGRESS but all checklist items are checked — should be marked COMPLETE',
+          )
         }
       }
     }

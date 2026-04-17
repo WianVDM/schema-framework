@@ -11,12 +11,12 @@
  *   node scripts/auto-changeset/index.mjs --files a.ts b.ts  # Explicit file list
  */
 
-import { existsSync, mkdirSync, readdirSync } from 'fs'
-import { join } from 'path'
+import { existsSync, mkdirSync, readdirSync } from 'node:fs'
+import { join } from 'node:path'
 import { ROOT } from '../shared/constants.mjs'
 import { readPackageJson } from '../shared/file-helpers.mjs'
-import { getChangedCoreFiles } from './git-operations.mjs'
 import { generateChangeset, writeChangeset } from './changeset-writer.mjs'
+import { getChangedCoreFiles } from './git-operations.mjs'
 
 /**
  * NOTE: Reads the package name from packages/core/package.json.
@@ -53,7 +53,9 @@ function main() {
   }
 
   // NOTE: Skip if a changeset already exists — manual changeset takes precedence over auto-generated
-  const existingChangesets = readdirSync(changesetDir).filter(f => f.endsWith('.md') && f !== 'README.md')
+  const existingChangesets = readdirSync(changesetDir).filter(
+    f => f.endsWith('.md') && f !== 'README.md',
+  )
   if (existingChangesets.length > 0) {
     console.log(`ℹ️  Changeset already exists (${existingChangesets[0]}). Skipping auto-generation.`)
     return
@@ -65,7 +67,12 @@ function main() {
 
   if (writeChangeset(filePath, content)) {
     console.log(`✅ Auto-generated changeset: .changeset/${filename}`)
-    console.log(`   ${content.split('\n').find(l => l.trim() && !l.startsWith('---') && !l.startsWith('"'))?.trim()}`)
+    console.log(
+      `   ${content
+        .split('\n')
+        .find(l => l.trim() && !l.startsWith('---') && !l.startsWith('"'))
+        ?.trim()}`,
+    )
   } else {
     console.error(`❌ Failed to write changeset: ${filePath}`)
     process.exitCode = 1

@@ -3,7 +3,8 @@ import { deepFreeze } from '@my-framework/core'
 
 export const multiselectFormSchema = deepFreeze<FormSchema>({
   title: 'Multi-Select & Tag Input Demo',
-  description: 'Demonstrates multiselect fields with predefined options, tag creation, and selection limits.',
+  description:
+    'Demonstrates multiselect fields with predefined options, tag creation, and selection limits.',
   fields: [
     {
       name: 'programmingLanguages',

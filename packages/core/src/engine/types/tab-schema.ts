@@ -1,5 +1,5 @@
-import type { TabItem } from './tab-item'
 import type { I18nConfig } from './i18n-config'
+import type { TabItem } from './tab-item'
 
 /** Tab container definition */
 export interface TabSchema {

@@ -21,8 +21,14 @@
           "additionalProperties": false,
           "properties": {
             "file": { "type": "string", "description": "Relative file path from project root" },
-            "type": { "type": "string", "enum": ["interface", "type", "function", "const", "component", "utility", "config"] },
-            "category": { "type": "string", "enum": ["dto", "component", "utility", "controller", "service", "config", "other"] }
+            "type": {
+              "type": "string",
+              "enum": ["interface", "type", "function", "const", "component", "utility", "config"]
+            },
+            "category": {
+              "type": "string",
+              "enum": ["dto", "component", "utility", "controller", "service", "config", "other"]
+            }
           }
         }
       }

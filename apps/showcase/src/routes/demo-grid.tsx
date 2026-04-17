@@ -1,7 +1,7 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
-import { SchemaGrid } from '@my-framework/core'
 import type { GridSchema } from '@my-framework/core'
+import { SchemaGrid } from '@my-framework/core'
+import { useQuery } from '@tanstack/react-query'
+import { createFileRoute } from '@tanstack/react-router'
 import { getUserGridSchema } from '../server/get-user-grid-schema'
 import { getUsers } from '../server/get-users'
 import { createSelectionStore } from '../stores/selection-store'
@@ -37,7 +37,7 @@ function DemoGridRoute() {
     )
   }
 
-  if (!schema || !users) {
+  if (!(schema && users)) {
     return (
       <div className="max-w-4xl mx-auto text-center py-12">
         <p className="text-destructive">Failed to load grid data.</p>
@@ -47,11 +47,7 @@ function DemoGridRoute() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-4">
-      <SchemaGrid
-        schema={schema as GridSchema}
-        data={users}
-        onRowClick={handleRowClick}
-      />
+      <SchemaGrid schema={schema as GridSchema} data={users} onRowClick={handleRowClick} />
       {selectedData && (
         <div className="border rounded-lg p-4 bg-muted/50">
           <div className="flex items-center justify-between mb-2">
@@ -64,9 +60,7 @@ function DemoGridRoute() {
               Clear
             </button>
           </div>
-          <pre className="text-sm overflow-auto">
-            {JSON.stringify(selectedData, null, 2)}
-          </pre>
+          <pre className="text-sm overflow-auto">{JSON.stringify(selectedData, null, 2)}</pre>
         </div>
       )}
     </div>

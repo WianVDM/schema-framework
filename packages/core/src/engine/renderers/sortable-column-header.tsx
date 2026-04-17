@@ -26,19 +26,12 @@ export function SortableColumnHeader({
   enableResizing,
   filterDisabled = false,
 }: SortableColumnHeaderProps) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: header.id })
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: header.id,
+  })
 
   const thStyle: React.CSSProperties = {
-    transform: transform
-      ? `translate3d(${transform.x}px, 0, 0)`
-      : undefined,
+    transform: transform ? `translate3d(${transform.x}px, 0, 0)` : undefined,
     transition,
     opacity: isDragging ? 0.5 : 1,
     position: 'relative',

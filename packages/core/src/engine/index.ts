@@ -1,102 +1,106 @@
 // Layer 2: Engine — Schema types, validators, context, and renderers
 
+export { CustomComponentProvider, useCustomComponents } from './context/custom-component-context'
+export { LayoutPrimitivesProvider, useLayoutPrimitives } from './context/layout-primitives-context'
+// Context
+export { PrimitivesProvider, usePrimitives } from './context/primitives-context'
+export {
+  applyResponsiveClasses,
+  asDataKey,
+  deepFreeze,
+  isCustomContent,
+  isFormContent,
+  isGridContent,
+  isLayoutContent,
+  isTabsContent,
+  isWizardContent,
+} from './helpers'
+// Helpers
+export { resolveMessage } from './helpers/i18n'
+export { FieldRenderer } from './renderers/field-renderer'
+export { GridColumnHeader } from './renderers/grid-column-header'
+export { GridPagination } from './renderers/grid-pagination'
+export { GridToolbar } from './renderers/grid-toolbar'
+// Renderers
+export { SchemaForm } from './renderers/schema-form'
+export { SchemaGrid } from './renderers/schema-grid'
+export { SchemaWizard } from './renderers/schema-wizard'
+export { ThemeProvider } from './renderers/theme-provider'
+export { useTheme } from './renderers/use-theme'
 // Types (one-export-per-file via barrel)
 export type {
-  FieldType,
+  Brand,
+  CellValueRenderer,
+  ColumnFilterConfig,
+  ConditionOperator,
+  ContentRendererProps,
+  ContentSchema,
+  CustomComponentRegistry,
+  DashboardRendererProps,
+  DashboardSchema,
+  DataKey,
+  DatePickerConfig,
+  DeepFrozen,
+  FieldCondition,
+  FieldId,
+  FieldRendererProps,
   FieldSchema,
-  SelectOption,
+  FieldType,
+  FileUploadConfig,
   FormSchema,
+  FormSubmitHandler,
   GridColumnSchema,
   GridSchema,
-  PrimitiveComponents,
-  FieldRendererProps,
-  SchemaFormProps,
-  SchemaGridProps,
-  SelectionStore,
-  FormSubmitHandler,
-  FieldCondition,
-  ValidationRule,
-  RuntimeValidationRule,
-  FileUploadConfig,
-  PaginationConfig,
-  ColumnFilterConfig,
-  StatusConfig,
-  ServerPaginationConfig,
-  ThemeConfig,
   I18nConfig,
-  CellValueRenderer,
-  Brand,
-  FieldId,
-  DataKey,
-  ReadonlyDeep,
-  DeepFrozen,
-  ConditionOperator,
-  ValidationType,
-  DatePickerConfig,
-  MultiSelectConfig,
-  WizardStep,
-  WizardNavigationConfig,
-  ReviewStepConfig,
-  WizardSchema,
-  StepIndicatorProps,
-  SchemaWizardProps,
+  LayoutPrimitiveComponents,
+  LayoutRegion,
+  LayoutRendererProps,
+  LayoutSchema,
   // Layout types
   LayoutType,
+  MultiSelectConfig,
+  PaginationConfig,
+  PrimitiveComponents,
+  ReadonlyDeep,
   ResponsiveConfig,
-  CustomComponentRegistry,
-  LayoutPrimitiveComponents,
-  ContentSchema,
+  ReviewStepConfig,
+  RuntimeValidationRule,
+  SchemaFormProps,
+  SchemaGridProps,
+  SchemaWizardProps,
+  SelectionStore,
+  SelectOption,
+  ServerPaginationConfig,
+  StatusConfig,
+  StepIndicatorProps,
   TabItem,
   TabSchema,
-  LayoutRegion,
-  LayoutSchema,
-  DashboardSchema,
-  LayoutRendererProps,
-  DashboardRendererProps,
   TabsRendererProps,
-  ContentRendererProps,
+  ThemeConfig,
+  ValidationRule,
+  ValidationType,
+  WizardNavigationConfig,
+  WizardSchema,
+  WizardStep,
 } from './types'
-
+export type { ValidationResult } from './validators'
 // Validators (one-export-per-file via barrel)
 export {
-  fieldSchemaValidator,
-  validateFieldSchema,
-  formSchemaValidator,
-  validateFormSchema,
-  gridSchemaValidator,
-  gridColumnSchemaValidator,
-  validateGridSchema,
-  validateFieldValue,
   evaluateCondition,
-  wizardSchemaValidator,
-  validateWizardSchema,
+  fieldSchemaValidator,
+  formSchemaValidator,
+  gridColumnSchemaValidator,
+  gridSchemaValidator,
+  validateContentSchema,
+  validateDashboardSchema,
+  validateFieldSchema,
+  validateFieldValue,
+  validateFormSchema,
+  validateGridSchema,
+  validateLayoutSchema,
   // Layout validators
   validateResponsiveConfig,
   validateTabSchema,
-  validateLayoutSchema,
-  validateDashboardSchema,
-  validateContentSchema,
+  validateWizardSchema,
+  wizardSchemaValidator,
 } from './validators'
-
-export type { ValidationResult } from './validators'
-
-// Context
-export { PrimitivesProvider, usePrimitives } from './context/primitives-context'
-export { LayoutPrimitivesProvider, useLayoutPrimitives } from './context/layout-primitives-context'
-export { CustomComponentProvider, useCustomComponents } from './context/custom-component-context'
-
-// Helpers
-export { resolveMessage } from './helpers/i18n'
-export { deepFreeze, asDataKey } from './helpers'
-export { applyResponsiveClasses, isFormContent, isGridContent, isWizardContent, isTabsContent, isLayoutContent, isCustomContent } from './helpers'
-
-// Renderers
-export { SchemaForm } from './renderers/schema-form'
-export { SchemaWizard } from './renderers/schema-wizard'
-export { SchemaGrid } from './renderers/schema-grid'
-export { FieldRenderer } from './renderers/field-renderer'
-export { GridPagination } from './renderers/grid-pagination'
-export { GridColumnHeader } from './renderers/grid-column-header'
-export { GridToolbar } from './renderers/grid-toolbar'
-export { ThemeProvider } from './renderers/theme-provider'
-export { useTheme } from './renderers/use-theme'

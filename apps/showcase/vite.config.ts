@@ -1,8 +1,8 @@
-import { defineConfig } from 'vite'
+import path from 'node:path'
+import tailwindcss from '@tailwindcss/vite'
 import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 import viteReact from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite'
-import path from 'path'
+import { defineConfig } from 'vite'
 
 export default defineConfig({
   server: {
@@ -19,15 +19,17 @@ export default defineConfig({
         manualChunks(id) {
           if (!id.includes('node_modules')) return
           if (id.includes('@tanstack')) return 'vendor-tanstack'
-          if (id.includes('lucide-react') || id.includes('@base-ui') || id.includes('class-variance-authority')) return 'vendor-ui'
-          if (id.includes('date-fns') || id.includes('zustand') || id.includes('/zod/')) return 'vendor-data'
+          if (
+            id.includes('lucide-react') ||
+            id.includes('@base-ui') ||
+            id.includes('class-variance-authority')
+          )
+            return 'vendor-ui'
+          if (id.includes('date-fns') || id.includes('zustand') || id.includes('/zod/'))
+            return 'vendor-data'
         },
       },
     },
   },
-  plugins: [
-    tailwindcss(),
-    tanstackStart(),
-    viteReact(),
-  ],
+  plugins: [tailwindcss(), tanstackStart(), viteReact()],
 })

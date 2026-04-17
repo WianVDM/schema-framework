@@ -1,7 +1,7 @@
-import { createServerFn } from '@tanstack/react-start'
 import type { FormSchema } from '@my-framework/core'
-import { toSerializable } from '../lib/to-serializable'
+import { createServerFn } from '@tanstack/react-start'
 import { contactFormSchema } from '../data/contact-form-schema'
+import { toSerializable } from '../lib/to-serializable'
 
 // NOTE: Server functions return serializable JSON. Any presentation or rendering
 // of this form schema is handled client-side.
@@ -9,5 +9,5 @@ import { contactFormSchema } from '../data/contact-form-schema'
 export const getContactFormSchema = createServerFn({ method: 'GET' }).handler(
   async (): Promise<FormSchema> => {
     return toSerializable(contactFormSchema)
-  }
+  },
 )

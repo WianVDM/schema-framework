@@ -1,7 +1,7 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
-import { SchemaGrid } from '@my-framework/core'
 import type { GridSchema } from '@my-framework/core'
+import { SchemaGrid } from '@my-framework/core'
+import { useQuery } from '@tanstack/react-query'
+import { createFileRoute } from '@tanstack/react-router'
 import { getOrderGridSchema } from '../server/get-order-grid-schema'
 import { getOrders } from '../server/get-orders'
 
@@ -28,7 +28,7 @@ function DemoOrdersRoute() {
     )
   }
 
-  if (!schema || !orders) {
+  if (!(schema && orders)) {
     return (
       <div className="max-w-4xl mx-auto text-center py-12">
         <p className="text-destructive">Failed to load order data.</p>
@@ -38,10 +38,7 @@ function DemoOrdersRoute() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-4">
-      <SchemaGrid
-        schema={schema as GridSchema}
-        data={orders}
-      />
+      <SchemaGrid schema={schema as GridSchema} data={orders} />
     </div>
   )
 }

@@ -1,7 +1,7 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
-import { SchemaForm } from '@my-framework/core'
 import type { FormSchema } from '@my-framework/core'
+import { SchemaForm } from '@my-framework/core'
+import { useQuery } from '@tanstack/react-query'
+import { createFileRoute } from '@tanstack/react-router'
 import { getRegistrationFormSchema } from '../server/get-registration-form-schema'
 
 export const Route = createFileRoute('/demo-registration')({
@@ -34,7 +34,7 @@ function DemoRegistrationRoute() {
     <div className="max-w-2xl mx-auto">
       <SchemaForm
         schema={schema as FormSchema}
-        onSubmit={async (values) => {
+        onSubmit={values => {
           alert(JSON.stringify(values, null, 2))
         }}
       />

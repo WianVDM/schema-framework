@@ -1,1 +1,29 @@
-{"$schema":"schemas/error-taxonomy-schema.json","exceptions":{"ZodValidationError":{"namespace":"packages/core/src/engine/validators/","use":"Schema validation failed against Zod schema","retryable":false,"example":"throw new ZodError([{code:'custom',path:['fields'],message:'Invalid field config'}])"},"SchemaParseError":{"namespace":"packages/core/src/engine/renderers/","use":"Schema structure is invalid or missing required fields","retryable":false,"example":"throw new SchemaParseError('Missing fields array in form schema')"},"FieldConfigError":{"namespace":"packages/core/src/engine/renderers/","use":"Field configuration is invalid or references unknown type","retryable":false,"example":"throw new FieldConfigError('Unknown field type: rating')"},"PrimitivesContextError":{"namespace":"packages/core/src/engine/context/","use":"Primitive component not registered in context","retryable":false,"example":"throw new PrimitivesContextError('No primitive registered for type: date')"}}}
+{
+  "$schema": "schemas/error-taxonomy-schema.json",
+  "exceptions": {
+    "ZodValidationError": {
+      "namespace": "packages/core/src/engine/validators/",
+      "use": "Schema validation failed against Zod schema",
+      "retryable": false,
+      "example": "throw new ZodError([{code:'custom',path:['fields'],message:'Invalid field config'}])"
+    },
+    "SchemaParseError": {
+      "namespace": "packages/core/src/engine/renderers/",
+      "use": "Schema structure is invalid or missing required fields",
+      "retryable": false,
+      "example": "throw new SchemaParseError('Missing fields array in form schema')"
+    },
+    "FieldConfigError": {
+      "namespace": "packages/core/src/engine/renderers/",
+      "use": "Field configuration is invalid or references unknown type",
+      "retryable": false,
+      "example": "throw new FieldConfigError('Unknown field type: rating')"
+    },
+    "PrimitivesContextError": {
+      "namespace": "packages/core/src/engine/context/",
+      "use": "Primitive component not registered in context",
+      "retryable": false,
+      "example": "throw new PrimitivesContextError('No primitive registered for type: date')"
+    }
+  }
+}

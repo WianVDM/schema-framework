@@ -2,7 +2,7 @@
 // NOTE: isSourceFile() extracted from generate-ai-context/file-discovery.mjs.
 // NOTE: readPackageJson() extracted from auto-changeset.mjs and compliance-check.mjs.
 
-import { readFileSync, existsSync } from 'fs'
+import { existsSync, readFileSync } from 'node:fs'
 
 /**
  * NOTE: Checks if a filename is a TypeScript source file.
@@ -20,5 +20,7 @@ export function readPackageJson(filePath) {
   if (!existsSync(filePath)) return null
   try {
     return JSON.parse(readFileSync(filePath, 'utf-8'))
-  } catch { return null }
+  } catch {
+    return null
+  }
 }

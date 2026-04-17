@@ -1,5 +1,5 @@
-import type { WizardSchema } from './wizard-schema'
 import type { FormSubmitHandler } from './form-submit-handler'
+import type { WizardSchema } from './wizard-schema'
 
 export interface SchemaWizardProps {
   readonly schema: WizardSchema

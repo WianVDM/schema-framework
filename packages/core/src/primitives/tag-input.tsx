@@ -1,5 +1,5 @@
-import { useState, useRef, useCallback } from 'react'
 import type { InputHTMLAttributes } from 'react'
+import { useCallback, useRef, useState } from 'react'
 
 interface TagOption {
   readonly label: string
@@ -16,7 +16,10 @@ export interface TagInputProps {
   readonly disabled?: boolean
 }
 
-type TagInputInputProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange' | 'placeholder' | 'disabled'>
+type TagInputInputProps = Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'value' | 'onChange' | 'placeholder' | 'disabled'
+>
 
 export function TagInput({
   value,
@@ -36,13 +39,11 @@ export function TagInput({
   const isAtLimit = maxSelections !== undefined && value.length >= maxSelections
 
   const filteredOptions = options.filter(
-    (opt) =>
-      !value.includes(opt.value) &&
-      opt.label.toLowerCase().includes(inputValue.toLowerCase()),
+    opt => !value.includes(opt.value) && opt.label.toLowerCase().includes(inputValue.toLowerCase()),
   )
 
   const exactMatch = options.some(
-    (opt) =>
+    opt =>
       opt.label.toLowerCase() === inputValue.trim().toLowerCase() ||
       opt.value.toLowerCase() === inputValue.trim().toLowerCase(),
   )
@@ -63,7 +64,7 @@ export function TagInput({
   const removeTag = useCallback(
     (tagValue: string) => {
       if (disabled) return
-      onChange(value.filter((v) => v !== tagValue))
+      onChange(value.filter(v => v !== tagValue))
     },
     [disabled, value, onChange],
   )
@@ -97,19 +98,29 @@ export function TagInput({
   }
 
   const getLabelForValue = (tagValue: string): string => {
-    const option = options.find((opt) => opt.value === tagValue)
+    const option = options.find(opt => opt.value === tagValue)
     return option?.label ?? tagValue
   }
 
   return (
     <div ref={containerRef} className="relative">
       <div
+        role="button"
+        tabIndex={0}
         onClick={handleContainerClick}
+        onKeyDown={(e: React.KeyboardEvent) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            handleContainerClick()
+          }
+        }}
         className={`flex flex-wrap gap-1.5 items-center min-h-10 px-3 py-2 rounded-md border border-input bg-background text-sm ring-offset-background cursor-text ${
-          disabled ? 'opacity-50 cursor-not-allowed' : 'focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2'
+          disabled
+            ? 'opacity-50 cursor-not-allowed'
+            : 'focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2'
         }`}
       >
-        {value.map((tagValue) => (
+        {value.map(tagValue => (
           <span
             key={tagValue}
             className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-secondary text-secondary-foreground text-xs font-medium"
@@ -118,7 +129,7 @@ export function TagInput({
             {!disabled && (
               <button
                 type="button"
-                onClick={(e) => {
+                onClick={e => {
                   e.stopPropagation()
                   removeTag(tagValue)
                 }}
@@ -154,11 +165,11 @@ export function TagInput({
 
       {showDropdown && !disabled && (filteredOptions.length > 0 || canCreate) && (
         <div className="absolute z-50 mt-1 w-full rounded-md border bg-popover text-popover-foreground shadow-md max-h-48 overflow-y-auto">
-          {filteredOptions.map((opt) => (
+          {filteredOptions.map(opt => (
             <button
               key={opt.value}
               type="button"
-              onMouseDown={(e) => {
+              onMouseDown={e => {
                 e.preventDefault()
                 addTag(opt.value)
               }}
@@ -170,7 +181,7 @@ export function TagInput({
           {canCreate && (
             <button
               type="button"
-              onMouseDown={(e) => {
+              onMouseDown={e => {
                 e.preventDefault()
                 addTag(inputValue.trim())
               }}
