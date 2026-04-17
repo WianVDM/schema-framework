@@ -3,7 +3,7 @@
 // Shell operators like `&&` are treated as literal arguments, causing crashes.
 // This script runs both commands in sequence as a single invocation.
 
-import { execSync } from "node:child_process";
+import { execSync } from 'node:child_process'
 
-execSync("pnpm changeset version", { stdio: "inherit" });
-execSync("node scripts/sync-version-status.mjs", { stdio: "inherit" });
+execSync('pnpm changeset version', { stdio: 'inherit' })
+execSync('node scripts/sync-version-status.mjs', { stdio: 'inherit' })
