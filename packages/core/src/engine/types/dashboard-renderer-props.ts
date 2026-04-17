@@ -1,6 +1,6 @@
 import type { DashboardSchema } from './dashboard-schema'
-import type { RegionResizeHandler } from './region-resize-handler'
 import type { PanelCollapseHandler } from './panel-collapse-handler'
+import type { RegionResizeHandler } from './region-resize-handler'
 
 /** Props for the SchemaDashboard renderer */
 export interface DashboardRendererProps {

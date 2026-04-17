@@ -1,8 +1,8 @@
-import type { FieldRendererProps, SelectOption } from '../types'
-import type { AddressData } from '../../primitives/address-data'
 import { useEffect } from 'react'
+import type { AddressData } from '../../primitives/address-data'
 import { usePrimitives } from '../context/primitives-context'
 import { DefaultFallbackComponent } from '../helpers/default-fallback-component'
+import type { FieldRendererProps, SelectOption } from '../types'
 
 export function FieldRenderer({ schema, value, onChange, error }: FieldRendererProps) {
   const {
@@ -25,9 +25,9 @@ export function FieldRenderer({ schema, value, onChange, error }: FieldRendererP
   const errorId = `${fieldId}-error`
   const descriptionId = `${fieldId}-description`
 
-  const describedBy = [error ? errorId : null, schema.description ? descriptionId : null]
-    .filter(Boolean)
-    .join(' ') || undefined
+  const describedBy =
+    [error ? errorId : null, schema.description ? descriptionId : null].filter(Boolean).join(' ') ||
+    undefined
 
   const ariaProps = {
     'aria-required': schema.required || undefined,
@@ -69,7 +69,7 @@ export function FieldRenderer({ schema, value, onChange, error }: FieldRendererP
               <SelectValue placeholder={schema.placeholder ?? 'Select...'} />
             </SelectTrigger>
             <SelectContent>
-              {options.map((opt) => (
+              {options.map(opt => (
                 <SelectItem key={opt.value} value={opt.value}>
                   {opt.label}
                 </SelectItem>
@@ -89,9 +89,7 @@ export function FieldRenderer({ schema, value, onChange, error }: FieldRendererP
           <Textarea
             id={fieldId}
             value={value ?? ''}
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-              onChange(e.target.value)
-            }
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => onChange(e.target.value)}
             placeholder={schema.placeholder}
             disabled={schema.disabled}
             {...ariaProps}
@@ -144,7 +142,9 @@ export function FieldRenderer({ schema, value, onChange, error }: FieldRendererP
           </Label>
           <AddressInput
             id={fieldId}
-            value={(value as AddressData) ?? { street: '', city: '', state: '', zip: '', country: '' }}
+            value={
+              (value as AddressData) ?? { street: '', city: '', state: '', zip: '', country: '' }
+            }
             onChange={(val: AddressData) => onChange(val)}
             disabled={schema.disabled}
             placeholder={schema.placeholder}
@@ -192,7 +192,9 @@ export function FieldRenderer({ schema, value, onChange, error }: FieldRendererP
             options={schema.multiSelectConfig?.options}
             maxSelections={schema.multiSelectConfig?.maxSelections}
             creatable={schema.multiSelectConfig?.creatable}
-            placeholder={schema.multiSelectConfig?.placeholder ?? schema.placeholder ?? 'Select tags...'}
+            placeholder={
+              schema.multiSelectConfig?.placeholder ?? schema.placeholder ?? 'Select tags...'
+            }
             disabled={schema.disabled}
             {...ariaProps}
           />
@@ -201,18 +203,21 @@ export function FieldRenderer({ schema, value, onChange, error }: FieldRendererP
         </div>
       )
     }
-
-    case 'text':
-    case 'email':
-    case 'number':
-    case 'password':
     default:
       return (
         <div className="space-y-1">
           {labelElement}
           <Input
             id={fieldId}
-            type={schema.type === 'email' ? 'email' : schema.type === 'number' ? 'number' : schema.type === 'password' ? 'password' : 'text'}
+            type={
+              schema.type === 'email'
+                ? 'email'
+                : schema.type === 'number'
+                  ? 'number'
+                  : schema.type === 'password'
+                    ? 'password'
+                    : 'text'
+            }
             value={value ?? ''}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               const newVal =
@@ -234,7 +239,9 @@ export function FieldRenderer({ schema, value, onChange, error }: FieldRendererP
   }
 }
 
-function DefaultTagInput({ placeholder }: { readonly placeholder?: string } & Record<string, unknown>) {
+function DefaultTagInput({
+  placeholder,
+}: { readonly placeholder?: string } & Record<string, unknown>) {
   useEffect(() => {
     console.warn(
       'TagInput primitive not provided. Pass a TagInput component via PrimitiveComponents to enable multiselect fields.',
@@ -247,11 +254,7 @@ function DefaultTagInput({ placeholder }: { readonly placeholder?: string } & Re
   )
 }
 
-function normalizeOptions(
-  options?: readonly (string | SelectOption)[]
-): SelectOption[] {
+function normalizeOptions(options?: readonly (string | SelectOption)[]): SelectOption[] {
   if (!options) return []
-  return options.map((opt) =>
-    typeof opt === 'string' ? { label: opt, value: opt } : opt
-  )
+  return options.map(opt => (typeof opt === 'string' ? { label: opt, value: opt } : opt))
 }

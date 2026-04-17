@@ -15,7 +15,6 @@ export function applyResponsiveClasses(config: ResponsiveConfig): string {
     // which is designed when SchemaLayout is built.
   }
 
-
   if (config.stackBelow !== undefined) {
     classes.push(`max-[${config.stackBelow}px]:flex-col`)
   }

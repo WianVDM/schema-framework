@@ -1,22 +1,28 @@
 import type { ComponentType } from 'react'
 
 /**
- * Layout-specific primitive interface, separate from core PrimitiveComponents.
- * All slots are optional — layout renderers must check availability and provide fallbacks.
+ * Type alias for layout primitive component slots.
  *
  * NOTE: ComponentType<any> is intentional here. These slots accept shadcn components
  * which have varying prop signatures. Narrowing would create false type safety.
  */
+// biome-ignore lint/suspicious/noExplicitAny: shadcn components have varying prop signatures
+type AnyComponent = ComponentType<any>
+
+/**
+ * Layout-specific primitive interface, separate from core PrimitiveComponents.
+ * All slots are optional — layout renderers must check availability and provide fallbacks.
+ */
 export interface LayoutPrimitiveComponents {
-  readonly Panel?: ComponentType<any>
-  readonly Splitter?: ComponentType<any>
-  readonly Tabs?: ComponentType<any>
-  readonly Accordion?: ComponentType<any>
-  readonly Card?: ComponentType<any>
-  readonly Separator?: ComponentType<any>
-  readonly Collapsible?: ComponentType<any>
-  readonly ScrollArea?: ComponentType<any>
-  readonly ResizablePanelGroup?: ComponentType<any>
-  readonly ResizablePanel?: ComponentType<any>
-  readonly ResizableHandle?: ComponentType<any>
+  readonly Panel?: AnyComponent
+  readonly Splitter?: AnyComponent
+  readonly Tabs?: AnyComponent
+  readonly Accordion?: AnyComponent
+  readonly Card?: AnyComponent
+  readonly Separator?: AnyComponent
+  readonly Collapsible?: AnyComponent
+  readonly ScrollArea?: AnyComponent
+  readonly ResizablePanelGroup?: AnyComponent
+  readonly ResizablePanel?: AnyComponent
+  readonly ResizableHandle?: AnyComponent
 }

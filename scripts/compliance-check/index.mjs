@@ -9,12 +9,14 @@
  * - .context.json freshness (source files newer than context)
  * - Description quality (generic/auto-generated descriptions flagged)
  * - Symbol uniqueness (no duplicate exports across files)
+ * - Biome lint/format compliance (errors block, warnings warn)
  *
  * Output: Structured report with violations and suggestions.
  * Exit code: 0 if no violations, 1 if any violations found.
  */
 
 import { SeverityCollector } from '../shared/output-helpers.mjs'
+import { checkBiome } from './check-biome.mjs'
 import { checkChangelogs } from './check-changelogs.mjs'
 import { checkContextFreshness } from './check-context-freshness.mjs'
 import { checkSymbolUniqueness } from './check-symbol-uniqueness.mjs'
@@ -29,6 +31,7 @@ function main() {
   checkChangelogs(collector)
   checkContextFreshness(collector)
   checkSymbolUniqueness(collector)
+  checkBiome(collector)
 
   collector.printReport()
 

@@ -1,7 +1,7 @@
 import type { Header } from '@tanstack/react-table'
 import { flexRender } from '@tanstack/react-table'
-import type { GridColumnSchema } from '../types'
 import { usePrimitives } from '../context/primitives-context'
+import type { GridColumnSchema } from '../types'
 
 interface GridColumnHeaderProps {
   header: Header<Record<string, unknown>, unknown>
@@ -61,6 +61,7 @@ export function GridColumnHeader({
     >
       <div className="flex items-center gap-1">
         {dragHandleProps && (
+          // biome-ignore lint/a11y/useAriaPropsSupportedByRole: dnd-kit spreads role via dragHandleProps
           <span
             {...dragHandleProps}
             className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground select-none"
@@ -89,15 +90,14 @@ export function GridColumnHeader({
           <Input
             placeholder={filterPlaceholder}
             value={filterValue}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              onFilterChange(e.target.value)
-            }
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => onFilterChange(e.target.value)}
             className="h-6 text-xs"
             disabled={filterDisabled}
           />
         </div>
       )}
       {isResizable && (
+        // biome-ignore lint/a11y/noStaticElementInteractions: column resize handle — purely visual affordance
         <div
           onMouseDown={header.getResizeHandler()}
           onTouchStart={header.getResizeHandler()}
@@ -121,17 +121,9 @@ function getAlignClass(align?: 'left' | 'center' | 'right'): string {
   }
 }
 
-function SortIndicator({
-  sorted,
-}: {
-  sorted: false | 'asc' | 'desc'
-}) {
+function SortIndicator({ sorted }: { sorted: false | 'asc' | 'desc' }) {
   if (!sorted) {
     return <span className="text-muted-foreground text-xs">↕</span>
   }
-  return (
-    <span className="text-xs">
-      {sorted === 'asc' ? '↑' : '↓'}
-    </span>
-  )
+  return <span className="text-xs">{sorted === 'asc' ? '↑' : '↓'}</span>
 }

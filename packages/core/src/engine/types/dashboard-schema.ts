@@ -1,5 +1,5 @@
-import type { LayoutSchema } from './layout-schema'
 import type { I18nConfig } from './i18n-config'
+import type { LayoutSchema } from './layout-schema'
 
 /** Top-level dashboard composition */
 export interface DashboardSchema {

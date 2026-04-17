@@ -59,7 +59,7 @@ export const registrationFormSchema = deepFreeze<FormSchema>({
       description: 'Please upload a copy of your ID (max 5MB)',
       fileConfig: {
         accept: '.pdf,.jpg,.png',
-        maxSize: 5242880,
+        maxSize: 5_242_880,
         multiple: false,
       },
       colSpan: 2,

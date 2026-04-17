@@ -67,7 +67,7 @@ export const supportTicketFormSchema = deepFreeze<FormSchema>({
       type: 'file',
       fileConfig: {
         accept: '.png,.jpg,.jpeg,.gif',
-        maxSize: 2097152,
+        maxSize: 2_097_152,
         multiple: true,
       },
       colSpan: 2,

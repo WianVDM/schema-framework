@@ -15,9 +15,15 @@
         "required": ["namespace", "use", "retryable", "example"],
         "additionalProperties": false,
         "properties": {
-          "namespace": { "type": "string", "description": "Module or package where the exception is defined" },
+          "namespace": {
+            "type": "string",
+            "description": "Module or package where the exception is defined"
+          },
           "use": { "type": "string", "description": "When to throw this exception" },
-          "retryable": { "type": "boolean", "description": "Whether the operation can be retried after this error" },
+          "retryable": {
+            "type": "boolean",
+            "description": "Whether the operation can be retried after this error"
+          },
           "example": { "type": "string", "description": "Example throw statement" }
         }
       }

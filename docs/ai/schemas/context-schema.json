@@ -4,13 +4,7 @@
   "title": "Directory Context",
   "description": "Schema for .context.json files that document directory contents and relationships",
   "type": "object",
-  "required": [
-    "$schema",
-    "layer",
-    "language",
-    "purpose",
-    "files"
-  ],
+  "required": ["$schema", "layer", "language", "purpose", "files"],
   "additionalProperties": false,
   "properties": {
     "$schema": {
@@ -26,13 +20,7 @@
     "language": {
       "type": "string",
       "description": "Primary language of source files in this directory",
-      "enum": [
-        "typescript",
-        "typescript-jsx",
-        "javascript",
-        "json",
-        "markdown"
-      ]
+      "enum": ["typescript", "typescript-jsx", "javascript", "json", "markdown"]
     },
     "purpose": {
       "type": "string",
@@ -43,11 +31,7 @@
       "type": "object",
       "additionalProperties": {
         "type": "object",
-        "required": [
-          "export",
-          "type",
-          "desc"
-        ],
+        "required": ["export", "type", "desc"],
         "additionalProperties": false,
         "properties": {
           "export": {
@@ -98,9 +82,7 @@
         "type": "array",
         "items": {
           "type": "object",
-          "required": [
-            "path"
-          ],
+          "required": ["path"],
           "additionalProperties": false,
           "properties": {
             "path": {
@@ -108,10 +90,7 @@
             },
             "confidence": {
               "type": "string",
-              "enum": [
-                "explicit",
-                "inferred"
-              ],
+              "enum": ["explicit", "inferred"],
               "default": "explicit"
             }
           }
@@ -126,9 +105,7 @@
         "type": "array",
         "items": {
           "type": "object",
-          "required": [
-            "path"
-          ],
+          "required": ["path"],
           "additionalProperties": false,
           "properties": {
             "path": {
@@ -136,10 +113,7 @@
             },
             "confidence": {
               "type": "string",
-              "enum": [
-                "explicit",
-                "inferred"
-              ],
+              "enum": ["explicit", "inferred"],
               "default": "explicit"
             }
           }

@@ -1,7 +1,7 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
-import { SchemaForm } from '@my-framework/core'
 import type { FormSchema } from '@my-framework/core'
+import { SchemaForm } from '@my-framework/core'
+import { useQuery } from '@tanstack/react-query'
+import { createFileRoute } from '@tanstack/react-router'
 import { getContactFormSchema } from '../server/get-contact-form-schema'
 
 export const Route = createFileRoute('/demo-form')({
@@ -9,13 +9,16 @@ export const Route = createFileRoute('/demo-form')({
 })
 
 function DemoFormRoute() {
-  const { data: schema, isLoading, error } = useQuery({
+  const {
+    data: schema,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['schema', 'contact-form'],
     queryFn: () => getContactFormSchema(),
   })
 
   const handleSubmit = (values: Record<string, unknown>) => {
-    console.log('Form submitted:', values)
     alert(JSON.stringify(values, null, 2))
   }
 

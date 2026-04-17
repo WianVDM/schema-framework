@@ -1,7 +1,7 @@
 import type { Table } from '@tanstack/react-table'
-import type { I18nConfig, ServerPaginationConfig } from '../types'
 import { usePrimitives } from '../context/primitives-context'
 import { resolveMessage } from '../helpers/i18n'
+import type { I18nConfig, ServerPaginationConfig } from '../types'
 
 interface GridPaginationProps {
   readonly table: Table<Record<string, unknown>>
@@ -25,7 +25,9 @@ export function GridPagination({
   const isServerMode = !!serverPagination
 
   if (isServerMode && !onPageChange) {
-    console.warn('[SchemaGrid] serverPagination is enabled but onPageChange is not provided. The grid will not be able to fetch new pages.')
+    console.warn(
+      '[SchemaGrid] serverPagination is enabled but onPageChange is not provided. The grid will not be able to fetch new pages.',
+    )
   }
 
   const pageIndex = isServerMode
@@ -83,7 +85,7 @@ export function GridPagination({
         {showPageSizeSelector && (
           <select
             value={pageSize}
-            onChange={(e) => {
+            onChange={e => {
               const newSize = Number(e.target.value)
               table.setPageSize(newSize)
               table.setPageIndex(0)
@@ -94,7 +96,7 @@ export function GridPagination({
             className="h-8 rounded-md border border-input bg-background px-2 text-sm"
             aria-label={pageSizeLabel}
           >
-            {pageSizeOptions.map((size) => (
+            {pageSizeOptions.map(size => (
               <option key={size} value={size}>
                 {size} {pageLabel}
               </option>
@@ -112,6 +114,7 @@ export function GridPagination({
         </Button>
         {pageButtons.map((page, i) =>
           page === '...' ? (
+            // biome-ignore lint/suspicious/noArrayIndexKey: ellipsis duplicates have no stable id
             <span key={`ellipsis-${i}`} className="px-1 text-muted-foreground">
               …
             </span>
@@ -126,7 +129,7 @@ export function GridPagination({
             >
               {(page as number) + 1}
             </Button>
-          )
+          ),
         )}
         <Button
           onClick={handleNext}

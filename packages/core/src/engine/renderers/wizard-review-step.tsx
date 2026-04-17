@@ -1,6 +1,6 @@
-import type { FieldSchema, SelectOption } from '../types'
-import { isFieldVisible } from '../helpers/is-field-visible'
 import { usePrimitives } from '../context/primitives-context'
+import { isFieldVisible } from '../helpers/is-field-visible'
+import type { FieldSchema, SelectOption } from '../types'
 
 interface WizardReviewStepProps {
   readonly steps: readonly {
@@ -19,6 +19,7 @@ export function WizardReviewStep({ steps, values, onEditStep, editable }: Wizard
   return (
     <div className="space-y-6">
       {steps.map((step, stepIndex) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: steps are static wizard steps — index is stable
         <div key={stepIndex} className="border rounded-lg p-4">
           <div className="flex items-center justify-between mb-3">
             <div>
@@ -40,8 +41,8 @@ export function WizardReviewStep({ steps, values, onEditStep, editable }: Wizard
           </div>
           <dl className="grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-2">
             {step.schema.fields
-              .filter((field) => isFieldVisible(field, values))
-              .map((field) => {
+              .filter(field => isFieldVisible(field, values))
+              .map(field => {
                 const fieldValue = values[field.name]
                 const displayValue = formatDisplayValue(fieldValue, field)
                 return (
@@ -69,14 +70,12 @@ function formatDisplayValue(value: unknown, field: FieldSchema): string {
   if (field.type === 'multiselect' && Array.isArray(value)) {
     if (value.length === 0) return '—'
     const options = field.multiSelectConfig?.options
-    return value
-      .map((v) => resolveOptionLabel(v, options) ?? String(v))
-      .join(', ')
+    return value.map(v => resolveOptionLabel(v, options) ?? String(v)).join(', ')
   }
 
   if (Array.isArray(value)) {
     if (value.length === 0) return '—'
-    return value.map((v) => String(v)).join(', ')
+    return value.map(v => String(v)).join(', ')
   }
   if (typeof value === 'object') {
     return JSON.stringify(value)
@@ -86,12 +85,12 @@ function formatDisplayValue(value: unknown, field: FieldSchema): string {
 
 function resolveOptionLabel(
   value: unknown,
-  options?: readonly (string | SelectOption)[]
+  options?: readonly (string | SelectOption)[],
 ): string | undefined {
   if (!options) return undefined
-  const normalized = options.map((opt) =>
-    typeof opt === 'string' ? { label: opt, value: opt } : opt
+  const normalized = options.map(opt =>
+    typeof opt === 'string' ? { label: opt, value: opt } : opt,
   )
-  const match = normalized.find((opt) => opt.value === value)
+  const match = normalized.find(opt => opt.value === value)
   return match?.label
 }

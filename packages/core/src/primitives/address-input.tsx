@@ -6,7 +6,10 @@ import type { InputHTMLAttributes } from 'react'
 import type { AddressData } from './address-data'
 import type { AddressPlaceholders } from './address-placeholders'
 
-type RestProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange' | 'placeholder' | 'disabled' | 'id' | 'type'>
+type RestProps = Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'value' | 'onChange' | 'placeholder' | 'disabled' | 'id' | 'type'
+>
 
 interface AddressInputProps extends RestProps {
   value: AddressData
@@ -24,13 +27,23 @@ const DEFAULT_PLACEHOLDERS: Record<keyof AddressData, string> = {
   country: 'Country',
 }
 
-function resolvePlaceholder(field: keyof AddressData, placeholder?: string | AddressPlaceholders): string {
+function resolvePlaceholder(
+  field: keyof AddressData,
+  placeholder?: string | AddressPlaceholders,
+): string {
   if (placeholder == null) return DEFAULT_PLACEHOLDERS[field]
   if (typeof placeholder === 'string') return `${placeholder} ${DEFAULT_PLACEHOLDERS[field]}`
   return placeholder[field] || DEFAULT_PLACEHOLDERS[field]
 }
 
-export function AddressInput({ value, onChange, disabled, id, placeholder, ...rest }: AddressInputProps) {
+export function AddressInput({
+  value,
+  onChange,
+  disabled,
+  id,
+  placeholder,
+  ...rest
+}: AddressInputProps) {
   const handleChange = (field: keyof AddressData, newValue: string) => {
     onChange({ ...value, [field]: newValue })
   }
@@ -43,7 +56,7 @@ export function AddressInput({ value, onChange, disabled, id, placeholder, ...re
           type="text"
           placeholder={resolvePlaceholder('street', placeholder)}
           value={value.street ?? ''}
-          onChange={(e) => handleChange('street', e.target.value)}
+          onChange={e => handleChange('street', e.target.value)}
           disabled={disabled}
           className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
           {...rest}
@@ -54,7 +67,7 @@ export function AddressInput({ value, onChange, disabled, id, placeholder, ...re
         type="text"
         placeholder={resolvePlaceholder('city', placeholder)}
         value={value.city ?? ''}
-        onChange={(e) => handleChange('city', e.target.value)}
+        onChange={e => handleChange('city', e.target.value)}
         disabled={disabled}
         aria-label="City"
         className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
@@ -64,7 +77,7 @@ export function AddressInput({ value, onChange, disabled, id, placeholder, ...re
         type="text"
         placeholder={resolvePlaceholder('state', placeholder)}
         value={value.state ?? ''}
-        onChange={(e) => handleChange('state', e.target.value)}
+        onChange={e => handleChange('state', e.target.value)}
         disabled={disabled}
         aria-label="State"
         className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
@@ -74,7 +87,7 @@ export function AddressInput({ value, onChange, disabled, id, placeholder, ...re
         type="text"
         placeholder={resolvePlaceholder('zip', placeholder)}
         value={value.zip ?? ''}
-        onChange={(e) => handleChange('zip', e.target.value)}
+        onChange={e => handleChange('zip', e.target.value)}
         disabled={disabled}
         aria-label="ZIP"
         className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
@@ -84,7 +97,7 @@ export function AddressInput({ value, onChange, disabled, id, placeholder, ...re
         type="text"
         placeholder={resolvePlaceholder('country', placeholder)}
         value={value.country ?? ''}
-        onChange={(e) => handleChange('country', e.target.value)}
+        onChange={e => handleChange('country', e.target.value)}
         disabled={disabled}
         aria-label="Country"
         className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"

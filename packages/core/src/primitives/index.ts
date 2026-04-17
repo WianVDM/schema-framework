@@ -3,16 +3,15 @@
 // packages/core CANNOT import shadcn components directly. The Showcase app (Layer 3)
 // wires shadcn primitives into the engine via PrimitivesContext.
 
-export { StatusBadge } from './status-badge'
-export { AddressInput } from './address-input'
-export { DatePicker } from './date-picker'
-export { TagInput } from './tag-input'
 export type { AddressData } from './address-data'
+export { AddressInput } from './address-input'
 export type { AddressPlaceholders } from './address-placeholders'
+export { DatePicker } from './date-picker'
 export { FileUpload } from './file-upload'
-
+export type { PanelProps } from './panel'
 // Layout primitives
 export { Panel } from './panel'
-export type { PanelProps } from './panel'
-export { Splitter } from './splitter'
 export type { SplitterProps } from './splitter'
+export { Splitter } from './splitter'
+export { StatusBadge } from './status-badge'
+export { TagInput } from './tag-input'

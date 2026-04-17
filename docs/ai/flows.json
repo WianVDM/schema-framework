@@ -1,87 +1,87 @@
 {
-    "$schema": "schemas/flows-schema.json",
-    "flows": {
-        "schema-load": {
-            "steps": [
-                "Route calls useQuery → server function",
-                "Server reads mock JSON schema",
-                "Zod validateXxxSchema() validates",
-                "Renderer receives typed schema",
-                "FieldRenderer maps field types to primitives"
-            ],
-            "entry": "routes/",
-            "exit": "renderers/",
-            "files": [
-                "packages/core/src/engine/validators/field-schema.ts",
-                "packages/core/src/engine/validators/form-schema.ts",
-                "packages/core/src/engine/validators/grid-schema.ts",
-                "packages/core/src/engine/validators/wizard-schema.ts",
-                "packages/core/src/engine/validators/content-schema.ts",
-                "packages/core/src/engine/renderers/schema-form.tsx",
-                "packages/core/src/engine/renderers/field-renderer.tsx"
-            ]
-        },
-        "form-submit": {
-            "steps": [
-                "User fills form fields",
-                "TanStack Form handleSubmit fires",
-                "Validation runs per-field",
-                "onSubmit callback receives typed data",
-                "Server function processes submission"
-            ],
-            "entry": "renderers/schema-form.tsx",
-            "exit": "server/",
-            "files": [
-                "packages/core/src/engine/renderers/schema-form.tsx",
-                "apps/showcase/src/routes/__root.tsx"
-            ]
-        },
-        "wizard-navigation": {
-            "steps": [
-                "SchemaWizard reads wizardSchema.steps",
-                "User clicks Next/Back",
-                "Step validation runs",
-                "Active step index updates",
-                "Step component re-renders"
-            ],
-            "entry": "renderers/schema-wizard.tsx",
-            "exit": "renderers/schema-wizard.tsx",
-            "files": [
-                "packages/core/src/engine/renderers/schema-wizard.tsx",
-                "packages/core/src/engine/types/wizard-schema.ts",
-                "packages/core/src/engine/types/wizard-step.ts"
-            ]
-        },
-        "grid-rendering": {
-            "steps": [
-                "SchemaGrid receives gridSchema",
-                "Columns mapped from gridSchema.columns",
-                "Data rows rendered with virtualization",
-                "Pagination controls rendered",
-                "Column headers with sort/filter"
-            ],
-            "entry": "renderers/schema-grid.tsx",
-            "exit": "primitives/",
-            "files": [
-                "packages/core/src/engine/renderers/schema-grid.tsx",
-                "packages/core/src/engine/types/grid-schema.ts",
-                "packages/core/src/engine/types/grid-column-schema.ts"
-            ]
-        },
-        "virtual-scroll": {
-            "steps": [
-                "Grid detects large dataset",
-                "VirtualScrollConfig enables virtualization",
-                "Viewport height calculated",
-                "Visible rows rendered, others culled",
-                "Scroll handler updates visible range"
-            ],
-            "entry": "renderers/schema-grid.tsx",
-            "exit": "renderers/schema-grid.tsx",
-            "files": [
-                "packages/core/src/engine/renderers/schema-grid.tsx",
-                "packages/core/src/engine/types/virtual-scroll-config.ts"
-            ]
-        }
+  "$schema": "schemas/flows-schema.json",
+  "flows": {
+    "schema-load": {
+      "steps": [
+        "Route calls useQuery → server function",
+        "Server reads mock JSON schema",
+        "Zod validateXxxSchema() validates",
+        "Renderer receives typed schema",
+        "FieldRenderer maps field types to primitives"
+      ],
+      "entry": "routes/",
+      "exit": "renderers/",
+      "files": [
+        "packages/core/src/engine/validators/field-schema.ts",
+        "packages/core/src/engine/validators/form-schema.ts",
+        "packages/core/src/engine/validators/grid-schema.ts",
+        "packages/core/src/engine/validators/wizard-schema.ts",
+        "packages/core/src/engine/validators/content-schema.ts",
+        "packages/core/src/engine/renderers/schema-form.tsx",
+        "packages/core/src/engine/renderers/field-renderer.tsx"
+      ]
+    },
+    "form-submit": {
+      "steps": [
+        "User fills form fields",
+        "TanStack Form handleSubmit fires",
+        "Validation runs per-field",
+        "onSubmit callback receives typed data",
+        "Server function processes submission"
+      ],
+      "entry": "renderers/schema-form.tsx",
+      "exit": "server/",
+      "files": [
+        "packages/core/src/engine/renderers/schema-form.tsx",
+        "apps/showcase/src/routes/__root.tsx"
+      ]
+    },
+    "wizard-navigation": {
+      "steps": [
+        "SchemaWizard reads wizardSchema.steps",
+        "User clicks Next/Back",
+        "Step validation runs",
+        "Active step index updates",
+        "Step component re-renders"
+      ],
+      "entry": "renderers/schema-wizard.tsx",
+      "exit": "renderers/schema-wizard.tsx",
+      "files": [
+        "packages/core/src/engine/renderers/schema-wizard.tsx",
+        "packages/core/src/engine/types/wizard-schema.ts",
+        "packages/core/src/engine/types/wizard-step.ts"
+      ]
+    },
+    "grid-rendering": {
+      "steps": [
+        "SchemaGrid receives gridSchema",
+        "Columns mapped from gridSchema.columns",
+        "Data rows rendered with virtualization",
+        "Pagination controls rendered",
+        "Column headers with sort/filter"
+      ],
+      "entry": "renderers/schema-grid.tsx",
+      "exit": "primitives/",
+      "files": [
+        "packages/core/src/engine/renderers/schema-grid.tsx",
+        "packages/core/src/engine/types/grid-schema.ts",
+        "packages/core/src/engine/types/grid-column-schema.ts"
+      ]
+    },
+    "virtual-scroll": {
+      "steps": [
+        "Grid detects large dataset",
+        "VirtualScrollConfig enables virtualization",
+        "Viewport height calculated",
+        "Visible rows rendered, others culled",
+        "Scroll handler updates visible range"
+      ],
+      "entry": "renderers/schema-grid.tsx",
+      "exit": "renderers/schema-grid.tsx",
+      "files": [
+        "packages/core/src/engine/renderers/schema-grid.tsx",
+        "packages/core/src/engine/types/virtual-scroll-config.ts"
+      ]
     }
+  }
 }

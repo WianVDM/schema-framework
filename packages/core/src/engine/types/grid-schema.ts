@@ -1,9 +1,9 @@
+import type { DataKey } from './branded'
 import type { GridColumnSchema } from './grid-column-schema'
+import type { I18nConfig } from './i18n-config'
 import type { PaginationConfig } from './pagination-config'
 import type { ServerPaginationConfig } from './server-pagination-config'
-import type { I18nConfig } from './i18n-config'
 import type { VirtualScrollConfig } from './virtual-scroll-config'
-import type { DataKey } from './branded'
 
 export interface GridSchema {
   readonly title?: string

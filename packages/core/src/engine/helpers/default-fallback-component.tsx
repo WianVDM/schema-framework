@@ -6,7 +6,9 @@ import { useEffect } from 'react'
  * instead of an inline `() => null` avoids unnecessary re-renders and provides
  * a visible warning to developers.
  */
-export function DefaultFallbackComponent({ placeholder }: { readonly placeholder?: string } & Record<string, unknown>) {
+export function DefaultFallbackComponent({
+  placeholder,
+}: { readonly placeholder?: string } & Record<string, unknown>) {
   useEffect(() => {
     console.warn(
       'A required primitive was not provided. Pass the missing component via PrimitiveComponents to enable this field type.',

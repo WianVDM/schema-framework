@@ -1,9 +1,9 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
-import { SchemaGrid } from '@my-framework/core'
 import type { GridSchema } from '@my-framework/core'
-import { getVirtualGridSchema } from '../server/get-virtual-grid-schema'
+import { SchemaGrid } from '@my-framework/core'
+import { useQuery } from '@tanstack/react-query'
+import { createFileRoute } from '@tanstack/react-router'
 import { getVirtualData } from '../server/get-virtual-data'
+import { getVirtualGridSchema } from '../server/get-virtual-grid-schema'
 
 export const Route = createFileRoute('/demo-virtual-grid')({
   component: DemoVirtualGridRoute,
@@ -34,7 +34,7 @@ function DemoVirtualGridRoute() {
     )
   }
 
-  if (!schema || !rows) {
+  if (!(schema && rows)) {
     return (
       <div className="max-w-6xl mx-auto text-center py-12">
         <p className="text-destructive">Failed to load virtual grid data.</p>
@@ -44,13 +44,10 @@ function DemoVirtualGridRoute() {
 
   return (
     <div className="max-w-6xl mx-auto space-y-4">
-      <SchemaGrid
-        schema={schema as GridSchema}
-        data={rows}
-      />
+      <SchemaGrid schema={schema as GridSchema} data={rows} />
       <p className="text-xs text-muted-foreground">
-        Rendering {rows.length.toLocaleString()} rows with virtual scrolling.
-        Only visible rows are mounted in the DOM for optimal performance.
+        Rendering {rows.length.toLocaleString()} rows with virtual scrolling. Only visible rows are
+        mounted in the DOM for optimal performance.
       </p>
     </div>
   )

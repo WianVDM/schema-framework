@@ -15,7 +15,11 @@
         "required": ["trigger", "steps"],
         "additionalProperties": false,
         "properties": {
-          "trigger": { "type": "string", "maxLength": 100, "description": "What initiates this flow" },
+          "trigger": {
+            "type": "string",
+            "maxLength": 100,
+            "description": "What initiates this flow"
+          },
           "steps": {
             "type": "array",
             "items": { "type": "string" },

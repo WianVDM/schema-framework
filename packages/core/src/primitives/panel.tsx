@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useCallback, useState } from 'react'
 
 export interface PanelProps {
   readonly title?: string
@@ -41,9 +41,10 @@ export function Panel({
       {(title || header || toolbar || collapsible) && (
         <div className="flex items-center justify-between px-4 py-3 border-b">
           <div className="flex items-center gap-2">
-            {header ?? (
-              title && <h3 className="text-sm font-semibold leading-none tracking-tight">{title}</h3>
-            )}
+            {header ??
+              (title && (
+                <h3 className="text-sm font-semibold leading-none tracking-tight">{title}</h3>
+              ))}
           </div>
           <div className="flex items-center gap-2">
             {toolbar}
@@ -66,6 +67,7 @@ export function Panel({
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   className={`transition-transform ${isCollapsed ? '' : 'rotate-180'}`}
+                  aria-hidden="true"
                 >
                   <polyline points="6 9 12 15 18 9" />
                 </svg>
@@ -81,9 +83,7 @@ export function Panel({
         </div>
       )}
 
-      {footer && !isCollapsed && (
-        <div className="px-4 py-3 border-t">{footer}</div>
-      )}
+      {footer && !isCollapsed && <div className="px-4 py-3 border-t">{footer}</div>}
     </div>
   )
 }

@@ -1,18 +1,18 @@
 import { z } from 'zod'
 import { fieldSchemaValidator } from './field-schema'
-import { formatZodIssue } from './shared-schemas'
 import type { ValidationResult } from './shared-schemas'
+import { formatZodIssue } from './shared-schemas'
 
-export const formSchemaValidator = z.object({
-  title: z.string().optional(),
-  description: z.string().optional(),
-  fields: z
-    .array(fieldSchemaValidator)
-    .min(1, 'Form must have at least one field'),
-  submitLabel: z.string().optional(),
-  cancelLabel: z.string().optional(),
-  layout: z.enum(['stack', 'grid']).optional(),
-}).strict()
+export const formSchemaValidator = z
+  .object({
+    title: z.string().optional(),
+    description: z.string().optional(),
+    fields: z.array(fieldSchemaValidator).min(1, 'Form must have at least one field'),
+    submitLabel: z.string().optional(),
+    cancelLabel: z.string().optional(),
+    layout: z.enum(['stack', 'grid']).optional(),
+  })
+  .strict()
 
 export function validateFormSchema(data: unknown): ValidationResult {
   const result = formSchemaValidator.safeParse(data)

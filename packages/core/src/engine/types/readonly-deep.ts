@@ -1,3 +1,4 @@
+// biome-ignore lint/complexity/noBannedTypes: intentional — recursive deep type must detect all functions
 export type ReadonlyDeep<T> = T extends Function
   ? T
   : T extends string | number | boolean | symbol | bigint
@@ -10,6 +11,7 @@ export type ReadonlyDeep<T> = T extends Function
           ? { readonly [K in keyof T]: ReadonlyDeep<T[K]> }
           : T
 
+// biome-ignore lint/complexity/noBannedTypes: intentional — recursive deep type must detect all functions
 export type DeepFrozen<T> = T extends Function
   ? T
   : T extends string | number | boolean | symbol | bigint

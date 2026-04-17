@@ -2,10 +2,13 @@
 // Generic file upload component with drag-and-drop zone styling.
 // Knows nothing about schemas — accepts standard controlled props.
 
-import { useState, useRef } from 'react'
 import type { HTMLAttributes } from 'react'
+import { useRef, useState } from 'react'
 
-type RestProps = Omit<HTMLAttributes<HTMLDivElement>, 'value' | 'onChange' | 'disabled' | 'accept' | 'multiple'>
+type RestProps = Omit<
+  HTMLAttributes<HTMLDivElement>,
+  'value' | 'onChange' | 'disabled' | 'accept' | 'multiple'
+>
 
 interface FileUploadProps extends RestProps {
   accept?: string
@@ -122,27 +125,24 @@ export function FileUpload({
           ) : (
             <>
               Click or drag files here to upload
-              {accept && (
-                <span className="block text-xs mt-1">
-                  Accepted: {accept}
-                </span>
-              )}
+              {accept && <span className="block text-xs mt-1">Accepted: {accept}</span>}
               {maxSize && (
-                <span className="block text-xs mt-0.5">
-                  Max size: {formatFileSize(maxSize)}
-                </span>
+                <span className="block text-xs mt-0.5">Max size: {formatFileSize(maxSize)}</span>
               )}
             </>
           )}
         </div>
       </div>
       {error && (
-        <p role="alert" className="text-sm text-destructive">{error}</p>
+        <p role="alert" className="text-sm text-destructive">
+          {error}
+        </p>
       )}
       {value.length > 0 && (
         <ul className="space-y-1">
           {value.map((file, index) => (
             <li
+              // biome-ignore lint/suspicious/noArrayIndexKey: file list order is user-controlled — index is stable
               key={`${file.name}-${index}`}
               className="flex items-center justify-between text-sm bg-muted/50 rounded px-3 py-1.5"
             >
@@ -152,7 +152,7 @@ export function FileUpload({
               </span>
               <button
                 type="button"
-                onClick={(e) => {
+                onClick={e => {
                   e.stopPropagation()
                   handleRemove(index)
                 }}

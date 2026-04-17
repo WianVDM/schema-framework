@@ -1,64 +1,54 @@
 {
-    "$schema": "https://json-schema.org/draft-07/schema#",
-    "$id": "core-abstractions-schema.json",
-    "title": "Core Abstractions",
-    "description": "Top N most-depended-on exports (god nodes)",
-    "type": "object",
-    "required": [
-        "$schema",
-        "generatedAt",
-        "abstractions"
-    ],
-    "additionalProperties": false,
-    "properties": {
-        "$schema": {
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "core-abstractions-schema.json",
+  "title": "Core Abstractions",
+  "description": "Top N most-depended-on exports (god nodes)",
+  "type": "object",
+  "required": ["$schema", "generatedAt", "abstractions"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "abstractions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["export", "file", "consumedBy", "consumerCount", "layerSpan"],
+        "additionalProperties": false,
+        "properties": {
+          "export": {
             "type": "string"
-        },
-        "generatedAt": {
-            "type": "string",
-            "format": "date-time"
-        },
-        "abstractions": {
+          },
+          "file": {
+            "type": "string"
+          },
+          "consumedBy": {
             "type": "array",
             "items": {
-                "type": "object",
-                "required": [
-                    "export",
-                    "file",
-                    "consumedBy",
-                    "consumerCount",
-                    "layerSpan"
-                ],
-                "additionalProperties": false,
-                "properties": {
-                    "export": {
-                        "type": "string"
-                    },
-                    "file": {
-                        "type": "string"
-                    },
-                    "consumedBy": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "consumerCount": {
-                        "type": "integer",
-                        "minimum": 0,
-                        "description": "Number of consumers; should equal consumedBy.length (validate in application code)"
-                    },
-                    "layerSpan": {
-                        "type": "array",
-                        "minItems": 1,
-                        "uniqueItems": true,
-                        "items": {
-                            "type": "integer",
-                            "minimum": 1
-                        }
-                    }
-                }
+              "type": "string"
             }
+          },
+          "consumerCount": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of consumers; should equal consumedBy.length (validate in application code)"
+          },
+          "layerSpan": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
         }
+      }
     }
+  }
 }

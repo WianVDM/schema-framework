@@ -1,5 +1,5 @@
-import { deepFreeze, asDataKey } from '@my-framework/core'
 import type { GridSchema } from '@my-framework/core'
+import { asDataKey, deepFreeze } from '@my-framework/core'
 
 export const columnReorderGridSchema = deepFreeze<GridSchema>({
   title: 'Column Reordering',
@@ -52,7 +52,10 @@ export const columnReorderGridSchema = deepFreeze<GridSchema>({
         variants: {
           active: { label: 'Active', className: 'bg-green-100 text-green-800 border-green-300' },
           inactive: { label: 'Inactive', className: 'bg-gray-100 text-gray-800 border-gray-300' },
-          pending: { label: 'Pending', className: 'bg-yellow-100 text-yellow-800 border-yellow-300' },
+          pending: {
+            label: 'Pending',
+            className: 'bg-yellow-100 text-yellow-800 border-yellow-300',
+          },
         },
       },
     },

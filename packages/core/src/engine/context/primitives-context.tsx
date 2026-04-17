@@ -32,9 +32,7 @@ const primitivesContextDefaultValue: PrimitiveComponents = {
   TagInput: undefined,
 }
 
-export const PrimitivesContext = createContext<PrimitiveComponents>(
-  primitivesContextDefaultValue
-)
+export const PrimitivesContext = createContext<PrimitiveComponents>(primitivesContextDefaultValue)
 PrimitivesContext.displayName = 'PrimitivesContext'
 
 export function PrimitivesProvider({
@@ -44,22 +42,17 @@ export function PrimitivesProvider({
   primitives: PrimitiveComponents
   children: React.ReactNode
 }) {
-  return (
-    <PrimitivesContext.Provider value={primitives}>
-      {children}
-    </PrimitivesContext.Provider>
-  )
+  return <PrimitivesContext.Provider value={primitives}>{children}</PrimitivesContext.Provider>
 }
 
 export function usePrimitives(): PrimitiveComponents {
   const ctx = useContext(PrimitivesContext)
 
-  const isDefault =
-    ctx.Input === primitivesContextDefaultValue.Input
+  const isDefault = ctx.Input === primitivesContextDefaultValue.Input
   if (isDefault) {
     console.warn(
       'usePrimitives: No PrimitivesProvider found. ' +
-        'Ensure your app wraps routes with <PrimitivesProvider>.'
+        'Ensure your app wraps routes with <PrimitivesProvider>.',
     )
   }
 

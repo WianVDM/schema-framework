@@ -1,5 +1,5 @@
-import { createContext, useContext } from 'react'
 import type { ReactNode } from 'react'
+import { createContext, useContext } from 'react'
 import type { LayoutPrimitiveComponents } from '../types'
 
 const layoutPrimitivesDefaultValue: LayoutPrimitiveComponents = {
@@ -17,7 +17,7 @@ const layoutPrimitivesDefaultValue: LayoutPrimitiveComponents = {
 }
 
 export const LayoutPrimitivesContext = createContext<LayoutPrimitiveComponents>(
-  layoutPrimitivesDefaultValue
+  layoutPrimitivesDefaultValue,
 )
 LayoutPrimitivesContext.displayName = 'LayoutPrimitivesContext'
 

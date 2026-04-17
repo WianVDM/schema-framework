@@ -1,12 +1,7 @@
 /// <reference types="vite/client" />
+
+import { createRootRoute, HeadContent, Link, Outlet, Scripts } from '@tanstack/react-router'
 import type { ReactNode } from 'react'
-import {
-  Outlet,
-  createRootRoute,
-  HeadContent,
-  Scripts,
-  Link,
-} from '@tanstack/react-router'
 import appCss from '../app/app.css?url'
 import { AppPrimitivesProvider } from '../app/primitives-provider'
 import { AppQueryProvider } from '../lib/query-client'
@@ -18,9 +13,7 @@ export const Route = createRootRoute({
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { title: 'Schema Framework Showcase' },
     ],
-    links: [
-      { rel: 'stylesheet', href: appCss },
-    ],
+    links: [{ rel: 'stylesheet', href: appCss }],
   }),
   component: RootComponent,
   notFoundComponent: NotFound,
@@ -42,9 +35,7 @@ function NotFound() {
   return (
     <div className="max-w-2xl mx-auto text-center py-12">
       <h2 className="text-2xl font-bold mb-2">Page Not Found</h2>
-      <p className="text-muted-foreground mb-4">
-        The page you are looking for does not exist.
-      </p>
+      <p className="text-muted-foreground mb-4">The page you are looking for does not exist.</p>
       <Link to="/" className="text-primary hover:underline">
         Go back home
       </Link>
@@ -133,9 +124,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
             Multi-Select
           </Link>
         </nav>
-        <main className="p-6">
-          {children}
-        </main>
+        <main className="p-6">{children}</main>
         <Scripts />
       </body>
     </html>

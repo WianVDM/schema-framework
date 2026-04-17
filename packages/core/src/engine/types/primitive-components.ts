@@ -1,38 +1,43 @@
 import type { ComponentType } from 'react'
 
-/* eslint-disable @typescript-eslint/no-explicit-any -- Primitives are passed from
-   the showcase app where shadcn components have varying prop signatures.
-   Using `any` here is intentional: the adapter pattern accepts any component
-   and type safety is enforced at the renderer call-site instead. */
+/**
+ * Type alias for primitive component slots.
+ *
+ * NOTE: Primitives are passed from the showcase app where shadcn components have varying
+ * prop signatures. Using `any` here is intentional: the adapter pattern accepts any component
+ * and type safety is enforced at the renderer call-site instead.
+ */
+// biome-ignore lint/suspicious/noExplicitAny: shadcn adapter pattern — type safety at call-site
+type AnyComponent = ComponentType<any>
 
 export interface PrimitiveComponents {
-  readonly Input: ComponentType<any>
-  readonly Select: ComponentType<any>
-  readonly SelectTrigger: ComponentType<any>
-  readonly SelectContent: ComponentType<any>
-  readonly SelectItem: ComponentType<any>
-  readonly SelectValue: ComponentType<any>
-  readonly Label: ComponentType<any>
-  readonly Textarea: ComponentType<any>
-  readonly Checkbox: ComponentType<any>
-  readonly Table: ComponentType<any>
-  readonly TableHeader: ComponentType<any>
-  readonly TableBody: ComponentType<any>
-  readonly TableRow: ComponentType<any>
-  readonly TableHead: ComponentType<any>
-  readonly TableCell: ComponentType<any>
-  readonly Button: ComponentType<any>
-  readonly Badge: ComponentType<any>
-  readonly Dialog: ComponentType<any>
-  readonly DialogContent: ComponentType<any>
-  readonly DialogTrigger: ComponentType<any>
-  readonly DropdownMenu: ComponentType<any>
-  readonly DropdownMenuTrigger: ComponentType<any>
-  readonly DropdownMenuContent: ComponentType<any>
-  readonly DropdownMenuItem: ComponentType<any>
-  readonly FileUpload: ComponentType<any>
-  readonly AddressInput: ComponentType<any>
-  readonly DatePicker?: ComponentType<any>
-  readonly TagInput?: ComponentType<any>
-  readonly StepIndicator?: ComponentType<any>
+  readonly Input: AnyComponent
+  readonly Select: AnyComponent
+  readonly SelectTrigger: AnyComponent
+  readonly SelectContent: AnyComponent
+  readonly SelectItem: AnyComponent
+  readonly SelectValue: AnyComponent
+  readonly Label: AnyComponent
+  readonly Textarea: AnyComponent
+  readonly Checkbox: AnyComponent
+  readonly Table: AnyComponent
+  readonly TableHeader: AnyComponent
+  readonly TableBody: AnyComponent
+  readonly TableRow: AnyComponent
+  readonly TableHead: AnyComponent
+  readonly TableCell: AnyComponent
+  readonly Button: AnyComponent
+  readonly Badge: AnyComponent
+  readonly Dialog: AnyComponent
+  readonly DialogContent: AnyComponent
+  readonly DialogTrigger: AnyComponent
+  readonly DropdownMenu: AnyComponent
+  readonly DropdownMenuTrigger: AnyComponent
+  readonly DropdownMenuContent: AnyComponent
+  readonly DropdownMenuItem: AnyComponent
+  readonly FileUpload: AnyComponent
+  readonly AddressInput: AnyComponent
+  readonly DatePicker?: AnyComponent
+  readonly TagInput?: AnyComponent
+  readonly StepIndicator?: AnyComponent
 }

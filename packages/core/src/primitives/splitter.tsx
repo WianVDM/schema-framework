@@ -1,9 +1,9 @@
-import React, { useState, useCallback, useRef, useEffect, Fragment } from 'react'
+import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react'
 
 function normalizeSizes(
   initialSizes: readonly number[] | undefined,
   panelCount: number,
-  defaultSize: number
+  defaultSize: number,
 ): number[] {
   if (panelCount === 0) return []
 
@@ -22,7 +22,7 @@ function normalizeSizes(
   // NOTE: Normalize so the output always sums to exactly 100 percentage points
   const sum = raw.reduce((a, b) => a + b, 0)
   if (sum === 0) return Array(panelCount).fill(100 / panelCount)
-  return raw.map((v) => (v / sum) * 100)
+  return raw.map(v => (v / sum) * 100)
 }
 
 export interface SplitterProps {
@@ -47,7 +47,9 @@ export function Splitter({
   const childArray = React.Children.toArray(children)
   const panelCount = childArray.length
   const defaultSize = panelCount > 0 ? 100 / panelCount : 0
-  const [sizes, setSizes] = useState<number[]>(() => normalizeSizes(initialSizes, panelCount, defaultSize))
+  const [sizes, setSizes] = useState<number[]>(() =>
+    normalizeSizes(initialSizes, panelCount, defaultSize),
+  )
   const containerRef = useRef<HTMLDivElement>(null)
   const sizesRef = useRef(sizes)
   sizesRef.current = sizes
@@ -136,7 +138,8 @@ export function Splitter({
 
   useEffect(() => {
     // NOTE: Detect any change including transitions to/from undefined
-    const initialSizesChanged = JSON.stringify(initialSizes) !== JSON.stringify(prevInitialSizesRef.current)
+    const initialSizesChanged =
+      JSON.stringify(initialSizes) !== JSON.stringify(prevInitialSizesRef.current)
     const panelCountChanged = panelCount !== prevPanelCountRef.current
 
     if (initialSizesChanged || panelCountChanged) {
@@ -160,7 +163,7 @@ export function Splitter({
     const observer = new ResizeObserver(() => {
       setContainerSize(isHorizontal ? container.offsetWidth : container.offsetHeight)
     })
-    
+
     observer.observe(container)
     return () => observer.disconnect()
   }, [isHorizontal])
@@ -237,9 +240,7 @@ export function Splitter({
         const childKey = (child as React.ReactElement)?.key ?? index
         return (
           <Fragment key={childKey}>
-            <div style={{ flex: `${sizes[index]} 0 0`, overflow: 'hidden' }}>
-              {child}
-            </div>
+            <div style={{ flex: `${sizes[index]} 0 0`, overflow: 'hidden' }}>{child}</div>
             {index < panelCount - 1 && (
               <div
                 onMouseDown={handleDragStart(index)}
@@ -257,7 +258,8 @@ export function Splitter({
                 aria-valuemin={Math.max(
                   ariaMinPct,
                   // NOTE: Account for neighbor panel's maxSize constraint
-                  (sizes[index] + (sizes[index + 1] ?? 0)) -
+                  sizes[index] +
+                    (sizes[index + 1] ?? 0) -
                     (containerSize > 0 ? (maxSize / containerSize) * 100 : 100),
                 )}
                 aria-valuemax={Math.max(

@@ -1,6 +1,6 @@
-import type { ResponsiveConfig } from './responsive-config'
 import type { ContentSchema } from './content-schema'
 import type { I18nConfig } from './i18n-config'
+import type { ResponsiveConfig } from './responsive-config'
 
 /** A single region within a layout */
 export interface LayoutRegion {

@@ -1,6 +1,6 @@
-import type { LayoutType } from './layout-type'
-import type { LayoutRegion } from './layout-region'
 import type { I18nConfig } from './i18n-config'
+import type { LayoutRegion } from './layout-region'
+import type { LayoutType } from './layout-type'
 
 /** Top-level layout definition */
 export interface LayoutSchema {
