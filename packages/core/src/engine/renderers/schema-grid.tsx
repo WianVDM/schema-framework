@@ -244,7 +244,7 @@ export function SchemaGrid({
   const tableProps = {
     role: 'grid' as const,
     'aria-label': schema.title ?? 'Data grid',
-    'aria-rowcount': (totalRows ?? 0) + 1,
+    ...(totalRows == null ? {} : { 'aria-rowcount': totalRows + 1 }),
   }
 
   const headerContent = <TableHeader>{renderHeaderRows()}</TableHeader>
@@ -318,7 +318,7 @@ interface VirtualContentProps {
   readonly tableProps: {
     readonly role: 'grid'
     readonly 'aria-label': string
-    readonly 'aria-rowcount': number
+    readonly 'aria-rowcount'?: number
   }
   readonly Table: React.ComponentType<Record<string, unknown>>
   readonly headerContent: React.ReactNode
@@ -397,9 +397,11 @@ function renderVirtualContent({
         {headerContent}
         <TableBody>
           {paddingTop > 0 && (
-            <tr>
+            // biome-ignore lint/a11y/noAriaHiddenOnFocusable: NOTE: Spacer row contains no focusable content — purely layout for virtual scroll padding
+            <tr aria-hidden="true">
               <td
                 colSpan={schema.columns.length}
+                role="presentation"
                 style={{ height: `${paddingTop}px`, padding: 0, border: 'none' }}
               />
             </tr>
@@ -409,9 +411,11 @@ function renderVirtualContent({
             return renderRow(row, pageOffset + virtualRow.index)
           })}
           {paddingBottom > 0 && (
-            <tr>
+            // biome-ignore lint/a11y/noAriaHiddenOnFocusable: NOTE: Spacer row contains no focusable content — purely layout for virtual scroll padding
+            <tr aria-hidden="true">
               <td
                 colSpan={schema.columns.length}
+                role="presentation"
                 style={{ height: `${paddingBottom}px`, padding: 0, border: 'none' }}
               />
             </tr>
@@ -427,7 +431,7 @@ interface StandardContentProps {
   readonly tableProps: {
     readonly role: 'grid'
     readonly 'aria-label': string
-    readonly 'aria-rowcount': number
+    readonly 'aria-rowcount'?: number
   }
   readonly Table: React.ComponentType<Record<string, unknown>>
   readonly headerContent: React.ReactNode

@@ -187,15 +187,17 @@ function renderCheckboxControl(
   ariaProps: Record<string, unknown>,
 ) {
   return (
-    <div className="flex items-center gap-2">
-      <primitives.Checkbox
-        id={fieldId}
-        checked={Boolean(value)}
-        onCheckedChange={(checked: boolean) => onChange(checked)}
-        disabled={schema.disabled}
-        {...ariaProps}
-      />
-      {labelElement}
+    <div className="space-y-1">
+      <div className="flex items-center gap-2">
+        <primitives.Checkbox
+          id={fieldId}
+          checked={Boolean(value)}
+          onCheckedChange={(checked: boolean) => onChange(checked)}
+          disabled={schema.disabled}
+          {...ariaProps}
+        />
+        {labelElement}
+      </div>
       {descriptionElement}
       {errorElement}
     </div>
