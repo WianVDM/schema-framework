@@ -37,7 +37,7 @@ export function SchemaLayout({
 /** Renders border layout with N/S/E/W/C regions using injected resizable panels */
 function BorderLayoutRenderer({
   regions,
-  onRegionResize,
+  onRegionResize: _onRegionResize,
   onPanelCollapse,
 }: {
   readonly regions: readonly LayoutRegion[]

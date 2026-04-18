@@ -6,8 +6,8 @@
 import { spawnSync } from 'node:child_process'
 
 /**
- * NOTE: Runs biome check and categorizes output into violations and warnings.
- * Errors become violations (blocking), warnings remain warnings (non-blocking).
+ * NOTE: Runs biome check and reports ALL findings as compliance violations.
+ * Both biome errors and biome warnings are blocking (violations).
  * This ensures biome rules are enforced as part of the post-build compliance gate.
  */
 export function checkBiome(collector) {
@@ -46,8 +46,6 @@ export function checkBiome(collector) {
     )
   }
   if (warnings > 0) {
-    collector.addWarning(
-      `Biome: ${warnings} warning(s) — complexity warnings — run \`pnpm lint\` to review`,
-    )
+    collector.addViolation(`Biome: ${warnings} warning(s) — run \`pnpm lint\` to review`)
   }
 }
