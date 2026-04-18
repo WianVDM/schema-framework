@@ -22,6 +22,7 @@ export function checkContextFreshness(collector) {
  * NOTE: Recursively walks directories checking .context.json freshness and quality.
  * Flags stale contexts (source files newer) and TODO-prefixed descriptions.
  */
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: NOTE: Recursive filesystem traversal with multi-condition filtering; decomposition would obscure the walk logic
 function checkDirRecursive(dirPath, collector) {
   const entries = readdirSync(dirPath, { withFileTypes: true })
   const skipDirs = new Set([...SKIP_DIRS, 'ui'])

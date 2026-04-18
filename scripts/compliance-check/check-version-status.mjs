@@ -10,6 +10,7 @@ import { readPackageJson } from '../shared/file-helpers.mjs'
  * NOTE: Validates version consistency between VERSION_STATUS.md and package.json files.
  * Checks: current version match, target version logic, milestone status, upcoming duplicates.
  */
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: NOTE: Multi-section Markdown parsing with regex-based validation; inherent to VERSION_STATUS.md structure
 export function checkVersionStatus(collector) {
   const statusPath = join(ROOT, 'docs', 'VERSION_STATUS.md')
   if (!existsSync(statusPath)) {

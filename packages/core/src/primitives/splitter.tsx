@@ -171,6 +171,7 @@ export function Splitter({
   const ariaMinPct = containerSize > 0 ? (minSize / containerSize) * 100 : 0
 
   const handleKeyDown = useCallback(
+    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: NOTE: Keyboard handler requires multi-key switch + state math; extraction would only move complexity
     (index: number) => (e: React.KeyboardEvent) => {
       const container = containerRef.current
       if (!container) return

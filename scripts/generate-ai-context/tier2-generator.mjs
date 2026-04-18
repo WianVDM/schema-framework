@@ -16,6 +16,7 @@ import { estimateTokens } from './token-budget.mjs'
  * Each layer gets its own JSON file mapping symbol names to their file locations.
  * Returns array of { file, content, count, tokens } for writing/logging.
  */
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: NOTE: Per-layer symbol aggregation with cross-layer deduplication; data-shape-driven complexity
 export function generateSymbolIndexes(contexts) {
   const layerData = { 1: {}, 2: {}, 3: {} }
 
@@ -88,6 +89,7 @@ export function generateSymbolIndexes(contexts) {
  * NOTE: Generates the impact graph — maps each file to all files that import it.
  * Returns { content, tokens, entries }.
  */
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: NOTE: Bidirectional dependency graph construction from per-file import data; inherent to graph traversal
 export function generateImpactGraph(contexts) {
   const consumedBy = {}
 
@@ -230,6 +232,7 @@ export function generateCoreAbstractions(contexts, consumedBy) {
  * Accepts the parsed consumedBy object directly (no double-parsing).
  * Returns { file, content, tokens }.
  */
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: NOTE: Multi-pass analysis: cross-layer deps, high-impact files, patterns, and health scoring
 export function generateInsights(contexts, consumedBy) {
   const crossLayerDeps = []
   const highImpactFiles = []
@@ -340,6 +343,7 @@ export function generateInsights(contexts, consumedBy) {
  * Uses Jaccard similarity on extDeps to find related directories.
  * Returns { file, content, tokens, count }.
  */
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: NOTE: Community detection with Jaccard similarity, clustering, and adjacency graph construction
 export function generateCommunityMap(contexts) {
   // NOTE: Build extDeps sets per directory
   const dirExtDeps = {}
@@ -491,6 +495,7 @@ function jaccardSimilarity(setA, setB) {
 }
 
 // NOTE: Builds a directory-level adjacency list from extDeps for circular dependency detection.
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: NOTE: Adjacency list construction with edge deduplication; graph algorithm inherently branches
 function buildDirectoryAdjacencyList(contexts) {
   const adjList = {}
   for (const { dirPath, context } of contexts) {

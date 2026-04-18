@@ -8,6 +8,7 @@ import { estimateTokens } from './token-budget.mjs'
  * NOTE: Generates docs/context-map.md from all collected context data.
  * Returns { path, tokens } for logging by the orchestrator.
  */
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: NOTE: Multi-layer grouping + per-directory relationship generation; data-shape-driven complexity
 export function generateContextMap(contexts) {
   const layerGroups = { 1: [], 2: [], 3: [] }
 

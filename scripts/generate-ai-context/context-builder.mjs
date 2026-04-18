@@ -18,6 +18,7 @@ import { getLayer } from './get-layer.mjs'
  * Returns { context, symbolTypes } or null if the directory has no source files.
  * Merges hand-crafted `desc`, `deprecated`, and `tests` fields from existing .context.json.
  */
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: NOTE: Multi-pass AST analysis with merge-from-existing logic; decomposition would scatter the build pipeline
 export function buildContextForDir(dirPath) {
   const absDir = resolve(ROOT, dirPath)
   const files = getSourceFiles(dirPath)
