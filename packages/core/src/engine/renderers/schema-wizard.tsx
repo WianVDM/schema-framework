@@ -8,6 +8,7 @@ import { validateFieldValue } from '../validators'
 import { FieldRenderer } from './field-renderer'
 import { WizardReviewStep } from './wizard-review-step'
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: NOTE: Orchestrator component — tightly coupled hooks/state for wizard flow; extraction would require excessive prop-drilling
 export function SchemaWizard({
   schema,
   onSubmit,

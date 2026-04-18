@@ -149,6 +149,7 @@ function runCheckMode(allDirs, _budgets) {
  * NOTE: Generate mode — builds and writes all context files.
  * Skips fresh directories unless --force is set.
  */
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: NOTE: Orchestrator with budgeting, freshness checks, and multi-mode output; complexity inherent to CLI pipeline
 function runGenerateMode(allDirs, budgets) {
   const contexts = []
   let regenerated = 0

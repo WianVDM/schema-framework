@@ -8,6 +8,7 @@ import { ROOT } from '../shared/constants.mjs'
  * NOTE: Validates symbol index integrity from docs/ai/symbol-index-manifest.json.
  * Checks JSON validity and reports parse errors in per-layer files.
  */
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: NOTE: Multi-layer manifest parsing with per-layer validation; complexity inherent to data shape
 export function checkSymbolUniqueness(collector) {
   const manifestPath = join(ROOT, 'docs', 'ai', 'symbol-index-manifest.json')
   if (!existsSync(manifestPath)) {
