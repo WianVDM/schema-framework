@@ -1,7 +1,7 @@
 # Version Status
 
-## Current Version: 0.3.0
-## Target Version: 0.3.1
+## Current Version: 0.3.1
+## Target Version: 0.3.2
 ## Active Milestone: Layout System
 ## Milestone Status: IN PROGRESS
 
