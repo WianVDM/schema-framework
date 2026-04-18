@@ -104,8 +104,16 @@ function renderFieldControl(
     case 'file':
       return wrapper(renderFileControl(schema, value, onChange, primitives, fieldId, ariaProps))
     case 'address':
-      return wrapper(
-        renderAddressControl(schema, value, onChange, primitives, fieldId, labelElement, ariaProps),
+      return renderAddressControl(
+        schema,
+        value,
+        onChange,
+        primitives,
+        fieldId,
+        labelElement,
+        descriptionElement,
+        errorElement,
+        ariaProps,
       )
     case 'date':
       return wrapper(renderDateControl(schema, value, onChange, primitives, fieldId, ariaProps))
@@ -199,11 +207,12 @@ function renderFileControl(
   value: unknown,
   onChange: FieldControlProps['onChange'],
   primitives: ReturnType<typeof usePrimitives>,
-  _fieldId: string,
+  fieldId: string,
   ariaProps: Record<string, unknown>,
 ) {
   return (
     <primitives.FileUpload
+      id={fieldId}
       accept={schema.fileConfig?.accept}
       maxSize={schema.fileConfig?.maxSize}
       multiple={schema.fileConfig?.multiple}
@@ -222,10 +231,12 @@ function renderAddressControl(
   primitives: ReturnType<typeof usePrimitives>,
   fieldId: string,
   _labelElement: React.ReactNode,
+  descriptionElement: React.ReactNode,
+  errorElement: React.ReactNode,
   ariaProps: Record<string, unknown>,
 ) {
   return (
-    <>
+    <div className="space-y-1">
       <primitives.Label htmlFor={`${fieldId}-street`}>
         {schema.label}
         {schema.required && <span className="text-destructive ml-1">*</span>}
@@ -238,7 +249,9 @@ function renderAddressControl(
         placeholder={schema.placeholder}
         {...ariaProps}
       />
-    </>
+      {descriptionElement}
+      {errorElement}
+    </div>
   )
 }
 

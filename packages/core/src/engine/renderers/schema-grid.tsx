@@ -244,7 +244,7 @@ export function SchemaGrid({
   const tableProps = {
     role: 'grid' as const,
     'aria-label': schema.title ?? 'Data grid',
-    'aria-rowcount': totalRows + 1,
+    'aria-rowcount': (totalRows ?? 0) + 1,
   }
 
   const headerContent = <TableHeader>{renderHeaderRows()}</TableHeader>
@@ -532,7 +532,7 @@ function resolveRowId(
   if (row.id != null) return String(row.id)
   let stableId = rowIdMapRef.current?.get(row)
   if (stableId === undefined) {
-    // biome-ignore lint/style/noNonNullAssertion: ref guaranteed initialized by useEffect before any render
+    // biome-ignore lint/style/noNonNullAssertion: rowIdCounterRef is initialized directly via useRef(0), so .current is never null
     stableId = `__row_${rowIdCounterRef.current!++}`
     rowIdMapRef.current?.set(row, stableId)
   }

@@ -14,27 +14,31 @@ export function validateFieldValue(value: unknown, field: Readonly<FieldSchema>)
 type RuleHandler = (value: unknown, rule: Readonly<RuntimeValidationRule>) => string | null
 
 function checkRequired(value: unknown, rule: Readonly<RuntimeValidationRule>): string | null {
-  if (isEmpty(value)) return rule.message
+  if (isEmpty(value)) return rule.message ?? 'This field is required'
   return null
 }
 
 function checkMin(value: unknown, rule: Readonly<RuntimeValidationRule>): string | null {
-  if (typeof value === 'number' && value < (rule.value as number)) return rule.message
+  if (typeof value === 'number' && value < (rule.value as number))
+    return rule.message ?? `Value must be >= ${rule.value}`
   return null
 }
 
 function checkMax(value: unknown, rule: Readonly<RuntimeValidationRule>): string | null {
-  if (typeof value === 'number' && value > (rule.value as number)) return rule.message
+  if (typeof value === 'number' && value > (rule.value as number))
+    return rule.message ?? `Value must be <= ${rule.value}`
   return null
 }
 
 function checkMinLength(value: unknown, rule: Readonly<RuntimeValidationRule>): string | null {
-  if (typeof value === 'string' && value.length < (rule.value as number)) return rule.message
+  if (typeof value === 'string' && value.length < (rule.value as number))
+    return rule.message ?? `Length must be >= ${rule.value}`
   return null
 }
 
 function checkMaxLength(value: unknown, rule: Readonly<RuntimeValidationRule>): string | null {
-  if (typeof value === 'string' && value.length > (rule.value as number)) return rule.message
+  if (typeof value === 'string' && value.length > (rule.value as number))
+    return rule.message ?? `Length must be <= ${rule.value}`
   return null
 }
 
@@ -42,7 +46,7 @@ function checkPattern(value: unknown, rule: Readonly<RuntimeValidationRule>): st
   if (typeof value !== 'string' || !rule.value) return null
   try {
     const regex = new RegExp(rule.value as string)
-    if (!regex.test(value)) return rule.message
+    if (!regex.test(value)) return rule.message ?? 'Value does not match pattern'
   } catch {
     return rule.message || 'Invalid pattern rule'
   }
@@ -50,7 +54,8 @@ function checkPattern(value: unknown, rule: Readonly<RuntimeValidationRule>): st
 }
 
 function checkEmail(value: unknown, rule: Readonly<RuntimeValidationRule>): string | null {
-  if (typeof value === 'string' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return rule.message
+  if (typeof value === 'string' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))
+    return rule.message ?? 'Invalid email address'
   return null
 }
 

@@ -69,7 +69,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.CHANGESETS_TOKEN }}
         run: |
-          PR_NUMBER=$(gh pr list --head changeset-release/main --state open --json number --jq '.[0].number')
+          PR_NUMBER=$(gh pr list --head changeset-release/main --state open --json number --jq '.[0].number // empty')
           if [ -n "$PR_NUMBER" ]; then
             echo "Enabling auto-merge for PR #$PR_NUMBER"
             gh pr merge "$PR_NUMBER" --auto --merge
