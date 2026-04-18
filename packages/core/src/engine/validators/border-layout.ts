@@ -34,28 +34,35 @@ export const borderLayoutSchema = z
 
 /** Validates that border regions have valid positions, no duplicates, and exactly one center */
 function isValidBorderRegions(regions: unknown[]): boolean {
-  const positions = extractPositions(regions)
-  if (positions.length === 0) return false
+  const entries = extractPositions(regions)
+  if (entries.length === 0) return false
 
-  for (const pos of positions) {
-    if (!VALID_BORDER_POSITIONS.has(pos)) return false
+  for (const entry of entries) {
+    if (!VALID_BORDER_POSITIONS.has(entry.position)) return false
   }
 
-  const uniquePositions = new Set(positions)
-  if (uniquePositions.size !== positions.length) return false
+  const uniquePositions = new Set(entries.map(e => e.position))
+  if (uniquePositions.size !== entries.length) return false
 
-  const centerCount = positions.filter(p => p === 'center').length
+  const centerCount = entries.filter(e => e.position === 'center').length
   return centerCount === 1
 }
 
-/** Extracts position values from region objects */
-function extractPositions(regions: unknown[]): string[] {
-  const positions: string[] = []
-  for (const region of regions) {
+/** Position paired with its original index in the regions array */
+interface PositionEntry {
+  readonly position: string
+  readonly index: number
+}
+
+/** Extracts position values from region objects, preserving original indices */
+function extractPositions(regions: unknown[]): PositionEntry[] {
+  const positions: PositionEntry[] = []
+  for (let i = 0; i < regions.length; i++) {
+    const region = regions[i]
     if (typeof region === 'object' && region !== null && 'position' in region) {
       const pos = (region as Record<string, unknown>).position
       if (typeof pos === 'string') {
-        positions.push(pos)
+        positions.push({ position: pos, index: i })
       }
     }
   }
@@ -69,32 +76,32 @@ function validateBorderConstraints(
 ): void {
   const positions = extractPositions(data.regions)
 
-  // NOTE: Validate each position is a valid BorderPosition
-  for (let i = 0; i < positions.length; i++) {
-    if (!VALID_BORDER_POSITIONS.has(positions[i])) {
+  // NOTE: Validate each position is a valid BorderPosition using original indices
+  for (const entry of positions) {
+    if (!VALID_BORDER_POSITIONS.has(entry.position)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: `Invalid border position "${positions[i]}" at regions[${i}]. Must be one of: north, south, east, west, center`,
-        path: ['regions', i, 'position'],
+        message: `Invalid border position "${entry.position}" at regions[${entry.index}]. Must be one of: north, south, east, west, center`,
+        path: ['regions', entry.index, 'position'],
       })
     }
   }
 
-  // NOTE: Check for duplicate positions
+  // NOTE: Check for duplicate positions using original indices
   const seen = new Set<string>()
-  for (let i = 0; i < positions.length; i++) {
-    if (seen.has(positions[i])) {
+  for (const entry of positions) {
+    if (seen.has(entry.position)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: `Duplicate position "${positions[i]}" at regions[${i}]`,
-        path: ['regions', i, 'position'],
+        message: `Duplicate position "${entry.position}" at regions[${entry.index}]`,
+        path: ['regions', entry.index, 'position'],
       })
     }
-    seen.add(positions[i])
+    seen.add(entry.position)
   }
 
   // NOTE: Exactly one center is required
-  const centerCount = positions.filter(p => p === 'center').length
+  const centerCount = positions.filter(e => e.position === 'center').length
   if (centerCount === 0) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,

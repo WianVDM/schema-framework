@@ -126,7 +126,12 @@ function BorderLayoutRenderer({
 
 /** Categorizes regions into border positions */
 function categorizeRegions(regions: readonly LayoutRegion[]): BorderRegions {
-  const result: BorderRegions = { center: regions[0] }
+  const center = regions.find(r => (r.position as BorderPosition) === 'center')
+  if (!center) {
+    throw new Error('Border layout requires a region with position "center"')
+  }
+
+  const result: BorderRegions = { center }
 
   for (const region of regions) {
     const pos = region.position as BorderPosition
@@ -134,16 +139,24 @@ function categorizeRegions(regions: readonly LayoutRegion[]): BorderRegions {
     else if (pos === 'south') result.south = region
     else if (pos === 'east') result.east = region
     else if (pos === 'west') result.west = region
-    else if (pos === 'center') result.center = region
   }
 
   return result
 }
 
+/** Safely parses a string/number size value, returning undefined on failure */
+function parseNumericSize(raw: string | number): number | undefined {
+  if (typeof raw === 'number') return raw
+  const trimmed = raw.trim()
+  const parsed = Number.parseFloat(trimmed)
+  return Number.isFinite(parsed) ? parsed : undefined
+}
+
 /** Extracts numeric size from a region, falling back to position default */
 function getRegionSize(region: LayoutRegion, position: BorderPosition): number {
   if (region.size !== undefined) {
-    return typeof region.size === 'number' ? region.size : Number.parseInt(region.size, 10)
+    const parsed = parseNumericSize(region.size)
+    if (parsed !== undefined) return parsed
   }
   return BORDER_DEFAULT_SIZES[position]
 }
@@ -164,10 +177,10 @@ function getCenterHorizontalSize(categorized: BorderRegions): number {
   return Math.max(100 - used, 10)
 }
 
-/** Extracts numeric value from size prop if numeric */
+/** Extracts numeric value from minSize/maxSize prop, returning undefined on invalid input */
 function extractNumericSize(size: string | number | undefined): number | undefined {
   if (size === undefined) return undefined
-  return typeof size === 'number' ? size : Number.parseInt(size, 10)
+  return parseNumericSize(size)
 }
 
 /** Fallback border layout when resizable primitives are not injected */

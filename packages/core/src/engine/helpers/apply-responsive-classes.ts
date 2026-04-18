@@ -9,10 +9,9 @@ export function applyResponsiveClasses(config: ResponsiveConfig): string {
   }
 
   if (config.collapsedBelow !== undefined) {
-    // NOTE: collapsedBelow uses a data attribute selector. The SchemaLayout renderer
-    // applies a `data-collapsed-below` attribute and uses ResizeObserver or matchMedia
-    // to toggle panel collapse state at runtime. CSS alone cannot toggle Panel collapse.
-    classes.push(`max-[${config.collapsedBelow}px]:border-collapse`)
+    // NOTE: collapsedBelow cannot be expressed as a CSS class — CSS has no mechanism
+    // to toggle resizable panel collapse. The SchemaLayout renderer reads this value
+    // directly from the schema and uses ResizeObserver/matchMedia to collapse panels.
   }
 
   if (config.stackBelow !== undefined) {
