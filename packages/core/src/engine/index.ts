@@ -17,18 +17,23 @@ export {
 } from './helpers'
 // Helpers
 export { resolveMessage } from './helpers/i18n'
+// Renderers
+export { ContentRenderer } from './renderers/content-renderer'
 export { FieldRenderer } from './renderers/field-renderer'
 export { GridColumnHeader } from './renderers/grid-column-header'
 export { GridPagination } from './renderers/grid-pagination'
 export { GridToolbar } from './renderers/grid-toolbar'
-// Renderers
 export { SchemaForm } from './renderers/schema-form'
 export { SchemaGrid } from './renderers/schema-grid'
+export { SchemaLayout } from './renderers/schema-layout'
+export { SchemaPanel } from './renderers/schema-panel'
 export { SchemaWizard } from './renderers/schema-wizard'
 export { ThemeProvider } from './renderers/theme-provider'
 export { useTheme } from './renderers/use-theme'
 // Types (one-export-per-file via barrel)
 export type {
+  // Layout types
+  BorderPosition,
   Brand,
   CellValueRenderer,
   ColumnFilterConfig,
@@ -56,7 +61,6 @@ export type {
   LayoutRegion,
   LayoutRendererProps,
   LayoutSchema,
-  // Layout types
   LayoutType,
   MultiSelectConfig,
   PaginationConfig,
@@ -86,11 +90,14 @@ export type {
 export type { ValidationResult } from './validators'
 // Validators (one-export-per-file via barrel)
 export {
+  BORDER_DEFAULT_SIZES,
+  borderLayoutSchema,
   evaluateCondition,
   fieldSchemaValidator,
   formSchemaValidator,
   gridColumnSchemaValidator,
   gridSchemaValidator,
+  validateBorderLayout,
   validateContentSchema,
   validateDashboardSchema,
   validateFieldSchema,

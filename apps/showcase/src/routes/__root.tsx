@@ -123,6 +123,13 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
           >
             Multi-Select
           </Link>
+          <Link
+            to="/demo-border-layout"
+            activeProps={{ className: 'font-bold underline' }}
+            className="text-sm hover:underline"
+          >
+            Border Layout
+          </Link>
         </nav>
         <main className="p-6">{children}</main>
         <Scripts />

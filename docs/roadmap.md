@@ -32,7 +32,7 @@ See `docs/VERSION_STATUS.md` for the current target version and milestone progre
 - Add `CHANGELOG.md` generation via Changesets
 - Codebase cleanup: fix known file structure violations (multi-export files in `mock-schemas.ts`, `server/schemas.ts`, `server/data.ts`)
 - Update `packages/core/package.json` version to `0.1.0`
-- Update `apps/showcase/package.json` version to `0.1.0`
+- Update `apps/showcase/package.json` version to `0.1.0` (NOTE: Later changed to `0.0.0-dev` per Option C — only core is versioned)
 - Create `.github/workflows/release.yml` for automated versioning + changelog
 
 **Enforcement files created:**

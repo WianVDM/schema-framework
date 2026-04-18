@@ -1,3 +1,4 @@
+export { borderLayoutSchema } from './border-layout-schema'
 export { contactFormSchema } from './contact-form-schema'
 export { mockOrders } from './mock-orders'
 export { mockUsers } from './mock-users'
