@@ -1,7 +1,7 @@
 // NOTE: Biome runner — single-file and full-project biome execution.
 // NOTE: Provides checkSingleFile() and checkProject() for hook consumption.
 
-import { execSync } from 'node:child_process'
+import { execFileSync, execSync } from 'node:child_process'
 
 /**
  * NOTE: Runs biome check --fix on a single file to auto-fix formatting/import sorting.
@@ -11,7 +11,7 @@ import { execSync } from 'node:child_process'
  */
 export function autoFixSingleFile(filePath) {
   try {
-    execSync(`npx biome check --fix "${filePath}" --no-errors-on-unmatched`, {
+    execFileSync('npx', ['biome', 'check', '--fix', filePath, '--no-errors-on-unmatched'], {
       encoding: 'utf-8',
       windowsHide: true,
       timeout: 15_000,
@@ -32,7 +32,7 @@ export function autoFixSingleFile(filePath) {
  */
 export function checkSingleFile(filePath) {
   try {
-    execSync(`npx biome check "${filePath}" --no-errors-on-unmatched`, {
+    execFileSync('npx', ['biome', 'check', filePath, '--no-errors-on-unmatched'], {
       encoding: 'utf-8',
       windowsHide: true,
       timeout: 15_000,
@@ -77,12 +77,13 @@ export function autoFixProject(workspaceRoot) {
  * Used by TaskComplete hook for full codebase validation.
  * @returns {{ passed: boolean, errors: string[], warnings: string[] }}
  */
-export function checkProject() {
+export function checkProject(workspaceRoot) {
   try {
     execSync('npx biome check .', {
       encoding: 'utf-8',
       windowsHide: true,
       timeout: 60_000,
+      cwd: workspaceRoot,
       stdio: ['pipe', 'pipe', 'pipe'],
     })
     return { passed: true, errors: [], warnings: [] }
@@ -105,9 +106,10 @@ function parseBiomeErrors(output) {
 
   for (const line of lines) {
     // NOTE: Match file path lines (e.g., "src/file.ts:1:1 lint/...")
-    const fileMatch = line.match(/^([^\s:]+:\d+:\d+)\s+(.+?)$/)
+    // NOTE: Parse from right to handle Windows absolute paths (e.g., C:\path:1:1)
+    const fileMatch = line.match(/^(.+):(\d+:\d+)\s+(.+?)$/)
     if (fileMatch) {
-      currentFile = fileMatch[1]
+      currentFile = `${fileMatch[1]}:${fileMatch[2]}`
     }
 
     // NOTE: Match error lines (× prefix)

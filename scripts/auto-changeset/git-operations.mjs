@@ -1,7 +1,7 @@
 // NOTE: Git change detection for the auto-changeset system.
 // NOTE: Isolated from changeset generation so git calls can be mocked for testing.
 
-import { execSync } from 'node:child_process'
+import { execFileSync, execSync, spawnSync } from 'node:child_process'
 import { ROOT } from '../shared/constants.mjs'
 import { isSourceFile } from '../shared/file-helpers.mjs'
 import { logTrace } from '../shared/output-helpers.mjs'
@@ -57,7 +57,7 @@ export function getChangedCoreFiles() {
  */
 export function getFileDiff(filePath) {
   try {
-    const diff = execSync(`git diff --unified=3 -- "${filePath}"`, {
+    const diff = execFileSync('git', ['diff', '--unified=3', '--', filePath], {
       cwd: ROOT,
       encoding: 'utf-8',
     })
@@ -65,19 +65,24 @@ export function getFileDiff(filePath) {
     return diff
   } catch {
     // NOTE: File may be untracked — try diffing against /dev/null
-    try {
-      const diff = execSync(`git diff --unified=3 --no-index /dev/null -- "${filePath}"`, {
+    // NOTE: spawnSync handles exit code 1 (differences found) without throwing
+    const result = spawnSync(
+      'git',
+      ['diff', '--unified=3', '--no-index', '/dev/null', '--', filePath],
+      {
         cwd: ROOT,
         encoding: 'utf-8',
-      })
+      },
+    )
+    if (result.status === 0 || result.status === 1) {
+      const diff = result.stdout ?? ''
       logTrace(
         SCRIPT,
         `[STEP] Untracked file diff retrieved for ${filePath} (${diff.length} chars)`,
       )
       return diff
-    } catch {
-      logTrace(SCRIPT, `[STEP] No diff available for ${filePath}`)
-      return ''
     }
+    logTrace(SCRIPT, `[STEP] No diff available for ${filePath}`)
+    return ''
   }
 }

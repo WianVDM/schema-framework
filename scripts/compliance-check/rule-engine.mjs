@@ -9,21 +9,21 @@ import { isSourceFile } from '../shared/file-helpers.mjs'
 /** @typedef {{ id: string, scope: string, fileMatch: string[], pattern: string, message: string, rationale: string }} RuleCheck */
 /** @typedef {{ id: string, file: string, line: number, message: string, rationale: string }} Violation */
 
-let cachedRules = null
+const cachedRulesByRoot = new Map()
 
 /**
  * NOTE: Loads all RuleCheck objects from .clinerules/workspace-*.json files.
- * Caches result for process lifetime (rules don't change during a hook invocation).
+ * Caches result per workspaceRoot (rules don't change during a hook invocation).
  * @param {string} workspaceRoot - Project root directory
  * @returns {RuleCheck[]}
  */
 export function loadRules(workspaceRoot) {
-  if (cachedRules) return cachedRules
+  if (cachedRulesByRoot.has(workspaceRoot)) return cachedRulesByRoot.get(workspaceRoot)
 
   const rulesDir = join(workspaceRoot, '.clinerules')
   if (!existsSync(rulesDir)) {
-    cachedRules = []
-    return cachedRules
+    cachedRulesByRoot.set(workspaceRoot, [])
+    return cachedRulesByRoot.get(workspaceRoot)
   }
 
   const allChecks = []
@@ -45,7 +45,7 @@ export function loadRules(workspaceRoot) {
     }
   }
 
-  cachedRules = allChecks
+  cachedRulesByRoot.set(workspaceRoot, allChecks)
   return allChecks
 }
 
@@ -71,12 +71,21 @@ export function checkFile(filePath, content, rules) {
   const lines = content.split('\n')
   const violations = []
 
+  // NOTE: Precompile regex patterns once per rule with error handling
+  const compiledRules = []
+  for (const rule of applicableRules) {
+    try {
+      compiledRules.push({ rule, regex: new RegExp(rule.pattern) })
+    } catch {
+      // NOTE: Skip rules with invalid regex patterns — don't crash the engine
+    }
+  }
+
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i]
     const prevLine = i > 0 ? lines[i - 1] : ''
 
-    for (const rule of applicableRules) {
-      const regex = new RegExp(rule.pattern)
+    for (const { rule, regex } of compiledRules) {
       if (regex.test(line)) {
         if (hasSuppression(line, prevLine, rule.id)) continue
         violations.push({

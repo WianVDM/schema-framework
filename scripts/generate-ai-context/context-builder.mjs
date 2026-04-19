@@ -310,19 +310,27 @@ function inferImportsFrom(extDeps) {
   for (const depList of Object.values(extDeps)) {
     if (!Array.isArray(depList)) continue
     for (const dep of depList) {
-      if (dep?.path && typeof dep.path === 'string' && !dep.path.startsWith('.')) {
-        // NOTE: Extract directory-level prefix from resolved relative paths
-        const parts = dep.path.replace(/\\/g, '/').split('/')
-        if (parts.length >= 3) {
-          allPaths.add(`${parts.slice(0, 3).join('/')}/**`)
-        } else if (parts.length > 0) {
-          allPaths.add(parts.join('/'))
-        }
-      }
+      const glob = depPathToGlob(dep?.path)
+      if (glob) allPaths.add(glob)
     }
   }
 
   return [...allPaths].sort()
+}
+
+/**
+ * NOTE: Converts a dependency path to a directory-level glob pattern.
+ * Skips bare npm package names (no slash). Returns null if not a filesystem path.
+ */
+function depPathToGlob(depPath) {
+  if (!depPath || typeof depPath !== 'string') return null
+  // NOTE: Skip bare npm package names (no slash — e.g., "react", "lodash")
+  const isFilesystemImport = depPath.startsWith('.') || depPath.includes('/')
+  if (!isFilesystemImport) return null
+
+  const parts = depPath.replace(/\\/g, '/').split('/')
+  if (parts.length >= 3) return `${parts.slice(0, 3).join('/')}/**`
+  return parts.length > 0 ? parts.join('/') : null
 }
 
 /**
@@ -375,15 +383,17 @@ function mergeGovernance(child, parent) {
     const parentVal = parent[field]
 
     // NOTE: Skip if parent doesn't define this field
-    if (!(parentVal && Array.isArray(parentVal))) continue
+    if (!Array.isArray(parentVal)) continue
 
-    // NOTE: Child field is unresolved — inherit from parent
-    if (
-      !(childVal && Array.isArray(childVal)) ||
-      childVal.length === 0 ||
-      childVal.some(v => typeof v === 'string' && (v.startsWith('TODO:') || v.startsWith('FIXME:')))
-    ) {
+    if (!Array.isArray(childVal) || childVal.length === 0) {
+      // NOTE: Child field is missing or empty — inherit entirely from parent
       result[field] = parentVal
+    } else {
+      // NOTE: Filter out TODO/FIXME markers, preserve actual entries
+      const childValFiltered = childVal.filter(
+        v => !(typeof v === 'string' && (v.startsWith('TODO:') || v.startsWith('FIXME:'))),
+      )
+      result[field] = childValFiltered.length > 0 ? childValFiltered : parentVal
     }
   }
 

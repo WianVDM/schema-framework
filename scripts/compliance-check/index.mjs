@@ -32,7 +32,7 @@ if (rules.length > 0) {
 
 // NOTE: Phase 2 — Biome checks
 logTrace(SCRIPT, 'Phase 2: Running biome check...')
-const biomeResult = runBiomeCheck()
+const biomeResult = runBiomeCheck(ROOT)
 for (const error of biomeResult.errors) {
   collector.addViolation(`[biome] ${error}`)
 }

@@ -76,12 +76,10 @@ function main() {
   if (writeChangeset(filePath, content)) {
     logTrace(SCRIPT, `[RESULT] Changeset written: .changeset/${filename}`)
     console.error(`[auto-changeset] ✅ Auto-generated changeset: .changeset/${filename}`)
-    console.error(
-      `   ${content
-        .split('\n')
-        .find(l => l.trim() && !l.startsWith('---') && !l.startsWith('"'))
-        ?.trim()}`,
-    )
+    const matched = content
+      .split('\n')
+      .find(l => l.trim() && !l.startsWith('---') && !l.startsWith('"'))
+    console.error(`   ${matched?.trim() ?? '(empty changeset)'}`)
   } else {
     logTrace(SCRIPT, `[ERROR] Failed to write changeset: ${filePath}`)
     console.error(`[auto-changeset] ❌ Failed to write changeset: ${filePath}`)

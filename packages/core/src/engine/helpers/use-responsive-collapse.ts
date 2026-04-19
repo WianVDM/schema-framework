@@ -21,7 +21,8 @@ export function useResponsiveCollapse(
     return result
   }, [regions])
 
-  const [collapsed, setCollapsed] = useState<ReadonlyMap<string, boolean>>(computeCollapsed)
+  // NOTE: Initialize with empty Map to avoid SSR/client mismatch (computeCollapsed reads window)
+  const [collapsed, setCollapsed] = useState<ReadonlyMap<string, boolean>>(() => new Map())
 
   useEffect(() => {
     // NOTE: Collect all unique collapsedBelow breakpoints and observe them with matchMedia
@@ -35,7 +36,11 @@ export function useResponsiveCollapse(
 
     if (breakpoints.size === 0) return
 
-    const mqls = [...breakpoints].map(bp => window.matchMedia(`(max-width: ${bp - 1}px)`))
+    // NOTE: Filter invalid breakpoints (≤ 1) to avoid negative/zero media queries
+    const validBreakpoints = [...breakpoints].filter(bp => bp > 1 && Number.isFinite(bp))
+    if (validBreakpoints.length === 0) return
+
+    const mqls = validBreakpoints.map(bp => window.matchMedia(`(max-width: ${bp - 1}px)`))
 
     // NOTE: Initial computation on mount
     setCollapsed(computeCollapsed())

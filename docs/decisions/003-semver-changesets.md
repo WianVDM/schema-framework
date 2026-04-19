@@ -5,7 +5,7 @@ Accepted
 
 ## Context
 The project needs a versioning strategy for the monorepo that:
-- Manages versions for `packages/core` and `apps/showcase` independently
+- Manages versions for `packages/core` only (originally both; see Addendum below)
 - Auto-generates changelogs
 - Integrates with GitHub Actions for CI/CD
 - Follows industry-standard versioning conventions
