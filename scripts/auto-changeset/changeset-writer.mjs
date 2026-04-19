@@ -128,9 +128,11 @@ function buildSlug(verb, areas) {
  * @param {string[]} files - List of changed file paths
  * @param {string} packageName - NPM package name for frontmatter
  * @param {object} [diffProvider] - Optional diff provider (for testing). Defaults to git-operations.
+ * @param {object} [options] - Additional options.
+ * @param {string} [options.bump='patch'] - Semver bump level: 'patch', 'minor', or 'major'.
  * @returns {{ filename: string, content: string }}
  */
-export function generateChangeset(files, packageName, diffProvider) {
+export function generateChangeset(files, packageName, diffProvider, options = {}) {
   logTrace(SCRIPT, `[STEP] generateChangeset: ${files.length} file(s), package: ${packageName}`)
 
   // NOTE: Guard against empty files list
@@ -203,7 +205,8 @@ export function generateChangeset(files, packageName, diffProvider) {
       ? `\n\n**Affected symbols:** ${symbolList.length <= 6 ? symbolList.join(', ') : `${symbolList.slice(0, 6).join(', ')} and ${symbolList.length - 6} more`}`
       : ''
 
-  const frontmatter = `---\n"${packageName}": patch\n---\n`
+  const bump = options.bump || 'patch'
+  const frontmatter = `---\n"${packageName}": ${bump}\n---\n`
   const body = `${title}\n\n**Areas:** ${areaSummary}${affectedSymbols}\n\n${bulletPoints.join('\n')}\n`
 
   logTrace(SCRIPT, `[STEP] Generated title: ${title}`)

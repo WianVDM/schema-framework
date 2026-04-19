@@ -5,6 +5,7 @@ import { ROOT } from '../shared/constants.mjs'
 import { logTrace, SeverityCollector } from '../shared/output-helpers.mjs'
 import { checkProject as runBiomeCheck } from './biome-runner.mjs'
 import { checkChangelogs } from './checks/changelogs.mjs'
+import { checkChangesetBumps } from './checks/changeset-bump.mjs'
 import { checkContextFreshness } from './checks/context-freshness.mjs'
 import { checkContextGovernance } from './checks/context-governance.mjs'
 import { checkSymbolUniqueness } from './checks/symbol-uniqueness.mjs'
@@ -49,6 +50,7 @@ logTrace(
 logTrace(SCRIPT, 'Phase 3: Running project health checks...')
 checkContextFreshness(collector)
 checkContextGovernance(collector)
+checkChangesetBumps(collector)
 checkChangelogs(collector)
 checkVersionStatus(collector)
 checkSymbolUniqueness(collector)
