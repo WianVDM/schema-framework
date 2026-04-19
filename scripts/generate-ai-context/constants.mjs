@@ -16,6 +16,7 @@ export const options = {
   check: false,
   deep: false,
   diff: false,
+  governance: true,
 }
 
 // NOTE: Fields preserved from existing .context.json during regeneration.

@@ -1,22 +1,19 @@
 #!/usr/bin/env node
 
-/**
- * Auto-Changeset Generator — CLI Entry Point
- *
- * Non-interactive changeset creation for packages/core/src/ modifications.
- * Generates a patch-level changeset file derived from changed file names.
- *
- * Usage:
- *   node scripts/auto-changeset/index.mjs                    # Auto-detect from git
- *   node scripts/auto-changeset/index.mjs --files a.ts b.ts  # Explicit file list
- */
+// NOTE: Auto-Changeset Generator — CLI Entry Point
+// NOTE: Non-interactive changeset creation for packages/core/src/ modifications.
+// NOTE: Generates a patch-level changeset file derived from changed file names and git diffs.
+// NOTE: All trace output goes to stderr; only the final result goes to stdout.
 
 import { existsSync, mkdirSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { ROOT } from '../shared/constants.mjs'
 import { readPackageJson } from '../shared/file-helpers.mjs'
+import { logTrace } from '../shared/output-helpers.mjs'
 import { generateChangeset, writeChangeset } from './changeset-writer.mjs'
-import { getChangedCoreFiles } from './git-operations.mjs'
+import { getChangedCoreFiles, getFileDiff } from './git-operations.mjs'
+
+const SCRIPT = 'auto-changeset'
 
 /**
  * NOTE: Reads the package name from packages/core/package.json.
@@ -25,31 +22,41 @@ import { getChangedCoreFiles } from './git-operations.mjs'
 function getCorePackageName() {
   const corePkgPath = join(ROOT, 'packages', 'core', 'package.json')
   const pkg = readPackageJson(corePkgPath)
-  return pkg ? pkg.name : '@my-framework/core'
+  const name = pkg ? pkg.name : '@my-framework/core'
+  logTrace(SCRIPT, `[STEP] Package name resolved: ${name}`)
+  return name
 }
 
 /**
  * NOTE: Main entry point. Detects changed files, generates changeset, writes to disk.
  */
 function main() {
+  logTrace(SCRIPT, '[START] Auto-changeset generator invoked')
+
   const args = process.argv.slice(2)
   let files
 
   const filesIdx = args.indexOf('--files')
   if (filesIdx !== -1 && args.length > filesIdx + 1) {
     files = args.slice(filesIdx + 1)
+    logTrace(SCRIPT, `[STEP] Using explicit file list: ${files.join(', ')}`)
   } else {
     files = getChangedCoreFiles()
+    logTrace(SCRIPT, `[STEP] Git-detected changed files: ${files.length}`)
   }
 
   if (files.length === 0) {
-    console.log('ℹ️  No packages/core/src/ changes detected — no changeset needed.')
+    logTrace(SCRIPT, '[DECISION] No packages/core/src/ changes detected — no changeset needed')
+    console.error(
+      '[auto-changeset] ℹ️  No packages/core/src/ changes detected — no changeset needed.',
+    )
     return
   }
 
   const changesetDir = join(ROOT, '.changeset')
   if (!existsSync(changesetDir)) {
     mkdirSync(changesetDir, { recursive: true })
+    logTrace(SCRIPT, '[STEP] Created .changeset/ directory')
   }
 
   // NOTE: Skip if a changeset already exists — manual changeset takes precedence over auto-generated
@@ -57,26 +64,31 @@ function main() {
     f => f.endsWith('.md') && f !== 'README.md',
   )
   if (existingChangesets.length > 0) {
-    console.log(`ℹ️  Changeset already exists (${existingChangesets[0]}). Skipping auto-generation.`)
+    logTrace(SCRIPT, `[DECISION] Changeset already exists (${existingChangesets[0]}) — skipping`)
     return
   }
 
   const packageName = getCorePackageName()
-  const { filename, content } = generateChangeset(files, packageName)
+  logTrace(SCRIPT, `[STEP] Generating changeset for ${files.length} file(s)`)
+  const { filename, content } = generateChangeset(files, packageName, { getFileDiff })
   const filePath = join(changesetDir, filename)
 
   if (writeChangeset(filePath, content)) {
-    console.log(`✅ Auto-generated changeset: .changeset/${filename}`)
-    console.log(
+    logTrace(SCRIPT, `[RESULT] Changeset written: .changeset/${filename}`)
+    console.error(`[auto-changeset] ✅ Auto-generated changeset: .changeset/${filename}`)
+    console.error(
       `   ${content
         .split('\n')
         .find(l => l.trim() && !l.startsWith('---') && !l.startsWith('"'))
         ?.trim()}`,
     )
   } else {
-    console.error(`❌ Failed to write changeset: ${filePath}`)
+    logTrace(SCRIPT, `[ERROR] Failed to write changeset: ${filePath}`)
+    console.error(`[auto-changeset] ❌ Failed to write changeset: ${filePath}`)
     process.exitCode = 1
   }
+
+  logTrace(SCRIPT, '[DONE] Auto-changeset generator finished')
 }
 
 main()

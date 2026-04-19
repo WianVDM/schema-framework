@@ -11,6 +11,11 @@
     "sourceMap": true,
     "outDir": "./dist",
     "rootDir": "./src",
+    "baseUrl": ".",
+    "paths": {
+      "@primitives/*": ["./src/primitives/*"],
+      "@engine/*": ["./src/engine/*"]
+    },
     "skipLibCheck": true
   },
   "include": ["src"]

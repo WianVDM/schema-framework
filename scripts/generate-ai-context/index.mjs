@@ -15,6 +15,7 @@
  *   --verbose   Show detailed progress output
  *   --deep      Enable deep scanning with AST type-reference extraction
  *   --diff      Generate last-diff.json tracking changes since last generation
+ *   --no-governance  Skip governance field generation in .context.json files
  *
  * Usage:
  *   node scripts/generate-ai-context/index.mjs
@@ -52,6 +53,7 @@ options.check = process.argv.includes('--check')
 options.verbose = process.argv.includes('--verbose')
 options.deep = process.argv.includes('--deep')
 options.diff = process.argv.includes('--diff')
+options.governance = !process.argv.includes('--no-governance')
 
 /**
  * NOTE: Shared helper for writing, logging, and validating Tier 2 artifacts.

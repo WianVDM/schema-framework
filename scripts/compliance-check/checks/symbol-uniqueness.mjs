@@ -2,7 +2,7 @@
 
 import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { ROOT } from '../shared/constants.mjs'
+import { ROOT } from '../../shared/constants.mjs'
 
 /**
  * NOTE: Validates symbol index integrity from docs/ai/symbol-index-manifest.json.

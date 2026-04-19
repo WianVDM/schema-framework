@@ -2,8 +2,8 @@
 
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
-import { ROOT } from '../shared/constants.mjs'
-import { readPackageJson } from '../shared/file-helpers.mjs'
+import { ROOT } from '../../shared/constants.mjs'
+import { readPackageJson } from '../../shared/file-helpers.mjs'
 
 /**
  * NOTE: Lightweight semver comparison without adding the semver dependency.

@@ -4,6 +4,9 @@
 import { execSync } from 'node:child_process'
 import { ROOT } from '../shared/constants.mjs'
 import { isSourceFile } from '../shared/file-helpers.mjs'
+import { logTrace } from '../shared/output-helpers.mjs'
+
+const SCRIPT = 'auto-changeset'
 
 /**
  * NOTE: Detects changed files in packages/core/src/ via git.
@@ -11,6 +14,7 @@ import { isSourceFile } from '../shared/file-helpers.mjs'
  * Returns deduplicated list of core source file paths.
  */
 export function getChangedCoreFiles() {
+  logTrace(SCRIPT, '[STEP] Detecting changed files via git')
   try {
     const staged = execSync('git diff --cached --name-only --diff-filter=ACMR', {
       cwd: ROOT,
@@ -26,7 +30,7 @@ export function getChangedCoreFiles() {
     })
 
     const allFiles = [...staged.split('\n'), ...unstaged.split('\n'), ...untracked.split('\n')]
-    return [...new Set(allFiles)]
+    const coreFiles = [...new Set(allFiles)]
       .map(f => f.trim())
       .filter(
         f =>
@@ -35,7 +39,45 @@ export function getChangedCoreFiles() {
           !f.endsWith('.test.ts') &&
           !f.endsWith('.spec.ts'),
       )
+
+    logTrace(
+      SCRIPT,
+      `[STEP] Raw git files: ${allFiles.filter(f => f.trim()).length}, core source: ${coreFiles.length}`,
+    )
+    return coreFiles
   } catch {
+    logTrace(SCRIPT, '[ERROR] Git detection failed — returning empty list')
     return []
+  }
+}
+
+/**
+ * NOTE: Gets the unified diff for a specific file.
+ * Returns the raw diff string or empty string on failure.
+ */
+export function getFileDiff(filePath) {
+  try {
+    const diff = execSync(`git diff --unified=3 -- "${filePath}"`, {
+      cwd: ROOT,
+      encoding: 'utf-8',
+    })
+    logTrace(SCRIPT, `[STEP] Diff retrieved for ${filePath} (${diff.length} chars)`)
+    return diff
+  } catch {
+    // NOTE: File may be untracked — try diffing against /dev/null
+    try {
+      const diff = execSync(`git diff --unified=3 --no-index /dev/null -- "${filePath}"`, {
+        cwd: ROOT,
+        encoding: 'utf-8',
+      })
+      logTrace(
+        SCRIPT,
+        `[STEP] Untracked file diff retrieved for ${filePath} (${diff.length} chars)`,
+      )
+      return diff
+    } catch {
+      logTrace(SCRIPT, `[STEP] No diff available for ${filePath}`)
+      return ''
+    }
   }
 }
