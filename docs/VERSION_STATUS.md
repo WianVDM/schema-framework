@@ -50,20 +50,28 @@
 
 > **NOTE:** All layout renderer tests (ContentRenderer dispatch, SchemaPanel, SchemaLayout, BorderLayoutValidator, E2E for `/demo-border-layout`) are deferred to v0.7.0 (Testing Suite milestone).
 
-### Slice 3: Accordion, Card, HBox, VBox Layouts (v0.3.3)
-- [ ] Add accordion layout rendering to `SchemaLayout`
-- [ ] Add card/stack layout rendering to `SchemaLayout`
-- [ ] Add hbox layout rendering to `SchemaLayout`
-- [ ] Add vbox layout rendering to `SchemaLayout`
-- [ ] Create mock data for each layout type
-- [ ] Create showcase demo routes for each layout type
-- [ ] `pnpm build` passes
+### Slice 3: Accordion, Card, HBox, VBox, Tabs Layouts (v0.3.3) — COMPLETE ✅
+- [x] Create `AccordionConfig`, `CardGridConfig`, `BoxConfig` type interfaces
+- [x] Update `LayoutSchema` with type-specific config fields
+- [x] Update `TabSchema` with `mountMode` field for lazy mounting
+- [x] Add `TabsList`, `TabsTrigger`, `TabsContent` to `LayoutPrimitiveComponents`
+- [x] Create type-specific validators (`accordion-layout`, `card-layout`, `box-layout`)
+- [x] Create `AccordionLayoutRenderer` with animation config support
+- [x] Create `CardLayoutRenderer` with CSS Grid responsive breakpoints
+- [x] Create `HBoxLayoutRenderer` + `VBoxLayoutRenderer` with flex config
+- [x] Create `SchemaTabs` renderer with lazy mounting hook (`useLazyTabContent`)
+- [x] Wire all renderers in `SchemaLayout` — no more `NotImplementedPlaceholder`
+- [x] Replace `TabsPlaceholder` in `ContentRenderer` with `SchemaTabs`
+- [x] Create mock data for each layout type
+- [x] Create showcase demo routes for each layout type
+- [x] Update `primitives-provider` with Tabs sub-component mapping
+- [x] Regenerate context maps
+- [x] `pnpm build` passes
 
-### Slice 4: SchemaTabs & SchemaDashboard (v0.3.4)
-- [ ] Create `SchemaTabs` renderer with lazy rendering
+### Slice 4: SchemaDashboard (v0.3.4)
 - [ ] Create `SchemaDashboard` renderer
-- [ ] Create mock data for tabs and dashboard
-- [ ] Create showcase demo routes (`/demo-tabs`, `/demo-dashboard`)
+- [ ] Create mock data for dashboard
+- [ ] Create showcase demo route (`/demo-dashboard`)
 - [ ] Run `pnpm generate-context` to update all context maps
 - [ ] Ensure all layouts are responsive
 - [ ] `pnpm build` passes

@@ -60,20 +60,34 @@ export const primitives: PrimitiveComponents = {
   TagInput,
 }
 
-import { Accordion } from '@/components/ui/accordion'
-import { Card } from '@/components/ui/card'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Collapsible } from '@/components/ui/collapsible'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
-import { Tabs } from '@/components/ui/tabs'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 export const layoutPrimitives: LayoutPrimitiveComponents = {
   Panel,
   Splitter,
   Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
   Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
   Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
   Separator,
   Collapsible,
   ScrollArea,

@@ -27,6 +27,45 @@ export const layoutSchemaValidator = z
   .object({
     type: z.enum(['border', 'accordion', 'card', 'hbox', 'vbox']),
     regions: z.array(layoutRegionValidator).min(1, 'LayoutSchema must have at least one region'),
+    accordionConfig: z
+      .object({
+        mode: z.enum(['single', 'multiple']).optional(),
+        animation: z.enum(['slide', 'fade', 'none']).optional(),
+        defaultOpen: z.array(z.string()).optional(),
+        collapsible: z.boolean().optional(),
+      })
+      .strict()
+      .optional(),
+    cardGridConfig: z
+      .object({
+        columns: z
+          .union([
+            z.number().int().positive().min(1),
+            z
+              .object({
+                sm: z.number().int().positive().optional(),
+                md: z.number().int().positive().optional(),
+                lg: z.number().int().positive().optional(),
+                xl: z.number().int().positive().optional(),
+              })
+              .strict(),
+          ])
+          .optional(),
+        gap: z.union([z.number().min(0), z.string()]).optional(),
+        padding: z.union([z.number().min(0), z.string()]).optional(),
+      })
+      .strict()
+      .optional(),
+    boxConfig: z
+      .object({
+        gap: z.union([z.number().min(0), z.string()]).optional(),
+        align: z.enum(['start', 'center', 'end', 'stretch']).optional(),
+        justify: z.enum(['start', 'center', 'end', 'between', 'around', 'evenly']).optional(),
+        wrap: z.boolean().optional(),
+        padding: z.union([z.number().min(0), z.string()]).optional(),
+      })
+      .strict()
+      .optional(),
     gap: z.number().min(0).optional(),
     padding: z
       .union([z.number().min(0), z.tuple([z.number().min(0), z.number().min(0)])])

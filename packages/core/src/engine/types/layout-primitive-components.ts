@@ -17,8 +17,17 @@ export interface LayoutPrimitiveComponents {
   readonly Panel?: AnyComponent
   readonly Splitter?: AnyComponent
   readonly Tabs?: AnyComponent
+  readonly TabsList?: AnyComponent
+  readonly TabsTrigger?: AnyComponent
+  readonly TabsContent?: AnyComponent
   readonly Accordion?: AnyComponent
+  readonly AccordionItem?: AnyComponent
+  readonly AccordionTrigger?: AnyComponent
+  readonly AccordionContent?: AnyComponent
   readonly Card?: AnyComponent
+  readonly CardHeader?: AnyComponent
+  readonly CardTitle?: AnyComponent
+  readonly CardContent?: AnyComponent
   readonly Separator?: AnyComponent
   readonly Collapsible?: AnyComponent
   readonly ScrollArea?: AnyComponent

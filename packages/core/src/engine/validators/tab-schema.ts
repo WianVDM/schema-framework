@@ -23,6 +23,7 @@ export const tabSchemaValidator = z
         message: 'Tab IDs must be unique within a TabSchema',
       }),
     defaultTab: z.string().optional(),
+    mountMode: z.enum(['eager', 'lazy']).optional(),
     lazy: z.boolean().optional(),
     className: z.string().optional(),
     i18n: i18nConfigSchema.optional(),

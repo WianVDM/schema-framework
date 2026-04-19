@@ -10,22 +10,31 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as DemoVirtualGridRouteImport } from './routes/demo-virtual-grid'
+import { Route as DemoVboxLayoutRouteImport } from './routes/demo-vbox-layout'
 import { Route as DemoSupportTicketRouteImport } from './routes/demo-support-ticket'
 import { Route as DemoRegistrationRouteImport } from './routes/demo-registration'
 import { Route as DemoOrdersRouteImport } from './routes/demo-orders'
 import { Route as DemoMultiSelectRouteImport } from './routes/demo-multi-select'
+import { Route as DemoHboxLayoutRouteImport } from './routes/demo-hbox-layout'
 import { Route as DemoGridRouteImport } from './routes/demo-grid'
 import { Route as DemoFormWizardRouteImport } from './routes/demo-form-wizard'
 import { Route as DemoFormRouteImport } from './routes/demo-form'
 import { Route as DemoDatePickerRouteImport } from './routes/demo-date-picker'
 import { Route as DemoColumnReorderingRouteImport } from './routes/demo-column-reordering'
+import { Route as DemoCardLayoutRouteImport } from './routes/demo-card-layout'
 import { Route as DemoBorderLayoutRouteImport } from './routes/demo-border-layout'
+import { Route as DemoAccordionLayoutRouteImport } from './routes/demo-accordion-layout'
 import { Route as DemoRouteImport } from './routes/demo'
 import { Route as IndexRouteImport } from './routes/index'
 
 const DemoVirtualGridRoute = DemoVirtualGridRouteImport.update({
   id: '/demo-virtual-grid',
   path: '/demo-virtual-grid',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoVboxLayoutRoute = DemoVboxLayoutRouteImport.update({
+  id: '/demo-vbox-layout',
+  path: '/demo-vbox-layout',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoSupportTicketRoute = DemoSupportTicketRouteImport.update({
@@ -46,6 +55,11 @@ const DemoOrdersRoute = DemoOrdersRouteImport.update({
 const DemoMultiSelectRoute = DemoMultiSelectRouteImport.update({
   id: '/demo-multi-select',
   path: '/demo-multi-select',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoHboxLayoutRoute = DemoHboxLayoutRouteImport.update({
+  id: '/demo-hbox-layout',
+  path: '/demo-hbox-layout',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoGridRoute = DemoGridRouteImport.update({
@@ -73,9 +87,19 @@ const DemoColumnReorderingRoute = DemoColumnReorderingRouteImport.update({
   path: '/demo-column-reordering',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DemoCardLayoutRoute = DemoCardLayoutRouteImport.update({
+  id: '/demo-card-layout',
+  path: '/demo-card-layout',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DemoBorderLayoutRoute = DemoBorderLayoutRouteImport.update({
   id: '/demo-border-layout',
   path: '/demo-border-layout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoAccordionLayoutRoute = DemoAccordionLayoutRouteImport.update({
+  id: '/demo-accordion-layout',
+  path: '/demo-accordion-layout',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoRoute = DemoRouteImport.update({
@@ -92,47 +116,59 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/demo': typeof DemoRoute
+  '/demo-accordion-layout': typeof DemoAccordionLayoutRoute
   '/demo-border-layout': typeof DemoBorderLayoutRoute
+  '/demo-card-layout': typeof DemoCardLayoutRoute
   '/demo-column-reordering': typeof DemoColumnReorderingRoute
   '/demo-date-picker': typeof DemoDatePickerRoute
   '/demo-form': typeof DemoFormRoute
   '/demo-form-wizard': typeof DemoFormWizardRoute
   '/demo-grid': typeof DemoGridRoute
+  '/demo-hbox-layout': typeof DemoHboxLayoutRoute
   '/demo-multi-select': typeof DemoMultiSelectRoute
   '/demo-orders': typeof DemoOrdersRoute
   '/demo-registration': typeof DemoRegistrationRoute
   '/demo-support-ticket': typeof DemoSupportTicketRoute
+  '/demo-vbox-layout': typeof DemoVboxLayoutRoute
   '/demo-virtual-grid': typeof DemoVirtualGridRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/demo': typeof DemoRoute
+  '/demo-accordion-layout': typeof DemoAccordionLayoutRoute
   '/demo-border-layout': typeof DemoBorderLayoutRoute
+  '/demo-card-layout': typeof DemoCardLayoutRoute
   '/demo-column-reordering': typeof DemoColumnReorderingRoute
   '/demo-date-picker': typeof DemoDatePickerRoute
   '/demo-form': typeof DemoFormRoute
   '/demo-form-wizard': typeof DemoFormWizardRoute
   '/demo-grid': typeof DemoGridRoute
+  '/demo-hbox-layout': typeof DemoHboxLayoutRoute
   '/demo-multi-select': typeof DemoMultiSelectRoute
   '/demo-orders': typeof DemoOrdersRoute
   '/demo-registration': typeof DemoRegistrationRoute
   '/demo-support-ticket': typeof DemoSupportTicketRoute
+  '/demo-vbox-layout': typeof DemoVboxLayoutRoute
   '/demo-virtual-grid': typeof DemoVirtualGridRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/demo': typeof DemoRoute
+  '/demo-accordion-layout': typeof DemoAccordionLayoutRoute
   '/demo-border-layout': typeof DemoBorderLayoutRoute
+  '/demo-card-layout': typeof DemoCardLayoutRoute
   '/demo-column-reordering': typeof DemoColumnReorderingRoute
   '/demo-date-picker': typeof DemoDatePickerRoute
   '/demo-form': typeof DemoFormRoute
   '/demo-form-wizard': typeof DemoFormWizardRoute
   '/demo-grid': typeof DemoGridRoute
+  '/demo-hbox-layout': typeof DemoHboxLayoutRoute
   '/demo-multi-select': typeof DemoMultiSelectRoute
   '/demo-orders': typeof DemoOrdersRoute
   '/demo-registration': typeof DemoRegistrationRoute
   '/demo-support-ticket': typeof DemoSupportTicketRoute
+  '/demo-vbox-layout': typeof DemoVboxLayoutRoute
   '/demo-virtual-grid': typeof DemoVirtualGridRoute
 }
 export interface FileRouteTypes {
@@ -140,62 +176,78 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/demo'
+    | '/demo-accordion-layout'
     | '/demo-border-layout'
+    | '/demo-card-layout'
     | '/demo-column-reordering'
     | '/demo-date-picker'
     | '/demo-form'
     | '/demo-form-wizard'
     | '/demo-grid'
+    | '/demo-hbox-layout'
     | '/demo-multi-select'
     | '/demo-orders'
     | '/demo-registration'
     | '/demo-support-ticket'
+    | '/demo-vbox-layout'
     | '/demo-virtual-grid'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/demo'
+    | '/demo-accordion-layout'
     | '/demo-border-layout'
+    | '/demo-card-layout'
     | '/demo-column-reordering'
     | '/demo-date-picker'
     | '/demo-form'
     | '/demo-form-wizard'
     | '/demo-grid'
+    | '/demo-hbox-layout'
     | '/demo-multi-select'
     | '/demo-orders'
     | '/demo-registration'
     | '/demo-support-ticket'
+    | '/demo-vbox-layout'
     | '/demo-virtual-grid'
   id:
     | '__root__'
     | '/'
     | '/demo'
+    | '/demo-accordion-layout'
     | '/demo-border-layout'
+    | '/demo-card-layout'
     | '/demo-column-reordering'
     | '/demo-date-picker'
     | '/demo-form'
     | '/demo-form-wizard'
     | '/demo-grid'
+    | '/demo-hbox-layout'
     | '/demo-multi-select'
     | '/demo-orders'
     | '/demo-registration'
     | '/demo-support-ticket'
+    | '/demo-vbox-layout'
     | '/demo-virtual-grid'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DemoRoute: typeof DemoRoute
+  DemoAccordionLayoutRoute: typeof DemoAccordionLayoutRoute
   DemoBorderLayoutRoute: typeof DemoBorderLayoutRoute
+  DemoCardLayoutRoute: typeof DemoCardLayoutRoute
   DemoColumnReorderingRoute: typeof DemoColumnReorderingRoute
   DemoDatePickerRoute: typeof DemoDatePickerRoute
   DemoFormRoute: typeof DemoFormRoute
   DemoFormWizardRoute: typeof DemoFormWizardRoute
   DemoGridRoute: typeof DemoGridRoute
+  DemoHboxLayoutRoute: typeof DemoHboxLayoutRoute
   DemoMultiSelectRoute: typeof DemoMultiSelectRoute
   DemoOrdersRoute: typeof DemoOrdersRoute
   DemoRegistrationRoute: typeof DemoRegistrationRoute
   DemoSupportTicketRoute: typeof DemoSupportTicketRoute
+  DemoVboxLayoutRoute: typeof DemoVboxLayoutRoute
   DemoVirtualGridRoute: typeof DemoVirtualGridRoute
 }
 
@@ -206,6 +258,13 @@ declare module '@tanstack/react-router' {
       path: '/demo-virtual-grid'
       fullPath: '/demo-virtual-grid'
       preLoaderRoute: typeof DemoVirtualGridRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo-vbox-layout': {
+      id: '/demo-vbox-layout'
+      path: '/demo-vbox-layout'
+      fullPath: '/demo-vbox-layout'
+      preLoaderRoute: typeof DemoVboxLayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/demo-support-ticket': {
@@ -234,6 +293,13 @@ declare module '@tanstack/react-router' {
       path: '/demo-multi-select'
       fullPath: '/demo-multi-select'
       preLoaderRoute: typeof DemoMultiSelectRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo-hbox-layout': {
+      id: '/demo-hbox-layout'
+      path: '/demo-hbox-layout'
+      fullPath: '/demo-hbox-layout'
+      preLoaderRoute: typeof DemoHboxLayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/demo-grid': {
@@ -271,11 +337,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoColumnReorderingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/demo-card-layout': {
+      id: '/demo-card-layout'
+      path: '/demo-card-layout'
+      fullPath: '/demo-card-layout'
+      preLoaderRoute: typeof DemoCardLayoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/demo-border-layout': {
       id: '/demo-border-layout'
       path: '/demo-border-layout'
       fullPath: '/demo-border-layout'
       preLoaderRoute: typeof DemoBorderLayoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo-accordion-layout': {
+      id: '/demo-accordion-layout'
+      path: '/demo-accordion-layout'
+      fullPath: '/demo-accordion-layout'
+      preLoaderRoute: typeof DemoAccordionLayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/demo': {
@@ -298,16 +378,20 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DemoRoute: DemoRoute,
+  DemoAccordionLayoutRoute: DemoAccordionLayoutRoute,
   DemoBorderLayoutRoute: DemoBorderLayoutRoute,
+  DemoCardLayoutRoute: DemoCardLayoutRoute,
   DemoColumnReorderingRoute: DemoColumnReorderingRoute,
   DemoDatePickerRoute: DemoDatePickerRoute,
   DemoFormRoute: DemoFormRoute,
   DemoFormWizardRoute: DemoFormWizardRoute,
   DemoGridRoute: DemoGridRoute,
+  DemoHboxLayoutRoute: DemoHboxLayoutRoute,
   DemoMultiSelectRoute: DemoMultiSelectRoute,
   DemoOrdersRoute: DemoOrdersRoute,
   DemoRegistrationRoute: DemoRegistrationRoute,
   DemoSupportTicketRoute: DemoSupportTicketRoute,
+  DemoVboxLayoutRoute: DemoVboxLayoutRoute,
   DemoVirtualGridRoute: DemoVirtualGridRoute,
 }
 export const routeTree = rootRouteImport
