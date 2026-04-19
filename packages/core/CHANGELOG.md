@@ -1,5 +1,29 @@
 # @my-framework/core
 
+## 0.4.0
+
+### Minor Changes
+
+- [#28](https://github.com/WianVDM/schema-framework/pull/28) [`23510d3`](https://github.com/WianVDM/schema-framework/commit/23510d372de3dfc68ae4fc2ea00ed42f87d71fd8) Thanks [@WianVDM](https://github.com/WianVDM)! - Add layout system renderers: ContentRenderer, SchemaPanel, SchemaLayout with border layout support
+
+  - **ContentRenderer**: Central dispatcher for all 6 ContentSchema variants (form, grid, wizard, tabs, layout, custom)
+  - **SchemaPanel**: Engine renderer wrapping Panel primitive with LayoutRegion config
+  - **SchemaLayout**: Border layout renderer (N/S/E/W/C regions) with resizable panels and collapse/expand
+  - **BorderPosition type**: String literal union for border layout positions
+  - **validateBorderLayout**: Zod validator for border layout constraints (exactly one center, no duplicates)
+  - **useResponsiveCollapse**: Runtime hook using matchMedia for responsive panel collapse
+  - **LayoutPrimitiveComponents**: Extended with ResizablePanelGroup, ResizablePanel, ResizableHandle slots
+  - **Showcase**: Added mock border layout data and `/demo-border-layout` demo route
+  - **Versioning**: Corrected to Option C (version core only, showcase = 0.0.0-dev)
+
+### Patch Changes
+
+- [#28](https://github.com/WianVDM/schema-framework/pull/28) [`23510d3`](https://github.com/WianVDM/schema-framework/commit/23510d372de3dfc68ae4fc2ea00ed42f87d71fd8) Thanks [@WianVDM](https://github.com/WianVDM)! - Fix border-layout validator error paths, region size parsing, center detection, and responsive class emission
+
+  - **border-layout.ts**: Fix `extractPositions` to preserve original region indices so `ctx.addIssue` error paths point to the correct region
+  - **schema-layout.tsx**: Add NaN-safe parsing for `getRegionSize`/`extractNumericSize` with fallback to `BORDER_DEFAULT_SIZES`; fix `categorizeRegions` to explicitly find the center region instead of defaulting to `regions[0]`
+  - **apply-responsive-classes.ts**: Remove incorrect `border-collapse` CSS class for `collapsedBelow` — panel collapse is handled by the renderer via ResizeObserver/matchMedia, not CSS
+
 ## 0.3.1
 
 ### Patch Changes
