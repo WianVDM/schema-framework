@@ -2,6 +2,16 @@
 // NOTE: SeverityCollector extracted from compliance-check.mjs inline arrays and print logic.
 
 /**
+ * NOTE: Writes a trace message to stderr for hook/script observability.
+ * Stderr is separate from stdout so result output stays clean for callers.
+ * @param {string} script - Script name prefix (e.g., "auto-changeset")
+ * @param {string} message - Trace message with step/decision marker
+ */
+export function logTrace(script, message) {
+  process.stderr.write(`[${script}] ${message}\n`)
+}
+
+/**
  * NOTE: Collects violations, warnings, and suggestions, then prints a structured report.
  * Replaces the inline arrays and print logic previously in compliance-check.mjs.
  */

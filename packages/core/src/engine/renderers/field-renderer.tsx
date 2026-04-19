@@ -1,5 +1,5 @@
+import type { AddressData } from '@primitives/address-data'
 import { useEffect } from 'react'
-import type { AddressData } from '../../primitives/address-data'
 import { usePrimitives } from '../context/primitives-context'
 import { DefaultFallbackComponent } from '../helpers/default-fallback-component'
 import type { FieldRendererProps, SelectOption } from '../types'

@@ -24,7 +24,7 @@
           }
         },
         "noUselessUndefinedInitialization": "error",
-        "useSimplifiedLogicExpression": "warn"
+        "useSimplifiedLogicExpression": "error"
       },
       "correctness": {
         "noConstAssign": "error",
@@ -37,15 +37,15 @@
         "noUndeclaredVariables": "error",
         "noUnreachable": "error",
         "noUnreachableSuper": "error",
-        "noUnusedFunctionParameters": "warn",
-        "noUnusedImports": "error",
-        "noUnusedVariables": "error",
-        "useExhaustiveDependencies": "warn",
+        "noUnusedFunctionParameters": "error",
+        "noUnusedImports": "warn",
+        "noUnusedVariables": "warn",
+        "useExhaustiveDependencies": "error",
         "useHookAtTopLevel": "error",
         "useValidForDirection": "error"
       },
       "performance": {
-        "noAccumulatingSpread": "warn",
+        "noAccumulatingSpread": "error",
         "noDelete": "error"
       },
       "security": {
@@ -54,12 +54,12 @@
       },
       "style": {
         "noDefaultExport": "off",
-        "noImplicitBoolean": "warn",
+        "noImplicitBoolean": "error",
         "noInferrableTypes": "error",
-        "noNegationElse": "warn",
-        "noShoutyConstants": "warn",
+        "noNegationElse": "error",
+        "noShoutyConstants": "error",
         "noUnusedTemplateLiteral": "error",
-        "noUselessElse": "warn",
+        "noUselessElse": "error",
         "useConsistentArrayType": "error",
         "useConst": "error",
         "useDefaultParameterLast": "error",
@@ -77,7 +77,7 @@
         "noConfusingLabels": "error",
         "noConfusingVoidType": "error",
         "noConsole": {
-          "level": "warn",
+          "level": "error",
           "options": {
             "allow": ["warn", "error", "info"]
           }
@@ -91,7 +91,7 @@
         "noDuplicateParameters": "error",
         "noEmptyBlockStatements": "error",
         "noEmptyInterface": "error",
-        "noExplicitAny": "warn",
+        "noExplicitAny": "error",
         "noExtraNonNullAssertion": "error",
         "noFallthroughSwitchClause": "error",
         "noFunctionAssign": "error",

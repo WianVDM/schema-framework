@@ -1,6 +1,7 @@
 // NOTE: Builds .context.json data for individual directories.
 // NOTE: Handles export classification, dependency mapping, and merge with existing context.
 
+import { existsSync, readFileSync } from 'node:fs'
 import { basename, dirname, extname, join, posix, resolve } from 'node:path'
 import { parseInternalRefs } from './ast-parser.mjs'
 import { options, ROOT } from './constants.mjs'
@@ -11,7 +12,7 @@ import {
   loadExistingContext,
   resolveImport,
 } from './file-discovery.mjs'
-import { getLayer } from './get-layer.mjs'
+import { getLayer, getLayerConstraints } from './get-layer.mjs'
 
 /**
  * NOTE: Builds the complete context object for a single directory.
@@ -95,6 +96,17 @@ export function buildContextForDir(dirPath) {
 
   const schemaRelPath = posix.relative(dirPath, 'docs/ai/schemas/context-schema.json')
 
+  // NOTE: Build governance object if enabled, with parent inheritance
+  let governance =
+    options.governance && layer
+      ? buildGovernance(dirPath, existingContext, { layer, extDeps })
+      : undefined
+
+  // NOTE: Apply parent governance inheritance so layer defaults are preserved
+  if (governance) {
+    governance = resolveGovernanceInheritance(dirPath, governance)
+  }
+
   return {
     context: {
       $schema: schemaRelPath,
@@ -104,6 +116,7 @@ export function buildContextForDir(dirPath) {
       files: filesMap,
       ...(Object.keys(rels).length > 0 ? { rels } : {}),
       ...(Object.keys(extDeps).length > 0 ? { extDeps } : {}),
+      ...(governance ? { governance } : {}),
     },
     symbolTypes,
   }
@@ -257,4 +270,164 @@ export function parseSymbolTypesForDir(dirPath) {
   }
 
   return symbolTypes
+}
+
+/**
+ * NOTE: Constructs a governance object for a directory's .context.json.
+ * Infers what it can from layer constraints and extDeps data.
+ * Uses empty arrays for fields that cannot be inferred (layer defaults applied during merge).
+ * Preserves existing governance fields unless --force is set.
+ */
+export function buildGovernance(dirPath, existingContext, layerInfo) {
+  const existingGov = existingContext?.governance
+
+  // NOTE: Preserve existing governance unless force mode
+  if (existingGov && !options.force) {
+    return existingGov
+  }
+
+  const { layer } = layerInfo
+  const { extDeps } = layerInfo
+  const layerConstraints = getLayerConstraints(layer)
+
+  // NOTE: Infer importsFrom from extDeps — collect unique external dependency directories
+  const inferredImportsFrom = inferImportsFrom(extDeps, dirPath)
+
+  // NOTE: Merge layer-level importsFrom defaults with inferred — use layer defaults when inferred is empty
+  const layerImportsFrom = layerConstraints.importsFrom || []
+  const mergedImportsFrom =
+    inferredImportsFrom.length > 0
+      ? [...new Set([...inferredImportsFrom, ...layerImportsFrom])].sort()
+      : layerImportsFrom
+
+  const governance = {
+    importsFrom: mergedImportsFrom.length > 0 ? mergedImportsFrom : inferredImportsFrom,
+    importedBy: layerConstraints.importedBy || [],
+    constraints: layerConstraints.constraints || [],
+    forbidden: layerConstraints.forbidden,
+    inherits: true,
+  }
+
+  return governance
+}
+
+/**
+ * NOTE: Infers importsFrom patterns from extDeps data.
+ * Extracts unique directory-level prefixes from external dependency paths.
+ * Uses originDir to resolve relative imports against the correct source directory.
+ */
+function inferImportsFrom(extDeps, originDir) {
+  if (!extDeps || typeof extDeps !== 'object') return []
+
+  const allPaths = new Set()
+  for (const depList of Object.values(extDeps)) {
+    if (!Array.isArray(depList)) continue
+    for (const dep of depList) {
+      const glob = depPathToGlob(dep?.path, originDir)
+      if (glob) allPaths.add(glob)
+    }
+  }
+
+  return [...allPaths].sort()
+}
+
+/**
+ * NOTE: Converts a dependency path to a directory-level glob pattern.
+ * Skips bare npm package names (no slash). Returns null if not a filesystem path.
+ * Resolves relative paths from originDir (the source directory containing the import).
+ * Strips trailing filename segments so globs target directories, not files.
+ */
+function depPathToGlob(depPath, originDir) {
+  if (!depPath || typeof depPath !== 'string') return null
+  // NOTE: Only treat paths starting with '.' or '/' as filesystem imports
+  // NOTE: Scoped packages like "@scope/pkg" have '/' but are npm packages, not filesystem paths
+  const isFilesystemImport = depPath.startsWith('.') || depPath.startsWith('/')
+  if (!isFilesystemImport) return null
+
+  // NOTE: Resolve relative paths from originDir, not ROOT
+  let normalized = depPath.replace(/\\/g, '/')
+  if (depPath.startsWith('.')) {
+    const originAbsDir = resolve(ROOT, originDir)
+    const resolved = resolve(originAbsDir, depPath).replace(/\\/g, '/')
+    normalized = posix.relative(ROOT.replace(/\\/g, '/'), resolved)
+  }
+
+  // NOTE: Strip trailing filename segment (contains a file extension) to get directory-level pattern
+  const parts = normalized.split('/')
+  const lastPart = parts[parts.length - 1]
+  if (lastPart && /\.\w+$/.test(lastPart)) {
+    parts.pop()
+  }
+
+  if (parts.length >= 3) return `${parts.slice(0, 3).join('/')}/**`
+  return parts.length > 0 ? parts.join('/') : null
+}
+
+/**
+ * NOTE: Resolves inherited governance fields from parent .context.json files.
+ * Walks up the directory tree looking for parent contexts.
+ * Merges parent governance for fields that are undefined or contain TODO/FIXME markers.
+ * Respects inherits: false on the child — returns child as-is.
+ */
+export function resolveGovernanceInheritance(dirPath, childGovernance) {
+  if (!childGovernance || childGovernance.inherits === false) {
+    return childGovernance
+  }
+
+  // NOTE: Walk up directory tree to find parent .context.json files
+  const parts = dirPath.replace(/\\/g, '/').split('/')
+  for (let i = parts.length - 1; i > 0; i--) {
+    const parentDir = parts.slice(0, i).join('/')
+    const contextPath = join(ROOT, parentDir, '.context.json')
+
+    if (!existsSync(contextPath)) continue
+
+    try {
+      const raw = readFileSync(contextPath, 'utf-8')
+      const parentContext = JSON.parse(raw)
+      const parentGov = parentContext.governance
+
+      if (!parentGov) continue
+      if (parentGov.inherits === false) continue
+
+      // NOTE: Merge parent governance for unresolved fields
+      return mergeGovernance(childGovernance, parentGov)
+    } catch {
+      // NOTE: Malformed .context.json — skip parent inheritance
+    }
+  }
+
+  return childGovernance
+}
+
+/**
+ * NOTE: Merges parent governance into child for fields that are unresolved.
+ * A field is unresolved if it is undefined, empty, or contains TODO/FIXME markers.
+ */
+function mergeGovernance(child, parent) {
+  const result = { ...child }
+  const governableFields = ['importsFrom', 'importedBy', 'constraints', 'forbidden']
+
+  for (const field of governableFields) {
+    const childVal = child[field]
+    const parentVal = parent[field]
+
+    // NOTE: Skip if parent doesn't define this field
+    if (!Array.isArray(parentVal)) continue
+
+    if (!Array.isArray(childVal) || childVal.length === 0) {
+      // NOTE: Child field is missing or empty — inherit entirely from parent
+      result[field] = parentVal
+    } else {
+      // NOTE: Filter out TODO/FIXME markers, preserve actual entries
+      const childValFiltered = childVal.filter(
+        v => !(typeof v === 'string' && (v.startsWith('TODO:') || v.startsWith('FIXME:'))),
+      )
+      // NOTE: Merge real child entries with parent entries — preserve both
+      const merged = [...new Set([...childValFiltered, ...parentVal])]
+      result[field] = merged.length > 0 ? merged : parentVal
+    }
+  }
+
+  return result
 }

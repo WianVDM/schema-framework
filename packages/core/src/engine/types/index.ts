@@ -1,3 +1,4 @@
+export type { BorderPosition } from './border-position'
 export type { Brand, DataKey, FieldId } from './branded'
 export type { CellValueRenderer } from './cell-value-renderer'
 export type { ColumnFilterConfig } from './column-filter-config'

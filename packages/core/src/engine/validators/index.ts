@@ -1,3 +1,4 @@
+export { BORDER_DEFAULT_SIZES, borderLayoutSchema, validateBorderLayout } from './border-layout'
 export { contentSchemaValidator, validateContentSchema } from './content-schema'
 export { dashboardSchemaValidator, validateDashboardSchema } from './dashboard-schema'
 export { evaluateCondition } from './evaluate-condition'

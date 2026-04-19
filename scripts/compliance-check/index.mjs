@@ -1,43 +1,66 @@
-#!/usr/bin/env node
+// NOTE: Compliance orchestrator — runs all checks and reports results.
+// NOTE: Used by `pnpm compliance` and by TaskComplete hook.
 
-/**
- * Compliance Check — CLI Entry Point
- *
- * Post-build validation runner. Validates project health after `pnpm build`:
- * - VERSION_STATUS.md version consistency vs package.json files
- * - CHANGELOG.md existence for published packages
- * - .context.json freshness (source files newer than context)
- * - Description quality (generic/auto-generated descriptions flagged)
- * - Symbol uniqueness (no duplicate exports across files)
- * - Biome lint/format compliance (errors block, warnings warn)
- *
- * Output: Structured report with violations and suggestions.
- * Exit code: 0 if no violations, 1 if any violations found.
- */
+import { ROOT } from '../shared/constants.mjs'
+import { logTrace, SeverityCollector } from '../shared/output-helpers.mjs'
+import { checkProject as runBiomeCheck } from './biome-runner.mjs'
+import { checkChangelogs } from './checks/changelogs.mjs'
+import { checkContextFreshness } from './checks/context-freshness.mjs'
+import { checkContextGovernance } from './checks/context-governance.mjs'
+import { checkSymbolUniqueness } from './checks/symbol-uniqueness.mjs'
+import { checkVersionStatus } from './checks/version-status.mjs'
+import { checkProject, loadRules } from './rule-engine.mjs'
 
-import { SeverityCollector } from '../shared/output-helpers.mjs'
-import { checkBiome } from './check-biome.mjs'
-import { checkChangelogs } from './check-changelogs.mjs'
-import { checkContextFreshness } from './check-context-freshness.mjs'
-import { checkSymbolUniqueness } from './check-symbol-uniqueness.mjs'
-import { checkVersionStatus } from './check-version-status.mjs'
+const SCRIPT = 'compliance'
+const collector = new SeverityCollector()
 
-function main() {
-  console.log('\n🔍 Compliance Check Results:\n')
+logTrace(SCRIPT, 'Starting compliance checks...')
 
-  const collector = new SeverityCollector()
+// NOTE: Phase 1 — Rule engine checks (regex patterns from .clinerules/workspace-*.json)
+logTrace(SCRIPT, 'Phase 1: Loading rules from .clinerules/...')
+const rules = loadRules(ROOT)
+logTrace(SCRIPT, `  Loaded ${rules.length} rules`)
 
-  checkVersionStatus(collector)
-  checkChangelogs(collector)
-  checkContextFreshness(collector)
-  checkSymbolUniqueness(collector)
-  checkBiome(collector)
-
-  collector.printReport()
-
-  if (collector.hasViolations) {
-    process.exit(1)
+if (rules.length > 0) {
+  logTrace(SCRIPT, 'Phase 1b: Running rule checks against all source files...')
+  const violations = checkProject(ROOT, rules)
+  for (const v of violations) {
+    collector.addViolation(`[${v.id}] ${v.file}:${v.line} — ${v.message}`)
   }
+  logTrace(SCRIPT, `  Found ${violations.length} rule violations`)
 }
 
-main()
+// NOTE: Phase 2 — Biome checks
+logTrace(SCRIPT, 'Phase 2: Running biome check...')
+const biomeResult = runBiomeCheck(ROOT)
+for (const error of biomeResult.errors) {
+  collector.addViolation(`[biome] ${error}`)
+}
+for (const warning of biomeResult.warnings) {
+  // NOTE: Treat biome warnings as violations — they should fail compliance
+  collector.addViolation(`[biome] ${warning}`)
+}
+logTrace(
+  SCRIPT,
+  `  Biome: ${biomeResult.errors.length} errors, ${biomeResult.warnings.length} warnings`,
+)
+
+// NOTE: Phase 3 — Project health checks
+logTrace(SCRIPT, 'Phase 3: Running project health checks...')
+checkContextFreshness(collector)
+checkContextGovernance(collector)
+checkChangelogs(collector)
+checkVersionStatus(collector)
+checkSymbolUniqueness(collector)
+
+// NOTE: Phase 4 — Report results
+logTrace(SCRIPT, 'Phase 4: Reporting results...')
+collector.printReport()
+
+if (collector.hasViolations) {
+  console.error('✗ Compliance FAILED — violations must be fixed')
+  process.exit(1)
+} else {
+  console.log('✓ Compliance PASSED')
+  process.exit(0)
+}

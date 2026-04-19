@@ -5,7 +5,7 @@ Accepted
 
 ## Context
 The project needs a versioning strategy for the monorepo that:
-- Manages versions for `packages/core` and `apps/showcase` independently
+- Manages versions for `packages/core` only (originally both; see Addendum below)
 - Auto-generates changelogs
 - Integrates with GitHub Actions for CI/CD
 - Follows industry-standard versioning conventions
@@ -41,4 +41,24 @@ Use **Changesets** (`@changesets/cli`) with **SemVer** convention.
 - Developers need to run `pnpm changeset` before committing
 - CHANGELOGs are auto-generated but need human review for quality
 - Package versions are managed by `pnpm changeset version`, never manually edited
-- The showcase app version tracks independently from the core library
+- The showcase app version is set to `0.0.0-dev` and excluded from changeset versioning (see Addendum below)
+
+## Addendum: Option C — Version Core Only (v0.3.2)
+
+**Date:** 2026-04-19
+
+**Context:** The original strategy versioned both `packages/core` and `apps/showcase`. However, the showcase app is a development-only demo application that is never published to npm. Versioning it adds overhead without value — its CHANGELOG is meaningless since there are no consumers.
+
+**Decision:** Only `packages/core` is versioned via changesets. The showcase app uses `"0.0.0-dev"` as a permanent version to signal it is a development build.
+
+**Changes made:**
+- `apps/showcase/package.json` version set to `"0.0.0-dev"`
+- `apps/showcase/CHANGELOG.md` deleted (no longer meaningful)
+- `.changeset/config.json` updated: `"ignore": ["showcase"]`
+- `docs/roadmap.md` v0.1.0 exit criteria annotated with Option C note
+
+**Rationale:**
+- Showcases are not publishable packages — versioning them creates false signals
+- `0.0.0-dev` clearly communicates "development build, not versioned"
+- Changesets `ignore` field prevents accidental version bumps
+- Reduces changeset noise (no need for showcase-specific changesets)

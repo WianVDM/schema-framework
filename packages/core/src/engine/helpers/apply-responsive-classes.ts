@@ -1,6 +1,6 @@
 import type { ResponsiveConfig } from '../types/responsive-config'
 
-/** Maps ResponsiveConfig to Tailwind utility classes */
+/** Maps ResponsiveConfig to Tailwind utility classes and responsive metadata */
 export function applyResponsiveClasses(config: ResponsiveConfig): string {
   const classes: string[] = []
 
@@ -9,10 +9,9 @@ export function applyResponsiveClasses(config: ResponsiveConfig): string {
   }
 
   if (config.collapsedBelow !== undefined) {
-    // TODO: Implement collapsed responsive behavior in Slice 2 (SchemaLayout renderer).
-    // Collapsed panels must show their title bar but hide their content body — not fully hidden.
-    // The correct approach depends on how the Panel primitive handles collapse state,
-    // which is designed when SchemaLayout is built.
+    // NOTE: collapsedBelow cannot be expressed as a CSS class — CSS has no mechanism
+    // to toggle resizable panel collapse. The SchemaLayout renderer reads this value
+    // directly from the schema and uses ResizeObserver/matchMedia to collapse panels.
   }
 
   if (config.stackBelow !== undefined) {

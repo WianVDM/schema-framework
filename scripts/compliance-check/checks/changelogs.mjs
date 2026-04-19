@@ -2,16 +2,22 @@
 
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
-import { ROOT } from '../shared/constants.mjs'
-import { readPackageJson } from '../shared/file-helpers.mjs'
+import { ROOT } from '../../shared/constants.mjs'
+import { readPackageJson } from '../../shared/file-helpers.mjs'
 
 /**
  * NOTE: Lightweight semver comparison without adding the semver dependency.
  * Returns positive if a > b, negative if a < b, zero if equal.
  */
 function compareVersions(a, b) {
-  const aParts = a.split('.').map(Number)
-  const bParts = b.split('.').map(Number)
+  // NOTE: Strip prerelease/build metadata (e.g., "1.0.0-alpha" → "1.0.0")
+  const normalize = v => v.split(/[-+]/)[0]
+  const aParts = normalize(a)
+    .split('.')
+    .map(part => Number.parseInt(part, 10) || 0)
+  const bParts = normalize(b)
+    .split('.')
+    .map(part => Number.parseInt(part, 10) || 0)
   const maxLen = Math.max(aParts.length, bParts.length)
   for (let i = 0; i < maxLen; i++) {
     const aVal = aParts[i] || 0

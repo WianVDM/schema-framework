@@ -1,8 +1,6 @@
 import type { ContentSchema } from './content-schema'
-import type { CustomComponentRegistry } from './custom-component-registry'
 
-/** Props for the ContentRenderer */
+/** Props for the ContentRenderer — custom components accessed via CustomComponentContext */
 export interface ContentRendererProps {
   readonly content: ContentSchema
-  readonly customComponents?: CustomComponentRegistry
 }

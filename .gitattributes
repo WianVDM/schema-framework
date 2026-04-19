@@ -1,3 +1,6 @@
+# NOTE: Enforce LF line endings across all text files to prevent CRLF/LF drift
+* text=auto eol=lf
+
 # Ensure YAML files always use LF line endings
 *.yml text eol=lf
 *.yaml text eol=lf

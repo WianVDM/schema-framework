@@ -32,7 +32,7 @@ See `docs/VERSION_STATUS.md` for the current target version and milestone progre
 - Add `CHANGELOG.md` generation via Changesets
 - Codebase cleanup: fix known file structure violations (multi-export files in `mock-schemas.ts`, `server/schemas.ts`, `server/data.ts`)
 - Update `packages/core/package.json` version to `0.1.0`
-- Update `apps/showcase/package.json` version to `0.1.0`
+- Update `apps/showcase/package.json` version to `0.1.0` (NOTE: Later changed to `0.0.0-dev` per Option C — only core is versioned)
 - Create `.github/workflows/release.yml` for automated versioning + changelog
 
 **Enforcement files created:**
@@ -290,10 +290,14 @@ This is the largest single milestone. It may be broken into sub-versions (0.3.0,
   - All type files: verify type shapes, branded types, readonly enforcement
   - All validators: Zod schema validation with valid/invalid inputs
   - All helpers: `evaluateCondition`, `deepFreeze`, `resolveMessage`, `asDataKey`
+  - `useResponsiveCollapse` hook: matchMedia observer, responsive collapse state
+  - `validateBorderLayout`: constraint validation (center required, no duplicates, valid positions)
   - Primitive components: shallow render tests
 - **Integration Tests (packages/core):**
   - `SchemaForm`: render with various field types, validation, conditional visibility, submit/cancel
   - `SchemaGrid`: render with data, sorting, filtering, pagination, column visibility, status rendering
+  - `ContentRenderer`: dispatch to all 6 ContentSchema variants (form, grid, wizard, tabs, layout, custom)
+  - `SchemaPanel`: maps LayoutRegion to Panel props, renders content via ContentRenderer
   - `SchemaLayout`: render border/accordion/card/hbox/vbox layouts
   - `SchemaTree`: render tree, expand/collapse, selection
   - `SchemaChart`: render all chart types
@@ -301,10 +305,10 @@ This is the largest single milestone. It may be broken into sub-versions (0.3.0,
   - `SchemaTabs`: tab switching, lazy rendering
   - `FieldRenderer`: all field types render correct components
 - **E2E Tests (apps/showcase):**
-  - All demo routes load without errors
+  - All demo routes load without errors (including `/demo-border-layout`)
   - Form submission flow (fill fields → submit → success)
   - Grid interaction flow (sort → filter → paginate → select row)
-  - Layout interaction (resize regions → collapse panels)
+  - Layout interaction (resize regions → collapse panels → responsive collapse)
   - Tree interaction (expand → select → drag node)
   - Documentation site navigation (sidebar → component page → code example)
 - **Coverage Target:** 80%+ for `packages/core`

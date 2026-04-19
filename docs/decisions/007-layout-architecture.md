@@ -55,7 +55,7 @@ This avoids duplicating CSS breakpoint logic in JSON while allowing schema autho
 Layout managers are discriminated via a string literal union:
 
 ```typescript
-export type LayoutType = 'border' | 'accordion' | 'card' | 'tabs' | 'hbox' | 'vbox'
+export type LayoutType = 'border' | 'accordion' | 'card' | 'hbox' | 'vbox'
 ```
 
 Each type maps to a specific rendering strategy in `SchemaLayout`:
@@ -65,7 +65,6 @@ graph TD
     SchemaLayout -->|border| BorderLayout["Border Layout<br/>N/S/E/W/C regions + splitters"]
     SchemaLayout -->|accordion| AccordionLayout["Accordion Layout<br/>Vertically stacked collapsible panels"]
     SchemaLayout -->|card| CardLayout["Card Layout<br/>One child visible at a time"]
-    SchemaLayout -->|tabs| TabLayout["Tabs Layout<br/>Tab-based switching via SchemaTabs"]
     SchemaLayout -->|hbox| HBoxLayout["HBox Layout<br/>Horizontal flexbox"]
     SchemaLayout -->|vbox| VBoxLayout["VBox Layout<br/>Vertical flexbox"]
 ```

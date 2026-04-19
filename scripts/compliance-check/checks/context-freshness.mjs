@@ -3,8 +3,8 @@
 
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
 import { join, relative, resolve } from 'node:path'
-import { ROOT, SCAN_ROOTS, SKIP_DIRS } from '../shared/constants.mjs'
-import { isSourceFile } from '../shared/file-helpers.mjs'
+import { ROOT, SCAN_ROOTS, SKIP_DIRS } from '../../shared/constants.mjs'
+import { isSourceFile } from '../../shared/file-helpers.mjs'
 
 /**
  * NOTE: Validates .context.json freshness across all scan roots.

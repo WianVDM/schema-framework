@@ -2,6 +2,7 @@
 
 ## Current Version: 0.3.1
 ## Target Version: 0.3.2
+## Versioning Strategy: Option C — version `packages/core` only; showcase = `0.0.0-dev`
 ## Active Milestone: Layout System
 ## Milestone Status: IN PROGRESS
 
@@ -36,13 +37,18 @@
 - [x] Update `primitives-provider.tsx` with new context providers
 - [x] `pnpm build` passes
 
-### Slice 2: Border Layout & SchemaPanel (v0.3.2)
-- [ ] Create `ContentRenderer` renderer
-- [ ] Create `SchemaPanel` renderer
-- [ ] Create `SchemaLayout` renderer (border layout)
-- [ ] Create mock data for border layout
-- [ ] Create showcase demo route (`/demo-border-layout`)
-- [ ] `pnpm build` passes
+### Slice 2: Border Layout & SchemaPanel (v0.3.2) — COMPLETE ✅
+- [x] Create `ContentRenderer` renderer
+- [x] Create `SchemaPanel` renderer
+- [x] Create `SchemaLayout` renderer (border layout)
+- [x] Create `BorderPosition` type + `validateBorderLayout` validator
+- [x] Create mock data for border layout
+- [x] Create showcase demo route (`/demo-border-layout`)
+- [x] Versioning strategy correction (Option C: version core only, showcase = `0.0.0-dev`)
+- [x] `pnpm build` passes
+- [x] Implement runtime responsive collapse (`useResponsiveCollapse` hook wired into `SchemaLayout`)
+
+> **NOTE:** All layout renderer tests (ContentRenderer dispatch, SchemaPanel, SchemaLayout, BorderLayoutValidator, E2E for `/demo-border-layout`) are deferred to v0.7.0 (Testing Suite milestone).
 
 ### Slice 3: Accordion, Card, HBox, VBox Layouts (v0.3.3)
 - [ ] Add accordion layout rendering to `SchemaLayout`
