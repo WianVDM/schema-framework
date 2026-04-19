@@ -2,16 +2,17 @@
 
 // NOTE: Auto-Changeset Generator — CLI Entry Point
 // NOTE: Non-interactive changeset creation for packages/core/src/ modifications.
-// NOTE: Generates a patch-level changeset file derived from changed file names and git diffs.
+// NOTE: Generates a changeset file with bump level derived from VERSION_STATUS.md.
 // NOTE: All trace output goes to stderr; only the final result goes to stdout.
 
-import { existsSync, mkdirSync, readdirSync } from 'node:fs'
+import { existsSync, mkdirSync, readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { ROOT } from '../shared/constants.mjs'
 import { readPackageJson } from '../shared/file-helpers.mjs'
 import { logTrace } from '../shared/output-helpers.mjs'
 import { generateChangeset, writeChangeset } from './changeset-writer.mjs'
 import { getChangedCoreFiles, getFileDiff } from './git-operations.mjs'
+import { resolveBumpLevel, validateChangesetBump } from './version-bump.mjs'
 
 const SCRIPT = 'auto-changeset'
 
@@ -59,18 +60,39 @@ function main() {
     logTrace(SCRIPT, '[STEP] Created .changeset/ directory')
   }
 
-  // NOTE: Skip if a changeset already exists — manual changeset takes precedence over auto-generated
+  // NOTE: Resolve bump level from VERSION_STATUS.md to ensure correct release version
+  const versionInfo = resolveBumpLevel()
+  const bump = versionInfo?.bump ?? 'patch'
+  if (versionInfo) {
+    logTrace(
+      SCRIPT,
+      `[STEP] VERSION_STATUS.md: current=${versionInfo.current}, target=${versionInfo.target}, bump=${bump}`,
+    )
+  } else {
+    logTrace(SCRIPT, '[WARN] Could not resolve bump level — defaulting to patch')
+  }
+
+  // NOTE: Skip if a changeset already exists — validate its bump level against VERSION_STATUS.md
   const existingChangesets = readdirSync(changesetDir).filter(
     f => f.endsWith('.md') && f !== 'README.md',
   )
   if (existingChangesets.length > 0) {
-    logTrace(SCRIPT, `[DECISION] Changeset already exists (${existingChangesets[0]}) — skipping`)
+    logTrace(SCRIPT, `[DECISION] Changeset already exists (${existingChangesets[0]}) — validating`)
+    // NOTE: Validate existing changeset bump level matches expected bump from VERSION_STATUS.md
+    if (versionInfo) {
+      const existingContent = readFileSync(join(changesetDir, existingChangesets[0]), 'utf-8')
+      const validationError = validateChangesetBump(existingContent, bump)
+      if (validationError) {
+        console.error(`[auto-changeset] ⚠️  WARNING: ${validationError}`)
+        logTrace(SCRIPT, `[WARN] Bump mismatch in ${existingChangesets[0]}: ${validationError}`)
+      }
+    }
     return
   }
 
   const packageName = getCorePackageName()
-  logTrace(SCRIPT, `[STEP] Generating changeset for ${files.length} file(s)`)
-  const { filename, content } = generateChangeset(files, packageName, { getFileDiff })
+  logTrace(SCRIPT, `[STEP] Generating changeset for ${files.length} file(s) with bump=${bump}`)
+  const { filename, content } = generateChangeset(files, packageName, { getFileDiff }, { bump })
   const filePath = join(changesetDir, filename)
 
   if (writeChangeset(filePath, content)) {
