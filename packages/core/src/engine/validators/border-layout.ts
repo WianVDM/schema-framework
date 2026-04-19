@@ -76,6 +76,24 @@ function validateBorderConstraints(
   data: { type: 'border'; regions: unknown[] },
   ctx: z.RefinementCtx,
 ): void {
+  // NOTE: Pre-pass — report regions with missing or non-string position before extractPositions filters them
+  for (let i = 0; i < data.regions.length; i++) {
+    const region = data.regions[i]
+    if (typeof region !== 'object' || region === null || !('position' in region)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `Missing "position" property at regions[${i}]`,
+        path: ['regions', i, 'position'],
+      })
+    } else if (typeof (region as Record<string, unknown>).position !== 'string') {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `Invalid "position" at regions[${i}] — expected string, got ${typeof (region as Record<string, unknown>).position}`,
+        path: ['regions', i, 'position'],
+      })
+    }
+  }
+
   const positions = extractPositions(data.regions)
 
   // NOTE: Validate each position is a valid BorderPosition using original indices

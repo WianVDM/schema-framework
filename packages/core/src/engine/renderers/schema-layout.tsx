@@ -100,7 +100,25 @@ function BorderLayoutRenderer({
         )}
 
         <ResizablePanel defaultSize={getCenterSize(categorized, responsiveCollapsed)}>
-          <ResizablePanelGroup direction="horizontal">
+          <ResizablePanelGroup
+            direction="horizontal"
+            onLayout={(sizes: number[]) => {
+              if (!onRegionResize) return
+              // NOTE: Map horizontal panel sizes back to visible region IDs
+              const visibleHorizontal = [
+                categorized.west,
+                categorized.center,
+                categorized.east,
+              ].filter(r => r && !isRegionCollapsed(r))
+              const sizeMap: Record<string, number> = {}
+              for (let i = 0; i < visibleHorizontal.length; i++) {
+                const region = visibleHorizontal[i]
+                if (region) sizeMap[region.id] = sizes[i] ?? 0
+              }
+              const firstRegion = visibleHorizontal[0]
+              if (firstRegion) onRegionResize(firstRegion.id, sizeMap)
+            }}
+          >
             {categorized.west && !isRegionCollapsed(categorized.west) && (
               <>
                 <ResizablePanel
@@ -190,31 +208,47 @@ function getRegionSize(region: LayoutRegion, position: BorderPosition): number {
   return BORDER_DEFAULT_SIZES[position]
 }
 
-/** Calculates center panel size in vertical direction, excluding responsively collapsed regions */
+/** Calculates center panel size in vertical direction, excluding collapsed regions */
 function getCenterSize(
   categorized: BorderRegions,
   responsiveCollapsed: ReadonlyMap<string, boolean>,
 ): number {
   let used = 0
-  if (categorized.north && !responsiveCollapsed.get(categorized.north.id)) {
+  if (
+    categorized.north &&
+    categorized.north.collapsed !== true &&
+    !responsiveCollapsed.get(categorized.north.id)
+  ) {
     used += getRegionSize(categorized.north, 'north')
   }
-  if (categorized.south && !responsiveCollapsed.get(categorized.south.id)) {
+  if (
+    categorized.south &&
+    categorized.south.collapsed !== true &&
+    !responsiveCollapsed.get(categorized.south.id)
+  ) {
     used += getRegionSize(categorized.south, 'south')
   }
   return Math.max(100 - used, 10)
 }
 
-/** Calculates center panel size in horizontal direction, excluding responsively collapsed regions */
+/** Calculates center panel size in horizontal direction, excluding collapsed regions */
 function getCenterHorizontalSize(
   categorized: BorderRegions,
   responsiveCollapsed: ReadonlyMap<string, boolean>,
 ): number {
   let used = 0
-  if (categorized.west && !responsiveCollapsed.get(categorized.west.id)) {
+  if (
+    categorized.west &&
+    categorized.west.collapsed !== true &&
+    !responsiveCollapsed.get(categorized.west.id)
+  ) {
     used += getRegionSize(categorized.west, 'west')
   }
-  if (categorized.east && !responsiveCollapsed.get(categorized.east.id)) {
+  if (
+    categorized.east &&
+    categorized.east.collapsed !== true &&
+    !responsiveCollapsed.get(categorized.east.id)
+  ) {
     used += getRegionSize(categorized.east, 'east')
   }
   return Math.max(100 - used, 10)

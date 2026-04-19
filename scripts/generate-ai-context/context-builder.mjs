@@ -278,7 +278,7 @@ export function parseSymbolTypesForDir(dirPath) {
  * Uses empty arrays for fields that cannot be inferred (layer defaults applied during merge).
  * Preserves existing governance fields unless --force is set.
  */
-export function buildGovernance(_dirPath, existingContext, layerInfo) {
+export function buildGovernance(dirPath, existingContext, layerInfo) {
   const existingGov = existingContext?.governance
 
   // NOTE: Preserve existing governance unless force mode
@@ -291,7 +291,7 @@ export function buildGovernance(_dirPath, existingContext, layerInfo) {
   const layerConstraints = getLayerConstraints(layer)
 
   // NOTE: Infer importsFrom from extDeps — collect unique external dependency directories
-  const inferredImportsFrom = inferImportsFrom(extDeps)
+  const inferredImportsFrom = inferImportsFrom(extDeps, dirPath)
 
   // NOTE: Merge layer-level importsFrom defaults with inferred — use layer defaults when inferred is empty
   const layerImportsFrom = layerConstraints.importsFrom || []
@@ -314,15 +314,16 @@ export function buildGovernance(_dirPath, existingContext, layerInfo) {
 /**
  * NOTE: Infers importsFrom patterns from extDeps data.
  * Extracts unique directory-level prefixes from external dependency paths.
+ * Uses originDir to resolve relative imports against the correct source directory.
  */
-function inferImportsFrom(extDeps) {
+function inferImportsFrom(extDeps, originDir) {
   if (!extDeps || typeof extDeps !== 'object') return []
 
   const allPaths = new Set()
   for (const depList of Object.values(extDeps)) {
     if (!Array.isArray(depList)) continue
     for (const dep of depList) {
-      const glob = depPathToGlob(dep?.path)
+      const glob = depPathToGlob(dep?.path, originDir)
       if (glob) allPaths.add(glob)
     }
   }
@@ -333,22 +334,31 @@ function inferImportsFrom(extDeps) {
 /**
  * NOTE: Converts a dependency path to a directory-level glob pattern.
  * Skips bare npm package names (no slash). Returns null if not a filesystem path.
+ * Resolves relative paths from originDir (the source directory containing the import).
+ * Strips trailing filename segments so globs target directories, not files.
  */
-function depPathToGlob(depPath) {
+function depPathToGlob(depPath, originDir) {
   if (!depPath || typeof depPath !== 'string') return null
   // NOTE: Only treat paths starting with '.' or '/' as filesystem imports
   // NOTE: Scoped packages like "@scope/pkg" have '/' but are npm packages, not filesystem paths
   const isFilesystemImport = depPath.startsWith('.') || depPath.startsWith('/')
   if (!isFilesystemImport) return null
 
-  // NOTE: Resolve relative paths to project-root-relative globs
+  // NOTE: Resolve relative paths from originDir, not ROOT
   let normalized = depPath.replace(/\\/g, '/')
   if (depPath.startsWith('.')) {
-    const resolved = resolve(ROOT, depPath).replace(/\\/g, '/')
+    const originAbsDir = resolve(ROOT, originDir)
+    const resolved = resolve(originAbsDir, depPath).replace(/\\/g, '/')
     normalized = posix.relative(ROOT.replace(/\\/g, '/'), resolved)
   }
 
+  // NOTE: Strip trailing filename segment (contains a file extension) to get directory-level pattern
   const parts = normalized.split('/')
+  const lastPart = parts[parts.length - 1]
+  if (lastPart && /\.\w+$/.test(lastPart)) {
+    parts.pop()
+  }
+
   if (parts.length >= 3) return `${parts.slice(0, 3).join('/')}/**`
   return parts.length > 0 ? parts.join('/') : null
 }

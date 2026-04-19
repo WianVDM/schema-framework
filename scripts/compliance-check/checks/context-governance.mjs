@@ -21,9 +21,11 @@ export function checkContextGovernance(collector) {
  * NOTE: Recursively walks directories checking .context.json governance validity.
  * Delegates per-file validation to validateGovernance().
  */
+// NOTE: Pre-compute skip set once — reused across all recursive calls
+const SKIP_DIR_SET = new Set(SKIP_DIRS)
+
 function checkGovernanceRecursive(dirPath, collector) {
   const entries = readdirSync(dirPath, { withFileTypes: true })
-  const skipDirs = new Set(SKIP_DIRS)
 
   const contextFile = entries.find(e => e.name === '.context.json')
   if (contextFile) {
@@ -33,7 +35,7 @@ function checkGovernanceRecursive(dirPath, collector) {
 
   // NOTE: Recurse into subdirectories
   for (const entry of entries) {
-    if (entry.isDirectory() && !skipDirs.has(entry.name)) {
+    if (entry.isDirectory() && !SKIP_DIR_SET.has(entry.name)) {
       checkGovernanceRecursive(join(dirPath, entry.name), collector)
     }
   }
@@ -116,7 +118,7 @@ function checkGovernanceConflicts(gov, relPath, collector) {
  * a base path with an importsFrom pattern.
  */
 function findPatternConflicts(importsFrom, forbidden) {
-  const conflicts = []
+  const conflicts = new Set()
   for (const imp of importsFrom) {
     if (typeof imp !== 'string') continue
     const impBase = imp.replace(/\/?\*+$/, '')
@@ -129,9 +131,10 @@ function findPatternConflicts(importsFrom, forbidden) {
         impBase.startsWith(`${fbdBase}/`) ||
         fbdBase.startsWith(`${impBase}/`)
       ) {
-        conflicts.push(imp)
+        conflicts.add(imp)
+        break
       }
     }
   }
-  return conflicts
+  return [...conflicts]
 }
