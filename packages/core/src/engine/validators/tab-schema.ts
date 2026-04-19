@@ -37,6 +37,15 @@ export const tabSchemaValidator = z
         message: `defaultTab "${schema.defaultTab}" does not match any tab ID`,
       })
     }
+
+    // NOTE: mountMode and lazy are mutually exclusive — mountMode takes precedence
+    if (schema.mountMode !== undefined && schema.lazy !== undefined) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['mountMode'],
+        message: 'Cannot specify both mountMode and lazy — use mountMode instead',
+      })
+    }
   })
 
 export function validateTabSchema(data: unknown): ValidationResult {

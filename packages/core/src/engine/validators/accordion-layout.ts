@@ -70,7 +70,7 @@ interface IdEntry {
 }
 
 /** Extracts id values from region objects, preserving original indices */
-function extractIds(regions: unknown[]): IdEntry[] {
+function extractIds(regions: readonly unknown[]): IdEntry[] {
   const entries: IdEntry[] = []
   for (let i = 0; i < regions.length; i++) {
     const region = regions[i]
@@ -91,20 +91,22 @@ export function validateAccordionLayout(schema: LayoutSchema): ValidationResult 
   }
 
   const errors: string[] = []
-  const regionIds = schema.regions.map(r => r.id)
+
+  // NOTE: Use extractIds to safely extract and validate region IDs
+  const ids = extractIds(schema.regions)
 
   // NOTE: Check for duplicate region IDs
   const seen = new Set<string>()
-  for (let i = 0; i < regionIds.length; i++) {
-    if (seen.has(regionIds[i])) {
-      errors.push(`Duplicate region id "${regionIds[i]}" at regions[${i}]`)
+  for (const entry of ids) {
+    if (seen.has(entry.id)) {
+      errors.push(`Duplicate region id "${entry.id}" at regions[${entry.index}]`)
     }
-    seen.add(regionIds[i])
+    seen.add(entry.id)
   }
 
   // NOTE: Validate defaultOpen references
   if (schema.accordionConfig?.defaultOpen) {
-    const idSet = new Set(regionIds)
+    const idSet = new Set(ids.map(e => e.id))
     for (const openId of schema.accordionConfig.defaultOpen) {
       if (!idSet.has(openId)) {
         errors.push(`accordionConfig.defaultOpen "${openId}" does not match any region id`)

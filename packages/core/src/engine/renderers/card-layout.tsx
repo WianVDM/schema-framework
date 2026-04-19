@@ -2,15 +2,11 @@ import type { CSSProperties, ReactNode } from 'react'
 import { useLayoutPrimitives } from '../context/layout-primitives-context'
 import type { CardGridConfig } from '../types/card-grid-config'
 import type { LayoutRegion } from '../types/layout-region'
-import type { PanelCollapseHandler } from '../types/panel-collapse-handler'
-import type { RegionResizeHandler } from '../types/region-resize-handler'
 import { ContentRenderer } from './content-renderer'
 
 interface CardLayoutProps {
   readonly regions: readonly LayoutRegion[]
   readonly cardGridConfig?: CardGridConfig
-  readonly onRegionResize?: RegionResizeHandler
-  readonly onPanelCollapse?: PanelCollapseHandler
 }
 
 /** Renders card grid layout from LayoutSchema regions using injected Card primitives */
@@ -57,7 +53,9 @@ function buildGridStyle(config: CardGridConfig | undefined): CSSProperties {
       style.gridTemplateColumns = `repeat(${config.columns}, 1fr)`
     } else {
       // NOTE: Responsive columns use mobile-first — smallest breakpoint is the default
-      const defaultCols = config.columns.sm ?? config.columns.md ?? 1
+      // NOTE: Consider all responsive breakpoints before falling back to 1
+      const defaultCols =
+        config.columns.sm ?? config.columns.md ?? config.columns.lg ?? config.columns.xl ?? 1
       style.gridTemplateColumns = `repeat(${defaultCols}, 1fr)`
     }
   }
@@ -92,7 +90,7 @@ function FallbackCardLayout({
               <h3 className="text-lg font-semibold leading-none tracking-tight">{region.title}</h3>
             </div>
           )}
-          <div className="p-6 pt-0">
+          <div className={region.title ? 'p-6 pt-0' : 'p-6'}>
             <ContentRenderer content={region.content} />
           </div>
         </div>

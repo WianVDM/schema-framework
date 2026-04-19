@@ -1,7 +1,7 @@
 ---
 "@my-framework/core": patch
 ---
-Add/Update/... layout-primitives-context, content-renderer, index and 11 more
+Add layout renderers (accordion, card, box, tabs) with engine context, validators, and type exports
 
 **Areas:** engine/context, engine/renderers, engine/types and 1 more
 

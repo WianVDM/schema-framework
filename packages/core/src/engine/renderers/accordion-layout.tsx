@@ -30,6 +30,7 @@ export function AccordionLayoutRenderer({
         regions={regions}
         defaultOpen={defaultOpen}
         animation={animation}
+        mode={mode}
         onPanelCollapse={onPanelCollapse}
       />
     )
@@ -41,12 +42,26 @@ export function AccordionLayoutRenderer({
   // NOTE: Animation config passed as data attribute for CSS-based animation control
   const animationClass = getAnimationClass(animation)
 
+  // NOTE: Handler for collapse events from injected Accordion — propagates to parent
+  const handleValueChange = (value: string | string[]): void => {
+    if (!onPanelCollapse) return
+    if (accordionType === 'multiple' && Array.isArray(value)) {
+      // NOTE: In multiple mode, value is an array of open item IDs
+      for (const id of value) {
+        onPanelCollapse(id, true)
+      }
+    } else if (typeof value === 'string') {
+      onPanelCollapse(value, true)
+    }
+  }
+
   return (
     <Accordion
       type={accordionType}
       collapsible={collapsible}
       defaultValue={defaultOpen}
       className={animationClass}
+      onValueChange={handleValueChange}
     >
       {regions.map(region => (
         <AccordionItem key={region.id} value={region.id}>
@@ -77,11 +92,13 @@ function FallbackAccordionLayout({
   regions,
   defaultOpen,
   animation,
+  mode,
   onPanelCollapse,
 }: {
   readonly regions: readonly LayoutRegion[]
   readonly defaultOpen: readonly string[]
   readonly animation: 'slide' | 'fade' | 'none'
+  readonly mode: 'single' | 'multiple'
   readonly onPanelCollapse?: PanelCollapseHandler
 }): ReactNode {
   // NOTE: State-driven toggle tracking for fallback accordion
@@ -90,16 +107,18 @@ function FallbackAccordionLayout({
   )
 
   const toggleRegion = (regionId: string): void => {
-    setOpenIds(prev => {
-      const next = new Set(prev)
-      if (next.has(regionId)) {
-        next.delete(regionId)
-      } else {
-        next.add(regionId)
-      }
-      onPanelCollapse?.(regionId, next.has(regionId))
-      return next
-    })
+    // NOTE: Build next state outside functional updater to keep setState pure
+    const next = new Set(openIds)
+    if (next.has(regionId)) {
+      next.delete(regionId)
+    } else if (mode === 'single') {
+      next.clear()
+      next.add(regionId)
+    } else {
+      next.add(regionId)
+    }
+    setOpenIds(next)
+    onPanelCollapse?.(regionId, next.has(regionId))
   }
 
   const animationStyle = animation === 'none' ? undefined : { transitionDuration: '200ms' }
@@ -111,7 +130,10 @@ function FallbackAccordionLayout({
         return (
           <div key={region.id} data-region-id={region.id}>
             <button
+              id={`trigger-${region.id}`}
               type="button"
+              aria-expanded={isOpen}
+              aria-controls={`panel-${region.id}`}
               className="flex w-full items-center justify-between p-4 font-medium transition-colors hover:bg-muted/50"
               onClick={() => toggleRegion(region.id)}
             >
@@ -124,6 +146,9 @@ function FallbackAccordionLayout({
               </span>
             </button>
             <div
+              id={`panel-${region.id}`}
+              role="region"
+              aria-labelledby={`trigger-${region.id}`}
               className="overflow-hidden px-4 pb-4"
               style={{
                 ...animationStyle,

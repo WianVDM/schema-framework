@@ -1,4 +1,4 @@
-import { type ReactNode, useCallback, useMemo, useRef, useState } from 'react'
+import { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { useLayoutPrimitives } from '../context/layout-primitives-context'
 import type { TabItem } from '../types/tab-item'
 import type { TabSchema } from '../types/tab-schema'
@@ -11,6 +11,7 @@ export function SchemaTabs({ schema, onTabChange }: TabsRendererProps): ReactNod
   const [activeTab, setActiveTab] = useState(schema.defaultTab ?? schema.tabs[0]?.id ?? '')
   const mountedTabs = useLazyTabContent(activeTab, schema.tabs, schema.mountMode ?? 'eager')
 
+  // NOTE: All hooks (useCallback) must be called before any conditional returns
   const handleTabChange = useCallback(
     (tabId: string) => {
       setActiveTab(tabId)
@@ -18,6 +19,9 @@ export function SchemaTabs({ schema, onTabChange }: TabsRendererProps): ReactNod
     },
     [onTabChange],
   )
+
+  // NOTE: Guard against empty tabs array — hooks must come before early returns
+  if (!schema.tabs?.length) return null
 
   // NOTE: Fallback when Tabs primitives are not injected — render plain HTML tabs
   if (!(Tabs && TabsList && TabsTrigger && TabsContent)) {
@@ -58,19 +62,26 @@ function useLazyTabContent(
   activeTab: string,
   tabs: readonly TabItem[],
   mountMode: 'eager' | 'lazy',
-): Set<string> {
-  const mountedRef = useRef<Set<string>>(new Set())
+): ReadonlySet<string> {
+  // NOTE: Eager mode computed via useMemo — pure render, no side effects
+  const eagerSet = useMemo(() => new Set(tabs.map(t => t.id)), [tabs])
 
-  return useMemo(() => {
-    if (mountMode === 'eager') {
-      // NOTE: Eager mode — all tabs are always mounted
-      return new Set(tabs.map(t => t.id))
+  const [lazyMounted, setLazyMounted] = useState<ReadonlySet<string>>(() =>
+    activeTab ? new Set([activeTab]) : new Set(),
+  )
+
+  // NOTE: Lazy mount tracking via useEffect — side effects belong in effects, not render
+  useEffect(() => {
+    if (mountMode === 'lazy' && activeTab) {
+      setLazyMounted(prev => {
+        if (prev.has(activeTab)) return prev
+        return new Set([...prev, activeTab])
+      })
     }
+  }, [activeTab, mountMode])
 
-    // NOTE: Lazy mode — add active tab to mounted set
-    mountedRef.current.add(activeTab)
-    return new Set(mountedRef.current)
-  }, [activeTab, tabs, mountMode])
+  if (mountMode === 'eager') return eagerSet
+  return lazyMounted
 }
 
 /** Fallback tabs renderer when primitives are not injected */
@@ -83,7 +94,7 @@ function FallbackTabs({
   readonly schema: TabSchema
   readonly activeTab: string
   readonly onTabChange: (tabId: string) => void
-  readonly mountedTabs: Set<string>
+  readonly mountedTabs: ReadonlySet<string>
 }): ReactNode {
   return (
     <div className={schema.className}>
@@ -91,9 +102,12 @@ function FallbackTabs({
         {schema.tabs.map(tab => (
           <button
             key={tab.id}
+            id={`tab-${tab.id}`}
             role="tab"
             type="button"
             aria-selected={activeTab === tab.id}
+            aria-controls={`panel-${tab.id}`}
+            tabIndex={activeTab === tab.id ? 0 : -1}
             disabled={tab.disabled}
             className={`px-4 py-2 text-sm border-b-2 transition-colors ${
               activeTab === tab.id
@@ -111,7 +125,9 @@ function FallbackTabs({
         return (
           <div
             key={tab.id}
+            id={`panel-${tab.id}`}
             role="tabpanel"
+            aria-labelledby={`tab-${tab.id}`}
             className={tab.className}
             style={{ display: activeTab === tab.id ? undefined : 'none' }}
           >

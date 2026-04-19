@@ -34,14 +34,7 @@ export function SchemaLayout({
         />
       )
     case 'card':
-      return (
-        <CardLayoutRenderer
-          regions={schema.regions}
-          cardGridConfig={schema.cardGridConfig}
-          onRegionResize={_onRegionResize}
-          onPanelCollapse={_onPanelCollapse}
-        />
-      )
+      return <CardLayoutRenderer regions={schema.regions} cardGridConfig={schema.cardGridConfig} />
     case 'hbox':
       return (
         <BoxLayoutRenderer

@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import type { CardGridResponsiveColumns } from '../types/card-grid-config'
 import type { LayoutSchema } from '../types/layout-schema'
 import type { ValidationResult } from './shared-schemas'
 
@@ -61,7 +62,7 @@ interface IdEntry {
 }
 
 /** Extracts id values from region objects, preserving original indices */
-function extractIds(regions: unknown[]): IdEntry[] {
+function extractIds(regions: readonly unknown[]): IdEntry[] {
   const entries: IdEntry[] = []
   for (let i = 0; i < regions.length; i++) {
     const region = regions[i]
@@ -82,23 +83,44 @@ export function validateCardLayout(schema: LayoutSchema): ValidationResult {
   }
 
   const errors: string[] = []
-  const regionIds = schema.regions.map(r => r.id)
+  const ids = extractIds(schema.regions)
 
   // NOTE: Check for duplicate region IDs
   const seen = new Set<string>()
-  for (let i = 0; i < regionIds.length; i++) {
-    if (seen.has(regionIds[i])) {
-      errors.push(`Duplicate region id "${regionIds[i]}" at regions[${i}]`)
+  for (const entry of ids) {
+    if (seen.has(entry.id)) {
+      errors.push(`Duplicate region id "${entry.id}" at regions[${entry.index}]`)
     }
-    seen.add(regionIds[i])
+    seen.add(entry.id)
   }
 
-  // NOTE: Validate column config
+  // NOTE: Validate column config — fixed number or responsive breakpoints
   if (schema.cardGridConfig?.columns !== undefined) {
-    if (typeof schema.cardGridConfig.columns === 'number' && schema.cardGridConfig.columns < 1) {
-      errors.push('Card grid columns must be at least 1')
-    }
+    validateColumns(schema.cardGridConfig.columns, errors)
   }
 
   return errors.length === 0 ? { success: true, errors: [] } : { success: false, errors }
+}
+
+/** Validates column configuration — fixed number or responsive breakpoints */
+function validateColumns(columns: number | CardGridResponsiveColumns, errors: string[]): void {
+  if (typeof columns === 'number') {
+    if (columns < 1) {
+      errors.push('Card grid columns must be at least 1')
+    }
+    return
+  }
+
+  // NOTE: Responsive breakpoints — at least one required, all values >= 1
+  const breakpoints = columns as Readonly<Record<string, number | undefined>>
+  const keys = Object.keys(breakpoints)
+  if (keys.length === 0) {
+    errors.push('Responsive card grid must have at least one breakpoint')
+  }
+  for (const key of keys) {
+    const value = breakpoints[key]
+    if (typeof value !== 'number' || value < 1) {
+      errors.push(`Card grid columns for breakpoint "${key}" must be a number >= 1`)
+    }
+  }
 }
