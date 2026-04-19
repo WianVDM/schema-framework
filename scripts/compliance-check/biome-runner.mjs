@@ -47,6 +47,32 @@ export function checkSingleFile(filePath) {
 }
 
 /**
+ * NOTE: Runs biome check --write on the entire project to auto-fix formatting/import sorting.
+ * Used by TaskComplete hook before compliance checks to prevent formatting-only blocks.
+ * @param {string} workspaceRoot - Absolute path to the workspace root
+ * @returns {{ fixed: number, success: boolean }}
+ */
+export function autoFixProject(workspaceRoot) {
+  try {
+    const output = execSync('npx biome check --write .', {
+      encoding: 'utf-8',
+      windowsHide: true,
+      timeout: 60_000,
+      cwd: workspaceRoot,
+      stdio: ['pipe', 'pipe', 'pipe'],
+    })
+    const fixedMatch = output.match(/Fixed (\d+) files?/)
+    const fixed = fixedMatch ? Number.parseInt(fixedMatch[1], 10) : 0
+    return { fixed, success: true }
+  } catch (err) {
+    const output = `${err.stdout || ''}${err.stderr || ''}`
+    const fixedMatch = output.match(/Fixed (\d+) files?/)
+    const fixed = fixedMatch ? Number.parseInt(fixedMatch[1], 10) : 0
+    return { fixed, success: false }
+  }
+}
+
+/**
  * NOTE: Runs full-project biome check and returns violations.
  * Used by TaskComplete hook for full codebase validation.
  * @returns {{ passed: boolean, errors: string[], warnings: string[] }}

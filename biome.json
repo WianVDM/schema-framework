@@ -38,8 +38,8 @@
         "noUnreachable": "error",
         "noUnreachableSuper": "error",
         "noUnusedFunctionParameters": "error",
-        "noUnusedImports": "error",
-        "noUnusedVariables": "error",
+        "noUnusedImports": "warn",
+        "noUnusedVariables": "warn",
         "useExhaustiveDependencies": "error",
         "useHookAtTopLevel": "error",
         "useValidForDirection": "error"

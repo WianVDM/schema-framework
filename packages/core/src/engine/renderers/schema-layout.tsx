@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { useLayoutPrimitives } from '../context/layout-primitives-context'
+import { useResponsiveCollapse } from '../helpers/use-responsive-collapse'
 import type { BorderPosition } from '../types/border-position'
 import type { LayoutRegion } from '../types/layout-region'
 import type { LayoutRendererProps } from '../types/layout-renderer-props'
@@ -46,17 +47,29 @@ function BorderLayoutRenderer({
 }): ReactNode {
   const { ResizablePanelGroup, ResizablePanel, ResizableHandle } = useLayoutPrimitives()
 
+  // NOTE: Runtime responsive collapse — uses matchMedia to observe viewport breakpoints
+  const responsiveCollapsed = useResponsiveCollapse(regions)
+
   const categorized = categorizeRegions(regions)
+
+  const isRegionCollapsed = (region: LayoutRegion): boolean =>
+    responsiveCollapsed.get(region.id) === true
 
   // NOTE: Fallback when resizable primitives are not injected
   if (!(ResizablePanelGroup && ResizablePanel && ResizableHandle)) {
-    return <FallbackBorderLayout categorized={categorized} onPanelCollapse={onPanelCollapse} />
+    return (
+      <FallbackBorderLayout
+        categorized={categorized}
+        onPanelCollapse={onPanelCollapse}
+        isRegionCollapsed={isRegionCollapsed}
+      />
+    )
   }
 
   return (
     <div className="h-full w-full">
       <ResizablePanelGroup direction="vertical">
-        {categorized.north && (
+        {categorized.north && !isRegionCollapsed(categorized.north) && (
           <>
             <ResizablePanel
               defaultSize={getRegionSize(categorized.north, 'north')}
@@ -70,9 +83,9 @@ function BorderLayoutRenderer({
           </>
         )}
 
-        <ResizablePanel defaultSize={getCenterSize(categorized)}>
+        <ResizablePanel defaultSize={getCenterSize(categorized, responsiveCollapsed)}>
           <ResizablePanelGroup direction="horizontal">
-            {categorized.west && (
+            {categorized.west && !isRegionCollapsed(categorized.west) && (
               <>
                 <ResizablePanel
                   defaultSize={getRegionSize(categorized.west, 'west')}
@@ -86,11 +99,11 @@ function BorderLayoutRenderer({
               </>
             )}
 
-            <ResizablePanel defaultSize={getCenterHorizontalSize(categorized)}>
+            <ResizablePanel defaultSize={getCenterHorizontalSize(categorized, responsiveCollapsed)}>
               <SchemaPanel region={categorized.center} onCollapse={onPanelCollapse} />
             </ResizablePanel>
 
-            {categorized.east && (
+            {categorized.east && !isRegionCollapsed(categorized.east) && (
               <>
                 <ResizableHandle />
                 <ResizablePanel
@@ -106,7 +119,7 @@ function BorderLayoutRenderer({
           </ResizablePanelGroup>
         </ResizablePanel>
 
-        {categorized.south && (
+        {categorized.south && !isRegionCollapsed(categorized.south) && (
           <>
             <ResizableHandle />
             <ResizablePanel
@@ -161,19 +174,33 @@ function getRegionSize(region: LayoutRegion, position: BorderPosition): number {
   return BORDER_DEFAULT_SIZES[position]
 }
 
-/** Calculates center panel size in vertical direction */
-function getCenterSize(categorized: BorderRegions): number {
+/** Calculates center panel size in vertical direction, excluding responsively collapsed regions */
+function getCenterSize(
+  categorized: BorderRegions,
+  responsiveCollapsed: ReadonlyMap<string, boolean>,
+): number {
   let used = 0
-  if (categorized.north) used += getRegionSize(categorized.north, 'north')
-  if (categorized.south) used += getRegionSize(categorized.south, 'south')
+  if (categorized.north && !responsiveCollapsed.get(categorized.north.id)) {
+    used += getRegionSize(categorized.north, 'north')
+  }
+  if (categorized.south && !responsiveCollapsed.get(categorized.south.id)) {
+    used += getRegionSize(categorized.south, 'south')
+  }
   return Math.max(100 - used, 10)
 }
 
-/** Calculates center panel size in horizontal direction */
-function getCenterHorizontalSize(categorized: BorderRegions): number {
+/** Calculates center panel size in horizontal direction, excluding responsively collapsed regions */
+function getCenterHorizontalSize(
+  categorized: BorderRegions,
+  responsiveCollapsed: ReadonlyMap<string, boolean>,
+): number {
   let used = 0
-  if (categorized.west) used += getRegionSize(categorized.west, 'west')
-  if (categorized.east) used += getRegionSize(categorized.east, 'east')
+  if (categorized.west && !responsiveCollapsed.get(categorized.west.id)) {
+    used += getRegionSize(categorized.west, 'west')
+  }
+  if (categorized.east && !responsiveCollapsed.get(categorized.east.id)) {
+    used += getRegionSize(categorized.east, 'east')
+  }
   return Math.max(100 - used, 10)
 }
 
@@ -187,19 +214,21 @@ function extractNumericSize(size: string | number | undefined): number | undefin
 function FallbackBorderLayout({
   categorized,
   onPanelCollapse,
+  isRegionCollapsed,
 }: {
   readonly categorized: BorderRegions
   readonly onPanelCollapse?: import('../types/panel-collapse-handler').PanelCollapseHandler
+  readonly isRegionCollapsed: (region: LayoutRegion) => boolean
 }): ReactNode {
   return (
     <div className="h-full w-full flex flex-col gap-1">
-      {categorized.north && (
+      {categorized.north && !isRegionCollapsed(categorized.north) && (
         <div style={{ height: `${getRegionSize(categorized.north, 'north')}%` }}>
           <SchemaPanel region={categorized.north} onCollapse={onPanelCollapse} />
         </div>
       )}
       <div className="flex-1 flex flex-row gap-1 min-h-0">
-        {categorized.west && (
+        {categorized.west && !isRegionCollapsed(categorized.west) && (
           <div style={{ width: `${getRegionSize(categorized.west, 'west')}%` }}>
             <SchemaPanel region={categorized.west} onCollapse={onPanelCollapse} />
           </div>
@@ -207,13 +236,13 @@ function FallbackBorderLayout({
         <div className="flex-1 min-w-0">
           <SchemaPanel region={categorized.center} onCollapse={onPanelCollapse} />
         </div>
-        {categorized.east && (
+        {categorized.east && !isRegionCollapsed(categorized.east) && (
           <div style={{ width: `${getRegionSize(categorized.east, 'east')}%` }}>
             <SchemaPanel region={categorized.east} onCollapse={onPanelCollapse} />
           </div>
         )}
       </div>
-      {categorized.south && (
+      {categorized.south && !isRegionCollapsed(categorized.south) && (
         <div style={{ height: `${getRegionSize(categorized.south, 'south')}%` }}>
           <SchemaPanel region={categorized.south} onCollapse={onPanelCollapse} />
         </div>
