@@ -37,7 +37,8 @@ for (const error of biomeResult.errors) {
   collector.addViolation(`[biome] ${error}`)
 }
 for (const warning of biomeResult.warnings) {
-  collector.addWarning(`[biome] ${warning}`)
+  // NOTE: Treat biome warnings as violations — they should fail compliance
+  collector.addViolation(`[biome] ${warning}`)
 }
 logTrace(
   SCRIPT,

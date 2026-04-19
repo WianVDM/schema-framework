@@ -42,7 +42,12 @@ export function checkSingleFile(filePath) {
   } catch (err) {
     const output = `${err.stdout || ''}${err.stderr || ''}`
     const errors = parseBiomeErrors(output)
-    return { passed: errors.length === 0, errors }
+    // NOTE: If parseBiomeErrors found nothing but the command failed, add fallback error
+    // NOTE: Skip ENOENT (npx not found) — infrastructure issue, not a biome violation
+    if (errors.length === 0 && err.code !== 'ENOENT') {
+      errors.push(`Biome check failed: ${err.message?.split('\n')[0] || 'unknown error'}`)
+    }
+    return { passed: false, errors }
   }
 }
 
@@ -91,6 +96,11 @@ export function checkProject(workspaceRoot) {
     const output = `${err.stdout || ''}${err.stderr || ''}`
     const errors = parseBiomeErrors(output)
     const warnings = parseBiomeWarnings(output)
+    // NOTE: If parseBiomeErrors found nothing but the command failed, add fallback error
+    // NOTE: Skip ENOENT (npx not found) — infrastructure issue, not a biome violation
+    if (errors.length === 0 && err.code !== 'ENOENT') {
+      errors.push(`Biome check failed: ${err.message?.split('\n')[0] || 'unknown error'}`)
+    }
     return { passed: errors.length === 0, errors, warnings }
   }
 }

@@ -40,8 +40,11 @@ export function loadRules(workspaceRoot) {
       if (parsed.version === 2 && Array.isArray(parsed.checks)) {
         allChecks.push(...parsed.checks)
       }
-    } catch {
-      // NOTE: Skip malformed rule files — don't crash the engine
+    } catch (err) {
+      // NOTE: Skip malformed rule files — log for operator visibility
+      console.warn(
+        `[rule-engine] Skipping malformed rule file ${file} in ${rulesDir}: ${err.message}`,
+      )
     }
   }
 
@@ -173,8 +176,8 @@ function matchesScope(filePath, scope) {
     .replace(/\*/g, '[^/]*')
     .replace(/{{GLOBSTAR}}/g, '.*')
 
-  // NOTE: Match anywhere in path (not anchored to start)
-  const regex = new RegExp(`(^|/)${regexStr}`)
+  // NOTE: Match anywhere in path, anchored to directory boundary
+  const regex = new RegExp(`(^|/)${regexStr}(?:/|$)`)
   return regex.test(normalized)
 }
 

@@ -34,11 +34,19 @@ export function useResponsiveCollapse(
       }
     }
 
-    if (breakpoints.size === 0) return
+    if (breakpoints.size === 0) {
+      // NOTE: Clear stale collapse state when no regions define breakpoints
+      setCollapsed(new Map())
+      return
+    }
 
     // NOTE: Filter invalid breakpoints (≤ 1) to avoid negative/zero media queries
     const validBreakpoints = [...breakpoints].filter(bp => bp > 1 && Number.isFinite(bp))
-    if (validBreakpoints.length === 0) return
+    if (validBreakpoints.length === 0) {
+      // NOTE: Clear stale collapse state when all breakpoints are invalid
+      setCollapsed(new Map())
+      return
+    }
 
     const mqls = validBreakpoints.map(bp => window.matchMedia(`(max-width: ${bp - 1}px)`))
 

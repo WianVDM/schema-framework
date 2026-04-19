@@ -64,7 +64,7 @@ function validateGovernance(contextPath, collector) {
   }
 
   const gov = context.governance
-  checkGovernanceMarkers(gov, relPath, collector)
+  checkGovernanceMarkers(gov, context.layer, relPath, collector)
   checkGovernanceConflicts(gov, relPath, collector)
 }
 
@@ -72,7 +72,7 @@ function validateGovernance(contextPath, collector) {
  * NOTE: Checks for TODO/FIXME markers in governance array fields.
  * These markers indicate fields that need manual specification.
  */
-function checkGovernanceMarkers(gov, relPath, collector) {
+function checkGovernanceMarkers(gov, layer, relPath, collector) {
   const arrayFields = ['importsFrom', 'importedBy', 'constraints', 'forbidden']
   for (const field of arrayFields) {
     const value = gov[field]
@@ -87,8 +87,8 @@ function checkGovernanceMarkers(gov, relPath, collector) {
     }
   }
 
-  // NOTE: Suggest restricting imports if importsFrom is empty
-  if (Array.isArray(gov.importsFrom) && gov.importsFrom.length === 0) {
+  // NOTE: Suggest restricting imports if importsFrom is empty (skip composition layer — intentional unrestricted)
+  if (Array.isArray(gov.importsFrom) && gov.importsFrom.length === 0 && layer !== 3) {
     collector.addSuggestion(
       `Governance opportunity: ${relPath} → importsFrom is empty — consider restricting allowed imports`,
     )
@@ -123,7 +123,12 @@ function findPatternConflicts(importsFrom, forbidden) {
     for (const fbd of forbidden) {
       if (typeof fbd !== 'string') continue
       const fbdBase = fbd.replace(/\/?\*+$/, '')
-      if (impBase === fbdBase || impBase.startsWith(fbdBase) || fbdBase.startsWith(impBase)) {
+      // NOTE: Segment-boundary matching — require '/' separator for prefix matches
+      if (
+        impBase === fbdBase ||
+        impBase.startsWith(`${fbdBase}/`) ||
+        fbdBase.startsWith(`${impBase}/`)
+      ) {
         conflicts.push(imp)
       }
     }

@@ -96,11 +96,16 @@ export function buildContextForDir(dirPath) {
 
   const schemaRelPath = posix.relative(dirPath, 'docs/ai/schemas/context-schema.json')
 
-  // NOTE: Build governance object if enabled
-  const governance =
+  // NOTE: Build governance object if enabled, with parent inheritance
+  let governance =
     options.governance && layer
       ? buildGovernance(dirPath, existingContext, { layer, extDeps })
       : undefined
+
+  // NOTE: Apply parent governance inheritance so layer defaults are preserved
+  if (governance) {
+    governance = resolveGovernanceInheritance(dirPath, governance)
+  }
 
   return {
     context: {
@@ -270,7 +275,7 @@ export function parseSymbolTypesForDir(dirPath) {
 /**
  * NOTE: Constructs a governance object for a directory's .context.json.
  * Infers what it can from layer constraints and extDeps data.
- * Writes TODO markers for fields that require manual specification.
+ * Uses empty arrays for fields that cannot be inferred (layer defaults applied during merge).
  * Preserves existing governance fields unless --force is set.
  */
 export function buildGovernance(_dirPath, existingContext, layerInfo) {
@@ -288,10 +293,17 @@ export function buildGovernance(_dirPath, existingContext, layerInfo) {
   // NOTE: Infer importsFrom from extDeps — collect unique external dependency directories
   const inferredImportsFrom = inferImportsFrom(extDeps)
 
+  // NOTE: Merge layer-level importsFrom defaults with inferred — use layer defaults when inferred is empty
+  const layerImportsFrom = layerConstraints.importsFrom || []
+  const mergedImportsFrom =
+    inferredImportsFrom.length > 0
+      ? [...new Set([...inferredImportsFrom, ...layerImportsFrom])].sort()
+      : layerImportsFrom
+
   const governance = {
-    importsFrom: inferredImportsFrom,
-    importedBy: ['TODO: manually specify allowed consumer directories'],
-    constraints: ['TODO: manually specify directory constraints'],
+    importsFrom: mergedImportsFrom.length > 0 ? mergedImportsFrom : inferredImportsFrom,
+    importedBy: layerConstraints.importedBy || [],
+    constraints: layerConstraints.constraints || [],
     forbidden: layerConstraints.forbidden,
     inherits: true,
   }
@@ -324,11 +336,19 @@ function inferImportsFrom(extDeps) {
  */
 function depPathToGlob(depPath) {
   if (!depPath || typeof depPath !== 'string') return null
-  // NOTE: Skip bare npm package names (no slash — e.g., "react", "lodash")
-  const isFilesystemImport = depPath.startsWith('.') || depPath.includes('/')
+  // NOTE: Only treat paths starting with '.' or '/' as filesystem imports
+  // NOTE: Scoped packages like "@scope/pkg" have '/' but are npm packages, not filesystem paths
+  const isFilesystemImport = depPath.startsWith('.') || depPath.startsWith('/')
   if (!isFilesystemImport) return null
 
-  const parts = depPath.replace(/\\/g, '/').split('/')
+  // NOTE: Resolve relative paths to project-root-relative globs
+  let normalized = depPath.replace(/\\/g, '/')
+  if (depPath.startsWith('.')) {
+    const resolved = resolve(ROOT, depPath).replace(/\\/g, '/')
+    normalized = posix.relative(ROOT.replace(/\\/g, '/'), resolved)
+  }
+
+  const parts = normalized.split('/')
   if (parts.length >= 3) return `${parts.slice(0, 3).join('/')}/**`
   return parts.length > 0 ? parts.join('/') : null
 }
@@ -393,7 +413,9 @@ function mergeGovernance(child, parent) {
       const childValFiltered = childVal.filter(
         v => !(typeof v === 'string' && (v.startsWith('TODO:') || v.startsWith('FIXME:'))),
       )
-      result[field] = childValFiltered.length > 0 ? childValFiltered : parentVal
+      // NOTE: Merge real child entries with parent entries — preserve both
+      const merged = [...new Set([...childValFiltered, ...parentVal])]
+      result[field] = merged.length > 0 ? merged : parentVal
     }
   }
 

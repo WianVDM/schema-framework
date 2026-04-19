@@ -35,6 +35,8 @@ export const borderLayoutSchema = z
 /** Validates that border regions have valid positions, no duplicates, and exactly one center */
 function isValidBorderRegions(regions: unknown[]): boolean {
   const entries = extractPositions(regions)
+  // NOTE: Every region must have a valid string position — reject if any are missing/non-string
+  if (entries.length !== regions.length) return false
   if (entries.length === 0) return false
 
   for (const entry of entries) {

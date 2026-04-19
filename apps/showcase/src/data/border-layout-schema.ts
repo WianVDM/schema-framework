@@ -38,6 +38,7 @@ export const borderLayoutSchema = deepFreeze<LayoutSchema>({
       size: 20,
       collapsible: true,
       scrollable: true,
+      responsive: { collapsedBelow: 768 },
       content: {
         type: 'form',
         schema: {
@@ -95,6 +96,7 @@ export const borderLayoutSchema = deepFreeze<LayoutSchema>({
       title: 'Details',
       size: 20,
       collapsible: true,
+      responsive: { collapsedBelow: 768 },
       content: {
         type: 'form',
         schema: {

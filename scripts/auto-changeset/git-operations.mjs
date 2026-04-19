@@ -61,14 +61,23 @@ export function getFileDiff(filePath) {
       cwd: ROOT,
       encoding: 'utf-8',
     })
-    logTrace(SCRIPT, `[STEP] Diff retrieved for ${filePath} (${diff.length} chars)`)
-    return diff
+    // NOTE: execFileSync returns empty string for untracked files — use fallback
+    if (diff.trim()) {
+      logTrace(SCRIPT, `[STEP] Diff retrieved for ${filePath} (${diff.length} chars)`)
+      return diff
+    }
+    logTrace(SCRIPT, `[STEP] Empty diff for ${filePath}, trying untracked fallback`)
   } catch {
-    // NOTE: File may be untracked — try diffing against /dev/null
+    logTrace(SCRIPT, `[STEP] diff failed for ${filePath}, trying untracked fallback`)
+  }
+
+  {
+    // NOTE: File may be untracked — diff against platform-aware null device
     // NOTE: spawnSync handles exit code 1 (differences found) without throwing
+    const nullDevice = process.platform === 'win32' ? 'NUL' : '/dev/null'
     const result = spawnSync(
       'git',
-      ['diff', '--unified=3', '--no-index', '/dev/null', '--', filePath],
+      ['diff', '--unified=3', '--no-index', nullDevice, '--', filePath],
       {
         cwd: ROOT,
         encoding: 'utf-8',

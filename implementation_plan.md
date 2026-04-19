@@ -47,7 +47,7 @@ Violation severity model:
 
 [Files]
 
-### Rule Files — Modified (6 files)
+## Rule Files — Modified (6 files)
 
 **`.clinerules/workspace-coding-standards.json`**
 - Bump `version` to 2

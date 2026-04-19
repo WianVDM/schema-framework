@@ -38,7 +38,7 @@ export function SchemaLayout({
 /** Renders border layout with N/S/E/W/C regions using injected resizable panels */
 function BorderLayoutRenderer({
   regions,
-  onRegionResize: _onRegionResize,
+  onRegionResize,
   onPanelCollapse,
 }: {
   readonly regions: readonly LayoutRegion[]
@@ -53,7 +53,7 @@ function BorderLayoutRenderer({
   const categorized = categorizeRegions(regions)
 
   const isRegionCollapsed = (region: LayoutRegion): boolean =>
-    responsiveCollapsed.get(region.id) === true
+    region.collapsed === true || responsiveCollapsed.get(region.id) === true
 
   // NOTE: Fallback when resizable primitives are not injected
   if (!(ResizablePanelGroup && ResizablePanel && ResizableHandle)) {
@@ -68,7 +68,23 @@ function BorderLayoutRenderer({
 
   return (
     <div className="h-full w-full">
-      <ResizablePanelGroup direction="vertical">
+      <ResizablePanelGroup
+        direction="vertical"
+        onLayout={(sizes: number[]) => {
+          if (!onRegionResize) return
+          // NOTE: Map vertical panel sizes back to visible region IDs
+          const visibleVertical = [categorized.north, categorized.center, categorized.south].filter(
+            r => r && !isRegionCollapsed(r),
+          )
+          const sizeMap: Record<string, number> = {}
+          for (let i = 0; i < visibleVertical.length; i++) {
+            const region = visibleVertical[i]
+            if (region) sizeMap[region.id] = sizes[i] ?? 0
+          }
+          const firstRegion = visibleVertical[0]
+          if (firstRegion) onRegionResize(firstRegion.id, sizeMap)
+        }}
+      >
         {categorized.north && !isRegionCollapsed(categorized.north) && (
           <>
             <ResizablePanel
@@ -159,7 +175,7 @@ function categorizeRegions(regions: readonly LayoutRegion[]): BorderRegions {
 
 /** Safely parses a string/number size value, returning undefined on failure */
 function parseNumericSize(raw: string | number): number | undefined {
-  if (typeof raw === 'number') return raw
+  if (typeof raw === 'number') return Number.isFinite(raw) ? raw : undefined
   const trimmed = raw.trim()
   const parsed = Number.parseFloat(trimmed)
   return Number.isFinite(parsed) ? parsed : undefined
