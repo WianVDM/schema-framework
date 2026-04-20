@@ -25,7 +25,7 @@ export const accordionLayoutSchema = deepFreeze<LayoutSchema>({
               placeholder: 'Enter first name',
             },
             { name: 'lastName', label: 'Last Name', type: 'text', placeholder: 'Enter last name' },
-            { name: 'email', label: 'Email', type: 'text', placeholder: 'Enter email' },
+            { name: 'email', label: 'Email', type: 'email', placeholder: 'Enter email' },
           ],
           submitLabel: 'Save',
         },
@@ -109,7 +109,7 @@ export const cardLayoutSchema = deepFreeze<LayoutSchema>({
           title: 'Edit Profile',
           fields: [
             { name: 'name', label: 'Name', type: 'text' },
-            { name: 'email', label: 'Email', type: 'text' },
+            { name: 'email', label: 'Email', type: 'email' },
           ],
           submitLabel: 'Update',
         },

@@ -193,6 +193,10 @@ function validateDefaultOpenRuntime(
         `accordionConfig.defaultOpen "${config.defaultOpen}" does not match any region id`,
       )
     }
+  } else {
+    errors.push(
+      `accordionConfig.defaultOpen must be a string when mode is "single" (got ${typeof config.defaultOpen})`,
+    )
   }
 }
 

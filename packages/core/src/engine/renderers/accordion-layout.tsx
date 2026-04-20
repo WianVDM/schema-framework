@@ -274,13 +274,16 @@ function computeNextOpenIds(
   return next
 }
 
-/** Registers a panel DOM element ref for height measurement */
+/** Registers a panel DOM element ref for height measurement — cleans up stale entries on unmount */
 function registerPanelRef(
   panelRefs: React.MutableRefObject<Map<string, HTMLDivElement>>,
   regionId: string,
   el: HTMLDivElement | null,
 ): void {
-  if (!el) return
+  if (!el) {
+    panelRefs.current.delete(regionId)
+    return
+  }
   panelRefs.current.set(regionId, el)
 }
 

@@ -36,6 +36,11 @@ export function validateBoxLayout(schema: LayoutSchema): ValidationResult {
 
   const errors: string[] = []
 
+  // NOTE: Enforce min(1) rule — regions array must not be empty (mirrors Zod schema)
+  if (!schema.regions?.length) {
+    return { success: false, errors: ['regions must contain at least one region'] }
+  }
+
   // NOTE: Validate each region id and check for duplicates
   const seen = new Set<string>()
   for (let i = 0; i < schema.regions.length; i++) {

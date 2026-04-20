@@ -50,7 +50,9 @@ function buildGridStyle(config: CardGridConfig | undefined): CSSProperties {
     style.gridTemplateColumns = 'repeat(auto-fill, minmax(300px, 1fr))'
   } else {
     if (typeof config.columns === 'number') {
-      style.gridTemplateColumns = `repeat(${config.columns}, 1fr)`
+      // NOTE: Clamp to at least 1 column to prevent zero/negative values hiding content
+      const normalizedColumns = Math.max(1, Math.floor(Number(config.columns) || 0))
+      style.gridTemplateColumns = `repeat(${normalizedColumns}, 1fr)`
     } else {
       // NOTE: Responsive columns use mobile-first — smallest breakpoint is the default
       // NOTE: Consider all responsive breakpoints before falling back to 1
@@ -58,8 +60,10 @@ function buildGridStyle(config: CardGridConfig | undefined): CSSProperties {
       // behavior across breakpoints is the responsibility of injected Card primitives.
       // Inline styles cannot express media queries; full responsive support requires either
       // CSS-in-JS, injected CSS classes, or consumer-provided Card components.
-      const defaultCols =
+      const resolved =
         config.columns.sm ?? config.columns.md ?? config.columns.lg ?? config.columns.xl ?? 1
+      // NOTE: Clamp to at least 1 column to prevent zero/negative values hiding content
+      const defaultCols = Math.max(1, Math.floor(Number(resolved) || 0))
       style.gridTemplateColumns = `repeat(${defaultCols}, 1fr)`
     }
   }
