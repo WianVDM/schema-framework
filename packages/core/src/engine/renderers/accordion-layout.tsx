@@ -1,4 +1,4 @@
-import { type ReactNode, useRef, useState } from 'react'
+import { type ReactNode, useEffect, useRef, useState } from 'react'
 import { useLayoutPrimitives } from '../context/layout-primitives-context'
 import type { AccordionConfig, SingleAccordionConfig } from '../types/accordion-config'
 import type { LayoutRegion } from '../types/layout-region'
@@ -53,10 +53,11 @@ export function AccordionLayoutRenderer({
   const handleValueChange = (value: string | string[]): void => {
     if (!onPanelCollapse) return
 
+    // NOTE: Filter empty strings — Radix passes '' in single-collapsible mode when all panels close
     const newOpenIds =
       accordionType === 'multiple' && Array.isArray(value)
-        ? new Set<string>(value)
-        : typeof value === 'string'
+        ? new Set<string>(value.filter(v => v !== ''))
+        : typeof value === 'string' && value !== ''
           ? new Set<string>([value])
           : new Set<string>()
 
@@ -141,10 +142,8 @@ function FallbackAccordionLayout({
   readonly collapsible: boolean
   readonly onPanelCollapse?: PanelCollapseHandler
 }): ReactNode {
-  // NOTE: State-driven toggle tracking for fallback accordion
-  const [openIds, setOpenIds] = useState<ReadonlySet<string>>(
-    () => new Set(defaultOpen.length > 0 ? defaultOpen : [regions[0]?.id].filter(Boolean)),
-  )
+  // NOTE: State-driven toggle tracking for fallback accordion — no auto-open of first panel
+  const [openIds, setOpenIds] = useState<ReadonlySet<string>>(() => new Set(defaultOpen))
 
   const toggleRegion = (regionId: string): void => {
     // NOTE: Use functional updater to avoid stale closure over openIds
@@ -168,19 +167,33 @@ function FallbackAccordionLayout({
     })
   }
 
-  // NOTE: Detect actual state changes and notify handler outside the updater
-  const handleToggle = (regionId: string): void => {
-    const prev = openIds
-    toggleRegion(regionId)
+  // NOTE: Track previous openIds for symmetric-diff notification via useEffect
+  const prevIdsRef = useRef<ReadonlySet<string>>(openIds)
 
-    // NOTE: onPanelCollapse fires only when open state actually changes
-    if (onPanelCollapse) {
-      const wasOpen = prev.has(regionId)
-      // NOTE: For non-collapsible single mode, no change occurs — skip notification
-      if (mode === 'single' && !collapsible && wasOpen) return
-      const isOpen = !wasOpen
-      onPanelCollapse(regionId, isOpen)
+  // NOTE: Notify onPanelCollapse for every ID whose open state changed — handles single-mode
+  // panel swap (close A, open B) that the previous inline approach missed
+  useEffect(() => {
+    if (!onPanelCollapse) return
+
+    const prev = prevIdsRef.current
+
+    for (const id of openIds) {
+      if (!prev.has(id)) {
+        onPanelCollapse(id, true)
+      }
     }
+
+    for (const id of prev) {
+      if (!openIds.has(id)) {
+        onPanelCollapse(id, false)
+      }
+    }
+
+    prevIdsRef.current = openIds
+  }, [openIds, onPanelCollapse])
+
+  const handleToggle = (regionId: string): void => {
+    toggleRegion(regionId)
   }
 
   const animationStyle = animation === 'none' ? undefined : { transitionDuration: '200ms' }

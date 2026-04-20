@@ -83,6 +83,12 @@ export function validateCardLayout(schema: LayoutSchema): ValidationResult {
   }
 
   const errors: string[] = []
+
+  // NOTE: Guard schema.regions is an array before extracting IDs
+  if (!Array.isArray(schema.regions)) {
+    return { success: false, errors: ['Card layout requires a regions array'] }
+  }
+
   const ids = extractIds(schema.regions)
 
   // NOTE: Check for duplicate region IDs

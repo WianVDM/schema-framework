@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import type { AccordionConfig } from '../types/accordion-config'
 import type { LayoutSchema } from '../types/layout-schema'
 import type { ValidationResult } from './shared-schemas'
 
@@ -84,6 +85,15 @@ function validateMultipleDefaultOpen(
 ): void {
   const openIds = Array.isArray(defaultOpen) ? defaultOpen : []
   for (const openId of openIds) {
+    // NOTE: Guard against non-string elements in defaultOpen array
+    if (typeof openId !== 'string') {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `accordionConfig.defaultOpen contains a non-string value (got ${typeof openId})`,
+        path: ['accordionConfig', 'defaultOpen'],
+      })
+      continue
+    }
     if (!regionIds.has(openId)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -138,6 +148,11 @@ export function validateAccordionLayout(schema: LayoutSchema): ValidationResult 
 
   const errors: string[] = []
 
+  // NOTE: Guard schema.regions is an array before extracting IDs
+  if (!Array.isArray(schema.regions)) {
+    return { success: false, errors: ['Accordion layout requires a regions array'] }
+  }
+
   // NOTE: Use extractIds to safely extract and validate region IDs
   const ids = extractIds(schema.regions)
 
@@ -151,22 +166,45 @@ export function validateAccordionLayout(schema: LayoutSchema): ValidationResult 
   }
 
   // NOTE: Validate defaultOpen references — handles discriminated union variants
-  const config = schema.accordionConfig
-  if (config?.defaultOpen) {
-    const idSet = new Set(ids.map(e => e.id))
-    if (config.mode === 'multiple') {
-      for (const openId of config.defaultOpen as readonly string[]) {
-        if (!idSet.has(openId)) {
-          errors.push(`accordionConfig.defaultOpen "${openId}" does not match any region id`)
-        }
-      }
-    } else {
-      const openId = config.defaultOpen as unknown as string
-      if (!idSet.has(openId)) {
-        errors.push(`accordionConfig.defaultOpen "${openId}" does not match any region id`)
-      }
-    }
-  }
+  validateDefaultOpenRuntime(schema.accordionConfig, ids, errors)
 
   return errors.length === 0 ? { success: true, errors: [] } : { success: false, errors }
+}
+
+/** Runtime validation of defaultOpen references — defensive checks for untyped runtime input */
+function validateDefaultOpenRuntime(
+  config: AccordionConfig | undefined,
+  ids: IdEntry[],
+  errors: string[],
+): void {
+  if (!config?.defaultOpen) return
+
+  const idSet = new Set(ids.map(e => e.id))
+
+  if (config.mode === 'multiple' && Array.isArray(config.defaultOpen)) {
+    validateMultipleDefaultOpenRuntime(config.defaultOpen, idSet, errors)
+  } else if (typeof config.defaultOpen === 'string') {
+    if (!idSet.has(config.defaultOpen)) {
+      errors.push(
+        `accordionConfig.defaultOpen "${config.defaultOpen}" does not match any region id`,
+      )
+    }
+  }
+}
+
+/** Runtime validation for multiple-mode defaultOpen — guards against non-string elements */
+function validateMultipleDefaultOpenRuntime(
+  defaultOpen: readonly unknown[],
+  idSet: Set<string>,
+  errors: string[],
+): void {
+  for (const openId of defaultOpen) {
+    if (typeof openId !== 'string') {
+      errors.push(`accordionConfig.defaultOpen contains a non-string value (got ${typeof openId})`)
+      continue
+    }
+    if (!idSet.has(openId)) {
+      errors.push(`accordionConfig.defaultOpen "${openId}" does not match any region id`)
+    }
+  }
 }

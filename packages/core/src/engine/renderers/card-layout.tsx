@@ -54,6 +54,10 @@ function buildGridStyle(config: CardGridConfig | undefined): CSSProperties {
     } else {
       // NOTE: Responsive columns use mobile-first — smallest breakpoint is the default
       // NOTE: Consider all responsive breakpoints before falling back to 1
+      // NOTE: This fallback renderer uses a single static gridTemplateColumns — responsive
+      // behavior across breakpoints is the responsibility of injected Card primitives.
+      // Inline styles cannot express media queries; full responsive support requires either
+      // CSS-in-JS, injected CSS classes, or consumer-provided Card components.
       const defaultCols =
         config.columns.sm ?? config.columns.md ?? config.columns.lg ?? config.columns.xl ?? 1
       style.gridTemplateColumns = `repeat(${defaultCols}, 1fr)`

@@ -3,6 +3,7 @@ import {
   type ReactNode,
   useCallback,
   useEffect,
+  useId,
   useMemo,
   useState,
 } from 'react'
@@ -107,6 +108,7 @@ function handleTabKeyDown(
   tabs: readonly TabItem[],
   activeTab: string,
   onTabChange: (tabId: string) => void,
+  instanceId: string,
 ): void {
   const enabledTabs = tabs.filter(t => !t.disabled)
   if (enabledTabs.length === 0) return
@@ -140,7 +142,7 @@ function handleTabKeyDown(
   const nextTab = enabledTabs[nextIndex]
   if (nextTab) {
     onTabChange(nextTab.id)
-    document.getElementById(`tab-${nextTab.id}`)?.focus()
+    document.getElementById(`${instanceId}-tab-${nextTab.id}`)?.focus()
   }
 }
 
@@ -157,6 +159,9 @@ function FallbackTabs({
   readonly mountedTabs: ReadonlySet<string>
 }): ReactNode {
   const safeTabs = schema.tabs ?? []
+  // NOTE: useId generates a stable per-instance prefix to avoid ID collisions across
+  // multiple FallbackTabs instances on the same page
+  const instanceId = useId()
 
   return (
     <div className={schema.className}>
@@ -164,11 +169,11 @@ function FallbackTabs({
         {safeTabs.map(tab => (
           <button
             key={tab.id}
-            id={`tab-${tab.id}`}
+            id={`${instanceId}-tab-${tab.id}`}
             role="tab"
             type="button"
             aria-selected={activeTab === tab.id}
-            aria-controls={`panel-${tab.id}`}
+            aria-controls={`${instanceId}-panel-${tab.id}`}
             tabIndex={activeTab === tab.id ? 0 : -1}
             disabled={tab.disabled}
             className={`px-4 py-2 text-sm border-b-2 transition-colors ${
@@ -177,7 +182,7 @@ function FallbackTabs({
                 : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
             onClick={() => onTabChange(tab.id)}
-            onKeyDown={e => handleTabKeyDown(e, safeTabs, activeTab, onTabChange)}
+            onKeyDown={e => handleTabKeyDown(e, safeTabs, activeTab, onTabChange, instanceId)}
           >
             {tab.label}
           </button>
@@ -188,9 +193,9 @@ function FallbackTabs({
         return (
           <div
             key={tab.id}
-            id={`panel-${tab.id}`}
+            id={`${instanceId}-panel-${tab.id}`}
             role="tabpanel"
-            aria-labelledby={`tab-${tab.id}`}
+            aria-labelledby={`${instanceId}-tab-${tab.id}`}
             className={tab.className}
             style={{ display: activeTab === tab.id ? undefined : 'none' }}
           >
