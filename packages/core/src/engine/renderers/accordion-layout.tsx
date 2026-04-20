@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect, useRef, useState } from 'react'
+import { type ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useLayoutPrimitives } from '../context/layout-primitives-context'
 import type { AccordionConfig, SingleAccordionConfig } from '../types/accordion-config'
 import type { LayoutRegion } from '../types/layout-region'
@@ -53,13 +53,8 @@ export function AccordionLayoutRenderer({
   const handleValueChange = (value: string | string[]): void => {
     if (!onPanelCollapse) return
 
-    // NOTE: Filter empty strings — Radix passes '' in single-collapsible mode when all panels close
-    const newOpenIds =
-      accordionType === 'multiple' && Array.isArray(value)
-        ? new Set<string>(value.filter(v => v !== ''))
-        : typeof value === 'string' && value !== ''
-          ? new Set<string>([value])
-          : new Set<string>()
+    // NOTE: Resolve open IDs from Radix value — handles single/multiple mode differences
+    const newOpenIds = resolveOpenIds(value, accordionType)
 
     const prev = prevOpenRef.current
 
@@ -83,7 +78,7 @@ export function AccordionLayoutRenderer({
   return (
     <Accordion
       type={accordionType}
-      collapsible={collapsible}
+      {...(accordionType === 'single' ? { collapsible } : {})}
       defaultValue={effectiveDefaultValue}
       className={animationClass}
       onValueChange={handleValueChange}
@@ -147,28 +142,29 @@ function FallbackAccordionLayout({
 
   const toggleRegion = (regionId: string): void => {
     // NOTE: Use functional updater to avoid stale closure over openIds
-    setOpenIds(prev => {
-      // NOTE: Single-mode + non-collapsible: clicking the already-open panel is a no-op
-      if (mode === 'single' && !collapsible && prev.has(regionId)) {
-        return prev
-      }
-
-      const next = new Set(prev)
-      if (next.has(regionId)) {
-        next.delete(regionId)
-      } else if (mode === 'single') {
-        next.clear()
-        next.add(regionId)
-      } else {
-        next.add(regionId)
-      }
-
-      return next
-    })
+    setOpenIds(prev => computeNextOpenIds(prev, regionId, mode, collapsible))
   }
 
   // NOTE: Track previous openIds for symmetric-diff notification via useEffect
   const prevIdsRef = useRef<ReadonlySet<string>>(openIds)
+
+  // NOTE: Panel element refs for measuring content height — avoids hardcoded maxHeight
+  const panelRefs = useRef<Map<string, HTMLDivElement>>(new Map())
+  const [panelHeights, setPanelHeights] = useState<Record<string, number>>({})
+
+  // NOTE: Measure panel heights synchronously before paint for accurate CSS transitions
+  useLayoutEffect(() => {
+    const heights: Record<string, number> = {}
+    for (const [id, el] of panelRefs.current) {
+      heights[id] = el.scrollHeight
+    }
+    setPanelHeights(prev => {
+      const keys = Object.keys(heights)
+      const prevKeys = Object.keys(prev)
+      if (keys.length !== prevKeys.length) return heights
+      return keys.some(k => heights[k] !== prev[k]) ? heights : prev
+    })
+  })
 
   // NOTE: Notify onPanelCollapse for every ID whose open state changed — handles single-mode
   // panel swap (close A, open B) that the previous inline approach missed
@@ -214,6 +210,7 @@ function FallbackAccordionLayout({
             >
               {region.title ?? region.id}
               <span
+                aria-hidden="true"
                 className="h-4 w-4 shrink-0 transition-transform duration-200"
                 style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
               >
@@ -222,14 +219,14 @@ function FallbackAccordionLayout({
             </button>
             <div
               id={`panel-${region.id}`}
+              ref={el => registerPanelRef(panelRefs, region.id, el)}
               role="region"
               aria-labelledby={`trigger-${region.id}`}
               className="overflow-hidden px-4 pb-4"
               style={{
                 ...animationStyle,
-                maxHeight: isOpen ? '2000px' : '0px',
+                maxHeight: getPanelMaxHeight(isOpen, panelHeights[region.id]),
                 opacity: animation === 'fade' ? (isOpen ? 1 : 0) : undefined,
-                padding: isOpen ? undefined : '0 1rem',
               }}
             >
               <ContentRenderer content={region.content} />
@@ -239,4 +236,60 @@ function FallbackAccordionLayout({
       })}
     </div>
   )
+}
+
+/** Resolves open IDs from Radix value change — handles single/multiple mode differences */
+function resolveOpenIds(value: string | string[], accordionType: string): ReadonlySet<string> {
+  // NOTE: Filter empty strings — Radix passes '' in single-collapsible mode when all panels close
+  if (accordionType === 'multiple' && Array.isArray(value)) {
+    return new Set<string>(value.filter(v => v !== ''))
+  }
+  if (typeof value === 'string' && value !== '') {
+    return new Set<string>([value])
+  }
+  return new Set<string>()
+}
+
+/** Computes next open ID set after toggling a region — handles single/multiple mode rules */
+function computeNextOpenIds(
+  prev: ReadonlySet<string>,
+  regionId: string,
+  mode: 'single' | 'multiple',
+  collapsible: boolean,
+): ReadonlySet<string> {
+  // NOTE: Single-mode + non-collapsible: clicking the already-open panel is a no-op
+  if (mode === 'single' && !collapsible && prev.has(regionId)) {
+    return prev
+  }
+
+  const next = new Set(prev)
+  if (next.has(regionId)) {
+    next.delete(regionId)
+    return next
+  }
+  if (mode === 'single') {
+    next.clear()
+  }
+  next.add(regionId)
+  return next
+}
+
+/** Registers a panel DOM element ref for height measurement */
+function registerPanelRef(
+  panelRefs: React.MutableRefObject<Map<string, HTMLDivElement>>,
+  regionId: string,
+  el: HTMLDivElement | null,
+): void {
+  if (!el) return
+  panelRefs.current.set(regionId, el)
+}
+
+/** Resolves panel maxHeight — undefined lets CSS auto-size, '0px' collapses */
+function getPanelMaxHeight(
+  isOpen: boolean,
+  measuredHeight: number | undefined,
+): string | undefined {
+  if (!isOpen) return '0px'
+  if (measuredHeight === undefined) return undefined
+  return `${measuredHeight}px`
 }

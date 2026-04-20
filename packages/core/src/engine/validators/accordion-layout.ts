@@ -183,6 +183,10 @@ function validateDefaultOpenRuntime(
 
   if (config.mode === 'multiple' && Array.isArray(config.defaultOpen)) {
     validateMultipleDefaultOpenRuntime(config.defaultOpen, idSet, errors)
+  } else if (config.mode === 'multiple') {
+    errors.push(
+      `accordionConfig.defaultOpen must be an array of region ids when mode is "multiple" (got ${typeof config.defaultOpen})`,
+    )
   } else if (typeof config.defaultOpen === 'string') {
     if (!idSet.has(config.defaultOpen)) {
       errors.push(

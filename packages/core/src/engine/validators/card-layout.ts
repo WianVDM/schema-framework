@@ -111,6 +111,9 @@ export function validateCardLayout(schema: LayoutSchema): ValidationResult {
 /** Validates column configuration — fixed number or responsive breakpoints */
 function validateColumns(columns: number | CardGridResponsiveColumns, errors: string[]): void {
   if (typeof columns === 'number') {
+    if (!Number.isInteger(columns)) {
+      errors.push('Card grid columns must be an integer')
+    }
     if (columns < 1) {
       errors.push('Card grid columns must be at least 1')
     }
