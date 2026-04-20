@@ -11,7 +11,7 @@ Add layout renderers (accordion, card, box, tabs) with engine context, validator
 - **content-renderer.tsx**: Update import, export, const
 - **index.ts**: Add export
 - **schema-layout.tsx**: Update import, export, function
-- **index.ts**: add changes in engine/types
+- **index.ts**: Add changes in engine/types
 - **layout-primitive-components.ts**: Add export
 - **layout-schema.ts**: Add import
 - **tab-schema.ts**: Add import

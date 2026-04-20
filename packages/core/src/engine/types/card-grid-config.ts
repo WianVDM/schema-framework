@@ -12,6 +12,6 @@ export interface CardGridConfig {
   readonly columns?: number | CardGridResponsiveColumns
   /** Gap between cards in px or CSS value (e.g., '1rem') */
   readonly gap?: number | string
-  /** Padding inside each card region in px or CSS value */
+  /** Padding inside the grid container (use gap for spacing between cards) — accepts px number or CSS string */
   readonly padding?: number | string
 }

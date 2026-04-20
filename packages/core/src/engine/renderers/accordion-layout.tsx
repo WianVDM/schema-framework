@@ -1,4 +1,4 @@
-import { type ReactNode, useState } from 'react'
+import { type ReactNode, useRef, useState } from 'react'
 import { useLayoutPrimitives } from '../context/layout-primitives-context'
 import type { AccordionConfig } from '../types/accordion-config'
 import type { LayoutRegion } from '../types/layout-region'
@@ -23,6 +23,12 @@ export function AccordionLayoutRenderer({
   const defaultOpen = accordionConfig?.defaultOpen ?? []
   const animation = accordionConfig?.animation ?? 'slide'
 
+  // NOTE: Determine accordion type — 'single' allows one item open, 'multiple' allows many
+  const accordionType = mode === 'multiple' ? 'multiple' : 'single'
+
+  // NOTE: All hooks (useRef) must be called before any conditional returns
+  const prevOpenRef = useRef<ReadonlySet<string>>(new Set(defaultOpen))
+
   // NOTE: Fallback when Accordion primitives are not injected
   if (!(Accordion && AccordionItem && AccordionTrigger && AccordionContent)) {
     return (
@@ -36,30 +42,47 @@ export function AccordionLayoutRenderer({
     )
   }
 
-  // NOTE: Determine accordion type — 'single' allows one item open, 'multiple' allows many
-  const accordionType = mode === 'multiple' ? 'multiple' : 'single'
-
   // NOTE: Animation config passed as data attribute for CSS-based animation control
   const animationClass = getAnimationClass(animation)
 
-  // NOTE: Handler for collapse events from injected Accordion — propagates to parent
+  // NOTE: Radix single-mode expects string, multiple-mode expects string[]
+  const effectiveDefaultValue = accordionType === 'single' ? (defaultOpen[0] ?? '') : defaultOpen
+
+  // NOTE: Handler for collapse events from injected Accordion — fires on both open and close
   const handleValueChange = (value: string | string[]): void => {
     if (!onPanelCollapse) return
-    if (accordionType === 'multiple' && Array.isArray(value)) {
-      // NOTE: In multiple mode, value is an array of open item IDs
-      for (const id of value) {
+
+    const newOpenIds =
+      accordionType === 'multiple' && Array.isArray(value)
+        ? new Set<string>(value)
+        : typeof value === 'string'
+          ? new Set<string>([value])
+          : new Set<string>()
+
+    const prev = prevOpenRef.current
+
+    // NOTE: Notify newly opened panels
+    for (const id of newOpenIds) {
+      if (!prev.has(id)) {
         onPanelCollapse(id, true)
       }
-    } else if (typeof value === 'string') {
-      onPanelCollapse(value, true)
     }
+
+    // NOTE: Notify newly closed panels
+    for (const id of prev) {
+      if (!newOpenIds.has(id)) {
+        onPanelCollapse(id, false)
+      }
+    }
+
+    prevOpenRef.current = newOpenIds
   }
 
   return (
     <Accordion
       type={accordionType}
       collapsible={collapsible}
-      defaultValue={defaultOpen}
+      defaultValue={effectiveDefaultValue}
       className={animationClass}
       onValueChange={handleValueChange}
     >
@@ -107,18 +130,20 @@ function FallbackAccordionLayout({
   )
 
   const toggleRegion = (regionId: string): void => {
-    // NOTE: Build next state outside functional updater to keep setState pure
-    const next = new Set(openIds)
-    if (next.has(regionId)) {
-      next.delete(regionId)
-    } else if (mode === 'single') {
-      next.clear()
-      next.add(regionId)
-    } else {
-      next.add(regionId)
-    }
-    setOpenIds(next)
-    onPanelCollapse?.(regionId, next.has(regionId))
+    // NOTE: Use functional updater to avoid stale closure over openIds
+    setOpenIds(prev => {
+      const next = new Set(prev)
+      if (next.has(regionId)) {
+        next.delete(regionId)
+      } else if (mode === 'single') {
+        next.clear()
+        next.add(regionId)
+      } else {
+        next.add(regionId)
+      }
+      onPanelCollapse?.(regionId, next.has(regionId))
+      return next
+    })
   }
 
   const animationStyle = animation === 'none' ? undefined : { transitionDuration: '200ms' }

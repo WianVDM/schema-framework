@@ -1,4 +1,11 @@
-import { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
+import {
+  type KeyboardEvent,
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { useLayoutPrimitives } from '../context/layout-primitives-context'
 import type { TabItem } from '../types/tab-item'
 import type { TabSchema } from '../types/tab-schema'
@@ -8,8 +15,18 @@ import { ContentRenderer } from './content-renderer'
 /** Renders tabbed content from TabSchema with eager/lazy mount modes */
 export function SchemaTabs({ schema, onTabChange }: TabsRendererProps): ReactNode {
   const { Tabs, TabsList, TabsTrigger, TabsContent } = useLayoutPrimitives()
-  const [activeTab, setActiveTab] = useState(schema.defaultTab ?? schema.tabs[0]?.id ?? '')
-  const mountedTabs = useLazyTabContent(activeTab, schema.tabs, schema.mountMode ?? 'eager')
+  const safeTabs = schema.tabs ?? []
+
+  // NOTE: Normalize mountMode — treat lazy:true as mountMode:'lazy' for backward compatibility
+  // biome-ignore lint/suspicious/noConsole: assertion validates mountMode/lazy normalization contract
+  console.assert(
+    !(schema.mountMode !== undefined && schema.lazy !== undefined),
+    'TabSchema: both mountMode and lazy are set — mountMode takes precedence. Prefer mountMode only.',
+  )
+  const effectiveMountMode = schema.mountMode ?? (schema.lazy ? 'lazy' : 'eager')
+
+  const [activeTab, setActiveTab] = useState(schema.defaultTab ?? safeTabs[0]?.id ?? '')
+  const mountedTabs = useLazyTabContent(activeTab, safeTabs, effectiveMountMode)
 
   // NOTE: All hooks (useCallback) must be called before any conditional returns
   const handleTabChange = useCallback(
@@ -21,7 +38,7 @@ export function SchemaTabs({ schema, onTabChange }: TabsRendererProps): ReactNod
   )
 
   // NOTE: Guard against empty tabs array — hooks must come before early returns
-  if (!schema.tabs?.length) return null
+  if (!safeTabs.length) return null
 
   // NOTE: Fallback when Tabs primitives are not injected — render plain HTML tabs
   if (!(Tabs && TabsList && TabsTrigger && TabsContent)) {
@@ -38,13 +55,13 @@ export function SchemaTabs({ schema, onTabChange }: TabsRendererProps): ReactNod
   return (
     <Tabs value={activeTab} onValueChange={handleTabChange}>
       <TabsList>
-        {schema.tabs.map(tab => (
+        {safeTabs.map(tab => (
           <TabsTrigger key={tab.id} value={tab.id} disabled={tab.disabled}>
             {tab.label}
           </TabsTrigger>
         ))}
       </TabsList>
-      {schema.tabs.map(tab => {
+      {safeTabs.map(tab => {
         // NOTE: Lazy mode — only render tabs that have been mounted (active + previously activated)
         if (!mountedTabs.has(tab.id)) return null
         return (
@@ -84,6 +101,44 @@ function useLazyTabContent(
   return lazyMounted
 }
 
+/** WAI-ARIA keyboard navigation handler for fallback tab buttons */
+function handleTabKeyDown(
+  e: KeyboardEvent<HTMLButtonElement>,
+  tabs: readonly TabItem[],
+  activeTab: string,
+  onTabChange: (tabId: string) => void,
+): void {
+  const enabledTabs = tabs.filter(t => !t.disabled)
+  if (enabledTabs.length === 0) return
+
+  const currentIndex = enabledTabs.findIndex(t => t.id === activeTab)
+  let nextIndex = currentIndex
+
+  switch (e.key) {
+    case 'ArrowRight':
+      nextIndex = (currentIndex + 1) % enabledTabs.length
+      break
+    case 'ArrowLeft':
+      nextIndex = (currentIndex - 1 + enabledTabs.length) % enabledTabs.length
+      break
+    case 'Home':
+      nextIndex = 0
+      break
+    case 'End':
+      nextIndex = enabledTabs.length - 1
+      break
+    default:
+      return
+  }
+
+  e.preventDefault()
+  const nextTab = enabledTabs[nextIndex]
+  if (nextTab) {
+    onTabChange(nextTab.id)
+    document.getElementById(`tab-${nextTab.id}`)?.focus()
+  }
+}
+
 /** Fallback tabs renderer when primitives are not injected */
 function FallbackTabs({
   schema,
@@ -96,10 +151,12 @@ function FallbackTabs({
   readonly onTabChange: (tabId: string) => void
   readonly mountedTabs: ReadonlySet<string>
 }): ReactNode {
+  const safeTabs = schema.tabs ?? []
+
   return (
     <div className={schema.className}>
       <div className="flex border-b" role="tablist">
-        {schema.tabs.map(tab => (
+        {safeTabs.map(tab => (
           <button
             key={tab.id}
             id={`tab-${tab.id}`}
@@ -115,12 +172,13 @@ function FallbackTabs({
                 : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
             onClick={() => onTabChange(tab.id)}
+            onKeyDown={e => handleTabKeyDown(e, safeTabs, activeTab, onTabChange)}
           >
             {tab.label}
           </button>
         ))}
       </div>
-      {schema.tabs.map(tab => {
+      {safeTabs.map(tab => {
         if (!mountedTabs.has(tab.id)) return null
         return (
           <div

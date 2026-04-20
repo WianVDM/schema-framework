@@ -41,7 +41,6 @@ export function SchemaLayout({
           direction="horizontal"
           regions={schema.regions}
           boxConfig={schema.boxConfig}
-          onRegionResize={_onRegionResize}
           onPanelCollapse={_onPanelCollapse}
         />
       )
@@ -51,7 +50,6 @@ export function SchemaLayout({
           direction="vertical"
           regions={schema.regions}
           boxConfig={schema.boxConfig}
-          onRegionResize={_onRegionResize}
           onPanelCollapse={_onPanelCollapse}
         />
       )

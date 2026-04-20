@@ -2,14 +2,12 @@ import type { CSSProperties, ReactNode } from 'react'
 import type { BoxConfig } from '../types/box-config'
 import type { LayoutRegion } from '../types/layout-region'
 import type { PanelCollapseHandler } from '../types/panel-collapse-handler'
-import type { RegionResizeHandler } from '../types/region-resize-handler'
 import { SchemaPanel } from './schema-panel'
 
 interface BoxLayoutProps {
   readonly direction: 'horizontal' | 'vertical'
   readonly regions: readonly LayoutRegion[]
   readonly boxConfig?: BoxConfig
-  readonly onRegionResize?: RegionResizeHandler
   readonly onPanelCollapse?: PanelCollapseHandler
 }
 
@@ -18,11 +16,10 @@ export function BoxLayoutRenderer({
   direction,
   regions,
   boxConfig,
-  onRegionResize: _onRegionResize,
   onPanelCollapse,
 }: BoxLayoutProps): ReactNode {
   // NOTE: hbox/vbox are pure CSS flex layouts — no injected primitives needed
-  const containerStyle = buildFlexStyle(direction, boxConfig)
+  const containerStyle = buildFlexStyle(boxConfig)
 
   return (
     <div
@@ -36,11 +33,8 @@ export function BoxLayoutRenderer({
   )
 }
 
-/** Builds CSS flex style from direction and BoxConfig */
-function buildFlexStyle(
-  _direction: 'horizontal' | 'vertical',
-  config: BoxConfig | undefined,
-): CSSProperties {
+/** Builds CSS flex style from BoxConfig */
+function buildFlexStyle(config: BoxConfig | undefined): CSSProperties {
   const style: CSSProperties = {}
 
   if (!config) return style
