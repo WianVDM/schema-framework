@@ -38,12 +38,12 @@ export const tabSchemaValidator = z
       })
     }
 
-    // NOTE: mountMode and lazy are mutually exclusive — mountMode takes precedence
+    // NOTE: lazy is deprecated — emit error when both mountMode and lazy are present
     if (schema.mountMode !== undefined && schema.lazy !== undefined) {
       ctx.addIssue({
         code: 'custom',
-        path: ['mountMode'],
-        message: 'Cannot specify both mountMode and lazy — use mountMode instead',
+        path: ['lazy'],
+        message: 'lazy is deprecated and cannot be used with mountMode — use mountMode instead',
       })
     }
   })

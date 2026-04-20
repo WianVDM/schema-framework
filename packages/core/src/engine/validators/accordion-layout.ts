@@ -2,15 +2,28 @@ import { z } from 'zod'
 import type { LayoutSchema } from '../types/layout-schema'
 import type { ValidationResult } from './shared-schemas'
 
-/** Zod schema for accordion-specific configuration constraints */
-const accordionConfigSchema = z
+/** Zod schema for single-mode accordion config */
+const singleAccordionConfigSchema = z
   .object({
-    mode: z.enum(['single', 'multiple']).optional(),
+    mode: z.enum(['single']),
     animation: z.enum(['slide', 'fade', 'none']).optional(),
-    defaultOpen: z.array(z.string()).optional(),
+    defaultOpen: z.string().optional(),
     collapsible: z.boolean().optional(),
   })
   .strict()
+
+/** Zod schema for multiple-mode accordion config */
+const multipleAccordionConfigSchema = z
+  .object({
+    mode: z.literal('multiple'),
+    animation: z.enum(['slide', 'fade', 'none']).optional(),
+    defaultOpen: z.array(z.string()).optional(),
+  })
+  .strict()
+
+/** Zod schema for accordion-specific configuration constraints — discriminated on mode */
+const accordionConfigSchema = z
+  .union([singleAccordionConfigSchema, multipleAccordionConfigSchema])
   .optional()
 
 /** Zod schema for accordion-specific layout constraints */
@@ -41,25 +54,58 @@ function validateAccordionConstraints(
     seen.add(entry.id)
   }
 
-  // NOTE: Validate defaultOpen references exist in regions
-  if (
-    data.accordionConfig &&
-    typeof data.accordionConfig === 'object' &&
-    data.accordionConfig !== null
-  ) {
-    const config = data.accordionConfig as { defaultOpen?: string[] }
-    if (config.defaultOpen && Array.isArray(config.defaultOpen)) {
-      const regionIds = new Set(ids.map(e => e.id))
-      for (const openId of config.defaultOpen) {
-        if (!regionIds.has(openId)) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: `accordionConfig.defaultOpen "${openId}" does not match any region id`,
-            path: ['accordionConfig', 'defaultOpen'],
-          })
-        }
-      }
+  // NOTE: Validate defaultOpen references exist in regions for both config variants
+  validateDefaultOpenRefs(data.accordionConfig, ids, ctx)
+}
+
+/** Validates defaultOpen references against known region IDs for discriminated config */
+function validateDefaultOpenRefs(
+  accordionConfig: unknown,
+  ids: IdEntry[],
+  ctx: z.RefinementCtx,
+): void {
+  if (!accordionConfig || typeof accordionConfig !== 'object' || accordionConfig === null) return
+
+  const config = accordionConfig as { mode?: string; defaultOpen?: unknown }
+  const regionIds = new Set(ids.map(e => e.id))
+
+  if (config.mode === 'multiple') {
+    validateMultipleDefaultOpen(config.defaultOpen, regionIds, ctx)
+  } else if (typeof config.defaultOpen === 'string') {
+    validateSingleDefaultOpen(config.defaultOpen, regionIds, ctx)
+  }
+}
+
+/** Validates multiple-mode defaultOpen array references */
+function validateMultipleDefaultOpen(
+  defaultOpen: unknown,
+  regionIds: Set<string>,
+  ctx: z.RefinementCtx,
+): void {
+  const openIds = Array.isArray(defaultOpen) ? defaultOpen : []
+  for (const openId of openIds) {
+    if (!regionIds.has(openId)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `accordionConfig.defaultOpen "${openId}" does not match any region id`,
+        path: ['accordionConfig', 'defaultOpen'],
+      })
     }
+  }
+}
+
+/** Validates single-mode defaultOpen string reference */
+function validateSingleDefaultOpen(
+  defaultOpen: string,
+  regionIds: Set<string>,
+  ctx: z.RefinementCtx,
+): void {
+  if (!regionIds.has(defaultOpen)) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: `accordionConfig.defaultOpen "${defaultOpen}" does not match any region id`,
+      path: ['accordionConfig', 'defaultOpen'],
+    })
   }
 }
 
@@ -104,10 +150,18 @@ export function validateAccordionLayout(schema: LayoutSchema): ValidationResult 
     seen.add(entry.id)
   }
 
-  // NOTE: Validate defaultOpen references
-  if (schema.accordionConfig?.defaultOpen) {
+  // NOTE: Validate defaultOpen references — handles discriminated union variants
+  const config = schema.accordionConfig
+  if (config?.defaultOpen) {
     const idSet = new Set(ids.map(e => e.id))
-    for (const openId of schema.accordionConfig.defaultOpen) {
+    if (config.mode === 'multiple') {
+      for (const openId of config.defaultOpen as readonly string[]) {
+        if (!idSet.has(openId)) {
+          errors.push(`accordionConfig.defaultOpen "${openId}" does not match any region id`)
+        }
+      }
+    } else {
+      const openId = config.defaultOpen as unknown as string
       if (!idSet.has(openId)) {
         errors.push(`accordionConfig.defaultOpen "${openId}" does not match any region id`)
       }

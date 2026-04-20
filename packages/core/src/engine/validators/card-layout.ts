@@ -111,7 +111,7 @@ function validateColumns(columns: number | CardGridResponsiveColumns, errors: st
     return
   }
 
-  // NOTE: Responsive breakpoints — at least one required, all values >= 1
+  // NOTE: Responsive breakpoints — at least one required, all values positive integers
   const breakpoints = columns as Readonly<Record<string, number | undefined>>
   const keys = Object.keys(breakpoints)
   if (keys.length === 0) {
@@ -119,8 +119,12 @@ function validateColumns(columns: number | CardGridResponsiveColumns, errors: st
   }
   for (const key of keys) {
     const value = breakpoints[key]
-    if (typeof value !== 'number' || value < 1) {
-      errors.push(`Card grid columns for breakpoint "${key}" must be a number >= 1`)
+    if (value === undefined) {
+      errors.push(
+        `Card grid columns for breakpoint "${key}" must be defined and a positive integer`,
+      )
+    } else if (typeof value !== 'number' || !Number.isInteger(value) || value < 1) {
+      errors.push(`Card grid columns for breakpoint "${key}" must be a positive integer >= 1`)
     }
   }
 }

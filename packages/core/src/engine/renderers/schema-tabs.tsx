@@ -116,10 +116,15 @@ function handleTabKeyDown(
 
   switch (e.key) {
     case 'ArrowRight':
-      nextIndex = (currentIndex + 1) % enabledTabs.length
+      // NOTE: If activeTab not in enabledTabs, start from first tab
+      nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % enabledTabs.length
       break
     case 'ArrowLeft':
-      nextIndex = (currentIndex - 1 + enabledTabs.length) % enabledTabs.length
+      // NOTE: If activeTab not in enabledTabs, start from last tab
+      nextIndex =
+        currentIndex === -1
+          ? enabledTabs.length - 1
+          : (currentIndex - 1 + enabledTabs.length) % enabledTabs.length
       break
     case 'Home':
       nextIndex = 0

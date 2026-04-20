@@ -4,9 +4,9 @@ import { asDataKey, deepFreeze } from '@my-framework/core'
 export const accordionLayoutSchema = deepFreeze<LayoutSchema>({
   type: 'accordion',
   accordionConfig: {
-    mode: 'single',
+    mode: 'single' as const,
     collapsible: true,
-    defaultOpen: ['personal-info'],
+    defaultOpen: 'personal-info',
   },
   regions: [
     {

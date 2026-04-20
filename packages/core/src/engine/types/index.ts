@@ -1,4 +1,8 @@
-export type { AccordionConfig } from './accordion-config'
+export type {
+  AccordionConfig,
+  MultipleAccordionConfig,
+  SingleAccordionConfig,
+} from './accordion-config'
 export type { BorderPosition } from './border-position'
 export type { BoxConfig } from './box-config'
 export type { Brand, DataKey, FieldId } from './branded'

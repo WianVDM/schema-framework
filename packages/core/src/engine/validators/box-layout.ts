@@ -39,8 +39,12 @@ export function validateBoxLayout(schema: LayoutSchema): ValidationResult {
   // NOTE: Validate each region id and check for duplicates
   const seen = new Set<string>()
   for (let i = 0; i < schema.regions.length; i++) {
-    const region = schema.regions[i]
-    const id = region.id
+    const region = schema.regions[i] as unknown
+    if (region === null || typeof region !== 'object') {
+      errors.push(`Invalid region at regions[${i}] — expected an object`)
+      continue
+    }
+    const id = (region as Record<string, unknown>).id
     if (typeof id !== 'string') {
       errors.push(`Missing or non-string region id at regions[${i}]`)
       continue

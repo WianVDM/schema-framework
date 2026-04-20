@@ -1,6 +1,6 @@
 import { type ReactNode, useRef, useState } from 'react'
 import { useLayoutPrimitives } from '../context/layout-primitives-context'
-import type { AccordionConfig } from '../types/accordion-config'
+import type { AccordionConfig, SingleAccordionConfig } from '../types/accordion-config'
 import type { LayoutRegion } from '../types/layout-region'
 import type { PanelCollapseHandler } from '../types/panel-collapse-handler'
 import { ContentRenderer } from './content-renderer'
@@ -19,8 +19,8 @@ export function AccordionLayoutRenderer({
 }: AccordionLayoutProps): ReactNode {
   const { Accordion, AccordionItem, AccordionTrigger, AccordionContent } = useLayoutPrimitives()
   const mode = accordionConfig?.mode ?? 'single'
-  const collapsible = accordionConfig?.collapsible ?? true
-  const defaultOpen = accordionConfig?.defaultOpen ?? []
+  const collapsible = isSingleConfig(accordionConfig) ? (accordionConfig.collapsible ?? true) : true
+  const defaultOpen = normalizeDefaultOpen(accordionConfig)
   const animation = accordionConfig?.animation ?? 'slide'
 
   // NOTE: Determine accordion type — 'single' allows one item open, 'multiple' allows many
@@ -37,6 +37,7 @@ export function AccordionLayoutRenderer({
         defaultOpen={defaultOpen}
         animation={animation}
         mode={mode}
+        collapsible={collapsible}
         onPanelCollapse={onPanelCollapse}
       />
     )
@@ -98,6 +99,20 @@ export function AccordionLayoutRenderer({
   )
 }
 
+/** Type guard: only SingleAccordionConfig supports collapsible and string defaultOpen */
+function isSingleConfig(config?: AccordionConfig): config is SingleAccordionConfig {
+  return config?.mode !== 'multiple'
+}
+
+/** Normalizes defaultOpen to a flat string array regardless of config variant */
+function normalizeDefaultOpen(config?: AccordionConfig): readonly string[] {
+  if (!config) return []
+  if (isSingleConfig(config)) {
+    return config.defaultOpen ? [config.defaultOpen] : []
+  }
+  return config.defaultOpen ?? []
+}
+
 /** Maps animation config to CSS class names */
 function getAnimationClass(animation: 'slide' | 'fade' | 'none'): string {
   switch (animation) {
@@ -116,12 +131,14 @@ function FallbackAccordionLayout({
   defaultOpen,
   animation,
   mode,
+  collapsible,
   onPanelCollapse,
 }: {
   readonly regions: readonly LayoutRegion[]
   readonly defaultOpen: readonly string[]
   readonly animation: 'slide' | 'fade' | 'none'
   readonly mode: 'single' | 'multiple'
+  readonly collapsible: boolean
   readonly onPanelCollapse?: PanelCollapseHandler
 }): ReactNode {
   // NOTE: State-driven toggle tracking for fallback accordion
@@ -132,6 +149,11 @@ function FallbackAccordionLayout({
   const toggleRegion = (regionId: string): void => {
     // NOTE: Use functional updater to avoid stale closure over openIds
     setOpenIds(prev => {
+      // NOTE: Single-mode + non-collapsible: clicking the already-open panel is a no-op
+      if (mode === 'single' && !collapsible && prev.has(regionId)) {
+        return prev
+      }
+
       const next = new Set(prev)
       if (next.has(regionId)) {
         next.delete(regionId)
@@ -141,9 +163,24 @@ function FallbackAccordionLayout({
       } else {
         next.add(regionId)
       }
-      onPanelCollapse?.(regionId, next.has(regionId))
+
       return next
     })
+  }
+
+  // NOTE: Detect actual state changes and notify handler outside the updater
+  const handleToggle = (regionId: string): void => {
+    const prev = openIds
+    toggleRegion(regionId)
+
+    // NOTE: onPanelCollapse fires only when open state actually changes
+    if (onPanelCollapse) {
+      const wasOpen = prev.has(regionId)
+      // NOTE: For non-collapsible single mode, no change occurs — skip notification
+      if (mode === 'single' && !collapsible && wasOpen) return
+      const isOpen = !wasOpen
+      onPanelCollapse(regionId, isOpen)
+    }
   }
 
   const animationStyle = animation === 'none' ? undefined : { transitionDuration: '200ms' }
@@ -160,7 +197,7 @@ function FallbackAccordionLayout({
               aria-expanded={isOpen}
               aria-controls={`panel-${region.id}`}
               className="flex w-full items-center justify-between p-4 font-medium transition-colors hover:bg-muted/50"
-              onClick={() => toggleRegion(region.id)}
+              onClick={() => handleToggle(region.id)}
             >
               {region.title ?? region.id}
               <span
