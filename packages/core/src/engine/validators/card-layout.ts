@@ -89,6 +89,10 @@ export function validateCardLayout(schema: LayoutSchema): ValidationResult {
     return { success: false, errors: ['Card layout requires a regions array'] }
   }
 
+  if (schema.regions.length === 0) {
+    return { success: false, errors: ['Card layout requires at least one region'] }
+  }
+
   const ids = extractIds(schema.regions)
 
   // NOTE: Check for duplicate region IDs

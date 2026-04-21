@@ -26,7 +26,24 @@ export function SchemaTabs({ schema, onTabChange }: TabsRendererProps): ReactNod
   )
   const effectiveMountMode = schema.mountMode ?? (schema.lazy ? 'lazy' : 'eager')
 
-  const [activeTab, setActiveTab] = useState(schema.defaultTab ?? safeTabs[0]?.id ?? '')
+  const [activeTab, setActiveTab] = useState(() => {
+    if (schema.defaultTab && safeTabs.some(t => t.id === schema.defaultTab)) {
+      return schema.defaultTab
+    }
+    return safeTabs[0]?.id ?? ''
+  })
+
+  // NOTE: Reset activeTab when safeTabs or defaultTab changes and current tab is no longer valid
+  useEffect(() => {
+    setActiveTab(prev => {
+      if (prev && safeTabs.some(t => t.id === prev)) return prev
+      if (schema.defaultTab && safeTabs.some(t => t.id === schema.defaultTab)) {
+        return schema.defaultTab
+      }
+      return safeTabs[0]?.id ?? ''
+    })
+  }, [safeTabs, schema.defaultTab])
+
   const mountedTabs = useLazyTabContent(activeTab, safeTabs, effectiveMountMode)
 
   // NOTE: All hooks (useCallback) must be called before any conditional returns
