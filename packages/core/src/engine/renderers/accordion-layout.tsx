@@ -11,6 +11,15 @@ interface AccordionLayoutProps {
   readonly onPanelCollapse?: PanelCollapseHandler
 }
 
+/** Compares two string arrays by content — avoids reference-equality false positives from re-renders */
+function areStringArraysEqual(a: readonly string[], b: readonly string[]): boolean {
+  if (a.length !== b.length) return false
+  for (let i = 0; i < a.length; i++) {
+    if (a[i] !== b[i]) return false
+  }
+  return true
+}
+
 /** Renders accordion layout from LayoutSchema regions using injected Accordion primitives */
 export function AccordionLayoutRenderer({
   regions,
@@ -29,9 +38,11 @@ export function AccordionLayoutRenderer({
   // NOTE: All hooks (useRef) must be called before any conditional returns
   const prevOpenRef = useRef<ReadonlySet<string>>(new Set(defaultOpen))
 
-  // NOTE: Sync prevOpenRef when defaultOpen changes externally (e.g. schema update)
+  // NOTE: Sync prevOpenRef when defaultOpen content changes externally (e.g. schema update)
   useEffect(() => {
-    prevOpenRef.current = new Set(defaultOpen)
+    if (!areStringArraysEqual(defaultOpen, Array.from(prevOpenRef.current))) {
+      prevOpenRef.current = new Set(defaultOpen)
+    }
   }, [defaultOpen])
 
   // NOTE: Fallback when Accordion primitives are not injected
@@ -189,11 +200,10 @@ function FallbackAccordionLayout({
           }
         }
       }
+      // NOTE: Merge partial heights into previous state to preserve measurements for unchanged panels
       setPanelHeights(prev => {
-        const keys = Object.keys(heights)
-        const prevKeys = Object.keys(prev)
-        if (keys.length !== prevKeys.length) return heights
-        return keys.some(k => heights[k] !== prev[k]) ? heights : prev
+        const merged = { ...prev, ...heights }
+        return Object.keys(merged).some(k => merged[k] !== prev[k]) ? merged : prev
       })
     })
 
@@ -260,6 +270,8 @@ function FallbackAccordionLayout({
               ref={el => registerPanelRef(panelRefs, region.id, el)}
               role="region"
               aria-labelledby={`trigger-${region.id}`}
+              aria-hidden={!isOpen}
+              inert={!isOpen}
               className="overflow-hidden px-4 pb-4"
               style={{
                 ...animationStyle,

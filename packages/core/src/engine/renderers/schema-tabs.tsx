@@ -36,16 +36,21 @@ export function SchemaTabs({ schema, onTabChange }: TabsRendererProps): ReactNod
     return safeTabs[0]?.id ?? ''
   })
 
-  // NOTE: Reset activeTab when safeTabs or defaultTab changes and current tab is no longer valid
+  // NOTE: Reset activeTab when safeTabs or defaultTab changes and current tab is no longer valid.
+  // Also notifies external consumers via onTabChange so they don't desync from programmatic resets.
   useEffect(() => {
-    setActiveTab(prev => {
-      if (prev && safeTabs.some(t => t.id === prev)) return prev
-      if (schema.defaultTab && safeTabs.some(t => t.id === schema.defaultTab)) {
-        return schema.defaultTab
-      }
-      return safeTabs[0]?.id ?? ''
-    })
-  }, [safeTabs, schema.defaultTab])
+    const nextTab =
+      activeTab && safeTabs.some(t => t.id === activeTab)
+        ? activeTab
+        : schema.defaultTab && safeTabs.some(t => t.id === schema.defaultTab)
+          ? schema.defaultTab
+          : (safeTabs[0]?.id ?? '')
+
+    if (nextTab !== activeTab) {
+      setActiveTab(nextTab)
+      onTabChange?.(nextTab)
+    }
+  }, [safeTabs, schema.defaultTab, activeTab, onTabChange])
 
   const mountedTabs = useLazyTabContent(activeTab, safeTabs, effectiveMountMode)
 

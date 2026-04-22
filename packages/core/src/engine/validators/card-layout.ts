@@ -19,7 +19,7 @@ const responsiveColumnsSchema = z
 /** Zod schema for card grid configuration constraints */
 const cardGridConfigSchema = z
   .object({
-    columns: z.union([z.number().int().positive().min(1), responsiveColumnsSchema]).optional(),
+    columns: z.union([z.number().int().positive(), responsiveColumnsSchema]).optional(),
     gap: z.union([z.number().min(0), z.string()]).optional(),
     padding: z.union([z.number().min(0), z.string()]).optional(),
   })

@@ -181,7 +181,7 @@ function validateDefaultOpenRuntime(
   ids: IdEntry[],
   errors: string[],
 ): void {
-  if (!config?.defaultOpen) return
+  if (config?.defaultOpen === undefined) return
 
   const idSet = new Set(ids.map(e => e.id))
 
