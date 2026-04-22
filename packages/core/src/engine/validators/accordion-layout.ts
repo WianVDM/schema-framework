@@ -153,6 +153,10 @@ export function validateAccordionLayout(schema: LayoutSchema): ValidationResult 
     return { success: false, errors: ['Accordion layout requires a regions array'] }
   }
 
+  if (schema.regions.length === 0) {
+    return { success: false, errors: ['Accordion layout requires at least one region'] }
+  }
+
   // NOTE: Use extractIds to safely extract and validate region IDs
   const ids = extractIds(schema.regions)
 

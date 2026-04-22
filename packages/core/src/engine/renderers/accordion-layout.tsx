@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { type ReactNode, useEffect, useRef, useState } from 'react'
 import { useLayoutPrimitives } from '../context/layout-primitives-context'
 import type { AccordionConfig, SingleAccordionConfig } from '../types/accordion-config'
 import type { LayoutRegion } from '../types/layout-region'
@@ -28,6 +28,11 @@ export function AccordionLayoutRenderer({
 
   // NOTE: All hooks (useRef) must be called before any conditional returns
   const prevOpenRef = useRef<ReadonlySet<string>>(new Set(defaultOpen))
+
+  // NOTE: Sync prevOpenRef when defaultOpen changes externally (e.g. schema update)
+  useEffect(() => {
+    prevOpenRef.current = new Set(defaultOpen)
+  }, [defaultOpen])
 
   // NOTE: Fallback when Accordion primitives are not injected
   if (!(Accordion && AccordionItem && AccordionTrigger && AccordionContent)) {
@@ -152,19 +157,52 @@ function FallbackAccordionLayout({
   const panelRefs = useRef<Map<string, HTMLDivElement>>(new Map())
   const [panelHeights, setPanelHeights] = useState<Record<string, number>>({})
 
-  // NOTE: Measure panel heights synchronously before paint for accurate CSS transitions
-  useLayoutEffect(() => {
-    const heights: Record<string, number> = {}
-    for (const [id, el] of panelRefs.current) {
-      heights[id] = el.scrollHeight
+  // NOTE: Measure panel heights via ResizeObserver for accurate CSS transitions.
+  // Falls back to synchronous measurement when ResizeObserver is unavailable (e.g. SSR).
+  // biome-ignore lint/correctness/useExhaustiveDependencies: regions change triggers re-observation of panel refs
+  useEffect(() => {
+    const panels = panelRefs.current
+    if (typeof ResizeObserver === 'undefined') {
+      // NOTE: Fallback synchronous measurement for environments without ResizeObserver
+      const heights: Record<string, number> = {}
+      for (const [id, el] of panels) {
+        heights[id] = el.scrollHeight
+      }
+      setPanelHeights(prev => {
+        const keys = Object.keys(heights)
+        const prevKeys = Object.keys(prev)
+        if (keys.length !== prevKeys.length) return heights
+        return keys.some(k => heights[k] !== prev[k]) ? heights : prev
+      })
+      return
     }
-    setPanelHeights(prev => {
-      const keys = Object.keys(heights)
-      const prevKeys = Object.keys(prev)
-      if (keys.length !== prevKeys.length) return heights
-      return keys.some(k => heights[k] !== prev[k]) ? heights : prev
+
+    const observer = new ResizeObserver(entries => {
+      const heights: Record<string, number> = {}
+      for (const entry of entries) {
+        const el = entry.target as HTMLDivElement
+        // NOTE: Find the region ID for this element
+        for (const [id, panelEl] of panels) {
+          if (panelEl === el) {
+            heights[id] = el.scrollHeight
+            break
+          }
+        }
+      }
+      setPanelHeights(prev => {
+        const keys = Object.keys(heights)
+        const prevKeys = Object.keys(prev)
+        if (keys.length !== prevKeys.length) return heights
+        return keys.some(k => heights[k] !== prev[k]) ? heights : prev
+      })
     })
-  })
+
+    for (const [, el] of panels) {
+      observer.observe(el)
+    }
+
+    return () => observer.disconnect()
+  }, [regions])
 
   // NOTE: Notify onPanelCollapse for every ID whose open state changed — handles single-mode
   // panel swap (close A, open B) that the previous inline approach missed

@@ -23,11 +23,15 @@ export function CardLayoutRenderer({ regions, cardGridConfig }: CardLayoutProps)
     <div className="grid" style={gridStyle}>
       {regions.map(region => (
         <Card key={region.id}>
-          {region.title && CardHeader && CardTitle && (
+          {region.title && CardHeader && CardTitle ? (
             <CardHeader>
               <CardTitle>{region.title}</CardTitle>
             </CardHeader>
-          )}
+          ) : region.title ? (
+            <CardContent>
+              <h3 className="text-lg font-semibold leading-none tracking-tight">{region.title}</h3>
+            </CardContent>
+          ) : null}
           <CardContent>
             <ContentRenderer content={region.content} />
           </CardContent>
@@ -54,17 +58,10 @@ function buildGridStyle(config: CardGridConfig | undefined): CSSProperties {
       const normalizedColumns = Math.max(1, Math.floor(Number(config.columns) || 0))
       style.gridTemplateColumns = `repeat(${normalizedColumns}, 1fr)`
     } else {
-      // NOTE: Responsive columns use mobile-first — smallest breakpoint is the default
-      // NOTE: Consider all responsive breakpoints before falling back to 1
-      // NOTE: This fallback renderer uses a single static gridTemplateColumns — responsive
-      // behavior across breakpoints is the responsibility of injected Card primitives.
-      // Inline styles cannot express media queries; full responsive support requires either
-      // CSS-in-JS, injected CSS classes, or consumer-provided Card components.
-      const resolved =
-        config.columns.sm ?? config.columns.md ?? config.columns.lg ?? config.columns.xl ?? 1
-      // NOTE: Clamp to at least 1 column to prevent zero/negative values hiding content
-      const defaultCols = Math.max(1, Math.floor(Number(resolved) || 0))
-      style.gridTemplateColumns = `repeat(${defaultCols}, 1fr)`
+      // NOTE: Responsive column objects are unsupported in inline styles — media queries
+      // require CSS-in-JS, injected CSS classes, or consumer-provided Card components.
+      // Falling back to 1 column; full responsive support is the consumer's responsibility.
+      style.gridTemplateColumns = 'repeat(1, 1fr)'
     }
   }
 

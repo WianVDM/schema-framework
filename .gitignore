@@ -44,9 +44,8 @@ docs/**/*.tmp
 # Dev tooling — linter/formatter config (not required to build/run the project)
 biome.json
 
-# Dev utility scripts — AI context gen, compliance checks, CI helpers
+# Dev utility scripts — targeted patterns for AI/tooling internals
 scripts/
 
 # Auto-generated runtime files
 **/.tanstack/
-*.gen.ts

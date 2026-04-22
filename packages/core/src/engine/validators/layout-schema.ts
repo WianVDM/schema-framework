@@ -28,13 +28,23 @@ export const layoutSchemaValidator = z
     type: z.enum(['border', 'accordion', 'card', 'hbox', 'vbox']),
     regions: z.array(layoutRegionValidator).min(1, 'LayoutSchema must have at least one region'),
     accordionConfig: z
-      .object({
-        mode: z.enum(['single', 'multiple']).optional(),
-        animation: z.enum(['slide', 'fade', 'none']).optional(),
-        defaultOpen: z.array(z.string()).optional(),
-        collapsible: z.boolean().optional(),
-      })
-      .strict()
+      .union([
+        z
+          .object({
+            mode: z.enum(['single']),
+            animation: z.enum(['slide', 'fade', 'none']).optional(),
+            defaultOpen: z.string().optional(),
+            collapsible: z.boolean().optional(),
+          })
+          .strict(),
+        z
+          .object({
+            mode: z.literal('multiple'),
+            animation: z.enum(['slide', 'fade', 'none']).optional(),
+            defaultOpen: z.array(z.string()).optional(),
+          })
+          .strict(),
+      ])
       .optional(),
     cardGridConfig: z
       .object({

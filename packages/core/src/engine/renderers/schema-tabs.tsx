@@ -16,15 +16,18 @@ import { ContentRenderer } from './content-renderer'
 /** Renders tabbed content from TabSchema with eager/lazy mount modes */
 export function SchemaTabs({ schema, onTabChange }: TabsRendererProps): ReactNode {
   const { Tabs, TabsList, TabsTrigger, TabsContent } = useLayoutPrimitives()
-  const safeTabs = schema.tabs ?? []
+  const safeTabs = useMemo(() => schema.tabs ?? [], [schema.tabs])
 
   // NOTE: Normalize mountMode — treat lazy:true as mountMode:'lazy' for backward compatibility
-  // biome-ignore lint/suspicious/noConsole: assertion validates mountMode/lazy normalization contract
-  console.assert(
-    !(schema.mountMode !== undefined && schema.lazy !== undefined),
-    'TabSchema: both mountMode and lazy are set — mountMode takes precedence. Prefer mountMode only.',
-  )
   const effectiveMountMode = schema.mountMode ?? (schema.lazy ? 'lazy' : 'eager')
+
+  useEffect(() => {
+    // biome-ignore lint/suspicious/noConsole: assertion validates mountMode/lazy normalization contract
+    console.assert(
+      !(schema.mountMode !== undefined && schema.lazy !== undefined),
+      'TabSchema: both mountMode and lazy are set — mountMode takes precedence. Prefer mountMode only.',
+    )
+  }, [schema.mountMode, schema.lazy])
 
   const [activeTab, setActiveTab] = useState(() => {
     if (schema.defaultTab && safeTabs.some(t => t.id === schema.defaultTab)) {
@@ -114,6 +117,19 @@ function useLazyTabContent(
       })
     }
   }, [activeTab, mountMode])
+
+  // NOTE: Prune stale IDs — remove tabs no longer in the schema, reset to eager when switching
+  useEffect(() => {
+    if (mountMode === 'eager') {
+      setLazyMounted(eagerSet)
+    } else {
+      const currentIds = new Set(tabs.map(t => t.id))
+      setLazyMounted(prev => {
+        const pruned = new Set([...prev].filter(id => currentIds.has(id)))
+        return pruned.size === prev.size ? prev : pruned
+      })
+    }
+  }, [tabs, mountMode, eagerSet])
 
   if (mountMode === 'eager') return eagerSet
   return lazyMounted
