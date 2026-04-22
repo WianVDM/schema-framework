@@ -21,6 +21,7 @@ export function ContentRenderer({ content }: ContentRendererProps): ReactNode {
       return <SchemaForm schema={content.schema} onSubmit={noopSubmit} />
 
     case 'grid':
+      // compliance-ignore no-inline-array-prop: NOTE: Empty default data is intentional — grid has no data in this context
       return <SchemaGrid schema={content.schema} data={[]} />
 
     case 'wizard':
