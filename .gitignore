@@ -44,8 +44,13 @@ docs/**/*.tmp
 # Dev tooling — linter/formatter config (not required to build/run the project)
 biome.json
 
-# Dev utility scripts — targeted patterns for AI/tooling internals
-scripts/
+# Dev utility scripts — AI/tooling internals (not required to build/run)
+scripts/auto-changeset/
+scripts/ci-check/
+scripts/compliance-check/
+scripts/generate-ai-context/
+scripts/shared/
+# NOTE: scripts/version-packages.mjs and sync-version-status.mjs are tracked — used by release.yml
 
 # Auto-generated runtime files
 **/.tanstack/
