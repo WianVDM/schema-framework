@@ -28,7 +28,11 @@ export function AccordionLayoutRenderer({
 }: AccordionLayoutProps): ReactNode {
   const { Accordion, AccordionItem, AccordionTrigger, AccordionContent } = useLayoutPrimitives()
   const mode = accordionConfig?.mode ?? 'single'
-  const collapsible = isSingleConfig(accordionConfig) ? (accordionConfig.collapsible ?? true) : true
+  const collapsible = accordionConfig
+    ? isSingleConfig(accordionConfig)
+      ? (accordionConfig.collapsible ?? true)
+      : true
+    : true
   const defaultOpen = normalizeDefaultOpen(accordionConfig)
   const animation = accordionConfig?.animation ?? 'slide'
 
@@ -119,7 +123,7 @@ export function AccordionLayoutRenderer({
 
 /** Type guard: only SingleAccordionConfig supports collapsible and string defaultOpen */
 function isSingleConfig(config?: AccordionConfig): config is SingleAccordionConfig {
-  return config?.mode !== 'multiple'
+  return config != null && config.mode !== 'multiple'
 }
 
 /** Normalizes defaultOpen to a flat string array regardless of config variant */
