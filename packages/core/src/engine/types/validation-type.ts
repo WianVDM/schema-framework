@@ -1,9 +1,9 @@
 export type ValidationType =
-  | 'required'
-  | 'min'
-  | 'max'
-  | 'minLength'
-  | 'maxLength'
-  | 'pattern'
-  | 'email'
-  | 'custom'
+	| "required"
+	| "min"
+	| "max"
+	| "minLength"
+	| "maxLength"
+	| "pattern"
+	| "email"
+	| "custom";

@@ -41,8 +41,6 @@ docs/**/*.tmp
 .vscode/
 .idea/
 
-# Dev tooling — linter/formatter config (not required to build/run the project)
-biome.json
 
 # Dev utility scripts — AI/tooling internals (not required to build/run)
 scripts/auto-changeset/

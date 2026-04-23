@@ -1,28 +1,30 @@
-import type { ReactNode } from 'react'
-import { createContext, useContext } from 'react'
+import type { ReactNode } from "react";
+import { createContext, useContext } from "react";
 // compliance-ignore no-cross-engine-import: NOTE: Type-only import — context needs direct type reference to avoid circular barrel dependency
-import type { CustomComponentRegistry } from '../types/custom-component-registry'
+import type { CustomComponentRegistry } from "../types/custom-component-registry";
 
 /** Silent empty fallback — custom components are always optional */
-const customComponentDefaultValue: CustomComponentRegistry = {}
+const customComponentDefaultValue: CustomComponentRegistry = {};
 
 export const CustomComponentContext = createContext<CustomComponentRegistry>(
-  customComponentDefaultValue,
-)
-CustomComponentContext.displayName = 'CustomComponentContext'
+	customComponentDefaultValue,
+);
+CustomComponentContext.displayName = "CustomComponentContext";
 
 export function CustomComponentProvider({
-  components,
-  children,
+	components,
+	children,
 }: {
-  components: CustomComponentRegistry
-  children: ReactNode
+	components: CustomComponentRegistry;
+	children: ReactNode;
 }) {
-  return (
-    <CustomComponentContext.Provider value={components}>{children}</CustomComponentContext.Provider>
-  )
+	return (
+		<CustomComponentContext.Provider value={components}>
+			{children}
+		</CustomComponentContext.Provider>
+	);
 }
 
 export function useCustomComponents(): CustomComponentRegistry {
-  return useContext(CustomComponentContext)
+	return useContext(CustomComponentContext);
 }

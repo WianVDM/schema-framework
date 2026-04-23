@@ -1,12 +1,12 @@
 export type FieldType =
-  | 'text'
-  | 'email'
-  | 'number'
-  | 'select'
-  | 'textarea'
-  | 'checkbox'
-  | 'date'
-  | 'password'
-  | 'file'
-  | 'address'
-  | 'multiselect'
+	| "text"
+	| "email"
+	| "number"
+	| "select"
+	| "textarea"
+	| "checkbox"
+	| "date"
+	| "password"
+	| "file"
+	| "address"
+	| "multiselect";

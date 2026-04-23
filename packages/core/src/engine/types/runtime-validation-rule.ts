@@ -1,5 +1,5 @@
-import type { ValidationRule } from './validation-rule'
+import type { ValidationRule } from "./validation-rule";
 
 export interface RuntimeValidationRule extends ValidationRule {
-  readonly validate?: (value: unknown) => string | null
+	readonly validate?: (value: unknown) => string | null;
 }
