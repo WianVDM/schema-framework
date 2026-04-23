@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { createContext, useContext } from 'react'
+// compliance-ignore no-cross-engine-import: NOTE: Type-only import — context needs direct type reference to avoid circular barrel dependency
 import type { CustomComponentRegistry } from '../types/custom-component-registry'
 
 /** Silent empty fallback — custom components are always optional */

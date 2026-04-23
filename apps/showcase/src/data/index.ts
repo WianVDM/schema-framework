@@ -1,5 +1,11 @@
 export { borderLayoutSchema } from './border-layout-schema'
 export { contactFormSchema } from './contact-form-schema'
+export {
+  accordionLayoutSchema,
+  cardLayoutSchema,
+  hboxLayoutSchema,
+  vboxLayoutSchema,
+} from './layout-demos-schema'
 export { mockOrders } from './mock-orders'
 export { mockUsers } from './mock-users'
 export { mockVirtualData } from './mock-virtual-data'

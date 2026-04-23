@@ -130,6 +130,34 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
           >
             Border Layout
           </Link>
+          <Link
+            to="/demo-accordion-layout"
+            activeProps={{ className: 'font-bold underline' }}
+            className="text-sm hover:underline"
+          >
+            Accordion
+          </Link>
+          <Link
+            to="/demo-card-layout"
+            activeProps={{ className: 'font-bold underline' }}
+            className="text-sm hover:underline"
+          >
+            Card Grid
+          </Link>
+          <Link
+            to="/demo-hbox-layout"
+            activeProps={{ className: 'font-bold underline' }}
+            className="text-sm hover:underline"
+          >
+            HBox
+          </Link>
+          <Link
+            to="/demo-vbox-layout"
+            activeProps={{ className: 'font-bold underline' }}
+            className="text-sm hover:underline"
+          >
+            VBox
+          </Link>
         </nav>
         <main className="p-6">{children}</main>
         <Scripts />

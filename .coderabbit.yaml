@@ -11,3 +11,50 @@ reviews:
   poem: false
   review_status: true
   collapse_walkthrough: true
+  instructions: |
+    ## Architectural Constraints
+
+    ### Layering Rules
+    - Layer 1 (primitives): `packages/core/src/primitives/**` — NO imports from engine. Primitives have zero schema knowledge.
+    - Layer 2 (engine): `packages/core/src/engine/**` — imports primitives via barrel re-exports only (`@/primitives`, not direct files).
+    - Cross-engine subdomain imports MUST go through barrel files (`../validators`), not specific files (`../validators/some-file`).
+
+    ### Naming Conventions
+    - Files and folders: `kebab-case` matching the primary export name.
+    - Variables/functions: `camelCase` | Classes/types: `PascalCase` | Constants: `UPPER_SNAKE_CASE`.
+    - Barrel files (`index.ts`) must ONLY contain re-exports — no logic, no side-effect imports.
+
+    ### TypeScript Strictness
+    - No `any` type — use `unknown`, union types, or generic constraints.
+    - No `as unknown as X` double assertions — fix the interface instead.
+    - No non-null assertions (`!.`) — use optional chaining or type guards.
+    - Use `as Type` syntax in TSX files (angle bracket assertions conflict with JSX).
+
+    ### React Patterns
+    - No `console.assert` in components — use error boundaries or invariant checks.
+    - No inline array/object literals in JSX props — extract to constants or `useMemo`.
+    - No inline arrow functions in event handlers — extract to named handlers or `useCallback`.
+    - No string refs — use `useRef()` or callback refs.
+
+    ### Defensive Coding
+    - No empty catch blocks — log, rethrow, or handle errors explicitly.
+    - Use explicit `=== null` / `=== undefined` checks instead of falsey guards (`!value`).
+    - No deep relative imports (`../../`) in `packages/core/src/` — use path aliases.
+
+    ### Comment Standards
+    - All comments must use prefixes: `TODO:`, `NOTE:`, `FIXME:`, `WARNING:`, `HACK:`.
+    - No bare comments. No commented-out code (version control preserves history).
+
+    ### Accessibility
+    - Interactive elements must have accessible labels (`aria-label`, `aria-labelledby`).
+    - Form inputs must have associated labels.
+    - Color must not be the sole indicator of state — use icons, text, or patterns as secondary indicators.
+
+    ### Immutability
+    - This project uses TanStack Start — do NOT use Next.js App Router conventions.
+    - This project builds its own UI primitives — do NOT install component libraries via npm.
+  path_filters:
+    - "packages/core/src/**"
+    - "apps/showcase/src/**"
+    - ".clinerules/**"
+    - "scripts/**"

@@ -1,5 +1,12 @@
+export type {
+  AccordionConfig,
+  MultipleAccordionConfig,
+  SingleAccordionConfig,
+} from './accordion-config'
 export type { BorderPosition } from './border-position'
+export type { BoxConfig } from './box-config'
 export type { Brand, DataKey, FieldId } from './branded'
+export type { CardGridConfig, CardGridResponsiveColumns } from './card-grid-config'
 export type { CellValueRenderer } from './cell-value-renderer'
 export type { ColumnFilterConfig } from './column-filter-config'
 export type { ConditionOperator } from './condition-operator'

@@ -4,6 +4,7 @@ import type { ContentRendererProps } from '../types/content-renderer-props'
 import type { FormSubmitHandler } from '../types/form-submit-handler'
 import { SchemaForm } from './schema-form'
 import { SchemaGrid } from './schema-grid'
+import { SchemaTabs } from './schema-tabs'
 import { SchemaWizard } from './schema-wizard'
 
 /** NOTE: Lazy-loaded to avoid circular dependency: content-renderer ↔ schema-layout */
@@ -20,14 +21,14 @@ export function ContentRenderer({ content }: ContentRendererProps): ReactNode {
       return <SchemaForm schema={content.schema} onSubmit={noopSubmit} />
 
     case 'grid':
+      // compliance-ignore no-inline-array-prop: NOTE: Empty default data is intentional — grid has no data in this context
       return <SchemaGrid schema={content.schema} data={[]} />
 
     case 'wizard':
       return <SchemaWizard schema={content.schema} onSubmit={noopSubmit} />
 
     case 'tabs':
-      // NOTE: SchemaTabs deferred to Slice 4 — placeholder render
-      return <TabsPlaceholder />
+      return <SchemaTabs schema={content.schema} />
 
     case 'layout':
       return (
@@ -54,15 +55,6 @@ export function ContentRenderer({ content }: ContentRendererProps): ReactNode {
 /** No-op submit handler for forms/wizards rendered without explicit callbacks */
 const noopSubmit: FormSubmitHandler = async () => {
   // NOTE: Default no-op — layout regions may not always provide submit handlers
-}
-
-/** Placeholder for tabs content (SchemaTabs deferred to v0.3.4) */
-function TabsPlaceholder(): ReactNode {
-  return (
-    <div className="p-4 border border-dashed rounded-md text-muted-foreground text-sm">
-      Tabs component — coming in Slice 4
-    </div>
-  )
 }
 
 /** Loading fallback for lazy-loaded layout renderer */

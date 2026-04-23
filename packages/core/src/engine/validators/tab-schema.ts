@@ -23,6 +23,7 @@ export const tabSchemaValidator = z
         message: 'Tab IDs must be unique within a TabSchema',
       }),
     defaultTab: z.string().optional(),
+    mountMode: z.enum(['eager', 'lazy']).optional(),
     lazy: z.boolean().optional(),
     className: z.string().optional(),
     i18n: i18nConfigSchema.optional(),
@@ -34,6 +35,15 @@ export const tabSchemaValidator = z
         code: 'custom',
         path: ['defaultTab'],
         message: `defaultTab "${schema.defaultTab}" does not match any tab ID`,
+      })
+    }
+
+    // NOTE: lazy is deprecated — emit error when both mountMode and lazy are present
+    if (schema.mountMode !== undefined && schema.lazy !== undefined) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['lazy'],
+        message: 'lazy is deprecated and cannot be used with mountMode — use mountMode instead',
       })
     }
   })

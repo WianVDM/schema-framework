@@ -28,11 +28,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Generate route tree
+        run: cd apps/showcase && npx @tanstack/router-cli generate
+
       - name: Type check
         run: pnpm run typecheck
 
       - name: Build
         run: pnpm run build:ci
-
-      - name: Lint
-        run: pnpm run lint

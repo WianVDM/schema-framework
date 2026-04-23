@@ -5,6 +5,9 @@ import type { BorderPosition } from '../types/border-position'
 import type { LayoutRegion } from '../types/layout-region'
 import type { LayoutRendererProps } from '../types/layout-renderer-props'
 import { BORDER_DEFAULT_SIZES } from '../validators/border-layout'
+import { AccordionLayoutRenderer } from './accordion-layout'
+import { BoxLayoutRenderer } from './box-layout'
+import { CardLayoutRenderer } from './card-layout'
 import { SchemaPanel } from './schema-panel'
 
 /** Main layout renderer — dispatches to layout-type-specific renderers */
@@ -23,13 +26,33 @@ export function SchemaLayout({
         />
       )
     case 'accordion':
-      return <NotImplementedPlaceholder layoutType="accordion" />
+      return (
+        <AccordionLayoutRenderer
+          regions={schema.regions}
+          accordionConfig={schema.accordionConfig}
+          onPanelCollapse={_onPanelCollapse}
+        />
+      )
     case 'card':
-      return <NotImplementedPlaceholder layoutType="card" />
+      return <CardLayoutRenderer regions={schema.regions} cardGridConfig={schema.cardGridConfig} />
     case 'hbox':
-      return <NotImplementedPlaceholder layoutType="hbox" />
+      return (
+        <BoxLayoutRenderer
+          direction="horizontal"
+          regions={schema.regions}
+          boxConfig={schema.boxConfig}
+          onPanelCollapse={_onPanelCollapse}
+        />
+      )
     case 'vbox':
-      return <NotImplementedPlaceholder layoutType="vbox" />
+      return (
+        <BoxLayoutRenderer
+          direction="vertical"
+          regions={schema.regions}
+          boxConfig={schema.boxConfig}
+          onPanelCollapse={_onPanelCollapse}
+        />
+      )
     default:
       return <ErrorPlaceholder message={`Unknown layout type: ${schema.type}`} />
   }
@@ -297,15 +320,6 @@ function FallbackBorderLayout({
           <SchemaPanel region={categorized.south} onCollapse={onPanelCollapse} />
         </div>
       )}
-    </div>
-  )
-}
-
-/** Placeholder for not-yet-implemented layout types */
-function NotImplementedPlaceholder({ layoutType }: { readonly layoutType: string }): ReactNode {
-  return (
-    <div className="p-4 border border-dashed rounded-md text-muted-foreground text-sm">
-      {layoutType} layout — not yet implemented
     </div>
   )
 }
