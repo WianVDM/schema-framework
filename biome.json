@@ -14,8 +14,7 @@
 			"!**/.tanstack",
 			"!**/.context.json",
 			"!**/routeTree.gen.ts",
-			"!.clinerules",
-			"!scripts"
+			"!.clinerules"
 		]
 	},
 	"vcs": {

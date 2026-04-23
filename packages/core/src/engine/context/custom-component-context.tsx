@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { createContext, useContext } from "react";
+import { createContext, useContext, useMemo } from "react";
 // compliance-ignore no-cross-engine-import: NOTE: Type-only import — context needs direct type reference to avoid circular barrel dependency
 import type { CustomComponentRegistry } from "../types/custom-component-registry";
 
@@ -18,8 +18,9 @@ export function CustomComponentProvider({
 	components: CustomComponentRegistry;
 	children: ReactNode;
 }) {
+	const value = useMemo(() => components, [components]);
 	return (
-		<CustomComponentContext.Provider value={components}>
+		<CustomComponentContext.Provider value={value}>
 			{children}
 		</CustomComponentContext.Provider>
 	);
