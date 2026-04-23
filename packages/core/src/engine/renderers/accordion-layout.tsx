@@ -37,11 +37,16 @@ export function AccordionLayoutRenderer({
 
   // NOTE: All hooks (useRef) must be called before any conditional returns
   const prevOpenRef = useRef<ReadonlySet<string>>(new Set(defaultOpen))
+  // NOTE: Tracks previous defaultOpen to distinguish external schema changes from user-driven toggles
+  const prevDefaultRef = useRef<readonly string[]>(defaultOpen)
 
-  // NOTE: Sync prevOpenRef when defaultOpen content changes externally (e.g. schema update)
+  // NOTE: Sync prevOpenRef when defaultOpen content changes externally (e.g. schema update).
+  // Uses prevDefaultRef to detect genuine defaultOpen changes — prevents overwriting user-driven toggles
+  // caused by unrelated parent re-renders passing the same defaultOpen value.
   useEffect(() => {
-    if (!areStringArraysEqual(defaultOpen, Array.from(prevOpenRef.current))) {
+    if (!areStringArraysEqual(defaultOpen, prevDefaultRef.current)) {
       prevOpenRef.current = new Set(defaultOpen)
+      prevDefaultRef.current = defaultOpen
     }
   }, [defaultOpen])
 
@@ -74,17 +79,17 @@ export function AccordionLayoutRenderer({
 
     const prev = prevOpenRef.current
 
-    // NOTE: Notify newly opened panels
+    // NOTE: Notify newly opened panels (collapsed=false means expanded)
     for (const id of newOpenIds) {
       if (!prev.has(id)) {
-        onPanelCollapse(id, true)
+        onPanelCollapse(id, false)
       }
     }
 
-    // NOTE: Notify newly closed panels
+    // NOTE: Notify newly closed panels (collapsed=true means collapsed)
     for (const id of prev) {
       if (!newOpenIds.has(id)) {
-        onPanelCollapse(id, false)
+        onPanelCollapse(id, true)
       }
     }
 
@@ -93,6 +98,7 @@ export function AccordionLayoutRenderer({
 
   return (
     <Accordion
+      key={defaultOpen.join(',')}
       type={accordionType}
       {...(accordionType === 'single' ? { collapsible } : {})}
       defaultValue={effectiveDefaultValue}
@@ -221,15 +227,17 @@ function FallbackAccordionLayout({
 
     const prev = prevIdsRef.current
 
+    // NOTE: Newly opened panels (collapsed=false means expanded)
     for (const id of openIds) {
       if (!prev.has(id)) {
-        onPanelCollapse(id, true)
+        onPanelCollapse(id, false)
       }
     }
 
+    // NOTE: Newly closed panels (collapsed=true means collapsed)
     for (const id of prev) {
       if (!openIds.has(id)) {
-        onPanelCollapse(id, false)
+        onPanelCollapse(id, true)
       }
     }
 

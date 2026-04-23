@@ -13,6 +13,22 @@ import type { TabSchema } from '../types/tab-schema'
 import type { TabsRendererProps } from '../types/tabs-renderer-props'
 import { ContentRenderer } from './content-renderer'
 
+/** Resolves a selectable (non-disabled) tab ID from a preference list — skips disabled tabs */
+function resolveSelectableTabId(
+  tabs: readonly TabItem[],
+  ...preferences: readonly (string | undefined)[]
+): string {
+  for (const preferred of preferences) {
+    if (preferred) {
+      const match = tabs.find(t => t.id === preferred && !t.disabled)
+      if (match) return match.id
+    }
+  }
+  // NOTE: Fall back to first non-disabled tab
+  const firstEnabled = tabs.find(t => !t.disabled)
+  return firstEnabled?.id ?? ''
+}
+
 /** Renders tabbed content from TabSchema with eager/lazy mount modes */
 export function SchemaTabs({ schema, onTabChange }: TabsRendererProps): ReactNode {
   const { Tabs, TabsList, TabsTrigger, TabsContent } = useLayoutPrimitives()
@@ -29,22 +45,15 @@ export function SchemaTabs({ schema, onTabChange }: TabsRendererProps): ReactNod
     )
   }, [schema.mountMode, schema.lazy])
 
-  const [activeTab, setActiveTab] = useState(() => {
-    if (schema.defaultTab && safeTabs.some(t => t.id === schema.defaultTab)) {
-      return schema.defaultTab
-    }
-    return safeTabs[0]?.id ?? ''
-  })
+  const [activeTab, setActiveTab] = useState(() =>
+    resolveSelectableTabId(safeTabs, schema.defaultTab),
+  )
 
   // NOTE: Reset activeTab when safeTabs or defaultTab changes and current tab is no longer valid.
   // Also notifies external consumers via onTabChange so they don't desync from programmatic resets.
+  // Uses resolveSelectableTabId to skip disabled tabs in all resolution paths.
   useEffect(() => {
-    const nextTab =
-      activeTab && safeTabs.some(t => t.id === activeTab)
-        ? activeTab
-        : schema.defaultTab && safeTabs.some(t => t.id === schema.defaultTab)
-          ? schema.defaultTab
-          : (safeTabs[0]?.id ?? '')
+    const nextTab = resolveSelectableTabId(safeTabs, activeTab, schema.defaultTab)
 
     if (nextTab !== activeTab) {
       setActiveTab(nextTab)
