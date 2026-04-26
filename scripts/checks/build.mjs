@@ -1,18 +1,19 @@
 #!/usr/bin/env node
 
 // NOTE: Project build — runs pnpm build and reports results.
+// NOTE: Uses plain `pnpm build` — compliance runs as a separate pipeline step.
 
 import { execSync } from "node:child_process";
 import { truncateOutput } from "../shared/truncate-output.mjs";
 
 /**
- * NOTE: Runs pnpm build.
+ * NOTE: Runs pnpm build (turbo build only — no compliance).
  * @param {string} workspaceRoot - Project root directory
  * @returns {{ passed: boolean, output?: string }}
  */
 export function build(workspaceRoot) {
 	try {
-		const output = execSync("pnpm build:ci", {
+		const output = execSync("pnpm build", {
 			cwd: workspaceRoot,
 			encoding: "utf8",
 			stdio: "pipe",
