@@ -23,7 +23,7 @@ const layoutRegionValidator = z
 	})
 	.strict();
 
-const stackConfigValidator = z
+export const stackConfigValidator = z
 	.object({
 		defaultIndex: z.number().int().min(0).optional(),
 		showNavigation: z.boolean().optional(),

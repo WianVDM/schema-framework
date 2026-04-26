@@ -9,6 +9,7 @@ import {
 import type { LayoutRegion } from "../types/layout-region";
 import type { StackConfig } from "../types/stack-config";
 import { SchemaPanel } from "./schema-panel";
+import { useAnimationStyles } from "./use-animation-styles";
 
 interface StackLayoutProps {
 	readonly regions: readonly LayoutRegion[];
@@ -44,6 +45,12 @@ export function StackLayoutRenderer({
 		});
 	}, [regions.length]);
 
+	// NOTE: Synchronous clamped index prevents rendering with out-of-bounds region access
+	const clampedActiveIndex =
+		regions.length > 0
+			? Math.min(activeIndex, Math.max(0, regions.length - 1))
+			: 0;
+
 	// NOTE: Ref for container-scoped keyboard handling instead of document-level
 	const containerRef = useRef<HTMLDivElement>(null);
 
@@ -64,6 +71,9 @@ export function StackLayoutRenderer({
 		goTo(activeIndex - 1, "backward");
 	}, [activeIndex, goTo]);
 
+	// NOTE: Inject animation keyframes for stack transitions
+	useAnimationStyles();
+
 	// NOTE: Keyboard navigation scoped to container — only fires when container has focus
 	useEffect(() => {
 		if (!keyboardNavigation) return;
@@ -72,16 +82,23 @@ export function StackLayoutRenderer({
 		if (container === null) return;
 
 		function handleKeyDown(e: KeyboardEvent) {
-			// NOTE: Skip navigation when target is an interactive element (input, textarea, select, etc.)
+			// NOTE: Skip navigation when target is an interactive or focusable element
 			const target = e.target as HTMLElement;
 			const tagName = target.tagName;
+			const role = target.getAttribute("role");
+			const tabIndexAttr = target.getAttribute("tabindex");
 			const isInteractive =
 				tagName === "INPUT" ||
 				tagName === "TEXTAREA" ||
 				tagName === "SELECT" ||
+				tagName === "BUTTON" ||
+				tagName === "A" ||
 				target.isContentEditable ||
-				target.getAttribute("role") === "menu" ||
-				target.getAttribute("role") === "listbox";
+				role === "menu" ||
+				role === "listbox" ||
+				role === "button" ||
+				role === "tab" ||
+				(tabIndexAttr !== null && Number(tabIndexAttr) >= 0);
 
 			if (isInteractive) return;
 
@@ -119,20 +136,20 @@ export function StackLayoutRenderer({
 					<button
 						type="button"
 						onClick={goPrev}
-						disabled={activeIndex === 0}
+						disabled={clampedActiveIndex === 0}
 						className="px-3 py-1 text-sm border rounded hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
 					>
 						‹ Prev
 					</button>
 					<span className="text-sm text-muted-foreground">
-						{activeIndex + 1} / {regions.length}
-						{regions[activeIndex]?.title !== undefined &&
-							` — ${regions[activeIndex].title}`}
+						{clampedActiveIndex + 1} / {regions.length}
+						{regions[clampedActiveIndex]?.title !== undefined &&
+							` — ${regions[clampedActiveIndex].title}`}
 					</span>
 					<button
 						type="button"
 						onClick={goNext}
-						disabled={activeIndex === regions.length - 1}
+						disabled={clampedActiveIndex === regions.length - 1}
 						className="px-3 py-1 text-sm border rounded hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
 					>
 						Next ›
@@ -142,12 +159,12 @@ export function StackLayoutRenderer({
 			{keepMounted ? (
 				// NOTE: keepMounted renders all panels but hides inactive ones; key forces animation retrigger
 				<div
-					key={activeIndex}
+					key={clampedActiveIndex}
 					className="flex-1 min-h-0 relative"
 					style={panelStyle}
 				>
 					{regions.map((region, index) => {
-						const isActive = index === activeIndex;
+						const isActive = index === clampedActiveIndex;
 						return (
 							<div
 								key={region.id}
@@ -161,11 +178,11 @@ export function StackLayoutRenderer({
 			) : (
 				// NOTE: Force remount via key to retrigger CSS animation on panel change
 				<div
-					key={`panel-${activeIndex}`}
+					key={`panel-${clampedActiveIndex}`}
 					className="flex-1 min-h-0 relative"
 					style={panelStyle}
 				>
-					<SchemaPanel region={regions[activeIndex]} />
+					<SchemaPanel region={regions[clampedActiveIndex]} />
 				</div>
 			)}
 		</div>

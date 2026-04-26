@@ -15,15 +15,15 @@ import {
 	getFileDiff,
 } from "../auto-changeset/git-operations.mjs";
 import { resolveBumpLevel } from "../auto-changeset/version-bump.mjs";
-import { ROOT } from "../shared/constants.mjs";
 import { readPackageJson } from "../shared/file-helpers.mjs";
 
 /**
  * NOTE: Reads the package name from packages/core/package.json.
  * Falls back to 'schema-framework' if unreadable.
+ * @param {string} workspaceRoot - Project root directory
  */
-function getCorePackageName() {
-	const corePkgPath = join(ROOT, "packages", "core", "package.json");
+function getCorePackageName(workspaceRoot) {
+	const corePkgPath = join(workspaceRoot, "packages", "core", "package.json");
 	const pkg = readPackageJson(corePkgPath);
 	return pkg ? pkg.name : "schema-framework";
 }
@@ -32,7 +32,7 @@ function getCorePackageName() {
  * NOTE: Checks if a changeset is required and exists.
  * Auto-generates a descriptive changeset using full diff analysis when needed.
  * @param {string} workspaceRoot - Project root directory
- * @param {{ scope?: string, extensions?: string }} config - Scope and extension filters
+ * @param {{}} _config - Unused placeholder for backwards compatibility
  * @returns {{ passed: boolean, output?: string }}
  */
 export function checkChangeset(workspaceRoot, _config = {}) {
@@ -46,7 +46,7 @@ export function checkChangeset(workspaceRoot, _config = {}) {
 
 	if (!existsSync(changesetDir)) {
 		// NOTE: Attempt to create directory and generate changeset
-		return tryAutoGenerate(changesetDir, changedCoreFiles);
+		return tryAutoGenerate(changesetDir, changedCoreFiles, workspaceRoot);
 	}
 
 	const existingChangesets = readdirSync(changesetDir).filter(
@@ -57,7 +57,7 @@ export function checkChangeset(workspaceRoot, _config = {}) {
 		return { passed: true };
 	}
 
-	return tryAutoGenerate(changesetDir, changedCoreFiles);
+	return tryAutoGenerate(changesetDir, changedCoreFiles, workspaceRoot);
 }
 
 /**
@@ -65,15 +65,16 @@ export function checkChangeset(workspaceRoot, _config = {}) {
  * Produces diff-analyzed content with per-file bullet points, change verbs, and affected symbols.
  * @param {string} changesetDir - Path to .changeset/ directory
  * @param {string[]} coreFiles - List of changed core source files
+ * @param {string} workspaceRoot - Project root directory
  * @returns {{ passed: boolean, output?: string }}
  */
-function tryAutoGenerate(changesetDir, coreFiles) {
+function tryAutoGenerate(changesetDir, coreFiles, workspaceRoot) {
 	try {
 		if (!existsSync(changesetDir)) {
 			mkdirSync(changesetDir, { recursive: true });
 		}
 
-		const packageName = getCorePackageName();
+		const packageName = getCorePackageName(workspaceRoot);
 		const versionInfo = resolveBumpLevel();
 		const bump = versionInfo?.bump ?? "patch";
 
@@ -97,11 +98,11 @@ function tryAutoGenerate(changesetDir, coreFiles) {
 			output:
 				"Changeset required: failed to write auto-generated changeset. Run `pnpm changeset` to create one manually.",
 		};
-	} catch {
+	} catch (err) {
+		const detail = err instanceof Error ? ` (${err.message})` : "";
 		return {
 			passed: false,
-			output:
-				"Changeset required: packages/core/src/ files changed. Run `pnpm changeset` to create one.",
+			output: `Changeset required: packages/core/src/ files changed. Run \`pnpm changeset\` to create one.${detail}`,
 		};
 	}
 }

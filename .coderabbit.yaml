@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
 language: "en-US"
 early_access: false
 reviews:
@@ -12,49 +13,136 @@ reviews:
   review_status: true
   collapse_walkthrough: true
   instructions: |
-    ## Architectural Constraints
+    ## Project Philosophy
 
-    ### Layering Rules
-    - Layer 1 (primitives): `packages/core/src/primitives/**` — NO imports from engine. Primitives have zero schema knowledge.
-    - Layer 2 (engine): `packages/core/src/engine/**` — imports primitives via barrel re-exports only (`@/primitives`, not direct files).
-    - Cross-engine subdomain imports MUST go through barrel files (`../validators`), not specific files (`../validators/some-file`).
+    This is a Data-Driven UI Framework inspired by Ext.NET's configurability. The backend owns JSON Schemas (metadata defining grids and forms); the React frontend owns rendering. Screens change per customer, permission, or workflow without deploying frontend code.
 
-    ### Naming Conventions
-    - Files and folders: `kebab-case` matching the primary export name.
-    - Variables/functions: `camelCase` | Classes/types: `PascalCase` | Constants: `UPPER_SNAKE_CASE`.
-    - Barrel files (`index.ts`) must ONLY contain re-exports — no logic, no side-effect imports.
+    The framework uses a strict 3-Layer Architecture with one-way dependency chain:
+    - Layer 1 (primitives): Generic, schema-agnostic UI wrappers + PrimitiveComponents interface + PrimitivesContext
+    - Layer 2 (engine): Schema system — TypeScript types, Zod validators, SchemaForm/SchemaGrid renderers, FieldRenderer switchboard
+    - Layer 3 (composition/showcase): TanStack Start routes, server functions, Zustand stores, shadcn/ui wiring via PrimitivesProvider
 
-    ### TypeScript Strictness
-    - No `any` type — use `unknown`, union types, or generic constraints.
-    - No `as unknown as X` double assertions — fix the interface instead.
-    - No non-null assertions (`!.`) — use optional chaining or type guards.
-    - Use `as Type` syntax in TSX files (angle bracket assertions conflict with JSX).
+    Key patterns:
+    - Shadcn Dependency Rule: packages/core CANNOT import shadcn directly — uses PrimitivesContext injection
+    - Immutability: ReadonlyDeep<T> at compile-time, deepFreeze<T>() at runtime, branded types (FieldId, DataKey)
+    - State: TanStack Query (data + metadata), TanStack Form (dirty state), TanStack Table (grid state), Zustand (selection)
+    - Serialization: All server function return values must be JSON-serializable (no functions, no ReactNode)
 
-    ### React Patterns
-    - No `console.assert` in components — use error boundaries or invariant checks.
-    - No inline array/object literals in JSX props — extract to constants or `useMemo`.
-    - No inline arrow functions in event handlers — extract to named handlers or `useCallback`.
-    - No string refs — use `useRef()` or callback refs.
+  path_instructions:
+    - path: "packages/core/src/primitives/**"
+      instructions: |
+        LAYER 1 — Primitives (The Raw Materials).
 
-    ### Defensive Coding
-    - No empty catch blocks — log, rethrow, or handle errors explicitly.
-    - Use explicit `=== null` / `=== undefined` checks instead of falsey guards (`!value`).
-    - No deep relative imports (`../../`) in `packages/core/src/` — use path aliases.
+        These are generic, highly reusable component wrappers. They have ZERO knowledge of JSON schemas.
 
-    ### Comment Standards
-    - All comments must use prefixes: `TODO:`, `NOTE:`, `FIXME:`, `WARNING:`, `HACK:`.
-    - No bare comments. No commented-out code (version control preserves history).
+        Rules:
+        - NO imports from engine/ — primitives cannot depend on schema system
+        - NO imports from Layer 2 or Layer 3
+        - Accept standard React props only
+        - Exports: PrimitiveComponents interface, PrimitivesContext, bespoke wrappers (StatusBadge, AddressInput, FileUpload)
+        - Files must work standalone without any framework context
+        - One primary export per file
+        - Filenames: kebab-case matching primary export name
+        - Barrel files (index.ts) contain ONLY re-exports — no logic, no side-effect imports
 
-    ### Accessibility
-    - Interactive elements must have accessible labels (`aria-label`, `aria-labelledby`).
-    - Form inputs must have associated labels.
-    - Color must not be the sole indicator of state — use icons, text, or patterns as secondary indicators.
+    - path: "packages/core/src/engine/**"
+      instructions: |
+        LAYER 2 — Engine (The Schema Brain).
 
-    ### Immutability
-    - This project uses TanStack Start — do NOT use Next.js App Router conventions.
-    - This project builds its own UI primitives — do NOT install component libraries via npm.
+        Contains the full schema system: TypeScript types, Zod validators, PrimitivesContext provider, and renderers.
+
+        Rules:
+        - Import primitives via barrel re-exports ONLY (@/primitives or ../primitives, never direct primitive files)
+        - Cross-engine subdomain imports MUST go through barrel files (../validators, not ../validators/some-file)
+        - NO imports from Layer 3 (apps/showcase)
+        - FieldRenderer reads schema type and renders injected component from PrimitivesContext
+        - SchemaGrid uses @tanstack/react-table under the hood
+        - SchemaForm uses @tanstack/react-form for field-level validation and conditional visibility
+        - GridColumnSchema intentionally has NO render property — custom cell rendering is client-side
+        - FieldSchema.defaultValue is string | number | boolean | null (not unknown) for JSON serialization
+        - One primary export per file, kebab-case filenames
+        - Barrel files contain ONLY re-exports
+
+        TypeScript strictness:
+        - No any — use unknown, union types, or generic constraints
+        - No as unknown as X double assertions — fix the interface
+        - No non-null assertions (!.) — use optional chaining or type guards
+        - Use as Type syntax in TSX files (angle bracket assertions conflict with JSX)
+
+        React patterns:
+        - No console.assert in components — use error boundaries
+        - No inline array/object literals in JSX props — extract to constants or useMemo
+        - No inline arrow functions in event handlers — extract to named handlers or useCallback
+        - No string refs — use useRef() or callback refs
+        - Always provide key props when rendering lists with .map()
+
+    - path: "apps/showcase/src/**"
+      instructions: |
+        LAYER 3 — Composition (The Showcase App).
+
+        TanStack Start file-based routes, mock server functions, Zustand stores, and shadcn/ui wiring.
+
+        Rules:
+        - Uses TanStack Start — do NOT use Next.js App Router conventions
+        - Uses createServerFn for server functions
+        - TanStack Query (useQuery) for fetching schemas + business data
+        - Zustand stores for UI selection state — use generic createSelectionStore pattern, not feature-specific stores
+        - primitives-provider.tsx maps shadcn/ui components to PrimitiveComponents interface
+        - Mock data uses typed interfaces (UserRow, OrderRow) with readonly properties — not Record<string, unknown>[]
+        - Mock schemas are wrapped with deepFreeze<T>()
+        - Server function return values must be JSON-serializable (no functions, no ReactNode)
+
+        React patterns:
+        - No inline array/object literals in JSX props — extract to constants or useMemo
+        - No inline arrow functions in event handlers — extract to named handlers or useCallback
+        - No string refs — use useRef() or callback refs
+
+    - path: "packages/core/src/engine/types/**"
+      instructions: |
+        Schema type definitions — one export per file.
+        - All properties use readonly
+        - Arrays and nested objects use ReadonlyDeep<T>
+        - Branded types for FieldId and DataKey (prevent string interchange)
+        - String literal unions for ConditionOperator, ValidationType (no bare string)
+        - Must be JSON-serializable (no function types, no ReactNode)
+
+    - path: "packages/core/src/engine/validators/**"
+      instructions: |
+        Zod validators — one export per file.
+        - Validators mirror the type definitions exactly
+        - Use z.literal() and z.union() for string literal union types
+        - Cross-reference types from ../types via barrel import
+
   path_filters:
     - "packages/core/src/**"
     - "apps/showcase/src/**"
     - ".clinerules/**"
     - "scripts/**"
+
+knowledge_base:
+  code_guidelines:
+    enabled: true
+    filePatterns:
+      - "**/.clinerules/*"
+      - "ARCHITECTURE.md"
+      - "docs/decisions/**"
+      - "docs/VERSION_STATUS.md"
+      - "docs/context-map.md"
+  pull_requests:
+    scope: local
+  issues:
+    scope: local
+  web_search:
+    enabled: true
+  learnings:
+    scope: auto
+
+chat:
+  auto_reply: true
+  art: false
+
+tools:
+  biome:
+    enabled: true
+  github-checks:
+    enabled: true

@@ -23,7 +23,12 @@ export const dashboardSchemaValidator = z
 		className: z.string().optional(),
 		i18n: i18nConfigSchema.optional(),
 	})
-	.strict();
+	.strict()
+	.refine(
+		(schema) =>
+			new Set(schema.panels.map((p) => p.id)).size === schema.panels.length,
+		{ message: "DashboardSchema panels must have unique ids" },
+	);
 
 export function validateDashboardSchema(data: unknown): ValidationResult {
 	const result = dashboardSchemaValidator.safeParse(data);

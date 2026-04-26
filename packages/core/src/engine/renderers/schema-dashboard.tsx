@@ -174,21 +174,41 @@ function TabsPanelLayout({
 			const currentIndex = tabs.findIndex((p) => p.id === activeTabId);
 			let nextIndex = -1;
 
-			switch (e.key) {
-				case "ArrowRight":
-					nextIndex = (currentIndex + 1) % tabs.length;
-					break;
-				case "ArrowLeft":
-					nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
-					break;
-				case "Home":
-					nextIndex = 0;
-					break;
-				case "End":
-					nextIndex = tabs.length - 1;
-					break;
-				default:
-					return;
+			// NOTE: Guard against activeTabId not found — start from logical endpoint
+			if (currentIndex === -1) {
+				switch (e.key) {
+					case "ArrowRight":
+						nextIndex = 0;
+						break;
+					case "ArrowLeft":
+						nextIndex = tabs.length - 1;
+						break;
+					case "Home":
+						nextIndex = 0;
+						break;
+					case "End":
+						nextIndex = tabs.length - 1;
+						break;
+					default:
+						return;
+				}
+			} else {
+				switch (e.key) {
+					case "ArrowRight":
+						nextIndex = (currentIndex + 1) % tabs.length;
+						break;
+					case "ArrowLeft":
+						nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+						break;
+					case "Home":
+						nextIndex = 0;
+						break;
+					case "End":
+						nextIndex = tabs.length - 1;
+						break;
+					default:
+						return;
+				}
 			}
 
 			e.preventDefault();
@@ -278,6 +298,14 @@ function BorderPanelLayout({
 	const primaryPanel = schema.panels[0];
 
 	if (primaryPanel === undefined) return null;
+
+	// NOTE: Dev-only warning — border layout only renders the first panel, others are silently dropped
+	if (schema.panels.length > 1) {
+		console.warn(
+			"BorderPanelLayout only renders the first panel. Additional panels (%d) will be ignored.",
+			schema.panels.length - 1,
+		);
+	}
 
 	return (
 		<div className="flex-1 min-h-0">

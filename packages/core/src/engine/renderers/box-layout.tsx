@@ -25,6 +25,15 @@ export function BoxLayoutRenderer({
 	// NOTE: hbox/vbox are pure CSS flex layouts — no injected primitives needed
 	const containerStyle = buildFlexStyle(boxConfig);
 
+	// NOTE: Hide container until useStackBelow resolves to prevent layout shift on narrow clients
+	const isResolving =
+		isStacked === undefined &&
+		direction === "horizontal" &&
+		boxConfig?.stackBelow !== undefined;
+	if (isResolving) {
+		containerStyle.visibility = "hidden";
+	}
+
 	return (
 		<div
 			className={

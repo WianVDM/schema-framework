@@ -1,16 +1,8 @@
 import { z } from "zod";
+import { contentSchemaValidator } from "./content-schema";
+import { stackConfigValidator } from "./layout-schema";
 import type { ValidationResult } from "./shared-schemas";
 import { formatZodIssue } from "./shared-schemas";
-
-const stackConfigSchema = z
-	.object({
-		defaultIndex: z.number().int().min(0).optional(),
-		showNavigation: z.boolean().optional(),
-		keyboardNavigation: z.boolean().optional(),
-		animation: z.enum(["none", "fade", "slide"]).optional(),
-		keepMounted: z.boolean().optional(),
-	})
-	.strict();
 
 export const stackLayoutSchema = z
 	.object({
@@ -21,11 +13,11 @@ export const stackLayoutSchema = z
 					id: z.string().min(1, "Region must have a non-empty id"),
 					position: z.string().min(1, "Region must have a non-empty position"),
 					title: z.string().optional(),
-					content: z.any(),
+					content: contentSchemaValidator,
 				}),
 			)
 			.min(1, "Stack layout must have at least one region"),
-		stackConfig: stackConfigSchema.optional(),
+		stackConfig: stackConfigValidator.optional(),
 	})
 	.strict();
 
