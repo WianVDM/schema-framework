@@ -65,7 +65,9 @@ function discoverContextFiles(dir) {
 function readFileContent(path) {
 	try {
 		return readFileSync(path, "utf-8");
-	} catch {
+	} catch (err) {
+		// NOTE: Skip unreadable context files — search operates on best-effort basis
+		console.error(`WARN: Could not read ${path}: ${err.message}`);
 		return "";
 	}
 }

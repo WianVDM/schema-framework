@@ -13,16 +13,16 @@ export function bm25Search(query, documents, options = {}) {
 	const queryTerms = tokenize(query);
 	if (queryTerms.length === 0 || documents.length === 0) return [];
 
-	// NOTE: Compute average document length for BM25 normalization
-	const docLengths = documents.map((d) => tokenize(d.content).length);
+	// NOTE: Pre-compute tokenized documents, lengths, and term frequency maps
+	const tokenizedDocs = documents.map((d) => tokenize(d.content));
+	const docLengths = tokenizedDocs.map((t) => t.length);
 	const avgDocLen = docLengths.reduce((a, b) => a + b, 0) / docLengths.length;
+	const tfMaps = tokenizedDocs.map((terms) => buildTermFreqMap(terms));
 
-	// NOTE: Compute document frequency for each query term
+	// NOTE: Compute document frequency for each query term using pre-computed maps
 	const df = new Map();
 	for (const term of queryTerms) {
-		const count = documents.filter((d) =>
-			tokenize(d.content).includes(term),
-		).length;
+		const count = tfMaps.filter((tfMap) => tfMap.has(term)).length;
 		df.set(term, count);
 	}
 
@@ -30,14 +30,13 @@ export function bm25Search(query, documents, options = {}) {
 	const results = [];
 
 	for (let i = 0; i < documents.length; i++) {
-		const doc = documents[i];
-		const docTerms = tokenize(doc.content);
 		const docLen = docLengths[i];
+		const tfMap = tfMaps[i];
 		let score = 0;
 		const matchedTerms = [];
 
 		for (const term of queryTerms) {
-			const tf = termFrequency(docTerms, term);
+			const tf = tfMap.get(term) || 0;
 			if (tf === 0) continue;
 			matchedTerms.push(term);
 
@@ -70,6 +69,10 @@ function tokenize(text) {
 		.filter((t) => t.length > 1);
 }
 
-function termFrequency(docTerms, term) {
-	return docTerms.filter((t) => t === term).length;
+function buildTermFreqMap(terms) {
+	const map = new Map();
+	for (const t of terms) {
+		map.set(t, (map.get(t) || 0) + 1);
+	}
+	return map;
 }

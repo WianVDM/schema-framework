@@ -27,6 +27,10 @@
 		"search-context": "node scripts/search/retrieve.mjs"
 	},
 	"packageManager": "pnpm@10.33.0",
+	"engines": {
+		"node": ">=18.0.0",
+		"pnpm": ">=9.0.0"
+	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.12",
 		"@changesets/changelog-github": "^0.6.0",

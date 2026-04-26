@@ -18,6 +18,7 @@ export function CustomComponentProvider({
 	components: CustomComponentRegistry;
 	children: ReactNode;
 }) {
+	// NOTE: Consumers must memoize the `components` prop (useMemo/useRef) for this optimization to be effective.
 	const value = useMemo(() => components, [components]);
 	return (
 		<CustomComponentContext.Provider value={value}>
