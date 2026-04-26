@@ -3,6 +3,7 @@ import {
 	type ReactNode,
 	useCallback,
 	useEffect,
+	useRef,
 	useState,
 } from "react";
 import type { LayoutRegion } from "../types/layout-region";
@@ -25,10 +26,18 @@ export function StackLayoutRenderer({
 	const animation = stackConfig?.animation ?? "none";
 	const keepMounted = stackConfig?.keepMounted ?? false;
 
-	const [activeIndex, setActiveIndex] = useState(defaultIndex);
+	// NOTE: Clamp defaultIndex to valid range [0, regions.length - 1] — safe even for empty regions (yields 0)
+	const safeIndex =
+		regions.length > 0
+			? Math.max(0, Math.min(defaultIndex, regions.length - 1))
+			: 0;
+	const [activeIndex, setActiveIndex] = useState(safeIndex);
 	const [animDirection, setAnimDirection] = useState<"forward" | "backward">(
 		"forward",
 	);
+
+	// NOTE: Ref for container-scoped keyboard handling instead of document-level
+	const containerRef = useRef<HTMLDivElement>(null);
 
 	const goTo = useCallback(
 		(index: number, direction: "forward" | "backward") => {
@@ -47,11 +56,27 @@ export function StackLayoutRenderer({
 		goTo(activeIndex - 1, "backward");
 	}, [activeIndex, goTo]);
 
-	// NOTE: Keyboard navigation with arrow keys
+	// NOTE: Keyboard navigation scoped to container — only fires when container has focus
 	useEffect(() => {
 		if (!keyboardNavigation) return;
 
+		const container = containerRef.current;
+		if (container === null) return;
+
 		function handleKeyDown(e: KeyboardEvent) {
+			// NOTE: Skip navigation when target is an interactive element (input, textarea, select, etc.)
+			const target = e.target as HTMLElement;
+			const tagName = target.tagName;
+			const isInteractive =
+				tagName === "INPUT" ||
+				tagName === "TEXTAREA" ||
+				tagName === "SELECT" ||
+				target.isContentEditable ||
+				target.getAttribute("role") === "menu" ||
+				target.getAttribute("role") === "listbox";
+
+			if (isInteractive) return;
+
 			switch (e.key) {
 				case "ArrowRight":
 				case "ArrowDown":
@@ -66,14 +91,21 @@ export function StackLayoutRenderer({
 			}
 		}
 
-		document.addEventListener("keydown", handleKeyDown);
-		return () => document.removeEventListener("keydown", handleKeyDown);
+		container.addEventListener("keydown", handleKeyDown);
+		return () => container.removeEventListener("keydown", handleKeyDown);
 	}, [keyboardNavigation, goNext, goPrev]);
 
 	const panelStyle: CSSProperties = getAnimationStyle(animation, animDirection);
 
+	// NOTE: Early return for empty regions — placed after all hooks to respect Rules of Hooks
+	if (regions.length === 0) return null;
+
 	return (
-		<div className="flex flex-col h-full w-full">
+		<div
+			ref={containerRef}
+			className="flex flex-col h-full w-full"
+			tabIndex={keyboardNavigation ? -1 : undefined}
+		>
 			{showNavigation && (
 				<div className="flex items-center justify-between p-2 border-b">
 					<button
@@ -86,7 +118,8 @@ export function StackLayoutRenderer({
 					</button>
 					<span className="text-sm text-muted-foreground">
 						{activeIndex + 1} / {regions.length}
-						{regions[activeIndex]?.title && ` — ${regions[activeIndex].title}`}
+						{regions[activeIndex]?.title !== undefined &&
+							` — ${regions[activeIndex].title}`}
 					</span>
 					<button
 						type="button"
@@ -98,21 +131,31 @@ export function StackLayoutRenderer({
 					</button>
 				</div>
 			)}
-			<div className="flex-1 min-h-0 relative" style={panelStyle}>
-				{regions.map((region, index) => {
-					// NOTE: Only render active panel unless keepMounted is true
-					if (!keepMounted && index !== activeIndex) return null;
-
-					return (
-						<div
-							key={region.id}
-							className={index === activeIndex ? "h-full w-full" : "hidden"}
-						>
-							<SchemaPanel region={region} />
-						</div>
-					);
-				})}
-			</div>
+			{keepMounted ? (
+				// NOTE: keepMounted renders all panels but hides inactive ones
+				<div className="flex-1 min-h-0 relative" style={panelStyle}>
+					{regions.map((region, index) => {
+						const isActive = index === activeIndex;
+						return (
+							<div
+								key={region.id}
+								className={isActive ? "h-full w-full" : "hidden"}
+							>
+								<SchemaPanel region={region} />
+							</div>
+						);
+					})}
+				</div>
+			) : (
+				// NOTE: Force remount via key to retrigger CSS animation on panel change
+				<div
+					key={`panel-${activeIndex}`}
+					className="flex-1 min-h-0 relative"
+					style={panelStyle}
+				>
+					<SchemaPanel region={regions[activeIndex]} />
+				</div>
+			)}
 		</div>
 	);
 }

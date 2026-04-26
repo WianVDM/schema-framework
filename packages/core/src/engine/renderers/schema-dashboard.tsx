@@ -1,6 +1,16 @@
-import { type ReactNode, useCallback, useState } from "react";
+import {
+	type KeyboardEvent as ReactKeyboardEvent,
+	type MouseEvent as ReactMouseEvent,
+	type ReactNode,
+	useCallback,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
 import type { DashboardRendererProps } from "../types/dashboard-renderer-props";
 import type { DashboardSchema } from "../types/dashboard-schema";
+import type { PanelCollapseHandler } from "../types/panel-collapse-handler";
+import type { RegionResizeHandler } from "../types/region-resize-handler";
 import { SchemaLayout } from "./schema-layout";
 
 /** Renders a multi-panel dashboard from DashboardSchema */
@@ -15,6 +25,11 @@ export function SchemaDashboard({
 	const [activeTabId, setActiveTabId] = useState<string>(
 		schema.panels[0]?.id ?? "",
 	);
+
+	// NOTE: Reset activeTabId when schema.panels changes to avoid stale state
+	useEffect(() => {
+		setActiveTabId(schema.panels[0]?.id ?? "");
+	}, [schema.panels]);
 
 	const handleTabChange = useCallback(
 		(panelId: string) => {
@@ -64,8 +79,8 @@ function DashboardPanelLayout({
 	readonly panelLayout: "vertical" | "tabs" | "border";
 	readonly activeTabId: string;
 	readonly onTabChange: (panelId: string) => void;
-	readonly onRegionResize?: import("../types/region-resize-handler").RegionResizeHandler;
-	readonly onPanelCollapse?: import("../types/panel-collapse-handler").PanelCollapseHandler;
+	readonly onRegionResize?: RegionResizeHandler;
+	readonly onPanelCollapse?: PanelCollapseHandler;
 }): ReactNode {
 	switch (panelLayout) {
 		case "tabs":
@@ -104,8 +119,8 @@ function VerticalPanelLayout({
 	onPanelCollapse,
 }: {
 	readonly schema: DashboardSchema;
-	readonly onRegionResize?: import("../types/region-resize-handler").RegionResizeHandler;
-	readonly onPanelCollapse?: import("../types/panel-collapse-handler").PanelCollapseHandler;
+	readonly onRegionResize?: RegionResizeHandler;
+	readonly onPanelCollapse?: PanelCollapseHandler;
 }): ReactNode {
 	return (
 		<div className="flex flex-col gap-4 flex-1 min-h-0">
@@ -125,7 +140,7 @@ function VerticalPanelLayout({
 	);
 }
 
-/** Tabbed panel switching — shows one panel at a time */
+/** Tabbed panel switching — shows one panel at a time with full ARIA support */
 function TabsPanelLayout({
 	schema,
 	activeTabId,
@@ -136,37 +151,110 @@ function TabsPanelLayout({
 	readonly schema: DashboardSchema;
 	readonly activeTabId: string;
 	readonly onTabChange: (panelId: string) => void;
-	readonly onRegionResize?: import("../types/region-resize-handler").RegionResizeHandler;
-	readonly onPanelCollapse?: import("../types/panel-collapse-handler").PanelCollapseHandler;
+	readonly onRegionResize?: RegionResizeHandler;
+	readonly onPanelCollapse?: PanelCollapseHandler;
 }): ReactNode {
+	const tabListRef = useRef<HTMLDivElement>(null);
 	const activePanel = schema.panels.find((p) => p.id === activeTabId);
+
+	const handleTabClick = useCallback(
+		(e: ReactMouseEvent<HTMLButtonElement>) => {
+			onTabChange(e.currentTarget.dataset.panelId ?? "");
+		},
+		[onTabChange],
+	);
+
+	// NOTE: Keyboard navigation for tab list — arrows move focus and activate, Home/End jump
+	const handleTabKeyDown = useCallback(
+		(e: ReactKeyboardEvent<HTMLButtonElement>) => {
+			const tabs = schema.panels;
+			const currentIndex = tabs.findIndex((p) => p.id === activeTabId);
+			let nextIndex = -1;
+
+			switch (e.key) {
+				case "ArrowRight":
+					nextIndex = (currentIndex + 1) % tabs.length;
+					break;
+				case "ArrowLeft":
+					nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+					break;
+				case "Home":
+					nextIndex = 0;
+					break;
+				case "End":
+					nextIndex = tabs.length - 1;
+					break;
+				default:
+					return;
+			}
+
+			e.preventDefault();
+			const nextPanel = tabs[nextIndex];
+			if (nextPanel) {
+				onTabChange(nextPanel.id);
+				// NOTE: Focus the newly active tab button
+				const tabButtons =
+					tabListRef.current?.querySelectorAll<HTMLButtonElement>(
+						'[role="tab"]',
+					);
+				tabButtons?.[nextIndex]?.focus();
+			}
+		},
+		[schema.panels, activeTabId, onTabChange],
+	);
 
 	return (
 		<div className="flex flex-col flex-1 min-h-0">
-			<div className="flex border-b">
-				{schema.panels.map((panel) => (
-					<button
-						key={panel.id}
-						type="button"
-						onClick={() => onTabChange(panel.id)}
-						className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-							panel.id === activeTabId
-								? "border-primary text-primary"
-								: "border-transparent text-muted-foreground hover:text-foreground"
-						}`}
-					>
-						{panel.title ?? panel.id}
-					</button>
-				))}
+			{/* NOTE: Tab list with ARIA role and keyboard navigation */}
+			<div
+				ref={tabListRef}
+				role="tablist"
+				aria-label="Dashboard panels"
+				className="flex border-b"
+			>
+				{schema.panels.map((panel) => {
+					const isActive = panel.id === activeTabId;
+					const panelId = `panel-${panel.id}`;
+					const tabId = `tab-${panel.id}`;
+
+					return (
+						<button
+							key={panel.id}
+							id={tabId}
+							type="button"
+							role="tab"
+							aria-selected={isActive}
+							aria-controls={panelId}
+							tabIndex={isActive ? 0 : -1}
+							data-panel-id={panel.id}
+							onClick={handleTabClick}
+							onKeyDown={handleTabKeyDown}
+							className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+								isActive
+									? "border-primary text-primary"
+									: "border-transparent text-muted-foreground hover:text-foreground"
+							}`}
+						>
+							{panel.title ?? panel.id}
+						</button>
+					);
+				})}
 			</div>
 			<div className="flex-1 min-h-0">
-				{activePanel && (
-					<SchemaLayout
-						schema={activePanel.layout}
-						onRegionResize={onRegionResize}
-						onPanelCollapse={onPanelCollapse}
-					/>
-				)}
+				{activePanel ? (
+					<div
+						id={`panel-${activePanel.id}`}
+						role="tabpanel"
+						aria-labelledby={`tab-${activePanel.id}`}
+						className="h-full"
+					>
+						<SchemaLayout
+							schema={activePanel.layout}
+							onRegionResize={onRegionResize}
+							onPanelCollapse={onPanelCollapse}
+						/>
+					</div>
+				) : null}
 			</div>
 		</div>
 	);
@@ -179,14 +267,14 @@ function BorderPanelLayout({
 	onPanelCollapse,
 }: {
 	readonly schema: DashboardSchema;
-	readonly onRegionResize?: import("../types/region-resize-handler").RegionResizeHandler;
-	readonly onPanelCollapse?: import("../types/panel-collapse-handler").PanelCollapseHandler;
+	readonly onRegionResize?: RegionResizeHandler;
+	readonly onPanelCollapse?: PanelCollapseHandler;
 }): ReactNode {
 	// NOTE: For border panelLayout, the first panel's layout is rendered as the main dashboard layout.
 	// This is a simple approach — a more advanced version would combine all panel layouts into one border layout.
 	const primaryPanel = schema.panels[0];
 
-	if (!primaryPanel) return null;
+	if (primaryPanel === undefined) return null;
 
 	return (
 		<div className="flex-1 min-h-0">

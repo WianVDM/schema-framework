@@ -43,12 +43,14 @@ export function BoxLayoutRenderer({
 	);
 }
 
-/** Hook that returns true when viewport width is below the stackBelow threshold */
+/** Hook that returns true when viewport width is below the stackBelow threshold.
+ *  Returns `undefined` during SSR / first render to avoid hydration mismatch. */
 function useStackBelow(
 	direction: "horizontal" | "vertical",
 	stackBelow: number | undefined,
-): boolean {
-	const [isBelow, setIsBelow] = useState(false);
+): boolean | undefined {
+	// NOTE: Start as undefined so SSR and first client render agree — avoids hydration mismatch
+	const [isBelow, setIsBelow] = useState<boolean | undefined>(undefined);
 
 	useEffect(() => {
 		// NOTE: Only hbox (horizontal) can stack below threshold; vbox is already vertical
