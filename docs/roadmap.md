@@ -137,54 +137,72 @@ This is the largest single milestone. It may be broken into sub-versions (0.3.0,
 
 ---
 
+### v0.3.0 — Layout System — COMPLETE ✅
+
+**Retrospective:**
+- Stack layout was added as an additional layout type (border, accordion, card, hbox, vbox → + stack)
+- `StackConfig` type + `stackBelow` responsive option added to `BoxConfig`
+- `DashboardSchema` redesigned for multi-panel composition with tabbed navigation
+- Layout type count: 6 (border, accordion, card, hbox, vbox, stack)
+- `ContentSchema` grew from 5 to 6 variants (including `custom`)
+- All layout renderers work correctly — no `NotImplementedPlaceholder` remains
+
+---
+
 ### v0.4.0 — Advanced Data Components
 
 **Theme:** Tree panels, charts, and hybrid data views for complex business applications.
+
+**Architecture Decision:** See ADR-008 (`docs/decisions/008-data-components-architecture.md`).
 
 **Scope:**
 - **SchemaTree** — hierarchical tree panel with:
   - Lazy loading (async node expansion)
   - Node expand/collapse with icons
-  - Checkbox selection mode (single, multi)
-  - Drag-and-drop node reordering
-  - Context menu support
-  - Node rendering customization via schema
+  - Checkbox selection mode (single, multi, checkbox) with parent propagation
+  - Drag-and-drop node reordering (`@dnd-kit/core` — already a peer dependency)
+  - Context menu support (via `ContextMenuConfig` + injected primitives)
+  - Virtual scrolling for large trees
 - **SchemaChart** — chart component with schema-driven configuration:
   - Chart types: line, bar, pie, area, scatter, doughnut
   - Data series configuration from schema
   - Axis labels, legends, tooltips
-  - Responsive sizing
-  - Theme integration (matches app theme)
-  - Library: Recharts (React, composable, widely used)
-- **SchemaTreeGrid** — hybrid tree + grid:
+  - Responsive sizing + theme integration
+  - Library: **Recharts as peerDependency** (not bundled in core)
+- **SchemaTreeGrid** — hybrid tree + grid (Option C — separate schema, shared `GridColumnSchema`):
   - Expandable rows with child data
-  - Hierarchical column structure
+  - Reuses `GridColumnSchema` for column definitions
   - Lazy loading of child nodes
   - Tree lines and expand/collapse icons
-- **Real-time Data Patterns:**
-  - Polling configuration on `GridSchema` and `TreeSchema`
-  - Data refresh hooks (`onDataStale`, `onDataRefresh`)
-  - Optimistic update helpers
+  - Virtual scrolling with tree-expanded state
+- **Real-time Data Patterns (polling only):**
+  - Polling configuration (`RealtimeConfig`) on `GridSchema` and `TreeSchema`
+  - `useRealtime` hook (polling interval, stale detection, pause-on-hidden)
+  - Refresh strategies: replace, merge, append
+  - **Optimistic updates deferred** — application-layer concern
 
 **New Types:**
-- `TreeSchema` — tree configuration, root nodes, selection mode
-- `TreeNodeSchema` — node data, children, icon, expanded, selected
-- `ChartSchema` — chart type, series, axes, legend config
-- `ChartSeries` — data source, color, label, type
+- `TreeSchema` — tree configuration, selection mode, lazy loading, DnD, context menu
+- `TreeSelectionConfig`, `TreeLazyConfig`, `TreeDndConfig`, `TreeIcons` — tree sub-configs
+- `TreeNode` — node data, children, icon, expanded, selected, disabled, loading
+- `ContextMenuConfig`, `ContextMenuItem` — context menu configuration
+- `ChartSchema` — chart type, series, axes, legend, tooltip, grid
+- `ChartSeries`, `ChartDataPoint`, `ChartAxis`, `ChartLegend`, `ChartTooltip`, `ChartGrid`
 - `TreeGridSchema` — hybrid tree + grid configuration
-- `RealtimeConfig` — polling interval, refresh strategy
+- `TreeGridRow` — treegrid row with children and expand state
+- `RealtimeConfig`, `RefreshStrategy` — polling configuration
 
-**New Primitives:**
-- (None — tree, chart, tree-grid are all engine-level renderers consuming injected primitives)
+**New Primitives (injected slots):**
+- `ContextMenu`, `ContextMenuTrigger`, `ContextMenuContent`, `ContextMenuItem`, `ContextMenuSeparator`
 
 **New Dependencies:**
-- `recharts` — chart rendering library
-- Possibly `@dnd-kit/core` for tree node drag-and-drop (if not already added in v0.2.0)
+- `recharts` (>=2.12) — as `peerDependency` in core, `dependency` in showcase
 
 **New Renderers:**
-- `SchemaTree` — tree panel renderer
-- `SchemaChart` — chart renderer
+- `SchemaTree` — tree panel renderer (expand/collapse, selection, DnD)
+- `SchemaChart` — chart renderer (dispatches to chart-type sub-renderers)
 - `SchemaTreeGrid` — hybrid tree + grid renderer
+- `useRealtime` — polling hook
 
 **Exit Criteria:**
 - [ ] SchemaTree renders hierarchical data with expand/collapse

@@ -21,6 +21,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible } from "@/components/ui/collapsible";
+import {
+	ContextMenu,
+	ContextMenuContent,
+	ContextMenuItem,
+	ContextMenuSeparator,
+	ContextMenuTrigger,
+} from "@/components/ui/context-menu";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import {
 	DropdownMenu,
@@ -84,6 +91,11 @@ export const primitives: PrimitiveComponents = {
 	AddressInput,
 	DatePicker,
 	TagInput,
+	ContextMenu,
+	ContextMenuTrigger,
+	ContextMenuContent,
+	ContextMenuItem,
+	ContextMenuSeparator,
 };
 
 export const layoutPrimitives: LayoutPrimitiveComponents = {

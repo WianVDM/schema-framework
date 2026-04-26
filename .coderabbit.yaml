@@ -12,6 +12,9 @@ reviews:
   poem: false
   review_status: true
   collapse_walkthrough: true
+  tools:
+    biome:
+      enabled: true
   instructions: |
     ## Project Philosophy
 
@@ -159,9 +162,3 @@ knowledge_base:
 chat:
   auto_reply: true
   art: false
-
-tools:
-  biome:
-    enabled: true
-  github-checks:
-    enabled: true

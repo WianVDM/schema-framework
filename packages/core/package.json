@@ -22,8 +22,8 @@
 		"dist"
 	],
 	"scripts": {
-		"build": "tsup src/index.ts --format esm --dts --external zod --external react --external @tanstack/react-table --external @tanstack/react-form --external @tanstack/react-virtual --external date-fns --external react-day-picker --external @dnd-kit/core --external @dnd-kit/sortable",
-		"dev": "tsup src/index.ts --format esm --dts --watch --external zod --external react --external @tanstack/react-table --external @tanstack/react-form --external @tanstack/react-virtual --external date-fns --external react-day-picker --external @dnd-kit/core --external @dnd-kit/sortable",
+		"build": "tsup src/index.ts --format esm --dts --external zod --external react --external @tanstack/react-table --external @tanstack/react-form --external @tanstack/react-virtual --external date-fns --external react-day-picker --external @dnd-kit/core --external @dnd-kit/sortable --external recharts",
+		"dev": "tsup src/index.ts --format esm --dts --watch --external zod --external react --external @tanstack/react-table --external @tanstack/react-form --external @tanstack/react-virtual --external date-fns --external react-day-picker --external @dnd-kit/core --external @dnd-kit/sortable --external recharts",
 		"lint": "tsc --noEmit",
 		"typecheck": "tsc --noEmit"
 	},
@@ -40,6 +40,7 @@
 		"date-fns": "^4.1.0",
 		"react": "^19",
 		"react-day-picker": "^9.14.0",
+		"recharts": "^3.8.1",
 		"tsup": "^8",
 		"typescript": "^5.8"
 	},
@@ -51,6 +52,7 @@
 		"@tanstack/react-virtual": ">=3",
 		"date-fns": ">=4",
 		"react": "^19",
-		"react-day-picker": ">=9"
+		"react-day-picker": ">=9",
+		"recharts": ">=2.12"
 	}
 }

@@ -1,8 +1,11 @@
+import type { ChartSchema } from "../types/chart-schema";
 import type { ContentSchema } from "../types/content-schema";
 import type { FormSchema } from "../types/form-schema";
 import type { GridSchema } from "../types/grid-schema";
 import type { LayoutSchema } from "../types/layout-schema";
 import type { TabSchema } from "../types/tab-schema";
+import type { TreeGridSchema } from "../types/tree-grid-schema";
+import type { TreeSchema } from "../types/tree-schema";
 import type { WizardSchema } from "../types/wizard-schema";
 
 /** Type guard: checks if ContentSchema is a form variant */
@@ -53,6 +56,36 @@ export function isLayoutContent(
 	readonly schema: LayoutSchema;
 } {
 	return content.type === "layout";
+}
+
+/** Type guard: checks if ContentSchema is a tree variant */
+export function isTreeContent(
+	content: ContentSchema,
+): content is ContentSchema & {
+	readonly type: "tree";
+	readonly schema: TreeSchema;
+} {
+	return content.type === "tree";
+}
+
+/** Type guard: checks if ContentSchema is a chart variant */
+export function isChartContent(
+	content: ContentSchema,
+): content is ContentSchema & {
+	readonly type: "chart";
+	readonly schema: ChartSchema;
+} {
+	return content.type === "chart";
+}
+
+/** Type guard: checks if ContentSchema is a treeGrid variant */
+export function isTreeGridContent(
+	content: ContentSchema,
+): content is ContentSchema & {
+	readonly type: "treeGrid";
+	readonly schema: TreeGridSchema;
+} {
+	return content.type === "treeGrid";
 }
 
 /** Type guard: checks if ContentSchema is a custom component variant */

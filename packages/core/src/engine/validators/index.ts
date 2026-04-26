@@ -17,6 +17,10 @@ export {
 	validateCardLayout,
 } from "./card-layout";
 export {
+	chartSchemaValidator,
+	validateChartSchema,
+} from "./chart-schema";
+export {
 	contentSchemaValidator,
 	validateContentSchema,
 } from "./content-schema";
@@ -44,4 +48,12 @@ export {
 	validateStackLayout,
 } from "./stack-layout";
 export { tabSchemaValidator, validateTabSchema } from "./tab-schema";
+export {
+	treeGridSchemaValidator,
+	validateTreeGridSchema,
+} from "./tree-grid-schema";
+export {
+	treeSchemaValidator,
+	validateTreeSchema,
+} from "./tree-schema";
 export { validateWizardSchema, wizardSchemaValidator } from "./wizard-schema";
