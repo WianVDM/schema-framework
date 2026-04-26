@@ -77,6 +77,42 @@ jobs:
             echo "No open Version Packages PR found — skipping auto-merge"
           fi
 
+      - name: Validate release version
+        if: steps.check-changesets.outputs.has_changesets == 'false'
+        run: |
+          CORE_VERSION=$(node -p "require('./packages/core/package.json').version")
+
+          # NOTE: Validate version matches what VERSION_STATUS.md expects
+          if [ -f "docs/VERSION_STATUS.md" ]; then
+            EXPECTED=$(grep '## Current Version:' docs/VERSION_STATUS.md | head -1 | sed 's/## Current Version: *//')
+            if [ -n "$EXPECTED" ] && [ "$CORE_VERSION" != "$EXPECTED" ]; then
+              echo "::error::Version mismatch! packages/core/package.json=$CORE_VERSION but VERSION_STATUS.md=$EXPECTED"
+              echo "A previous release may have failed, causing the version to drift."
+              echo "Fix: align versions manually before the next release."
+              exit 1
+            fi
+            echo "Version validated: $CORE_VERSION matches VERSION_STATUS.md"
+          fi
+
+      - name: Check for version gaps
+        if: steps.check-changesets.outputs.has_changesets == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.CHANGESETS_TOKEN }}
+        run: |
+          CORE_VERSION=$(node -p "require('./packages/core/package.json').version")
+
+          # NOTE: Check if the previous patch version has a release — warns on skips
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$CORE_VERSION"
+          PREV_PATCH=$((PATCH - 1))
+
+          if [ "$PREV_PATCH" -ge 0 ]; then
+            PREV="v${MAJOR}.${MINOR}.${PREV_PATCH}"
+            if ! gh release view "$PREV" 2>/dev/null; then
+              echo "::warning::Version gap detected! No release exists for $PREV but about to release v${CORE_VERSION}"
+              echo "This usually means a previous release failed. Consider fixing before proceeding."
+            fi
+          fi
+
       - name: Create GitHub Release
         if: steps.check-changesets.outputs.has_changesets == 'false'
         env:
