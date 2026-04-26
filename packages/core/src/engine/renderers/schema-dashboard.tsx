@@ -26,9 +26,12 @@ export function SchemaDashboard({
 		schema.panels[0]?.id ?? "",
 	);
 
-	// NOTE: Reset activeTabId when schema.panels changes to avoid stale state
+	// NOTE: Only reset activeTabId when current selection is no longer in the panel list
 	useEffect(() => {
-		setActiveTabId(schema.panels[0]?.id ?? "");
+		const panelIds = schema.panels.map((p) => p.id);
+		setActiveTabId((prev) =>
+			panelIds.includes(prev) ? prev : (panelIds[0] ?? ""),
+		);
 	}, [schema.panels]);
 
 	const handleTabChange = useCallback(

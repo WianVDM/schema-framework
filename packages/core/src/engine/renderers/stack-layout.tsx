@@ -36,6 +36,14 @@ export function StackLayoutRenderer({
 		"forward",
 	);
 
+	// NOTE: Re-clamp activeIndex when regions shrink to prevent out-of-bounds access
+	useEffect(() => {
+		setActiveIndex((prev) => {
+			if (regions.length === 0) return 0;
+			return prev > regions.length - 1 ? regions.length - 1 : prev;
+		});
+	}, [regions.length]);
+
 	// NOTE: Ref for container-scoped keyboard handling instead of document-level
 	const containerRef = useRef<HTMLDivElement>(null);
 
@@ -132,8 +140,12 @@ export function StackLayoutRenderer({
 				</div>
 			)}
 			{keepMounted ? (
-				// NOTE: keepMounted renders all panels but hides inactive ones
-				<div className="flex-1 min-h-0 relative" style={panelStyle}>
+				// NOTE: keepMounted renders all panels but hides inactive ones; key forces animation retrigger
+				<div
+					key={activeIndex}
+					className="flex-1 min-h-0 relative"
+					style={panelStyle}
+				>
 					{regions.map((region, index) => {
 						const isActive = index === activeIndex;
 						return (
