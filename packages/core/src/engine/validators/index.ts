@@ -39,5 +39,9 @@ export {
 	validateResponsiveConfig,
 } from "./responsive-config";
 export type { ValidationResult } from "./shared-schemas";
+export {
+	stackLayoutSchema,
+	validateStackLayout,
+} from "./stack-layout";
 export { tabSchemaValidator, validateTabSchema } from "./tab-schema";
 export { validateWizardSchema, wizardSchemaValidator } from "./wizard-schema";

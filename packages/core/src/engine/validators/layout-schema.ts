@@ -23,9 +23,19 @@ const layoutRegionValidator = z
 	})
 	.strict();
 
+export const stackConfigValidator = z
+	.object({
+		defaultIndex: z.number().int().min(0).optional(),
+		showNavigation: z.boolean().optional(),
+		keyboardNavigation: z.boolean().optional(),
+		animation: z.enum(["none", "fade", "slide"]).optional(),
+		keepMounted: z.boolean().optional(),
+	})
+	.strict();
+
 export const layoutSchemaValidator = z
 	.object({
-		type: z.enum(["border", "accordion", "card", "hbox", "vbox"]),
+		type: z.enum(["border", "accordion", "card", "hbox", "vbox", "stack"]),
 		regions: z
 			.array(layoutRegionValidator)
 			.min(1, "LayoutSchema must have at least one region"),
@@ -77,9 +87,11 @@ export const layoutSchemaValidator = z
 					.optional(),
 				wrap: z.boolean().optional(),
 				padding: z.union([z.number().min(0), z.string()]).optional(),
+				stackBelow: z.number().int().positive().optional(),
 			})
 			.strict()
 			.optional(),
+		stackConfig: stackConfigValidator.optional(),
 		gap: z.number().min(0).optional(),
 		padding: z
 			.union([

@@ -4,6 +4,7 @@ import type { CardGridConfig } from "./card-grid-config";
 import type { I18nConfig } from "./i18n-config";
 import type { LayoutRegion } from "./layout-region";
 import type { LayoutType } from "./layout-type";
+import type { StackConfig } from "./stack-config";
 
 /** Top-level layout definition */
 export interface LayoutSchema {
@@ -15,6 +16,8 @@ export interface LayoutSchema {
 	readonly cardGridConfig?: CardGridConfig;
 	/** HBox/VBox flex configuration */
 	readonly boxConfig?: BoxConfig;
+	/** Stack layout configuration */
+	readonly stackConfig?: StackConfig;
 	readonly gap?: number;
 	readonly padding?: number | readonly [number, number];
 	readonly className?: string;
