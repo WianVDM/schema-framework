@@ -1,0 +1,30 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"title": "Token Budgets",
+	"description": "Token/line budgets per context file. WARN on exceed, don't fail.",
+	"type": "object",
+	"required": ["budgets"],
+	"additionalProperties": false,
+	"properties": {
+		"budgets": {
+			"type": "object",
+			"additionalProperties": {
+				"type": "object",
+				"required": ["maxTokens"],
+				"additionalProperties": false,
+				"properties": {
+					"maxTokens": {
+						"type": "integer",
+						"minimum": 1,
+						"description": "Maximum token count for this file"
+					},
+					"maxLines": {
+						"type": "integer",
+						"minimum": 1,
+						"description": "Maximum line count for this file"
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,4 +1,4 @@
-// NOTE: Post-changeset hook that syncs docs/VERSION_STATUS.md with package.json version.
+// NOTE: Syncs docs/VERSION_STATUS.md with package.json version after changeset.
 // NOTE: Called by release.yml after `pnpm changeset version` to keep VERSION_STATUS.md in sync.
 
 import { readFileSync, writeFileSync } from "node:fs";

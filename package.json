@@ -17,7 +17,14 @@
 		"generate-context:force": "node scripts/generate-ai-context/index.mjs --force",
 		"generate-context:check": "node scripts/generate-ai-context/index.mjs --check",
 		"compliance": "node scripts/compliance-check/index.mjs",
-		"preflight": "node scripts/ci-check/index.mjs"
+		"preflight": "node scripts/ci-check/index.mjs",
+		"memory:wake-up": "node scripts/memory/wake-up.mjs",
+		"memory:save": "node scripts/memory/save.mjs",
+		"memory:budget": "node scripts/memory/budget.mjs --check .ai/memory/store.json",
+		"kg:query": "node scripts/knowledge-graph/query.mjs",
+		"kg:validate": "node scripts/knowledge-graph/validate.mjs",
+		"kg:evolve": "node scripts/knowledge-graph/evolve.mjs",
+		"search-context": "node scripts/search/retrieve.mjs"
 	},
 	"packageManager": "pnpm@10.33.0",
 	"devDependencies": {

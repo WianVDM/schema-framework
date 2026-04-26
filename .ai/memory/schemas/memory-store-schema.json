@@ -1,0 +1,71 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "memory-store-schema.json",
+	"title": "AI Memory Store",
+	"description": "Bounded cross-session memory for AI-assisted development. Max 750 tokens when serialized. Enforced by scripts/memory/budget.mjs.",
+	"type": "object",
+	"required": ["version", "project", "sessions"],
+	"properties": {
+		"version": {
+			"type": "integer",
+			"description": "Schema version for migration detection"
+		},
+		"project": {
+			"type": "object",
+			"required": ["name", "philosophy", "architecture"],
+			"properties": {
+				"name": { "type": "string" },
+				"philosophy": { "type": "string", "maxLength": 200 },
+				"architecture": { "type": "string", "maxLength": 200 },
+				"keyPatterns": {
+					"type": "array",
+					"items": { "type": "string", "maxLength": 100 },
+					"maxItems": 10,
+					"description": "Key architectural patterns summarized from past sessions"
+				}
+			}
+		},
+		"activeMilestone": {
+			"type": "object",
+			"properties": {
+				"version": { "type": "string" },
+				"milestone": { "type": "string" },
+				"status": { "type": "string", "enum": ["IN_PROGRESS", "COMPLETE", "BLOCKED"] },
+				"currentSlice": { "type": "string" },
+				"lastUpdated": { "type": "string", "format": "date" }
+			}
+		},
+		"sessions": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"required": ["id", "date", "summary"],
+				"properties": {
+					"id": { "type": "string" },
+					"date": { "type": "string", "format": "date" },
+					"summary": { "type": "string", "maxLength": 300 },
+					"decisions": {
+						"type": "array",
+						"items": { "type": "string", "maxLength": 150 },
+						"maxItems": 5
+					},
+					"nextSteps": {
+						"type": "array",
+						"items": { "type": "string", "maxLength": 100 },
+						"maxItems": 5
+					}
+				}
+			},
+			"maxItems": 5,
+			"description": "Last 5 sessions. Older sessions are summarized into project.keyPatterns."
+		},
+		"preferences": {
+			"type": "object",
+			"properties": {
+				"codingStyle": { "type": "string", "maxLength": 150 },
+				"commentStyle": { "type": "string", "maxLength": 150 },
+				"testingStrategy": { "type": "string", "maxLength": 150 }
+			}
+		}
+	}
+}

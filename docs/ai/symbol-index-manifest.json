@@ -1,0 +1,1 @@
+{"$schema":"schemas/symbol-index-manifest-schema.json","generatedAt":"2026-04-24T21:49:05.385Z","totalSymbols":211,"layers":{"1":{"file":"symbol-index-layer1.json","symbols":12},"2":{"file":"symbol-index-layer2.json","symbols":149},"3":{"file":"symbol-index-layer3.json","symbols":50}}}

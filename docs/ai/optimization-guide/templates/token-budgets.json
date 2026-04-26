@@ -1,0 +1,19 @@
+{
+	"description": "Template for token/line budgets. Copy to docs/ai/token-budgets.json and adjust. Add $schema pointing to schemas/token-budgets-schema.json in the instantiated file.",
+	"budgets": {
+		"system.md": { "maxTokens": 800, "maxLines": 80 },
+		".context.json": { "maxTokens": 200, "maxLines": 30 },
+		"symbol-index-manifest.json": { "maxTokens": 100 },
+		"symbol-index-layer-N.json": { "maxTokens": 400 },
+		"core-abstractions.json": { "maxTokens": 200 },
+		"insights.json": { "maxTokens": 200 },
+		"community-map.json": { "maxTokens": 200 },
+		"impact-graph.json": { "maxTokens": 400 },
+		"file-placement.json": { "maxTokens": 300 },
+		"flows.json": { "maxTokens": 500 },
+		"error-taxonomy.json": { "maxTokens": 200 },
+		"config-schema.json": { "maxTokens": 300 },
+		"directory-index.json": { "maxTokens": 300 },
+		"last-diff.json": { "maxTokens": 200 }
+	}
+}
