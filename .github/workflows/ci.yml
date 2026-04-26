@@ -35,4 +35,4 @@ jobs:
         run: pnpm run typecheck
 
       - name: Build
-        run: pnpm run build:ci
+        run: pnpm run build
