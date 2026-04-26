@@ -1,0 +1,40 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.4.12/schema.json",
+	"files": {
+		"includes": [
+			"**/*.ts",
+			"**/*.tsx",
+			"**/*.mjs",
+			"**/*.js",
+			"!**/node_modules",
+			"!**/dist",
+			"!**/.output",
+			"!**/.vinxi",
+			"!**/.turbo",
+			"!**/.tanstack",
+			"!**/.context.json",
+			"!**/routeTree.gen.ts",
+			"!.clinerules"
+		]
+	},
+	"vcs": {
+		"enabled": true,
+		"clientKind": "git",
+		"defaultBranch": "main"
+	},
+	"formatter": {
+		"enabled": true,
+		"indentStyle": "tab"
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true
+		}
+	},
+	"javascript": {
+		"formatter": {
+			"quoteStyle": "double"
+		}
+	}
+}

@@ -1,0 +1,15 @@
+{
+  "$schema": "../../schemas/flows-schema.json",
+  "flows": {
+    "{flow-name}": {
+      "trigger": "{what starts this flow}",
+      "steps": [
+        "{step 1: file or module}",
+        "{step 2: file or module}",
+        "{step 3: file or module}"
+      ],
+      "touches": ["{side-effect: logs, cache, events}"],
+      "errorPath": "{what happens on error}"
+    }
+  }
+}

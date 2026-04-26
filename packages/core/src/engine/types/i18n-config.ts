@@ -1,4 +1,4 @@
 export interface I18nConfig {
-  readonly locale: string
-  readonly messages?: Readonly<Record<string, string>>
+	readonly locale: string;
+	readonly messages?: Readonly<Record<string, string>>;
 }

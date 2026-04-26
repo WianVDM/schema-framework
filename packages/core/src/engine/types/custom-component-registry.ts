@@ -1,4 +1,4 @@
-import type { ComponentType } from 'react'
+import type { ComponentType } from "react";
 
 /**
  * Registry for user-defined components in layout regions.
@@ -9,6 +9,6 @@ import type { ComponentType } from 'react'
  * from being registered. This is an intentional upstream type exception.
  */
 export interface CustomComponentRegistry {
-  // biome-ignore lint/suspicious/noExplicitAny: generic injection point — typed props vary per consumer
-  readonly [componentKey: string]: ComponentType<any>
+	// biome-ignore lint/suspicious/noExplicitAny: generic injection point — typed props vary per consumer
+	readonly [componentKey: string]: ComponentType<any>;
 }

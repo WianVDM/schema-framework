@@ -1,1 +1,7 @@
-export type ConditionOperator = 'equals' | 'notEquals' | 'in' | 'notIn' | 'truthy' | 'falsy'
+export type ConditionOperator =
+	| "equals"
+	| "notEquals"
+	| "in"
+	| "notIn"
+	| "truthy"
+	| "falsy";

@@ -1,0 +1,31 @@
+# {PROJECT_NAME} — AI Context
+
+> NOTE: Compressed architecture reference. ≤800 tokens.
+
+## Architecture
+
+{LAYER_DESCRIPTION}
+- Layer 1: Primitives — zero-dependency building blocks
+- Layer 2: Engine — schema knowledge, composes primitives
+- Layer 3: App — UI, routing, user-facing features
+
+## Key Files
+
+| File | Purpose |
+|------|---------|
+| `docs/ai/symbol-index-manifest.json` | Symbol lookup per layer |
+| `docs/ai/impact-graph.json` | Reverse dependency lookup |
+| `docs/ai/flows.json` | Data flow descriptions |
+| `docs/ai/file-placement.json` | Where to put new files |
+
+## Key Behaviors
+
+| Pattern | Trigger | Response | Learned From |
+|---------|---------|----------|-------------|
+| {example} | {trigger} | {response} | {source} |
+
+## Constraints
+
+- {CONSTRAINT_1}
+- {CONSTRAINT_2}
+- {CONSTRAINT_3}

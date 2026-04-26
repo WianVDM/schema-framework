@@ -1,30 +1,41 @@
 {
-  "name": "schema-framework",
-  "private": true,
-  "scripts": {
-    "dev": "turbo dev",
-    "build": "turbo build",
-    "build:ci": "turbo build",
-    "typecheck": "turbo typecheck",
-    "lint": "biome check .",
-    "lint:fix": "biome check . --write",
-    "format": "biome format . --write",
-    "format:check": "biome format .",
-    "changeset": "changeset",
-    "changeset:version": "changeset version",
-    "changeset:publish": "changeset publish",
-    "generate-context": "node scripts/generate-ai-context/index.mjs",
-    "generate-context:force": "node scripts/generate-ai-context/index.mjs --force",
-    "generate-context:check": "node scripts/generate-ai-context/index.mjs --check",
-    "compliance": "node scripts/compliance-check/index.mjs",
-    "preflight": "node scripts/ci-check/index.mjs"
-  },
-  "packageManager": "pnpm@10.33.0",
-  "devDependencies": {
-    "@biomejs/biome": "^2.4.12",
-    "@changesets/changelog-github": "^0.6.0",
-    "@changesets/cli": "^2.30.0",
-    "turbo": "^2",
-    "typescript": "^5.8"
-  }
+	"name": "schema-framework",
+	"private": true,
+	"scripts": {
+		"dev": "turbo dev",
+		"build": "turbo build",
+		"build:ci": "turbo build",
+		"typecheck": "turbo typecheck",
+		"lint": "biome check .",
+		"lint:fix": "biome check . --write",
+		"format": "biome format . --write",
+		"format:check": "biome format .",
+		"changeset": "changeset",
+		"changeset:version": "changeset version",
+		"changeset:publish": "changeset publish",
+		"generate-context": "node scripts/generate-ai-context/index.mjs",
+		"generate-context:force": "node scripts/generate-ai-context/index.mjs --force",
+		"generate-context:check": "node scripts/generate-ai-context/index.mjs --check",
+		"compliance": "node scripts/compliance-check/index.mjs",
+		"preflight": "node scripts/ci-check/index.mjs",
+		"memory:wake-up": "node scripts/memory/wake-up.mjs",
+		"memory:save": "node scripts/memory/save.mjs",
+		"memory:budget": "node scripts/memory/budget.mjs --check .ai/memory/store.json",
+		"kg:query": "node scripts/knowledge-graph/query.mjs",
+		"kg:validate": "node scripts/knowledge-graph/validate.mjs",
+		"kg:evolve": "node scripts/knowledge-graph/evolve.mjs",
+		"search-context": "node scripts/search/retrieve.mjs"
+	},
+	"packageManager": "pnpm@10.33.0",
+	"engines": {
+		"node": ">=18.0.0",
+		"pnpm": ">=9.0.0"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.4.12",
+		"@changesets/changelog-github": "^0.6.0",
+		"@changesets/cli": "^2.30.0",
+		"turbo": "^2",
+		"typescript": "^5.8"
+	}
 }

@@ -1,0 +1,59 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "decisions-schema.json",
+	"title": "Knowledge Graph Decisions",
+	"description": "Temporal entity-relationship triples for tracking architectural decision validity. Max 50 triples. Managed by scripts/knowledge-graph/",
+	"type": "object",
+	"required": ["version", "triples"],
+	"properties": {
+		"version": {
+			"type": "integer",
+			"description": "Schema version for migration detection"
+		},
+		"triples": {
+			"type": "array",
+			"maxItems": 50,
+			"items": {
+				"type": "object",
+				"required": ["id", "subject", "predicate", "object", "validFrom", "source"],
+				"properties": {
+					"id": {
+						"type": "string",
+						"description": "Unique identifier, typically 'adr-NNN' matching the ADR file"
+					},
+					"subject": {
+						"type": "string",
+						"description": "The entity or concept this decision is about"
+					},
+					"predicate": {
+						"type": "string",
+						"description": "The relationship type (uses, implements, prefers, rejects, etc.)"
+					},
+					"object": {
+						"type": "string",
+						"description": "The value or target of the relationship"
+					},
+					"validFrom": {
+						"type": "string",
+						"format": "date",
+						"description": "ISO date when this decision became active"
+					},
+					"validTo": {
+						"type": ["string", "null"],
+						"format": "date",
+						"description": "ISO date when superseded, or null if still active"
+					},
+					"source": {
+						"type": "string",
+						"description": "File path of the originating ADR"
+					},
+					"context": {
+						"type": "string",
+						"maxLength": 200,
+						"description": "Human-readable explanation of this decision"
+					}
+				}
+			}
+		}
+	}
+}
