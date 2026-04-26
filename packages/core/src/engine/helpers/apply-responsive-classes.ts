@@ -14,8 +14,9 @@ export function applyResponsiveClasses(config: ResponsiveConfig): string {
 		// directly from the schema and uses ResizeObserver/matchMedia to collapse panels.
 	}
 
+	// NOTE: Subtract 1 to match matchMedia semantics — stackBelow means "below this value" (exclusive at threshold)
 	if (config.stackBelow !== undefined) {
-		classes.push(`max-[${config.stackBelow}px]:flex-col`);
+		classes.push(`max-[${config.stackBelow - 1}px]:flex-col`);
 	}
 
 	return classes.join(" ");

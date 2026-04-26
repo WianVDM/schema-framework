@@ -63,13 +63,20 @@ export function StackLayoutRenderer({
 		[regions.length],
 	);
 
+	// NOTE: Derive target from clampedActiveIndex (not raw activeIndex) to avoid stale closure after async re-clamp
 	const goNext = useCallback(() => {
-		goTo(activeIndex + 1, "forward");
-	}, [activeIndex, goTo]);
+		const target = clampedActiveIndex + 1;
+		if (target < regions.length) {
+			goTo(target, "forward");
+		}
+	}, [clampedActiveIndex, regions.length, goTo]);
 
 	const goPrev = useCallback(() => {
-		goTo(activeIndex - 1, "backward");
-	}, [activeIndex, goTo]);
+		const target = clampedActiveIndex - 1;
+		if (target >= 0) {
+			goTo(target, "backward");
+		}
+	}, [clampedActiveIndex, goTo]);
 
 	// NOTE: Inject animation keyframes for stack transitions
 	useAnimationStyles();

@@ -113,6 +113,25 @@ reviews:
         - Use z.literal() and z.union() for string literal union types
         - Cross-reference types from ../types via barrel import
 
+    - path: "scripts/**"
+      instructions: |
+        Build automation, compliance checks, and the auto-changeset system.
+
+        Directory structure:
+        - scripts/checks/ — Hook-consumed check modules (biome, rules, changeset, context, typescript)
+        - scripts/auto-changeset/ — Full changeset generation system (changeset-writer.mjs, git-operations.mjs, version-bump.mjs, index.mjs)
+        - scripts/shared/ — Cross-cutting utilities (file-helpers.mjs, constants.mjs, hook-io.mjs, etc.)
+        - scripts/compliance-check/ — Standalone compliance orchestrator
+        - scripts/generate-ai-context/ — .context.json generation system
+
+        Rules:
+        - All imports use relative paths within scripts/ (../auto-changeset/, ../shared/)
+        - auto-changeset modules exist and are fully implemented — do NOT flag imports as missing
+        - version-bump.mjs exports resolveBumpLevel(), validateChangesetBump(), readCoreVersion()
+        - changeset-writer.mjs exports generateChangeset(), writeChangeset()
+        - git-operations.mjs exports getChangedCoreFiles(), getFileDiff()
+        - shared/file-helpers.mjs exports readPackageJson() and isSourceFile()
+
   path_filters:
     - "packages/core/src/**"
     - "apps/showcase/src/**"

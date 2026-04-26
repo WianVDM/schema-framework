@@ -4,6 +4,7 @@ import {
 	type ReactNode,
 	useCallback,
 	useEffect,
+	useId,
 	useRef,
 	useState,
 } from "react";
@@ -24,6 +25,8 @@ export function SchemaDashboard({
 	onActivePanelChange,
 }: DashboardRendererProps): ReactNode {
 	const panelLayout = schema.panelLayout ?? "vertical";
+	// NOTE: Stable per-instance prefix prevents DOM ID collisions across multiple SchemaDashboard instances
+	const instanceId = useId();
 
 	const [activeTabId, setActiveTabId] = useState<string>(
 		schema.panels[0]?.id ?? "",
@@ -64,6 +67,7 @@ export function SchemaDashboard({
 				schema={schema}
 				panelLayout={panelLayout}
 				activeTabId={activeTabId}
+				instanceId={instanceId}
 				onTabChange={handleTabChange}
 				onRegionResize={onRegionResize}
 				onPanelCollapse={onPanelCollapse}
@@ -77,6 +81,7 @@ function DashboardPanelLayout({
 	schema,
 	panelLayout,
 	activeTabId,
+	instanceId,
 	onTabChange,
 	onRegionResize,
 	onPanelCollapse,
@@ -84,6 +89,7 @@ function DashboardPanelLayout({
 	readonly schema: DashboardSchema;
 	readonly panelLayout: "vertical" | "tabs" | "border";
 	readonly activeTabId: string;
+	readonly instanceId: string;
 	readonly onTabChange: (panelId: string) => void;
 	readonly onRegionResize?: RegionResizeHandler;
 	readonly onPanelCollapse?: PanelCollapseHandler;
@@ -94,6 +100,7 @@ function DashboardPanelLayout({
 				<TabsPanelLayout
 					schema={schema}
 					activeTabId={activeTabId}
+					instanceId={instanceId}
 					onTabChange={onTabChange}
 					onRegionResize={onRegionResize}
 					onPanelCollapse={onPanelCollapse}
@@ -150,12 +157,14 @@ function VerticalPanelLayout({
 function TabsPanelLayout({
 	schema,
 	activeTabId,
+	instanceId,
 	onTabChange,
 	onRegionResize,
 	onPanelCollapse,
 }: {
 	readonly schema: DashboardSchema;
 	readonly activeTabId: string;
+	readonly instanceId: string;
 	readonly onTabChange: (panelId: string) => void;
 	readonly onRegionResize?: RegionResizeHandler;
 	readonly onPanelCollapse?: PanelCollapseHandler;
@@ -240,8 +249,8 @@ function TabsPanelLayout({
 			>
 				{schema.panels.map((panel) => {
 					const isActive = panel.id === activeTabId;
-					const panelId = `panel-${panel.id}`;
-					const tabId = `tab-${panel.id}`;
+					const panelId = `${instanceId}-panel-${panel.id}`;
+					const tabId = `${instanceId}-tab-${panel.id}`;
 
 					return (
 						<button
@@ -269,9 +278,9 @@ function TabsPanelLayout({
 			<div className="flex-1 min-h-0">
 				{activePanel ? (
 					<div
-						id={`panel-${activePanel.id}`}
+						id={`${instanceId}-panel-${activePanel.id}`}
 						role="tabpanel"
-						aria-labelledby={`tab-${activePanel.id}`}
+						aria-labelledby={`${instanceId}-tab-${activePanel.id}`}
 						className="h-full"
 					>
 						<SchemaLayout
@@ -302,8 +311,8 @@ function BorderPanelLayout({
 
 	if (primaryPanel === undefined) return null;
 
-	// NOTE: Once-only warning — border layout only renders the first panel (minifiers strip console.warn in production)
-	if (schema.panels.length > 1 && !borderPanelWarned) {
+	// NOTE: Dev-only warning — border layout only renders the first panel; guard prevents shipping warnings to production
+	if (import.meta.env.DEV && schema.panels.length > 1 && !borderPanelWarned) {
 		borderPanelWarned = true;
 		console.warn(
 			"BorderPanelLayout only renders the first panel. Additional panels (%d) will be ignored.",

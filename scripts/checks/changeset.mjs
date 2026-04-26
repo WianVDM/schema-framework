@@ -69,40 +69,64 @@ export function checkChangeset(workspaceRoot, _config = {}) {
  * @returns {{ passed: boolean, output?: string }}
  */
 function tryAutoGenerate(changesetDir, coreFiles, workspaceRoot) {
+	// NOTE: mkdirSync with recursive:true is a no-op when directory already exists — no existsSync guard needed
 	try {
-		if (!existsSync(changesetDir)) {
-			mkdirSync(changesetDir, { recursive: true });
-		}
+		mkdirSync(changesetDir, { recursive: true });
+	} catch (err) {
+		const detail = err instanceof Error ? err.message : String(err);
+		return {
+			passed: false,
+			output: `Changeset required: failed to create .changeset directory (${detail}). Run \`pnpm changeset\` to create one manually.`,
+		};
+	}
 
-		const packageName = getCorePackageName(workspaceRoot);
+	let packageName;
+	try {
+		packageName = getCorePackageName(workspaceRoot);
+	} catch (err) {
+		const detail = err instanceof Error ? err.message : String(err);
+		return {
+			passed: false,
+			output: `Changeset required: failed to read package name (${detail}). Run \`pnpm changeset\` to create one manually.`,
+		};
+	}
+
+	let bump = "patch";
+	try {
 		const versionInfo = resolveBumpLevel();
-		const bump = versionInfo?.bump ?? "patch";
+		bump = versionInfo?.bump ?? "patch";
+	} catch (_err) {
+		// NOTE: resolveBumpLevel failure is non-fatal — fall back to "patch"
+	}
 
-		const { filename, content } = generateChangeset(
+	let filename;
+	let content;
+	try {
+		({ filename, content } = generateChangeset(
 			coreFiles,
 			packageName,
 			{ getFileDiff },
 			{ bump },
-		);
-
-		const filePath = join(changesetDir, filename);
-		if (writeChangeset(filePath, content)) {
-			return {
-				passed: true,
-				output: `Auto-generated descriptive changeset: .changeset/${filename}`,
-			};
-		}
-
-		return {
-			passed: false,
-			output:
-				"Changeset required: failed to write auto-generated changeset. Run `pnpm changeset` to create one manually.",
-		};
+		));
 	} catch (err) {
-		const detail = err instanceof Error ? ` (${err.message})` : "";
+		const detail = err instanceof Error ? err.message : String(err);
 		return {
 			passed: false,
-			output: `Changeset required: packages/core/src/ files changed. Run \`pnpm changeset\` to create one.${detail}`,
+			output: `Changeset required: failed to generate changeset content (${detail}). Run \`pnpm changeset\` to create one manually.`,
 		};
 	}
+
+	const filePath = join(changesetDir, filename);
+	if (writeChangeset(filePath, content)) {
+		return {
+			passed: true,
+			output: `Auto-generated descriptive changeset: .changeset/${filename}`,
+		};
+	}
+
+	return {
+		passed: false,
+		output:
+			"Changeset required: failed to write auto-generated changeset. Run `pnpm changeset` to create one manually.",
+	};
 }

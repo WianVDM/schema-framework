@@ -12,7 +12,7 @@ import { truncateOutput } from "../shared/truncate-output.mjs";
  */
 export function build(workspaceRoot) {
 	try {
-		const output = execSync("pnpm build", {
+		const output = execSync("pnpm build:ci", {
 			cwd: workspaceRoot,
 			encoding: "utf8",
 			stdio: "pipe",
