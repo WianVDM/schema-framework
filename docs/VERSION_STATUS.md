@@ -1,7 +1,7 @@
 # Version Status
 
-## Current Version: 0.3.2
-## Target Version: 0.3.3
+## Current Version: 0.3.3
+## Target Version: 0.3.4
 ## Versioning Strategy: Option C — version `packages/core` only; showcase = `0.0.0-dev`
 ## Active Milestone: Layout System
 ## Milestone Status: IN PROGRESS

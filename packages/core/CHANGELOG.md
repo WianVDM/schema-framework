@@ -1,5 +1,39 @@
 # @my-framework/core
 
+## 0.3.3
+
+### Patch Changes
+
+- [#31](https://github.com/WianVDM/schema-framework/pull/31) [`85abc9b`](https://github.com/WianVDM/schema-framework/commit/85abc9b5f3d2ce86a7c4f49c492ee4c6f727ca95) Thanks [@WianVDM](https://github.com/WianVDM)! - Add layout renderers (accordion, card, box, tabs) with engine context, validators, and type exports
+
+  **Areas:** engine/context, engine/renderers, engine/types and 1 more
+
+  **Affected symbols:** const, import, export, function, AccordionLayoutProps, AccordionLayoutRenderer and 59 more
+
+  - **layout-primitives-context.tsx**: Add const
+  - **content-renderer.tsx**: Update import, export, const
+  - **index.ts**: Add export
+  - **schema-layout.tsx**: Update import, export, function
+  - **index.ts**: Add changes in engine/types
+  - **layout-primitive-components.ts**: Add export
+  - **layout-schema.ts**: Add import
+  - **tab-schema.ts**: Add import
+  - **index.ts**: Fix export
+  - **layout-schema.ts**: Add export
+  - **tab-schema.ts**: Add export
+  - **accordion-layout.tsx**: Add AccordionLayoutProps, AccordionLayoutRenderer, mode and 11 more
+  - **box-layout.tsx**: Add BoxLayoutProps, BoxLayoutRenderer, containerStyle and 4 more
+  - **card-layout.tsx**: Add CardLayoutProps, CardLayoutRenderer, gridStyle and 4 more
+  - **schema-tabs.tsx**: Add SchemaTabs, mountedTabs, handleTabChange and 3 more
+  - **accordion-config.ts**: Add AccordionConfig
+  - **box-config.ts**: Add BoxConfig
+  - **card-grid-config.ts**: Add CardGridResponsiveColumns, CardGridConfig
+  - **accordion-layout.ts**: Add accordionConfigSchema, accordionLayoutSchema, validateAccordionConstraints and 12 more
+  - **box-layout.ts**: Add boxConfigSchema, hboxLayoutSchema, vboxLayoutSchema and 4 more
+  - **card-layout.ts**: Add responsiveColumnsSchema, cardGridConfigSchema, cardLayoutSchema and 11 more
+
+- [#32](https://github.com/WianVDM/schema-framework/pull/32) [`e443cf3`](https://github.com/WianVDM/schema-framework/commit/e443cf322c07c0059d53cae8e7a03dc75b653fe0) Thanks [@WianVDM](https://github.com/WianVDM)! - Optimize CustomComponentProvider with useMemo to prevent unnecessary context re-renders
+
 ## 0.3.2
 
 ### Minor Changes
