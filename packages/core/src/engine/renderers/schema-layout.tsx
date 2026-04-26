@@ -9,6 +9,7 @@ import { AccordionLayoutRenderer } from "./accordion-layout";
 import { BoxLayoutRenderer } from "./box-layout";
 import { CardLayoutRenderer } from "./card-layout";
 import { SchemaPanel } from "./schema-panel";
+import { StackLayoutRenderer } from "./stack-layout";
 
 /** Main layout renderer — dispatches to layout-type-specific renderers */
 export function SchemaLayout({
@@ -56,6 +57,13 @@ export function SchemaLayout({
 					regions={schema.regions}
 					boxConfig={schema.boxConfig}
 					onPanelCollapse={_onPanelCollapse}
+				/>
+			);
+		case "stack":
+			return (
+				<StackLayoutRenderer
+					regions={schema.regions}
+					stackConfig={schema.stackConfig}
 				/>
 			);
 		default:

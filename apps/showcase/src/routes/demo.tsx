@@ -43,6 +43,26 @@ function DemoPage() {
 						review step.
 					</p>
 				</Link>
+				<Link
+					to="/demo-dashboard"
+					className="border rounded-lg p-6 hover:bg-muted/50 transition-colors"
+				>
+					<h3 className="font-semibold text-lg mb-2">Dashboard</h3>
+					<p className="text-sm text-muted-foreground">
+						Multi-panel dashboard with tabbed navigation composing border, vbox,
+						and card layouts.
+					</p>
+				</Link>
+				<Link
+					to="/demo-stack-layout"
+					className="border rounded-lg p-6 hover:bg-muted/50 transition-colors"
+				>
+					<h3 className="font-semibold text-lg mb-2">Stack Layout</h3>
+					<p className="text-sm text-muted-foreground">
+						Stacked panels with prev/next navigation, keyboard support, and fade
+						animations.
+					</p>
+				</Link>
 			</div>
 		</div>
 	);

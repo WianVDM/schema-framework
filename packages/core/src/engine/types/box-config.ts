@@ -16,4 +16,6 @@ export interface BoxConfig {
 	readonly wrap?: boolean;
 	/** Padding around the box container */
 	readonly padding?: number | string;
+	/** Viewport width in px below which an HBox switches to VBox-style vertical stacking */
+	readonly stackBelow?: number;
 }

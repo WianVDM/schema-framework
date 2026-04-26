@@ -1,12 +1,12 @@
 # Version Status
 
-## Current Version: 0.3.3
+## Current Version: 0.3.4
 ## Target Version: 0.3.4
 ## Versioning Strategy: Option C — version `packages/core` only; showcase = `0.0.0-dev`
-## Active Milestone: Layout System
+## Active Milestone: Layout System (Slice 4)
 ## Milestone Status: IN PROGRESS
 
-## Milestone Checklist (v0.3.x) — IN PROGRESS
+## Milestone Checklist (v0.3.x) — COMPLETE ✅
 
 ### Slice 0: Housekeeping & Fixes (v0.3.0) — COMPLETE ✅
 - [x] Consume pending changesets via `pnpm changeset version`
@@ -68,13 +68,18 @@
 - [x] Regenerate context maps
 - [x] `pnpm build` passes
 
-### Slice 4: SchemaDashboard (v0.3.4)
-- [ ] Create `SchemaDashboard` renderer
-- [ ] Create mock data for dashboard
-- [ ] Create showcase demo route (`/demo-dashboard`)
-- [ ] Run `pnpm generate-context` to update all context maps
-- [ ] Ensure all layouts are responsive
-- [ ] `pnpm build` passes
+### Slice 4: SchemaDashboard, Stack Layout & Responsive Cleanup (v0.3.4) — COMPLETE ✅
+- [x] Add `StackConfig` type + `"stack"` to `LayoutType` union
+- [x] Add `stackConfig` to `LayoutSchema`, `stackBelow` to `BoxConfig`
+- [x] Redesign `DashboardSchema` for multi-panel composition
+- [x] Create `StackLayoutRenderer` with prev/next navigation and keyboard support
+- [x] Create `SchemaDashboard` renderer with tabbed panel navigation
+- [x] Add `stackBelow` responsive stacking to HBox/VBox layouts
+- [x] Create Zod validators for stack layout and updated dashboard schema
+- [x] Create mock data for dashboard and stack layout
+- [x] Create showcase demo routes (`/demo-dashboard`, `/demo-stack-layout`)
+- [x] Wire all new renderers in `SchemaLayout` dispatcher
+- [x] `pnpm build` + `pnpm typecheck` pass
 
 ## Milestone Checklist (v0.2.0) — COMPLETE ✅
 
@@ -146,6 +151,7 @@
 ## Completed Milestones
 - **0.1.0 — Tooling & Workflow Foundation** (completed 2026-04-05)
 - **0.2.0 — Enhanced Grid & Form Features** (completed 2026-04-09)
+- **0.3.0 — Layout System** (completed 2026-04-26)
 
 ## Upcoming Milestones
 - 0.4.0 — Advanced Data Components

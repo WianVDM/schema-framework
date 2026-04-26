@@ -7,4 +7,6 @@ export interface DashboardRendererProps {
 	readonly schema: DashboardSchema;
 	readonly onRegionResize?: RegionResizeHandler;
 	readonly onPanelCollapse?: PanelCollapseHandler;
+	/** Called when the active panel changes (for tabs/border panelLayout) */
+	readonly onActivePanelChange?: (panelId: string) => void;
 }

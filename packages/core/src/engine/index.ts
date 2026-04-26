@@ -32,11 +32,13 @@ export { FieldRenderer } from "./renderers/field-renderer";
 export { GridColumnHeader } from "./renderers/grid-column-header";
 export { GridPagination } from "./renderers/grid-pagination";
 export { GridToolbar } from "./renderers/grid-toolbar";
+export { SchemaDashboard } from "./renderers/schema-dashboard";
 export { SchemaForm } from "./renderers/schema-form";
 export { SchemaGrid } from "./renderers/schema-grid";
 export { SchemaLayout } from "./renderers/schema-layout";
 export { SchemaPanel } from "./renderers/schema-panel";
 export { SchemaWizard } from "./renderers/schema-wizard";
+export { StackLayoutRenderer } from "./renderers/stack-layout";
 export { ThemeProvider } from "./renderers/theme-provider";
 export { useTheme } from "./renderers/use-theme";
 // Types (one-export-per-file via barrel)
@@ -50,6 +52,7 @@ export type {
 	ContentRendererProps,
 	ContentSchema,
 	CustomComponentRegistry,
+	DashboardPanel,
 	DashboardRendererProps,
 	DashboardSchema,
 	DataKey,
@@ -84,6 +87,7 @@ export type {
 	SelectionStore,
 	SelectOption,
 	ServerPaginationConfig,
+	StackConfig,
 	StatusConfig,
 	StepIndicatorProps,
 	TabItem,
@@ -116,6 +120,7 @@ export {
 	validateLayoutSchema,
 	// Layout validators
 	validateResponsiveConfig,
+	validateStackLayout,
 	validateTabSchema,
 	validateWizardSchema,
 	wizardSchemaValidator,

@@ -125,15 +125,15 @@ This is the largest single milestone. It may be broken into sub-versions (0.3.0,
 - `SchemaDashboard` — renders full dashboard composition
 
 **Exit Criteria:**
-- [ ] Border layout renders with 5 regions, all resizable
-- [ ] Accordion layout expands/collapses panels
-- [ ] Card layout switches between panels
-- [ ] HBox/VBox layouts distribute children correctly
-- [ ] SchemaTabs renders tabs with lazy content
-- [ ] SchemaDashboard composes a full dashboard from JSON
-- [ ] All layouts are responsive
-- [ ] Showcase has a full dashboard demo route
-- [ ] `pnpm build` passes with zero errors
+- [x] Border layout renders with 5 regions, all resizable
+- [x] Accordion layout expands/collapses panels
+- [x] Card layout switches between panels
+- [x] HBox/VBox layouts distribute children correctly
+- [x] SchemaTabs renders tabs with lazy content
+- [x] SchemaDashboard composes a full dashboard from JSON
+- [x] All layouts are responsive
+- [x] Showcase has a full dashboard demo route
+- [x] `pnpm build` passes with zero errors
 
 ---
 

@@ -3,11 +3,23 @@ import { layoutSchemaValidator } from "./layout-schema";
 import type { ValidationResult } from "./shared-schemas";
 import { formatZodIssue, i18nConfigSchema } from "./shared-schemas";
 
+const dashboardPanelValidator = z
+	.object({
+		id: z.string().min(1, "DashboardPanel must have a non-empty id"),
+		title: z.string().optional(),
+		layout: layoutSchemaValidator,
+		className: z.string().optional(),
+	})
+	.strict();
+
 export const dashboardSchemaValidator = z
 	.object({
 		title: z.string().optional(),
 		description: z.string().optional(),
-		layout: layoutSchemaValidator,
+		panels: z
+			.array(dashboardPanelValidator)
+			.min(1, "DashboardSchema must have at least one panel"),
+		panelLayout: z.enum(["vertical", "tabs", "border"]).optional(),
 		className: z.string().optional(),
 		i18n: i18nConfigSchema.optional(),
 	})

@@ -17,6 +17,9 @@ importers:
       '@changesets/cli':
         specifier: ^2.30.0
         version: 2.30.0(@types/node@25.5.0)
+      ajv:
+        specifier: ^8.17.1
+        version: 8.18.0
       turbo:
         specifier: ^2
         version: 2.9.3

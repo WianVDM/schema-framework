@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from "react";
+import { type CSSProperties, type ReactNode, useEffect, useState } from "react";
 import type { BoxConfig } from "../types/box-config";
 import type { LayoutRegion } from "../types/layout-region";
 import type { PanelCollapseHandler } from "../types/panel-collapse-handler";
@@ -18,12 +18,18 @@ export function BoxLayoutRenderer({
 	boxConfig,
 	onPanelCollapse,
 }: BoxLayoutProps): ReactNode {
+	// NOTE: stackBelow causes hbox to switch to vertical when viewport is narrower than threshold
+	const isStacked = useStackBelow(direction, boxConfig?.stackBelow);
+	const effectiveDirection = isStacked ? "vertical" : direction;
+
 	// NOTE: hbox/vbox are pure CSS flex layouts — no injected primitives needed
 	const containerStyle = buildFlexStyle(boxConfig);
 
 	return (
 		<div
-			className={direction === "horizontal" ? "flex flex-row" : "flex flex-col"}
+			className={
+				effectiveDirection === "horizontal" ? "flex flex-row" : "flex flex-col"
+			}
 			style={containerStyle}
 		>
 			{regions.map((region) => (
@@ -35,6 +41,35 @@ export function BoxLayoutRenderer({
 			))}
 		</div>
 	);
+}
+
+/** Hook that returns true when viewport width is below the stackBelow threshold */
+function useStackBelow(
+	direction: "horizontal" | "vertical",
+	stackBelow: number | undefined,
+): boolean {
+	const [isBelow, setIsBelow] = useState(false);
+
+	useEffect(() => {
+		// NOTE: Only hbox (horizontal) can stack below threshold; vbox is already vertical
+		if (direction !== "horizontal" || stackBelow === undefined) {
+			setIsBelow(false);
+			return;
+		}
+
+		const query = window.matchMedia(`(max-width: ${stackBelow - 1}px)`);
+
+		function handleChange(e: MediaQueryListEvent) {
+			setIsBelow(e.matches);
+		}
+
+		// NOTE: Initialize with current match state
+		setIsBelow(query.matches);
+		query.addEventListener("change", handleChange);
+		return () => query.removeEventListener("change", handleChange);
+	}, [direction, stackBelow]);
+
+	return isBelow;
 }
 
 /** Builds CSS flex style from BoxConfig */
