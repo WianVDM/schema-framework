@@ -13,6 +13,9 @@ import type { PanelCollapseHandler } from "../types/panel-collapse-handler";
 import type { RegionResizeHandler } from "../types/region-resize-handler";
 import { SchemaLayout } from "./schema-layout";
 
+// NOTE: Module-level flag ensures the border panel warning fires only once per session
+let borderPanelWarned = false;
+
 /** Renders a multi-panel dashboard from DashboardSchema */
 export function SchemaDashboard({
 	schema,
@@ -299,8 +302,9 @@ function BorderPanelLayout({
 
 	if (primaryPanel === undefined) return null;
 
-	// NOTE: Dev-only warning — border layout only renders the first panel, others are silently dropped
-	if (schema.panels.length > 1) {
+	// NOTE: Once-only warning — border layout only renders the first panel (minifiers strip console.warn in production)
+	if (schema.panels.length > 1 && !borderPanelWarned) {
+		borderPanelWarned = true;
 		console.warn(
 			"BorderPanelLayout only renders the first panel. Additional panels (%d) will be ignored.",
 			schema.panels.length - 1,

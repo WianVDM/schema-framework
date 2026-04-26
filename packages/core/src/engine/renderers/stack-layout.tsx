@@ -157,18 +157,16 @@ export function StackLayoutRenderer({
 				</div>
 			)}
 			{keepMounted ? (
-				// NOTE: keepMounted renders all panels but hides inactive ones; key forces animation retrigger
-				<div
-					key={clampedActiveIndex}
-					className="flex-1 min-h-0 relative"
-					style={panelStyle}
-				>
+				// NOTE: keepMounted renders all panels but hides inactive ones; animation targets only the active panel
+				<div className="flex-1 min-h-0 relative">
 					{regions.map((region, index) => {
 						const isActive = index === clampedActiveIndex;
 						return (
 							<div
 								key={region.id}
+								data-active={isActive}
 								className={isActive ? "h-full w-full" : "hidden"}
+								style={isActive ? panelStyle : undefined}
 							>
 								<SchemaPanel region={region} />
 							</div>
