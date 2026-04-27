@@ -4,9 +4,9 @@
 ## Target Version: 0.4.0
 ## Versioning Strategy: Option C — version `packages/core` only; showcase = `0.0.0-dev`
 ## Active Milestone: Advanced Data Components
-## Milestone Status: IN PROGRESS 🚧
+## Milestone Status: COMPLETE ✅
 
-## Milestone Checklist (v0.4.x) — IN PROGRESS 🚧
+## Milestone Checklist (v0.4.x) — COMPLETE ✅
 
 ### Slice 0: Housekeeping & Architecture (v0.4.0) — COMPLETE ✅
 - [x] Create ADR-008 (`docs/decisions/008-data-components-architecture.md`)
@@ -217,9 +217,9 @@
 - **0.1.0 — Tooling & Workflow Foundation** (completed 2026-04-05)
 - **0.2.0 — Enhanced Grid & Form Features** (completed 2026-04-09)
 - **0.3.0 — Layout System** (completed 2026-04-26)
+- **0.4.0 — Advanced Data Components** (completed 2026-04-27)
 
 ## Upcoming Milestones
-- 0.4.0 — Advanced Data Components
 - 0.5.0 — Complete Primitive Library
 - 0.6.0 — Documentation & Showcase Site
 - 0.7.0 — Testing Suite

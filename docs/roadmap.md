@@ -205,14 +205,14 @@ This is the largest single milestone. It may be broken into sub-versions (0.3.0,
 - `useRealtime` — polling hook
 
 **Exit Criteria:**
-- [ ] SchemaTree renders hierarchical data with expand/collapse
-- [ ] SchemaTree supports lazy loading of child nodes
-- [ ] SchemaChart renders all 6 chart types
-- [ ] SchemaChart data is fully schema-driven
-- [ ] SchemaTreeGrid renders expandable grid rows
-- [ ] Real-time polling updates grid/tree data
-- [ ] Showcase has demo routes for tree, chart, and tree-grid
-- [ ] `pnpm build` passes with zero errors
+- [x] SchemaTree renders hierarchical data with expand/collapse
+- [x] SchemaTree supports lazy loading of child nodes
+- [x] SchemaChart renders all 6 chart types
+- [x] SchemaChart data is fully schema-driven
+- [x] SchemaTreeGrid renders expandable grid rows
+- [x] Real-time polling updates grid/tree data
+- [x] Showcase has demo routes for tree, chart, and tree-grid
+- [x] `pnpm build` passes with zero errors
 
 ---
 
