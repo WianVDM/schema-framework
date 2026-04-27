@@ -57,6 +57,7 @@ export function SchemaGrid({
 	onColumnOrderChange,
 	onDataStale,
 	onDataRefresh: _onDataRefresh,
+	fetchData,
 }: SchemaGridProps) {
 	const { Table, TableHeader, TableBody, TableRow, TableCell, Badge } =
 		usePrimitives();
@@ -64,10 +65,14 @@ export function SchemaGrid({
 	// NOTE: Use useRealtime hook when realtime config is present
 	const isRealtimeEnabled = schema.realtime?.enabled === true;
 
+	// NOTE: Use external fetchData prop when provided, otherwise return current data as placeholder
 	const realtimeFetcher = useCallback(async () => {
-		// NOTE: Return current data as placeholder — actual refresh is driven by onDataRefresh callback
+		if (fetchData) {
+			return fetchData() as Promise<RowData[]>;
+		}
+		// NOTE: No external fetcher — return current data; refresh is driven by onDataRefresh callback
 		return data as RowData[];
-	}, [data]);
+	}, [fetchData, data]);
 
 	const realtimeState = useRealtime<RowData[]>(
 		data as RowData[],
@@ -78,8 +83,12 @@ export function SchemaGrid({
 	// NOTE: Track stale state based on lastRefreshed from useRealtime
 	const [isStale, setIsStale] = useState(false);
 
+	// NOTE: Ref guard ensures onDataStale always calls the latest callback, avoiding stale closures in setTimeout
+	const onDataStaleRef = useRef(onDataStale);
+	onDataStaleRef.current = onDataStale;
+
 	useEffect(() => {
-		if (!isRealtimeEnabled || !onDataStale) return;
+		if (!isRealtimeEnabled || !onDataStaleRef.current) return;
 
 		const threshold = schema.realtime?.staleThresholdMs ?? 30_000;
 		const lastRefresh = realtimeState.lastRefreshed;
@@ -88,13 +97,13 @@ export function SchemaGrid({
 			const elapsed = Date.now() - lastRefresh;
 			if (elapsed >= threshold) {
 				setIsStale(true);
-				onDataStale();
+				onDataStaleRef.current();
 			} else {
 				setIsStale(false);
 				const remaining = threshold - elapsed;
 				const timer = setTimeout(() => {
 					setIsStale(true);
-					onDataStale();
+					onDataStaleRef.current?.();
 				}, remaining);
 				return () => clearTimeout(timer);
 			}
@@ -104,16 +113,20 @@ export function SchemaGrid({
 		isRealtimeEnabled,
 		schema.realtime?.staleThresholdMs,
 		realtimeState.lastRefreshed,
-		onDataStale,
 	]);
 
-	// NOTE: Notify consumer when realtime data refreshes
+	// NOTE: Notify consumer when realtime data refreshes (skip initial mount)
+	const isFirstRealtimeCallRef = useRef(true);
 	useEffect(() => {
 		if (
 			isRealtimeEnabled &&
 			realtimeState.lastRefreshed !== null &&
 			_onDataRefresh
 		) {
+			if (isFirstRealtimeCallRef.current) {
+				isFirstRealtimeCallRef.current = false;
+				return;
+			}
 			_onDataRefresh(realtimeState.data);
 		}
 	}, [
@@ -653,8 +666,9 @@ function resolveRowId(
 	if (row.id != null) return String(row.id);
 	let stableId = rowIdMapRef.current?.get(row);
 	if (stableId === undefined) {
-		// biome-ignore lint/style/noNonNullAssertion: rowIdCounterRef is initialized directly via useRef(0), so .current is never null
-		stableId = `__row_${rowIdCounterRef.current!++}`;
+		const counter = rowIdCounterRef.current ?? 0;
+		stableId = `__row_${counter}`;
+		rowIdCounterRef.current = counter + 1;
 		rowIdMapRef.current?.set(row, stableId);
 	}
 	return stableId;

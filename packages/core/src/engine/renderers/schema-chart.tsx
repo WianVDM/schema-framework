@@ -51,9 +51,12 @@ export function SchemaChart({
 }: SchemaChartProps): ReactNode {
 	const theme = useTheme();
 
-	// NOTE: Merge theme chart colors with defaults — theme overrides first entries
+	// NOTE: Merge theme chart colors with defaults — theme overrides first entries; guard against empty array
 	const colors = useMemo(
-		() => theme.chartColors ?? DEFAULT_COLORS,
+		() =>
+			theme.chartColors && theme.chartColors.length > 0
+				? theme.chartColors
+				: DEFAULT_COLORS,
 		[theme.chartColors],
 	);
 

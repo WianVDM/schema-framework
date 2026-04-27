@@ -1,6 +1,6 @@
 import { SchemaGrid, useRealtime } from "@my-framework/core";
 import { createFileRoute } from "@tanstack/react-router";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { REALTIME_GRID_SCHEMA } from "../data/realtime-grid-schema";
 
 export const Route = createFileRoute("/demo-realtime-grid")({
@@ -59,12 +59,14 @@ function DemoRealtimeGridRoute() {
 		fetcher,
 	);
 
-	// NOTE: Track refresh count via lastRefreshed changes
-	const prevRefreshed = useState(lastRefreshed);
-	if (lastRefreshed !== null && lastRefreshed !== prevRefreshed[0]) {
-		prevRefreshed[1](lastRefreshed);
-		setRefreshCount((c) => c + 1);
-	}
+	// NOTE: Track refresh count via lastRefreshed changes (useEffect avoids render-time state mutation)
+	const prevRefreshedRef = useRef<number | null>(lastRefreshed);
+	useEffect(() => {
+		if (lastRefreshed !== null && lastRefreshed !== prevRefreshedRef.current) {
+			prevRefreshedRef.current = lastRefreshed;
+			setRefreshCount((c) => c + 1);
+		}
+	}, [lastRefreshed]);
 
 	return (
 		<div className="max-w-3xl mx-auto space-y-4">

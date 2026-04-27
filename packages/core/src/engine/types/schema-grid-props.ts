@@ -14,4 +14,6 @@ export interface SchemaGridProps {
 	readonly onDataStale?: () => void;
 	/** Called when realtime data is refreshed */
 	readonly onDataRefresh?: (data: unknown) => void;
+	/** External fetcher for realtime polling — when provided, useRealtime calls this instead of returning stale data */
+	readonly fetchData?: () => Promise<readonly Record<string, unknown>[]>;
 }

@@ -97,8 +97,9 @@ export function resolveRowId(
 	if (row.id != null) return String(row.id);
 	let stableId = rowIdMapRef.current?.get(row);
 	if (stableId === undefined) {
-		// biome-ignore lint/style/noNonNullAssertion: NOTE: rowIdCounterRef is initialized via useRef(0), .current is never null
-		stableId = `__row_${rowIdCounterRef.current!++}`;
+		const counter = rowIdCounterRef.current ?? 0;
+		stableId = `__row_${counter}`;
+		rowIdCounterRef.current = counter + 1;
 		rowIdMapRef.current?.set(row, stableId);
 	}
 	return stableId;
