@@ -17,9 +17,17 @@ export {
 	validateCardLayout,
 } from "./card-layout";
 export {
+	chartSchemaValidator,
+	validateChartSchema,
+} from "./chart-schema";
+export {
 	contentSchemaValidator,
 	validateContentSchema,
 } from "./content-schema";
+export {
+	contextMenuConfigValidator,
+	validateContextMenuConfig,
+} from "./context-menu-config";
 export {
 	dashboardSchemaValidator,
 	validateDashboardSchema,
@@ -35,6 +43,10 @@ export {
 } from "./grid-schema";
 export { layoutSchemaValidator, validateLayoutSchema } from "./layout-schema";
 export {
+	realtimeConfigValidator,
+	validateRealtimeConfig,
+} from "./realtime-config";
+export {
 	responsiveConfigValidator,
 	validateResponsiveConfig,
 } from "./responsive-config";
@@ -44,4 +56,12 @@ export {
 	validateStackLayout,
 } from "./stack-layout";
 export { tabSchemaValidator, validateTabSchema } from "./tab-schema";
+export {
+	treeGridSchemaValidator,
+	validateTreeGridSchema,
+} from "./tree-grid-schema";
+export {
+	treeSchemaValidator,
+	validateTreeSchema,
+} from "./tree-schema";
 export { validateWizardSchema, wizardSchemaValidator } from "./wizard-schema";

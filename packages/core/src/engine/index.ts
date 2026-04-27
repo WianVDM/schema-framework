@@ -17,12 +17,16 @@ export {
 	applyResponsiveClasses,
 	asDataKey,
 	deepFreeze,
+	isChartContent,
 	isCustomContent,
 	isFormContent,
 	isGridContent,
 	isLayoutContent,
 	isTabsContent,
+	isTreeContent,
+	isTreeGridContent,
 	isWizardContent,
+	useRealtime,
 } from "./helpers";
 // Helpers
 export { resolveMessage } from "./helpers/i18n";
@@ -32,25 +36,37 @@ export { FieldRenderer } from "./renderers/field-renderer";
 export { GridColumnHeader } from "./renderers/grid-column-header";
 export { GridPagination } from "./renderers/grid-pagination";
 export { GridToolbar } from "./renderers/grid-toolbar";
+export { SchemaChart } from "./renderers/schema-chart";
 export { SchemaDashboard } from "./renderers/schema-dashboard";
 export { SchemaForm } from "./renderers/schema-form";
 export { SchemaGrid } from "./renderers/schema-grid";
 export { SchemaLayout } from "./renderers/schema-layout";
 export { SchemaPanel } from "./renderers/schema-panel";
+export { SchemaTree } from "./renderers/schema-tree";
+export { SchemaTreeGrid } from "./renderers/schema-tree-grid";
 export { SchemaWizard } from "./renderers/schema-wizard";
 export { StackLayoutRenderer } from "./renderers/stack-layout";
 export { ThemeProvider } from "./renderers/theme-provider";
 export { useTheme } from "./renderers/use-theme";
 // Types (one-export-per-file via barrel)
 export type {
-	// Layout types
 	BorderPosition,
 	Brand,
 	CellValueRenderer,
+	ChartAxis,
+	ChartDataPoint,
+	ChartGrid,
+	ChartLegend,
+	ChartSchema,
+	ChartSeries,
+	ChartTooltip,
+	ChartType,
 	ColumnFilterConfig,
 	ConditionOperator,
 	ContentRendererProps,
 	ContentSchema,
+	ContextMenuConfig,
+	ContextMenuItem,
 	CustomComponentRegistry,
 	DashboardPanel,
 	DashboardRendererProps,
@@ -78,11 +94,16 @@ export type {
 	PaginationConfig,
 	PrimitiveComponents,
 	ReadonlyDeep,
+	RealtimeConfig,
+	RefreshStrategy,
 	ResponsiveConfig,
 	ReviewStepConfig,
 	RuntimeValidationRule,
+	SchemaChartProps,
 	SchemaFormProps,
 	SchemaGridProps,
+	SchemaTreeGridProps,
+	SchemaTreeProps,
 	SchemaWizardProps,
 	SelectionStore,
 	SelectOption,
@@ -94,6 +115,15 @@ export type {
 	TabSchema,
 	TabsRendererProps,
 	ThemeConfig,
+	TreeDndConfig,
+	TreeGridRow,
+	TreeGridSchema,
+	TreeIcons,
+	TreeLazyConfig,
+	TreeNode,
+	TreeSchema,
+	TreeSelectionConfig,
+	TreeSelectionMode,
 	ValidationRule,
 	ValidationType,
 	WizardNavigationConfig,
@@ -105,23 +135,31 @@ export type { ValidationResult } from "./validators";
 export {
 	BORDER_DEFAULT_SIZES,
 	borderLayoutSchema,
+	chartSchemaValidator,
+	contextMenuConfigValidator,
 	evaluateCondition,
 	fieldSchemaValidator,
 	formSchemaValidator,
 	gridColumnSchemaValidator,
 	gridSchemaValidator,
+	treeGridSchemaValidator,
+	treeSchemaValidator,
 	validateBorderLayout,
+	validateChartSchema,
 	validateContentSchema,
+	validateContextMenuConfig,
 	validateDashboardSchema,
 	validateFieldSchema,
 	validateFieldValue,
 	validateFormSchema,
 	validateGridSchema,
 	validateLayoutSchema,
-	// Layout validators
+	validateRealtimeConfig,
 	validateResponsiveConfig,
 	validateStackLayout,
 	validateTabSchema,
+	validateTreeGridSchema,
+	validateTreeSchema,
 	validateWizardSchema,
 	wizardSchemaValidator,
 } from "./validators";

@@ -1,10 +1,13 @@
 import { z } from "zod";
+import { chartSchemaValidator } from "./chart-schema";
 import { formSchemaValidator } from "./form-schema";
 import { gridSchemaValidator } from "./grid-schema";
 import { layoutSchemaValidator } from "./layout-schema";
 import type { ValidationResult } from "./shared-schemas";
 import { formatZodIssue } from "./shared-schemas";
 import { tabSchemaValidator } from "./tab-schema";
+import { treeGridSchemaValidator } from "./tree-grid-schema";
+import { treeSchemaValidator } from "./tree-schema";
 import { wizardSchemaValidator } from "./wizard-schema";
 
 // NOTE: Circular dependency chain: content-schema ↔ tab-schema, content-schema ↔ layout-schema.
@@ -40,6 +43,24 @@ export const contentSchemaValidator: z.ZodType = z.discriminatedUnion("type", [
 		.object({
 			type: z.literal("layout"),
 			schema: z.lazy(() => layoutSchemaValidator),
+		})
+		.strict(),
+	z
+		.object({
+			type: z.literal("tree"),
+			schema: z.lazy(() => treeSchemaValidator),
+		})
+		.strict(),
+	z
+		.object({
+			type: z.literal("chart"),
+			schema: z.lazy(() => chartSchemaValidator),
+		})
+		.strict(),
+	z
+		.object({
+			type: z.literal("treeGrid"),
+			schema: z.lazy(() => treeGridSchemaValidator),
 		})
 		.strict(),
 	z

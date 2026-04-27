@@ -1,10 +1,75 @@
 # Version Status
 
 ## Current Version: 0.3.4
-## Target Version: 0.3.5
+## Target Version: 0.4.0
 ## Versioning Strategy: Option C — version `packages/core` only; showcase = `0.0.0-dev`
-## Active Milestone: Layout System
+## Active Milestone: Advanced Data Components
 ## Milestone Status: COMPLETE ✅
+
+## Milestone Checklist (v0.4.x) — COMPLETE ✅
+
+### Slice 0: Housekeeping & Architecture (v0.4.0) — COMPLETE ✅
+- [x] Create ADR-008 (`docs/decisions/008-data-components-architecture.md`)
+- [x] Update `docs/VERSION_STATUS.md` for v0.4.0 target
+- [x] Update `docs/roadmap.md` with v0.3 retrospective + v0.4 refinements
+- [x] Verify `pnpm build` passes on current main
+
+### Slice 1: SchemaTree Core — Types, Validators, Basic Renderer (v0.4.1) — COMPLETE ✅
+- [x] Create tree types (`TreeSchema`, `TreeNode`, `TreeSelectionConfig`, `TreeIcons`, `ContextMenuConfig`)
+- [x] Create tree validators (Zod)
+- [x] Add `tree`, `chart`, `treeGrid` variants to `ContentSchema` + type guards
+- [x] Create basic `SchemaTree` renderer (expand/collapse, indentation, node rendering)
+- [x] Update `ContentRenderer` dispatcher with `tree` case
+- [x] Add ContextMenu slots to `PrimitiveComponents`
+- [x] Install shadcn ContextMenu in showcase
+- [x] Create mock tree data + schema + demo route (`/demo-tree`)
+- [x] Regenerate context maps
+- [x] `pnpm build` + `pnpm typecheck` pass
+
+### Slice 2: SchemaTree Advanced — Selection, Lazy Loading, DnD, Context Menu (v0.4.2) — COMPLETE ✅
+- [x] Implement checkbox selection (single, multi, checkbox modes via `SchemaTreeProps`)
+- [x] Implement lazy loading (`onLoadChildren` + loading indicator in renderer)
+- [x] Implement drag-and-drop node reordering (`@dnd-kit/core`)
+- [x] Implement context menu (right-click handler via `onContextAction` callback)
+- [x] Update tree demo route with all advanced features
+- [x] `pnpm build` + `pnpm typecheck` pass
+
+### Slice 3: SchemaChart — Types, Validators, All Chart Types (v0.4.3) — COMPLETE ✅
+- [x] Add `recharts` as peerDependency in `packages/core/package.json`
+- [x] Install `recharts` in showcase
+- [x] Create chart types (`ChartSchema`, `ChartSeries`) — split into 10 individual type files (chart-type, chart-data-point, chart-series, chart-axis, chart-legend, chart-tooltip, chart-grid, context-menu-item, refresh-strategy, tree-grid-row)
+- [x] Create chart validator (Zod)
+- [x] Create chart renderer — full `SchemaChart` with Recharts (bar, line, area, scatter, pie, doughnut)
+- [x] Implement theme integration (CSS variables → chart colors)
+- [x] Update `ContentRenderer` dispatcher with `chart` case
+- [x] Create mock chart data + schema + demo route (`/demo-chart`)
+- [x] Regenerate context maps
+- [x] `pnpm build` + `pnpm typecheck` pass
+
+### Slice 4: SchemaTreeGrid — Types, Validators, Hybrid Renderer (v0.4.4) — COMPLETE ✅
+- [x] Create treegrid types (`TreeGridSchema`, `TreeGridRow`)
+- [x] Create treegrid validator (Zod)
+- [x] Extract shared grid helpers from SchemaGrid (cell rendering, pagination)
+- [x] Create `SchemaTreeGrid` renderer (shared column model + tree expansion)
+- [x] Implement lazy loading for child rows (`onLoadChildren` prop)
+- [x] Implement virtual scrolling with tree-expanded state
+- [x] Update `ContentRenderer` dispatcher with `treeGrid` case
+- [x] Create mock treegrid data + schema + demo route (`/demo-tree-grid`)
+- [x] Regenerate context maps
+- [x] `pnpm build` + `pnpm typecheck` pass
+
+### Slice 5: Real-time Patterns — Polling & Refresh Hooks (v0.4.5) — COMPLETE ✅
+- [x] Create real-time types (`RealtimeConfig`)
+- [x] Create real-time validator (Zod)
+- [x] Add `realtime?: RealtimeConfig` to `GridSchema` and `TreeSchema`
+- [x] Create `useRealtime` hook (polling, stale detection, pause-on-hidden)
+- [x] Integrate into `SchemaGrid` and `SchemaTree`
+- [x] Add `onDataStale` / `onDataRefresh` callbacks
+- [x] Create demo route (`/demo-realtime-grid`)
+- [x] Regenerate context maps
+- [x] `pnpm build` + `pnpm typecheck` pass
+
+---
 
 ## Milestone Checklist (v0.3.x) — COMPLETE ✅
 
@@ -152,9 +217,9 @@
 - **0.1.0 — Tooling & Workflow Foundation** (completed 2026-04-05)
 - **0.2.0 — Enhanced Grid & Form Features** (completed 2026-04-09)
 - **0.3.0 — Layout System** (completed 2026-04-26)
+- **0.4.0 — Advanced Data Components** (completed 2026-04-27)
 
 ## Upcoming Milestones
-- 0.4.0 — Advanced Data Components
 - 0.5.0 — Complete Primitive Library
 - 0.6.0 — Documentation & Showcase Site
 - 0.7.0 — Testing Suite

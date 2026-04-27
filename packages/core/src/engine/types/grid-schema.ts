@@ -2,6 +2,7 @@ import type { DataKey } from "./branded";
 import type { GridColumnSchema } from "./grid-column-schema";
 import type { I18nConfig } from "./i18n-config";
 import type { PaginationConfig } from "./pagination-config";
+import type { RealtimeConfig } from "./realtime-config";
 import type { ServerPaginationConfig } from "./server-pagination-config";
 import type { VirtualScrollConfig } from "./virtual-scroll-config";
 
@@ -22,4 +23,5 @@ export interface GridSchema {
 	readonly i18n?: I18nConfig;
 	readonly virtualScroll?: VirtualScrollConfig | boolean;
 	readonly columnReorder?: boolean;
+	readonly realtime?: RealtimeConfig;
 }

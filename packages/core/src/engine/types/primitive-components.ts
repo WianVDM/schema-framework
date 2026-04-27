@@ -39,5 +39,10 @@ export interface PrimitiveComponents {
 	readonly AddressInput: AnyComponent;
 	readonly DatePicker?: AnyComponent;
 	readonly TagInput?: AnyComponent;
+	readonly ContextMenu?: AnyComponent;
+	readonly ContextMenuTrigger?: AnyComponent;
+	readonly ContextMenuContent?: AnyComponent;
+	readonly ContextMenuItem?: AnyComponent;
+	readonly ContextMenuSeparator?: AnyComponent;
 	readonly StepIndicator?: AnyComponent;
 }

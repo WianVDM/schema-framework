@@ -2,9 +2,12 @@ import { lazy, type ReactNode, Suspense } from "react";
 import { useCustomComponents } from "../context/custom-component-context";
 import type { ContentRendererProps } from "../types/content-renderer-props";
 import type { FormSubmitHandler } from "../types/form-submit-handler";
+import { SchemaChart } from "./schema-chart";
 import { SchemaForm } from "./schema-form";
 import { SchemaGrid } from "./schema-grid";
 import { SchemaTabs } from "./schema-tabs";
+import { SchemaTree } from "./schema-tree";
+import { SchemaTreeGrid } from "./schema-tree-grid";
 import { SchemaWizard } from "./schema-wizard";
 
 /** NOTE: Lazy-loaded to avoid circular dependency: content-renderer ↔ schema-layout */
@@ -36,6 +39,15 @@ export function ContentRenderer({ content }: ContentRendererProps): ReactNode {
 					<SchemaLayoutLazy schema={content.schema} />
 				</Suspense>
 			);
+
+		case "tree":
+			return <SchemaTree schema={content.schema} />;
+
+		case "chart":
+			return <SchemaChart schema={content.schema} />;
+
+		case "treeGrid":
+			return <SchemaTreeGrid schema={content.schema} />;
 
 		case "custom":
 			return (

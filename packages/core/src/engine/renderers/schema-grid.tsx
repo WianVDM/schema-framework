@@ -17,6 +17,7 @@ import { useVirtualizer, type Virtualizer } from "@tanstack/react-virtual";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePrimitives } from "../context/primitives-context";
 import { resolveMessage } from "../helpers/i18n";
+import { useRealtime } from "../helpers/use-realtime";
 import type {
 	GridColumnSchema,
 	SchemaGridProps,
@@ -54,9 +55,91 @@ export function SchemaGrid({
 	onPageChange,
 	onFilterChange,
 	onColumnOrderChange,
+	onDataStale,
+	onDataRefresh: _onDataRefresh,
+	fetchData,
 }: SchemaGridProps) {
 	const { Table, TableHeader, TableBody, TableRow, TableCell, Badge } =
 		usePrimitives();
+
+	// NOTE: Use useRealtime hook when realtime config is present
+	const isRealtimeEnabled = schema.realtime?.enabled === true;
+
+	// NOTE: Use external fetchData prop when provided, otherwise return current data as placeholder
+	const realtimeFetcher = useCallback(async () => {
+		if (fetchData) {
+			return fetchData() as Promise<RowData[]>;
+		}
+		// NOTE: No external fetcher — return current data; refresh is driven by onDataRefresh callback
+		return data as RowData[];
+	}, [fetchData, data]);
+
+	const realtimeState = useRealtime<RowData[]>(
+		data as RowData[],
+		schema.realtime ?? { enabled: false, intervalMs: 30_000 },
+		realtimeFetcher,
+	);
+
+	// NOTE: Track stale state based on lastRefreshed from useRealtime
+	const [isStale, setIsStale] = useState(false);
+
+	// NOTE: Ref guard ensures onDataStale always calls the latest callback, avoiding stale closures in setTimeout
+	const onDataStaleRef = useRef(onDataStale);
+	onDataStaleRef.current = onDataStale;
+
+	useEffect(() => {
+		if (!isRealtimeEnabled || !onDataStaleRef.current) return;
+
+		const threshold = schema.realtime?.staleThresholdMs ?? 30_000;
+		const lastRefresh = realtimeState.lastRefreshed;
+
+		if (lastRefresh !== null) {
+			const elapsed = Date.now() - lastRefresh;
+			if (elapsed >= threshold) {
+				setIsStale(true);
+				onDataStaleRef.current();
+			} else {
+				setIsStale(false);
+				const remaining = threshold - elapsed;
+				const timer = setTimeout(() => {
+					setIsStale(true);
+					onDataStaleRef.current?.();
+				}, remaining);
+				return () => clearTimeout(timer);
+			}
+		}
+		return undefined;
+	}, [
+		isRealtimeEnabled,
+		schema.realtime?.staleThresholdMs,
+		realtimeState.lastRefreshed,
+	]);
+
+	// NOTE: Notify consumer when realtime data refreshes (skip initial mount)
+	const isFirstRealtimeCallRef = useRef(true);
+	useEffect(() => {
+		if (
+			isRealtimeEnabled &&
+			realtimeState.lastRefreshed !== null &&
+			_onDataRefresh
+		) {
+			if (isFirstRealtimeCallRef.current) {
+				isFirstRealtimeCallRef.current = false;
+				return;
+			}
+			_onDataRefresh(realtimeState.data);
+		}
+	}, [
+		isRealtimeEnabled,
+		realtimeState.lastRefreshed,
+		realtimeState.data,
+		_onDataRefresh,
+	]);
+
+	// NOTE: Use realtime data when available, otherwise fall back to prop data
+	const effectiveData = isRealtimeEnabled
+		? realtimeState.data
+		: (data as RowData[]);
 
 	const [sorting, setSorting] = useState<SortingState>([]);
 	const [columnFilters, setColumnFilters] = useState<Record<string, string>>(
@@ -132,8 +215,9 @@ export function SchemaGrid({
 
 	// NOTE: TanStack Table requires mutable Record<string, unknown>[];
 	// the data prop is typed as readonly unknown[] for caller immutability.
+	// When realtime is enabled, use the hook-managed data; otherwise use prop data.
 	const table = useReactTable({
-		data: data as RowData[],
+		data: effectiveData,
 		columns,
 		state: { sorting, ...(isColumnReorderEnabled ? { columnOrder } : {}) },
 		onSortingChange: setSorting,
@@ -277,6 +361,12 @@ export function SchemaGrid({
 	return (
 		<div className="space-y-2">
 			{schema.title && <h2 className="text-xl font-bold">{schema.title}</h2>}
+			{schema.realtime?.enabled && isStale && (
+				<div className="text-xs text-yellow-600 flex items-center gap-1">
+					<span className="inline-block w-2 h-2 rounded-full bg-yellow-500 animate-pulse" />
+					Data may be stale
+				</div>
+			)}
 			{schema.description && (
 				<p className="text-sm text-muted-foreground">{schema.description}</p>
 			)}
@@ -576,8 +666,9 @@ function resolveRowId(
 	if (row.id != null) return String(row.id);
 	let stableId = rowIdMapRef.current?.get(row);
 	if (stableId === undefined) {
-		// biome-ignore lint/style/noNonNullAssertion: rowIdCounterRef is initialized directly via useRef(0), so .current is never null
-		stableId = `__row_${rowIdCounterRef.current!++}`;
+		const counter = rowIdCounterRef.current ?? 0;
+		stableId = `__row_${counter}`;
+		rowIdCounterRef.current = counter + 1;
 		rowIdMapRef.current?.set(row, stableId);
 	}
 	return stableId;
