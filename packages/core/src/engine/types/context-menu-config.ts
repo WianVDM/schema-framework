@@ -1,13 +1,7 @@
-/** Menu item for context menus */
-export interface ContextMenuItem {
-	readonly label: string;
-	readonly icon?: string;
-	readonly disabled?: boolean;
-	readonly separator?: boolean;
-	readonly action: string;
-}
+import type { ContextMenuItem } from "./context-menu-item";
+import type { ReadonlyDeep } from "./readonly-deep";
 
 /** Context menu configuration — shared by Tree, Grid, and other components */
 export interface ContextMenuConfig {
-	readonly items: readonly ContextMenuItem[];
+	readonly items: ReadonlyArray<ReadonlyDeep<ContextMenuItem>>;
 }

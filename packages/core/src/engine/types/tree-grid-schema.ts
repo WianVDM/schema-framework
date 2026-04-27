@@ -1,22 +1,13 @@
 import type { GridColumnSchema } from "./grid-column-schema";
-
-/** A row in a tree grid — supports hierarchical children */
-export interface TreeGridRow {
-	readonly id: string;
-	/** Child rows — presence of this field makes the row expandable */
-	readonly children?: readonly TreeGridRow[];
-	/** Whether the row is expanded */
-	readonly expanded?: boolean;
-	/** Row data — keys correspond to column `key` values */
-	readonly [key: string]: unknown;
-}
+import type { ReadonlyDeep } from "./readonly-deep";
+import type { TreeGridRow } from "./tree-grid-row";
 
 /** Schema definition for a tree-grid (hybrid tree + grid) component */
 export interface TreeGridSchema {
 	/** Column definitions — reuses GridColumnSchema from the grid system */
-	readonly columns: readonly GridColumnSchema[];
+	readonly columns: ReadonlyArray<ReadonlyDeep<GridColumnSchema>>;
 	/** Row data with hierarchical structure */
-	readonly rows: readonly TreeGridRow[];
+	readonly rows: ReadonlyArray<ReadonlyDeep<TreeGridRow>>;
 	/** Tree indentation width per level in pixels */
 	readonly indentWidth?: number;
 	/** Show tree lines connecting parent-child rows */
@@ -29,4 +20,8 @@ export interface TreeGridSchema {
 	readonly description?: string;
 	/** Row height in pixels for virtual scrolling */
 	readonly rowHeight?: number;
+	/** Enable virtual scrolling for large datasets — only visible rows are rendered */
+	readonly virtualScroll?: boolean;
+	/** Container height in pixels when virtual scrolling is enabled (default: 600) */
+	readonly virtualScrollHeight?: number;
 }

@@ -1,5 +1,6 @@
 import type { DataKey } from "./branded";
 import type { ContextMenuConfig } from "./context-menu-config";
+import type { RealtimeConfig } from "./realtime-config";
 
 /** Selection mode for tree nodes */
 export type TreeSelectionMode = "single" | "multi" | "checkbox";
@@ -74,4 +75,6 @@ export interface TreeSchema {
 	readonly defaultExpandLevel?: number;
 	/** Title displayed above the tree */
 	readonly title?: string;
+	/** Realtime data refresh configuration */
+	readonly realtime?: RealtimeConfig;
 }

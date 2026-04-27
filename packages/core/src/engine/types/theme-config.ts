@@ -11,4 +11,6 @@ export interface ThemeConfig {
 		readonly pagination: string;
 		readonly toolbar: string;
 	}>;
+	/** NOTE: Color palette for chart series — overrides DEFAULT_COLORS in SchemaChart */
+	readonly chartColors?: readonly string[];
 }

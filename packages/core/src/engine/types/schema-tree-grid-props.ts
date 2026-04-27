@@ -1,4 +1,5 @@
-import type { TreeGridRow, TreeGridSchema } from "./tree-grid-schema";
+import type { TreeGridRow } from "./tree-grid-row";
+import type { TreeGridSchema } from "./tree-grid-schema";
 
 export interface SchemaTreeGridProps {
 	readonly schema: TreeGridSchema;

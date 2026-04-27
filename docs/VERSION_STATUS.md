@@ -26,47 +26,47 @@
 - [x] Regenerate context maps
 - [x] `pnpm build` + `pnpm typecheck` pass
 
-### Slice 2: SchemaTree Advanced — Selection, Lazy Loading, DnD, Context Menu (v0.4.2) — PARTIAL ⚡
+### Slice 2: SchemaTree Advanced — Selection, Lazy Loading, DnD, Context Menu (v0.4.2) — COMPLETE ✅
 - [x] Implement checkbox selection (single, multi, checkbox modes via `SchemaTreeProps`)
 - [x] Implement lazy loading (`onLoadChildren` + loading indicator in renderer)
-- [ ] Implement drag-and-drop node reordering (`@dnd-kit/core`)
+- [x] Implement drag-and-drop node reordering (`@dnd-kit/core`)
 - [x] Implement context menu (right-click handler via `onContextAction` callback)
 - [x] Update tree demo route with all advanced features
 - [x] `pnpm build` + `pnpm typecheck` pass
 
-### Slice 3: SchemaChart — Types, Validators, All Chart Types (v0.4.3) — PARTIAL ⚡
+### Slice 3: SchemaChart — Types, Validators, All Chart Types (v0.4.3) — COMPLETE ✅
 - [x] Add `recharts` as peerDependency in `packages/core/package.json`
 - [x] Install `recharts` in showcase
-- [x] Create chart types (`ChartSchema`, `ChartSeries`)
+- [x] Create chart types (`ChartSchema`, `ChartSeries`) — split into 10 individual type files (chart-type, chart-data-point, chart-series, chart-axis, chart-legend, chart-tooltip, chart-grid, context-menu-item, refresh-strategy, tree-grid-row)
 - [x] Create chart validator (Zod)
-- [x] Create chart renderer (placeholder — `SchemaChart` with Recharts interface)
-- [ ] Implement theme integration (CSS variables → chart colors)
+- [x] Create chart renderer — full `SchemaChart` with Recharts (bar, line, area, scatter, pie, doughnut)
+- [x] Implement theme integration (CSS variables → chart colors)
 - [x] Update `ContentRenderer` dispatcher with `chart` case
 - [x] Create mock chart data + schema + demo route (`/demo-chart`)
 - [x] Regenerate context maps
 - [x] `pnpm build` + `pnpm typecheck` pass
 
-### Slice 4: SchemaTreeGrid — Types, Validators, Hybrid Renderer (v0.4.4) — PARTIAL ⚡
+### Slice 4: SchemaTreeGrid — Types, Validators, Hybrid Renderer (v0.4.4) — COMPLETE ✅
 - [x] Create treegrid types (`TreeGridSchema`, `TreeGridRow`)
 - [x] Create treegrid validator (Zod)
-- [ ] Extract shared grid helpers from SchemaGrid (cell rendering, pagination)
+- [x] Extract shared grid helpers from SchemaGrid (cell rendering, pagination)
 - [x] Create `SchemaTreeGrid` renderer (shared column model + tree expansion)
 - [x] Implement lazy loading for child rows (`onLoadChildren` prop)
-- [ ] Implement virtual scrolling with tree-expanded state
+- [x] Implement virtual scrolling with tree-expanded state
 - [x] Update `ContentRenderer` dispatcher with `treeGrid` case
 - [x] Create mock treegrid data + schema + demo route (`/demo-tree-grid`)
 - [x] Regenerate context maps
 - [x] `pnpm build` + `pnpm typecheck` pass
 
-### Slice 5: Real-time Patterns — Polling & Refresh Hooks (v0.4.5) — PARTIAL ⚡
+### Slice 5: Real-time Patterns — Polling & Refresh Hooks (v0.4.5) — COMPLETE ✅
 - [x] Create real-time types (`RealtimeConfig`)
 - [x] Create real-time validator (Zod)
-- [ ] Add `realtime?: RealtimeConfig` to `GridSchema` and `TreeSchema`
+- [x] Add `realtime?: RealtimeConfig` to `GridSchema` and `TreeSchema`
 - [x] Create `useRealtime` hook (polling, stale detection, pause-on-hidden)
-- [ ] Integrate into `SchemaGrid` and `SchemaTree`
-- [ ] Add `onDataStale` / `onDataRefresh` callbacks
-- [ ] Create demo route (`/demo-realtime-grid`)
-- [ ] Regenerate context maps
+- [x] Integrate into `SchemaGrid` and `SchemaTree`
+- [x] Add `onDataStale` / `onDataRefresh` callbacks
+- [x] Create demo route (`/demo-realtime-grid`)
+- [x] Regenerate context maps
 - [x] `pnpm build` + `pnpm typecheck` pass
 
 ---

@@ -33,7 +33,7 @@ export const treeGridSchemaValidator = z
 			.min(1, "TreeGrid must have at least one row"),
 		indentWidth: z.number().int().min(0).optional(),
 		showLines: z.boolean().optional(),
-		defaultExpandLevel: z.number().int().optional(),
+		defaultExpandLevel: z.number().int().min(0).optional(),
 		title: z.string().optional(),
 		description: z.string().optional(),
 		rowHeight: z.number().int().min(1).optional(),

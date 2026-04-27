@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { DataKey } from "../types/branded";
+import type { DataKey } from "../types";
 import type { ValidationResult } from "./shared-schemas";
 import { formatZodIssue } from "./shared-schemas";
 

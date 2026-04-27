@@ -16,6 +16,7 @@ import { Route as DemoTreeRouteImport } from './routes/demo-tree'
 import { Route as DemoSupportTicketRouteImport } from './routes/demo-support-ticket'
 import { Route as DemoStackLayoutRouteImport } from './routes/demo-stack-layout'
 import { Route as DemoRegistrationRouteImport } from './routes/demo-registration'
+import { Route as DemoRealtimeGridRouteImport } from './routes/demo-realtime-grid'
 import { Route as DemoOrdersRouteImport } from './routes/demo-orders'
 import { Route as DemoMultiSelectRouteImport } from './routes/demo-multi-select'
 import { Route as DemoHboxLayoutRouteImport } from './routes/demo-hbox-layout'
@@ -65,6 +66,11 @@ const DemoStackLayoutRoute = DemoStackLayoutRouteImport.update({
 const DemoRegistrationRoute = DemoRegistrationRouteImport.update({
   id: '/demo-registration',
   path: '/demo-registration',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoRealtimeGridRoute = DemoRealtimeGridRouteImport.update({
+  id: '/demo-realtime-grid',
+  path: '/demo-realtime-grid',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoOrdersRoute = DemoOrdersRouteImport.update({
@@ -159,6 +165,7 @@ export interface FileRoutesByFullPath {
   '/demo-hbox-layout': typeof DemoHboxLayoutRoute
   '/demo-multi-select': typeof DemoMultiSelectRoute
   '/demo-orders': typeof DemoOrdersRoute
+  '/demo-realtime-grid': typeof DemoRealtimeGridRoute
   '/demo-registration': typeof DemoRegistrationRoute
   '/demo-stack-layout': typeof DemoStackLayoutRoute
   '/demo-support-ticket': typeof DemoSupportTicketRoute
@@ -183,6 +190,7 @@ export interface FileRoutesByTo {
   '/demo-hbox-layout': typeof DemoHboxLayoutRoute
   '/demo-multi-select': typeof DemoMultiSelectRoute
   '/demo-orders': typeof DemoOrdersRoute
+  '/demo-realtime-grid': typeof DemoRealtimeGridRoute
   '/demo-registration': typeof DemoRegistrationRoute
   '/demo-stack-layout': typeof DemoStackLayoutRoute
   '/demo-support-ticket': typeof DemoSupportTicketRoute
@@ -208,6 +216,7 @@ export interface FileRoutesById {
   '/demo-hbox-layout': typeof DemoHboxLayoutRoute
   '/demo-multi-select': typeof DemoMultiSelectRoute
   '/demo-orders': typeof DemoOrdersRoute
+  '/demo-realtime-grid': typeof DemoRealtimeGridRoute
   '/demo-registration': typeof DemoRegistrationRoute
   '/demo-stack-layout': typeof DemoStackLayoutRoute
   '/demo-support-ticket': typeof DemoSupportTicketRoute
@@ -234,6 +243,7 @@ export interface FileRouteTypes {
     | '/demo-hbox-layout'
     | '/demo-multi-select'
     | '/demo-orders'
+    | '/demo-realtime-grid'
     | '/demo-registration'
     | '/demo-stack-layout'
     | '/demo-support-ticket'
@@ -258,6 +268,7 @@ export interface FileRouteTypes {
     | '/demo-hbox-layout'
     | '/demo-multi-select'
     | '/demo-orders'
+    | '/demo-realtime-grid'
     | '/demo-registration'
     | '/demo-stack-layout'
     | '/demo-support-ticket'
@@ -282,6 +293,7 @@ export interface FileRouteTypes {
     | '/demo-hbox-layout'
     | '/demo-multi-select'
     | '/demo-orders'
+    | '/demo-realtime-grid'
     | '/demo-registration'
     | '/demo-stack-layout'
     | '/demo-support-ticket'
@@ -307,6 +319,7 @@ export interface RootRouteChildren {
   DemoHboxLayoutRoute: typeof DemoHboxLayoutRoute
   DemoMultiSelectRoute: typeof DemoMultiSelectRoute
   DemoOrdersRoute: typeof DemoOrdersRoute
+  DemoRealtimeGridRoute: typeof DemoRealtimeGridRoute
   DemoRegistrationRoute: typeof DemoRegistrationRoute
   DemoStackLayoutRoute: typeof DemoStackLayoutRoute
   DemoSupportTicketRoute: typeof DemoSupportTicketRoute
@@ -365,6 +378,13 @@ declare module '@tanstack/react-router' {
       path: '/demo-registration'
       fullPath: '/demo-registration'
       preLoaderRoute: typeof DemoRegistrationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo-realtime-grid': {
+      id: '/demo-realtime-grid'
+      path: '/demo-realtime-grid'
+      fullPath: '/demo-realtime-grid'
+      preLoaderRoute: typeof DemoRealtimeGridRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/demo-orders': {
@@ -491,6 +511,7 @@ const rootRouteChildren: RootRouteChildren = {
   DemoHboxLayoutRoute: DemoHboxLayoutRoute,
   DemoMultiSelectRoute: DemoMultiSelectRoute,
   DemoOrdersRoute: DemoOrdersRoute,
+  DemoRealtimeGridRoute: DemoRealtimeGridRoute,
   DemoRegistrationRoute: DemoRegistrationRoute,
   DemoStackLayoutRoute: DemoStackLayoutRoute,
   DemoSupportTicketRoute: DemoSupportTicketRoute,

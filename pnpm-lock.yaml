@@ -132,6 +132,9 @@ importers:
 
   packages/core:
     dependencies:
+      '@dnd-kit/utilities':
+        specifier: ^3.2.2
+        version: 3.2.2(react@19.2.4)
       zod:
         specifier: ^3.24
         version: 3.25.76

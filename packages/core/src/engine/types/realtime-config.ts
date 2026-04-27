@@ -1,16 +1,17 @@
-/** Strategy for merging refreshed data with existing data */
-export type RefreshStrategy = "replace" | "merge" | "append";
+import type { RefreshStrategy } from "./refresh-strategy";
 
-/** Real-time polling configuration for data components */
+/** Configuration for real-time data updates */
 export interface RealtimeConfig {
-	/** Enable polling */
+	/** Whether real-time updates are enabled */
 	readonly enabled: boolean;
-	/** Polling interval in milliseconds */
-	readonly intervalMs: number;
-	/** How to merge refreshed data */
+	/** Refresh strategy */
 	readonly strategy?: RefreshStrategy;
-	/** Pause polling when the page/tab is hidden */
+	/** Polling interval in milliseconds */
+	readonly intervalMs?: number;
+	/** Whether to pause polling when the tab is hidden */
 	readonly pauseOnHidden?: boolean;
-	/** Data older than this threshold (ms) is considered stale */
+	/** Threshold in milliseconds after which data is considered stale */
 	readonly staleThresholdMs?: number;
+	/** WebSocket or SSE endpoint URL */
+	readonly endpoint?: string;
 }

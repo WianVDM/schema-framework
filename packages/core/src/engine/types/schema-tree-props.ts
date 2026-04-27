@@ -19,4 +19,8 @@ export interface SchemaTreeProps {
 		targetId: string,
 		position: "before" | "after" | "child",
 	) => void;
+	/** Fired when realtime data becomes stale */
+	readonly onDataStale?: () => void;
+	/** Fired when realtime data is refreshed */
+	readonly onDataRefresh?: (data: unknown) => void;
 }

@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { type ReactNode, useMemo } from "react";
 import {
 	Area,
 	AreaChart,
@@ -18,8 +18,10 @@ import {
 	XAxis,
 	YAxis,
 } from "recharts";
-import type { ChartSchema, ChartSeries } from "../types/chart-schema";
+import type { ChartSchema } from "../types/chart-schema";
+import type { ChartSeries } from "../types/chart-series";
 import type { SchemaChartProps } from "../types/schema-chart-props";
+import { useTheme } from "./use-theme";
 
 /** NOTE: Default color palette for chart series without explicit colors */
 const DEFAULT_COLORS = [
@@ -33,11 +35,28 @@ const DEFAULT_COLORS = [
 	"#14b8a6",
 ] as const;
 
+/** Resolves a color for a series by index, preferring series color then palette */
+function resolveColor(
+	series: ChartSeries,
+	index: number,
+	palette: readonly string[],
+): string {
+	return series.color ?? palette[index % palette.length];
+}
+
 /** Schema-driven chart component backed by Recharts */
 export function SchemaChart({
 	schema,
 	onDataClick,
 }: SchemaChartProps): ReactNode {
+	const theme = useTheme();
+
+	// NOTE: Merge theme chart colors with defaults — theme overrides first entries
+	const colors = useMemo(
+		() => theme.chartColors ?? DEFAULT_COLORS,
+		[theme.chartColors],
+	);
+
 	return (
 		<div
 			className="schema-chart"
@@ -52,10 +71,10 @@ export function SchemaChart({
 			)}
 			{schema.responsive ? (
 				<ResponsiveContainer width="100%" height="100%">
-					{renderChart(schema, onDataClick)}
+					{renderChart(schema, onDataClick, colors)}
 				</ResponsiveContainer>
 			) : (
-				renderChart(schema, onDataClick)
+				renderChart(schema, onDataClick, colors)
 			)}
 		</div>
 	);
@@ -64,10 +83,13 @@ export function SchemaChart({
 /** Renders the appropriate chart type based on schema.chartType */
 function renderChart(
 	schema: ChartSchema,
-	onDataClick?: (
-		dataPoint: Readonly<Record<string, unknown>>,
-		seriesIndex: number,
-	) => void,
+	onDataClick:
+		| ((
+				dataPoint: Readonly<Record<string, unknown>>,
+				seriesIndex: number,
+		  ) => void)
+		| undefined,
+	colors: readonly string[],
 ): ReactNode {
 	const gridConfig = schema.grid;
 	const showGrid =
@@ -126,7 +148,7 @@ function renderChart(
 							key={s.dataKey}
 							dataKey={s.dataKey}
 							name={s.name ?? s.dataKey}
-							fill={s.color ?? DEFAULT_COLORS[i % DEFAULT_COLORS.length]}
+							fill={resolveColor(s, i, colors)}
 							stackId={s.stackId}
 						/>
 					))}
@@ -158,7 +180,7 @@ function renderChart(
 							type="monotone"
 							dataKey={s.dataKey}
 							name={s.name ?? s.dataKey}
-							stroke={s.color ?? DEFAULT_COLORS[i % DEFAULT_COLORS.length]}
+							stroke={resolveColor(s, i, colors)}
 						/>
 					))}
 				</LineChart>
@@ -189,8 +211,8 @@ function renderChart(
 							type="monotone"
 							dataKey={s.dataKey}
 							name={s.name ?? s.dataKey}
-							fill={s.color ?? DEFAULT_COLORS[i % DEFAULT_COLORS.length]}
-							stroke={s.color ?? DEFAULT_COLORS[i % DEFAULT_COLORS.length]}
+							fill={resolveColor(s, i, colors)}
+							stroke={resolveColor(s, i, colors)}
 							stackId={s.stackId}
 						/>
 					))}
@@ -220,7 +242,7 @@ function renderChart(
 							key={s.dataKey}
 							name={s.name ?? s.dataKey}
 							data={schema.data as Record<string, unknown>[]}
-							fill={s.color ?? DEFAULT_COLORS[i % DEFAULT_COLORS.length]}
+							fill={resolveColor(s, i, colors)}
 						/>
 					))}
 				</ScatterChart>
@@ -243,10 +265,7 @@ function renderChart(
 						{schema.data.map((entry, i) => (
 							<Cell
 								key={`cell-${String(entry[schema.xAxis?.dataKey ?? "name"] ?? i)}`}
-								fill={
-									firstSeries?.color ??
-									DEFAULT_COLORS[i % DEFAULT_COLORS.length]
-								}
+								fill={firstSeries?.color ?? colors[i % colors.length]}
 							/>
 						))}
 					</Pie>
@@ -272,10 +291,7 @@ function renderChart(
 						{schema.data.map((entry, i) => (
 							<Cell
 								key={`cell-${String(entry[schema.xAxis?.dataKey ?? "name"] ?? i)}`}
-								fill={
-									doughSeries?.color ??
-									DEFAULT_COLORS[i % DEFAULT_COLORS.length]
-								}
+								fill={doughSeries?.color ?? colors[i % colors.length]}
 							/>
 						))}
 					</Pie>

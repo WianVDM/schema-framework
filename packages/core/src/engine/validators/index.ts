@@ -25,6 +25,10 @@ export {
 	validateContentSchema,
 } from "./content-schema";
 export {
+	contextMenuConfigValidator,
+	validateContextMenuConfig,
+} from "./context-menu-config";
+export {
 	dashboardSchemaValidator,
 	validateDashboardSchema,
 } from "./dashboard-schema";
@@ -38,6 +42,10 @@ export {
 	validateGridSchema,
 } from "./grid-schema";
 export { layoutSchemaValidator, validateLayoutSchema } from "./layout-schema";
+export {
+	realtimeConfigValidator,
+	validateRealtimeConfig,
+} from "./realtime-config";
 export {
 	responsiveConfigValidator,
 	validateResponsiveConfig,
