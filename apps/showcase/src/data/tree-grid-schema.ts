@@ -1,5 +1,5 @@
 import type { GridColumnSchema, TreeGridSchema } from "@my-framework/core";
-import { asDataKey, deepFreeze } from "@my-framework/core";
+import { deepFreeze } from "@my-framework/core";
 
 const TREE_GRID_COLUMNS: readonly GridColumnSchema[] = [
 	{ key: "name", label: "Name", width: "250px" },
@@ -10,7 +10,6 @@ const TREE_GRID_COLUMNS: readonly GridColumnSchema[] = [
 
 /** NOTE: File system tree-grid for demo purposes */
 export const FILE_TREE_GRID_SCHEMA: TreeGridSchema = deepFreeze({
-	dataKey: asDataKey("id"),
 	title: "File System Tree Grid",
 	description: "Hybrid tree + grid showing file system data",
 	columns: TREE_GRID_COLUMNS,

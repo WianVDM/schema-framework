@@ -61,6 +61,11 @@ export function useRealtime<T>(
 			return;
 		}
 
+		// NOTE: If tab is already hidden on mount, skip starting the interval
+		if (document.hidden) {
+			return;
+		}
+
 		const handleVisibility = () => {
 			if (document.hidden) {
 				if (intervalRef.current !== null) {

@@ -1,17 +1,7 @@
 import { z } from "zod";
+import { gridColumnSchemaValidator } from "./grid-schema";
 import type { ValidationResult } from "./shared-schemas";
 import { formatZodIssue } from "./shared-schemas";
-
-/** NOTE: Inline column schema to avoid circular dependency with grid validator */
-const gridColumnSchema = z.object({
-	key: z.string().min(1, "Column key is required"),
-	label: z.string().min(1, "Column label is required"),
-	width: z.union([z.string(), z.number()]).optional(),
-	sortable: z.boolean().optional(),
-	visible: z.boolean().optional(),
-	frozen: z.boolean().optional(),
-	align: z.enum(["left", "center", "right"]).optional(),
-});
 
 const treeGridRowSchema: z.ZodType = z.lazy(() =>
 	z
@@ -26,7 +16,7 @@ const treeGridRowSchema: z.ZodType = z.lazy(() =>
 export const treeGridSchemaValidator = z
 	.object({
 		columns: z
-			.array(gridColumnSchema)
+			.array(gridColumnSchemaValidator)
 			.min(1, "TreeGrid must have at least one column"),
 		rows: z
 			.array(treeGridRowSchema)

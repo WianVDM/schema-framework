@@ -160,23 +160,25 @@ export function SchemaTree({
 			role="tree"
 			aria-label={schema.title ?? "Tree"}
 		>
-			{effectiveNodes.map((node) => (
-				<TreeNodeItem
-					key={node.id}
-					node={node}
-					depth={0}
-					expandedIds={expandedIds}
-					onToggle={handleToggle}
-					onLoadChildren={onLoadChildren}
-					onSelectionChange={onSelectionChange}
-					onContextAction={onContextAction}
-					onNodeReorder={onNodeReorder}
-					selection={schema.selection}
-					icons={schema.icons}
-					showLines={schema.showLines}
-					dnd={schema.dnd}
-				/>
-			))}
+			<ul>
+				{effectiveNodes.map((node) => (
+					<TreeNodeItem
+						key={node.id}
+						node={node}
+						depth={0}
+						expandedIds={expandedIds}
+						onToggle={handleToggle}
+						onLoadChildren={onLoadChildren}
+						onSelectionChange={onSelectionChange}
+						onContextAction={onContextAction}
+						onNodeReorder={onNodeReorder}
+						selection={schema.selection}
+						icons={schema.icons}
+						showLines={schema.showLines}
+						dnd={schema.dnd}
+					/>
+				))}
+			</ul>
 		</div>
 	);
 
@@ -268,11 +270,9 @@ function TreeNodeItem({
 	};
 
 	const handleCheckboxChange = () => {
-		if (selection?.mode === "checkbox" || selection?.mode === "multi") {
-			onSelectionChange?.([node.id], [node]);
-		} else if (selection?.mode === "single") {
-			onSelectionChange?.([node.id], [node]);
-		}
+		// NOTE: Toggle selection — delegate merge logic to consumer via onSelectionChange
+		const isSelected = node.selected === true;
+		onSelectionChange?.(isSelected ? [] : [node.id], isSelected ? [] : [node]);
 	};
 
 	const handleContextMenu = (e: React.MouseEvent) => {

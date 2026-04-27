@@ -49,7 +49,9 @@ export function buildColumns(
 		enableResizing: col.resizable ?? false,
 		cell: (info: CellContext<RowData, unknown>) =>
 			renderCellValue(col, info.getValue(), Badge),
-		size: col.width ? parseInt(col.width, 10) : undefined,
+		size: col.width
+			? Number.parseInt(String(col.width), 10) || undefined
+			: undefined,
 	}));
 }
 

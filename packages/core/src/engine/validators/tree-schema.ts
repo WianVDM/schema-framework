@@ -1,46 +1,59 @@
 import { z } from "zod";
 import type { DataKey } from "../types";
+import { realtimeConfigValidator } from "./realtime-config";
 import type { ValidationResult } from "./shared-schemas";
 import { formatZodIssue } from "./shared-schemas";
 
-const contextMenuItemSchema = z.object({
-	label: z.string().min(1, "Menu item label is required"),
-	icon: z.string().optional(),
-	disabled: z.boolean().optional(),
-	separator: z.boolean().optional(),
-	action: z.string().min(1, "Menu item action is required"),
-});
+const contextMenuItemSchema = z
+	.object({
+		label: z.string().min(1, "Menu item label is required"),
+		icon: z.string().optional(),
+		disabled: z.boolean().optional(),
+		separator: z.boolean().optional(),
+		action: z.string().min(1, "Menu item action is required"),
+	})
+	.strict();
 
-const contextMenuSchema = z.object({
-	items: z
-		.array(contextMenuItemSchema)
-		.min(1, "Context menu must have at least one item"),
-});
+const contextMenuSchema = z
+	.object({
+		items: z
+			.array(contextMenuItemSchema)
+			.min(1, "Context menu must have at least one item"),
+	})
+	.strict();
 
-const treeSelectionSchema = z.object({
-	mode: z.enum(["single", "multi", "checkbox"]),
-	cascade: z.boolean().optional(),
-});
+const treeSelectionSchema = z
+	.object({
+		mode: z.enum(["single", "multi", "checkbox"]),
+		cascade: z.boolean().optional(),
+	})
+	.strict();
 
-const treeLazySchema = z.object({
-	loadTrigger: z.enum(["expand", "click"]),
-	minDepth: z.number().int().min(0).optional(),
-});
+const treeLazySchema = z
+	.object({
+		loadTrigger: z.enum(["expand", "click"]),
+		minDepth: z.number().int().min(0).optional(),
+	})
+	.strict();
 
-const treeDndSchema = z.object({
-	enabled: z.literal(true),
-	dropBetween: z.boolean().optional(),
-	restrictToParent: z.boolean().optional(),
-});
+const treeDndSchema = z
+	.object({
+		enabled: z.literal(true),
+		dropBetween: z.boolean().optional(),
+		restrictToParent: z.boolean().optional(),
+	})
+	.strict();
 
-const treeIconsSchema = z.object({
-	expand: z.string().optional(),
-	collapse: z.string().optional(),
-	leaf: z.string().optional(),
-	loading: z.string().optional(),
-	folder: z.string().optional(),
-	folderOpen: z.string().optional(),
-});
+const treeIconsSchema = z
+	.object({
+		expand: z.string().optional(),
+		collapse: z.string().optional(),
+		leaf: z.string().optional(),
+		loading: z.string().optional(),
+		folder: z.string().optional(),
+		folderOpen: z.string().optional(),
+	})
+	.strict();
 
 const treeNodeSchema: z.ZodType = z.lazy(() =>
 	z.object({
@@ -73,6 +86,7 @@ export const treeSchemaValidator = z
 		contextMenu: contextMenuSchema.optional(),
 		showLines: z.boolean().optional(),
 		defaultExpandLevel: z.number().int().optional(),
+		realtime: realtimeConfigValidator.optional(),
 		title: z.string().optional(),
 	})
 	.strict();

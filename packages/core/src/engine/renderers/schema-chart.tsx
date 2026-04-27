@@ -44,6 +44,24 @@ function resolveColor(
 	return series.color ?? palette[index % palette.length];
 }
 
+/** NOTE: Type-safe wrapper for Recharts onClick handlers — normalises varied event payloads */
+function createSeriesClickHandler(
+	onDataClick:
+		| ((
+				dataPoint: Readonly<Record<string, unknown>>,
+				seriesIndex: number,
+		  ) => void)
+		| undefined,
+	seriesIndex: number,
+): ((data: unknown) => void) | undefined {
+	if (onDataClick === undefined) return undefined;
+	return (data: unknown) => {
+		if (data != null && typeof data === "object") {
+			onDataClick(data as Record<string, unknown>, seriesIndex);
+		}
+	};
+}
+
 /** Schema-driven chart component backed by Recharts */
 export function SchemaChart({
 	schema,
@@ -100,13 +118,6 @@ function renderChart(
 
 	const sharedProps = {
 		data: schema.data as Record<string, unknown>[],
-		onClick: onDataClick
-			? (payload: Record<string, unknown>) => {
-					if (payload && Object.keys(payload).length > 0) {
-						onDataClick(payload, 0);
-					}
-				}
-			: undefined,
 	};
 
 	switch (schema.chartType) {
@@ -153,6 +164,7 @@ function renderChart(
 							name={s.name ?? s.dataKey}
 							fill={resolveColor(s, i, colors)}
 							stackId={s.stackId}
+							onClick={createSeriesClickHandler(onDataClick, i)}
 						/>
 					))}
 				</BarChart>
@@ -184,6 +196,7 @@ function renderChart(
 							dataKey={s.dataKey}
 							name={s.name ?? s.dataKey}
 							stroke={resolveColor(s, i, colors)}
+							onClick={createSeriesClickHandler(onDataClick, i)}
 						/>
 					))}
 				</LineChart>
@@ -217,6 +230,7 @@ function renderChart(
 							fill={resolveColor(s, i, colors)}
 							stroke={resolveColor(s, i, colors)}
 							stackId={s.stackId}
+							onClick={createSeriesClickHandler(onDataClick, i)}
 						/>
 					))}
 				</AreaChart>
@@ -246,6 +260,7 @@ function renderChart(
 							name={s.name ?? s.dataKey}
 							data={schema.data as Record<string, unknown>[]}
 							fill={resolveColor(s, i, colors)}
+							onClick={createSeriesClickHandler(onDataClick, i)}
 						/>
 					))}
 				</ScatterChart>
@@ -264,6 +279,13 @@ function renderChart(
 						cx="50%"
 						cy="50%"
 						outerRadius={80}
+						onClick={
+							createSeriesClickHandler(onDataClick, 0) as (
+								data: unknown,
+								index: number,
+								e: React.MouseEvent,
+							) => void
+						}
 					>
 						{schema.data.map((entry, i) => (
 							<Cell
@@ -290,6 +312,13 @@ function renderChart(
 						cy="50%"
 						innerRadius={50}
 						outerRadius={80}
+						onClick={
+							createSeriesClickHandler(onDataClick, 0) as (
+								data: unknown,
+								index: number,
+								e: React.MouseEvent,
+							) => void
+						}
 					>
 						{schema.data.map((entry, i) => (
 							<Cell

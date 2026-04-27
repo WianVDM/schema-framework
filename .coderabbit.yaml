@@ -12,26 +12,24 @@ reviews:
   poem: false
   review_status: true
   collapse_walkthrough: true
-  tools:
-    biome:
-      enabled: true
-  instructions: |
-    ## Project Philosophy
-
-    This is a Data-Driven UI Framework inspired by Ext.NET's configurability. The backend owns JSON Schemas (metadata defining grids and forms); the React frontend owns rendering. Screens change per customer, permission, or workflow without deploying frontend code.
-
-    The framework uses a strict 3-Layer Architecture with one-way dependency chain:
-    - Layer 1 (primitives): Generic, schema-agnostic UI wrappers + PrimitiveComponents interface + PrimitivesContext
-    - Layer 2 (engine): Schema system — TypeScript types, Zod validators, SchemaForm/SchemaGrid renderers, FieldRenderer switchboard
-    - Layer 3 (composition/showcase): TanStack Start routes, server functions, Zustand stores, shadcn/ui wiring via PrimitivesProvider
-
-    Key patterns:
-    - Shadcn Dependency Rule: packages/core CANNOT import shadcn directly — uses PrimitivesContext injection
-    - Immutability: ReadonlyDeep<T> at compile-time, deepFreeze<T>() at runtime, branded types (FieldId, DataKey)
-    - State: TanStack Query (data + metadata), TanStack Form (dirty state), TanStack Table (grid state), Zustand (selection)
-    - Serialization: All server function return values must be JSON-serializable (no functions, no ReactNode)
-
   path_instructions:
+    - path: "**"
+      instructions: |
+        ## Project Philosophy
+
+        This is a Data-Driven UI Framework inspired by Ext.NET's configurability. The backend owns JSON Schemas (metadata defining grids and forms); the React frontend owns rendering. Screens change per customer, permission, or workflow without deploying frontend code.
+
+        The framework uses a strict 3-Layer Architecture with one-way dependency chain:
+        - Layer 1 (primitives): Generic, schema-agnostic UI wrappers + PrimitiveComponents interface + PrimitivesContext
+        - Layer 2 (engine): Schema system — TypeScript types, Zod validators, SchemaForm/SchemaGrid renderers, FieldRenderer switchboard
+        - Layer 3 (composition/showcase): TanStack Start routes, server functions, Zustand stores, shadcn/ui wiring via PrimitivesProvider
+
+        Key patterns:
+        - Shadcn Dependency Rule: packages/core CANNOT import shadcn directly — uses PrimitivesContext injection
+        - Immutability: ReadonlyDeep<T> at compile-time, deepFreeze<T>() at runtime, branded types (FieldId, DataKey)
+        - State: TanStack Query (data + metadata), TanStack Form (dirty state), TanStack Table (grid state), Zustand (selection)
+        - Serialization: All server function return values must be JSON-serializable (no functions, no ReactNode)
+
     - path: "packages/core/src/primitives/**"
       instructions: |
         LAYER 1 — Primitives (The Raw Materials).
@@ -158,6 +156,10 @@ knowledge_base:
     enabled: true
   learnings:
     scope: auto
+
+tools:
+  biome:
+    enabled: true
 
 chat:
   auto_reply: true

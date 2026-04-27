@@ -1,7 +1,7 @@
-import { asDataKey, type GridSchema } from "@my-framework/core";
+import { asDataKey, deepFreeze, type GridSchema } from "@my-framework/core";
 
-/** Grid schema demonstrating realtime polling configuration */
-export const REALTIME_GRID_SCHEMA: GridSchema = {
+/** NOTE: Grid schema demonstrating realtime polling configuration */
+export const REALTIME_GRID_SCHEMA: GridSchema = deepFreeze({
 	dataKey: asDataKey("id"),
 	columns: [
 		{ key: "id", label: "ID", type: "text", sortable: true, width: "80px" },
@@ -50,4 +50,4 @@ export const REALTIME_GRID_SCHEMA: GridSchema = {
 	striped: true,
 	hoverable: true,
 	bordered: true,
-};
+});
